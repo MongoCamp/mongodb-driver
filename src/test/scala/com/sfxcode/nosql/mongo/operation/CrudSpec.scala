@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.Database._
 import com.sfxcode.nosql.mongo.model.Line
+import com.sfxcode.nosql.mongo._
 import org.specs2.mutable.Specification
 
 /**
@@ -15,14 +16,14 @@ class CrudSpec extends Specification {
 
     "create Documents in" in {
       LineDAO.drop()
-      LineDAO.insertResult(Line.line)
+      LineDAO.insertResult(Line.line())
       LineDAO.count() must be equalTo 1
 
     }
 
     "update Doduments" in {
       LineDAO.drop()
-      LineDAO.insertResult(Line.line)
+      LineDAO.insertResult(Line.line())
       LineDAO.count() must be equalTo 1
 
       val line = LineDAO.findAll().head
@@ -39,9 +40,9 @@ class CrudSpec extends Specification {
 
     "delete Documents in" in {
       LineDAO.drop()
-      LineDAO.insertResult(Line.line)
+      LineDAO.insertResult(Line.line(2))
       LineDAO.count() must be equalTo 1
-      val line = LineDAO.findAll().head
+      val line = LineDAO.find(Map("id" -> 2)).head
       LineDAO.delete(line)
       LineDAO.count() must be equalTo 0
 
