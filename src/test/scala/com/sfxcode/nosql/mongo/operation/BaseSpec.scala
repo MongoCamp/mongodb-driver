@@ -16,7 +16,7 @@ class BaseSpec extends Specification with BeforeAll {
   "Base Operations" should {
 
     "count collection size in" in {
-      BookDAO.insertResult(Book.scalaBook)
+      BookDAO.insertResult(Book.scalaBook(1))
 
       BookDAO.count() must be equalTo 1
 
@@ -44,6 +44,6 @@ class BaseSpec extends Specification with BeforeAll {
 
   }
 
-  override def beforeAll = BookDAO.drop()
+  override def beforeAll: Unit = BookDAO.drop()
 
 }

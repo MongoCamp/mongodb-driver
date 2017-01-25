@@ -10,6 +10,6 @@ case class Book(id: Option[Int], title: String, pages: BigInt, author: Author, s
 
 object Book {
 
-  val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), Set(2, 4, 10))
+  def scalaBook(id: Int = 1) = Book(Some(id), "Programming In Scala", 852, Author("Martin Odersky"), Set(2, 4, 10))
 
 }
