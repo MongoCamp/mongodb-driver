@@ -2,10 +2,10 @@ package com.sfxcode.nosql.mongo.bson
 
 import java.lang.reflect.Field
 import java.math.BigInteger
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 
-import org.bson.{BsonDecimal128, BsonValue}
+import org.bson.{ BsonDecimal128, BsonValue }
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson._
@@ -27,7 +27,7 @@ object BsonConverter {
           toBson(option.get)
         else
           BsonNull()
-      case v:Any if extendedConverter.customClassList.contains(v.getClass) =>
+      case v: Any if extendedConverter.customClassList.contains(v.getClass) =>
         extendedConverter.toBson(v)
       case b: Boolean => BsonBoolean(b)
       case s: String => BsonString(s)
@@ -73,21 +73,21 @@ object BsonConverter {
   def fromBson(value: BsonValue): Any = {
     value match {
 
-      case b:BsonBoolean => b.getValue
-      case s:BsonString => s.getValue
-      case bytes:BsonBinary => bytes.getData
-      case r:BsonRegularExpression => r.getPattern
-      case d:BsonDateTime => new Date(d.getValue)
-      case d:BsonTimestamp => new Date(d.getTime)
-      case oid:BsonObjectId => oid.getValue
-      case i:BsonInt32 => i.getValue
-      case l:BsonInt64 => l.getValue
-      case d:BsonDouble => d.doubleValue()
-      case d:BsonDecimal128 => d.getValue.bigDecimalValue()
-      case doc:BsonDocument => Document(doc)
-      case array:BsonArray =>
+      case b: BsonBoolean => b.getValue
+      case s: BsonString => s.getValue
+      case bytes: BsonBinary => bytes.getData
+      case r: BsonRegularExpression => r.getPattern
+      case d: BsonDateTime => new Date(d.getValue)
+      case d: BsonTimestamp => new Date(d.getTime)
+      case oid: BsonObjectId => oid.getValue
+      case i: BsonInt32 => i.getValue
+      case l: BsonInt64 => l.getValue
+      case d: BsonDouble => d.doubleValue()
+      case d: BsonDecimal128 => d.getValue.bigDecimalValue()
+      case doc: BsonDocument => Document(doc)
+      case array: BsonArray =>
         array.getValues.asScala.toList.map(v => fromBson(v))
-      case n:BsonNull => null
+      case n: BsonNull => null
       case _ => value
     }
   }
