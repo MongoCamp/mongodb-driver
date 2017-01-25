@@ -27,7 +27,7 @@ object BsonConverter {
           toBson(option.get)
         else
           BsonNull()
-      case v: Any if extendedConverter.customClassList.contains(v.getClass) =>
+      case v: Any if extendedConverter.hasCustomClass(v) =>
         extendedConverter.toBson(v)
       case b: Boolean => BsonBoolean(b)
       case s: String => BsonString(s)
@@ -97,6 +97,14 @@ object BsonConverter {
 class BaseExtendedConverter {
 
   def customClassList: List[Class[_]] = List()
+
+  def hasCustomClass(v: Any): Boolean = {
+    customClassList.foreach(c => {
+      if (c.isAssignableFrom(v.getClass))
+        return true
+    })
+    false
+  }
 
   def objectToBson(value: AnyRef): BsonValue = {
     val map: Map[String, Any] = BaseExtendedConverter.membersToMap(value)
