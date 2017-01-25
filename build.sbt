@@ -3,7 +3,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.7.0"
+version := "0.7.1"
 
 crossScalaVersions := Seq( "2.12.1","2.11.8")
 
@@ -41,4 +41,6 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.7"
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
 
 
+licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
+bintrayReleaseOnPublish in ThisBuild := false
