@@ -2,10 +2,10 @@ package com.sfxcode.nosql.mongo.bson
 
 import java.lang.reflect.Field
 import java.math.BigInteger
-import java.time.{ LocalDate, LocalDateTime, ZoneId }
+import java.time.{LocalDate, LocalDateTime, ZoneId}
 import java.util.Date
 
-import org.bson.BsonValue
+import org.bson.{BsonDecimal128, BsonValue}
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson._
@@ -27,6 +27,8 @@ object BsonConverter {
           toBson(option.get)
         else
           BsonNull()
+      case v:Any if extendedConverter.customClassList.contains(v.getClass) =>
+        extendedConverter.toBson(v)
       case b: Boolean => BsonBoolean(b)
       case s: String => BsonString(s)
       case bytes: Array[Byte] => BsonBinary(bytes)
@@ -62,19 +64,31 @@ object BsonConverter {
         BsonArray(it.map(v => toBson(v)))
       case list: java.util.List[Any] =>
         BsonArray(list.asScala.map(v => toBson(v)))
+      case v: AnyRef => extendedConverter.objectToBson(v)
       case _ =>
-        extendedConverter.toBsonExtended(value)
+        BsonNull()
     }
   }
 
   def fromBson(value: BsonValue): Any = {
     value match {
-      case b: BsonBoolean => b.getValue
-      case b: BsonString => b.getValue
-      case b: BsonInt32 => b.getValue
-      case b: BsonInt64 => b.getValue
-      case b: BsonDouble => b.getValue
-      case b: BsonDecimal128 => b.getValue.bigDecimalValue()
+
+      case b:BsonBoolean => b.getValue
+      case s:BsonString => s.getValue
+      case bytes:BsonBinary => bytes.getData
+      case r:BsonRegularExpression => r.getPattern
+      case d:BsonDateTime => new Date(d.getValue)
+      case d:BsonTimestamp => new Date(d.getTime)
+      case oid:BsonObjectId => oid.getValue
+      case i:BsonInt32 => i.getValue
+      case l:BsonInt64 => l.getValue
+      case d:BsonDouble => d.doubleValue()
+      case d:BsonDecimal128 => d.getValue.bigDecimalValue()
+      case doc:BsonDocument => Document(doc)
+      case array:BsonArray =>
+        array.getValues.asScala.toList.map(v => fromBson(v))
+      case n:BsonNull => null
+      case _ => value
     }
   }
 
@@ -82,19 +96,19 @@ object BsonConverter {
 
 class BaseExtendedConverter {
 
+  def customClassList: List[Class[_]] = List()
+
   def objectToBson(value: AnyRef): BsonValue = {
     val map: Map[String, Any] = BaseExtendedConverter.membersToMap(value)
     BsonConverter.toBson(map)
   }
 
-  def toBsonExtended(value: Any): BsonValue = {
+  def toBson(value: Any): BsonValue = {
     value match {
-      case v: AnyRef => objectToBson(v)
       case _ =>
         BsonNull()
     }
   }
-
 }
 
 object BaseExtendedConverter {
