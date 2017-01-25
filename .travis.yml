@@ -1,9 +1,11 @@
 
 # See http://about.travis-ci.org/docs/user/build-configuration/
 language: scala
+services: mongodb
+
 scala:
    - 2.11.8
-   - 2.12.0
+   - 2.12.1
 branches:
   only:
     - master
@@ -13,6 +15,7 @@ notifications:
       - tom@sfxcode.com
 jdk:
   - oraclejdk8
+
 addons:
   apt:
     packages:
