@@ -21,13 +21,13 @@ trait ObservableIncludes {
   implicit class GenericObservable[C](val observable: Observable[C]) extends ImplicitObservable[C] {
     override val debugString: (C) => String = (doc) => doc.toString
 
-    def resultList[C]()(implicit formats: Formats, mf: Manifest[C]): List[C] =
-      Await.result(observable.toFuture(), Duration(10, TimeUnit.SECONDS)).toList.map(doc => {
+    def resultList[C](maxWait: Int = 10)(implicit formats: Formats, mf: Manifest[C]): List[C] =
+      Await.result(observable.toFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList.map(doc => {
         Converter.fromDocument[C](doc.asInstanceOf[Document])
       })
 
-    def result[C]()(implicit formats: Formats, mf: Manifest[C]): Option[C] = {
-      val list = Await.result(observable.toFuture(), Duration(10, TimeUnit.SECONDS)).toList.map(doc => {
+    def result[C](maxWait: Int = 10)(implicit formats: Formats, mf: Manifest[C]): Option[C] = {
+      val list = Await.result(observable.toFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList.map(doc => {
         Converter.fromDocument[C](doc.asInstanceOf[Document])
       })
       if (list.size == 1)
@@ -42,9 +42,9 @@ trait ObservableIncludes {
     val observable: Observable[C]
     val debugString: (C) => String
 
-    def results(): Seq[C] = Await.result(observable.toFuture(), Duration(10, TimeUnit.SECONDS))
+    def results(maxWait: Int = 10): Seq[C] = Await.result(observable.toFuture(), Duration(maxWait, TimeUnit.SECONDS))
 
-    def headResult(): C = Await.result(observable.head(), Duration(10, TimeUnit.SECONDS))
+    def headResult(maxWait: Int = 10): C = Await.result(observable.head(), Duration(maxWait, TimeUnit.SECONDS))
 
     def printResults(initial: String = ""): Unit = {
       if (initial.length > 0) print(initial)
