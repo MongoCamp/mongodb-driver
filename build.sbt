@@ -3,7 +3,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.7.5-SNAPSHOT"
+version := "0.7.5"
 
 crossScalaVersions := Seq( "2.12.1","2.11.8")
 

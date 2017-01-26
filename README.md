@@ -19,5 +19,48 @@ Scala Version is 2.12.1 / 2.11.8.
 
 Apache 2 License.
 
+## Usage
+
+Define MongoDB Connection and DAO objects for automatic case class conversion.
+
+
+```scala
+import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
+import org.mongodb.scala._
+
+import com.sfxcode.nosql.mongo.model._
+
+object Database {
+
+  val mongoClient: MongoClient = MongoClient()
+
+  val database: MongoDatabase = mongoClient.getDatabase("simple_mongo_test")
+
+  val bookCollection: MongoCollection[Document] = database.getCollection("books")
+
+  object BookDAO extends MongoDAO[Book](Database.bookCollection)
+}
+```
+
+
+Import the database object and execute find and CRUD functions on the DAO object.
+
+```scala
+
+import Database._
+
+  val books: List[Book] = BookDAO.findAll()
+
+
+  val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"))
+  
+    BookDAO.insertResult(scalaBook)
+    
+    BookDAO.deleteResult(scalaBook)
+  
+```
+
+
+
 
 
