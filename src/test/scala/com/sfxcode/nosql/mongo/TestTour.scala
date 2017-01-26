@@ -26,7 +26,7 @@ object TestTour extends App {
 
   println(collection.find.headResult().toJson())
 
-  val books = BookDAO.findAll()
+  val books: List[Book] = BookDAO.findAll()
 
   val book: Book = BookDAO.findAll().head
 
