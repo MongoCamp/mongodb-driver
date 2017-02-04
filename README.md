@@ -50,7 +50,8 @@ Import the database object and execute find and CRUD functions on the DAO object
 import Database._
 
    case class Book(id: Option[Int], title: String, pages: BigInt, author: Author, 
-   set: Set[Long] = Set(1, 2, 3), released: Boolean = true, releaseDate: Date = new Date(), _id: ObjectId = new ObjectId())
+    set: Set[Long] = Set(1, 2, 3), released: Boolean = true, releaseDate: Date = new Date(),
+    _id: ObjectId = new ObjectId())
 
 
   val books: List[Book] = BookDAO.findAll()
