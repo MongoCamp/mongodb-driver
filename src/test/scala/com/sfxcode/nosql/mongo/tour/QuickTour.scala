@@ -1,7 +1,7 @@
-package com.sfxcode.nosql.mongo
+package com.sfxcode.nosql.mongo.tour
 
-import com.sfxcode.nosql.mongo.Database._
 import com.sfxcode.nosql.mongo.model._
+import com.sfxcode.nosql.mongo.tour.Database._
 
 /**
  * Created by tom on 20.01.17.

@@ -1,11 +1,11 @@
-package com.sfxcode.nosql.mongo
+package com.sfxcode.nosql.mongo.converter
 
-import com.sfxcode.nosql.mongo.converter.Base
+import com.sfxcode.nosql.mongo.Converter
+import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
 import org.json4s.Formats
 import org.specs2.mutable.Specification
 
 import scala.reflect.Manifest
-import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
 
 /**
  * Created by tom on 22.01.17.
