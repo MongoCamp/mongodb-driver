@@ -1,22 +1,19 @@
 package com.sfxcode.nosql.mongo.bson
 
-import java.lang.reflect.Field
 import java.math.BigInteger
 import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 
 import org.bson.{ BsonDecimal128, BsonValue }
-import org.joda.time.DateTime
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson._
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.util.matching.Regex
 
 object BsonConverter {
 
-  var extendedConverter: BaseExtendedConverter = new BaseExtendedConverter()
+  var converterPlugin: AbstractConverterPlugin = new BaseConverterPlugin()
 
   def toBson(value: Any): BsonValue = {
 
@@ -27,14 +24,13 @@ object BsonConverter {
           toBson(option.get)
         else
           BsonNull()
-      case v: Any if extendedConverter.hasCustomClass(v) =>
-        extendedConverter.toBson(v)
+      case v: Any if converterPlugin.hasCustomClass(v) =>
+        converterPlugin.toBson(v)
       case b: Boolean => BsonBoolean(b)
       case s: String => BsonString(s)
       case bytes: Array[Byte] => BsonBinary(bytes)
       case r: Regex => BsonRegularExpression(r)
       case d: Date => BsonDateTime(d)
-      case dt: DateTime => BsonDateTime(dt.toDate)
       case ld: LocalDate => BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
       case ldt: LocalDateTime => BsonDateTime(Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant))
       case oid: ObjectId => BsonObjectId(oid)
@@ -64,7 +60,7 @@ object BsonConverter {
         BsonArray(it.map(v => toBson(v)))
       case list: java.util.List[Any] =>
         BsonArray(list.asScala.map(v => toBson(v)))
-      case v: AnyRef => extendedConverter.objectToBson(v)
+      case v: AnyRef => converterPlugin.objectToBson(v)
       case _ =>
         BsonNull()
     }
@@ -93,63 +89,3 @@ object BsonConverter {
   }
 
 }
-
-class BaseExtendedConverter {
-
-  def customClassList: List[Class[_]] = List()
-
-  def hasCustomClass(v: Any): Boolean = {
-    customClassList.foreach(c => {
-      if (c.isAssignableFrom(v.getClass))
-        return true
-    })
-    false
-  }
-
-  def objectToBson(value: AnyRef): BsonValue = {
-    val map: Map[String, Any] = BaseExtendedConverter.membersToMap(value)
-    BsonConverter.toBson(map)
-  }
-
-  def toBson(value: Any): BsonValue = {
-    value match {
-      case _ =>
-        BsonNull()
-    }
-  }
-}
-
-object BaseExtendedConverter {
-  private val classRegistry = new mutable.HashMap[Class[_], Map[String, Field]]()
-
-  def membersToMap(v: AnyRef): Map[String, Any] = {
-    val result = new mutable.HashMap[String, Any]()
-
-    val clazz = v.getClass
-
-    if (!classRegistry.contains(clazz)) {
-      val fields = clazz.getDeclaredFields
-
-      val fieldMap = new mutable.HashMap[String, Field]()
-
-      fields.foreach(field => {
-        val name = field.getName
-        val real = clazz.getDeclaredField(name)
-        fieldMap.+=(name -> real)
-        real.setAccessible(true)
-        val value = real.get(v)
-        result.+=(name -> value)
-      })
-
-    } else {
-      val fields = classRegistry(clazz)
-      fields.keys.foreach(name => {
-        val value = fields(name).get(v)
-        result.+=(name -> value)
-      })
-    }
-
-    result.toMap
-  }
-}
-

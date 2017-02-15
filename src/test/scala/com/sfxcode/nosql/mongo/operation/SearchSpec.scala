@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.Database._
+import com.sfxcode.nosql.mongo.tour.Database._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.mutable.{ Before, Specification }

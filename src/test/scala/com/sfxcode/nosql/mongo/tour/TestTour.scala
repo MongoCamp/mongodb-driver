@@ -1,7 +1,7 @@
-package com.sfxcode.nosql.mongo
+package com.sfxcode.nosql.mongo.tour
 
-import com.sfxcode.nosql.mongo.Database._
 import com.sfxcode.nosql.mongo.model._
+import com.sfxcode.nosql.mongo.tour.Database._
 /**
  * Created by tom on 20.01.17.
  */
@@ -23,8 +23,6 @@ object TestTour extends App {
   assert(BookDAO.count() == 0)
 
   BookDAO.insertResult(scalaBook)
-
-  println(collection.find.headResult().toJson())
 
   val books: List[Book] = BookDAO.findAll()
 

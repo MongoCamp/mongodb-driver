@@ -1,9 +1,9 @@
-package com.sfxcode.nosql.mongo
+package com.sfxcode.nosql.mongo.tour
 
+import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
-import org.mongodb.scala._
-
 import com.sfxcode.nosql.mongo.model._
+import org.mongodb.scala._
 
 object Database {
 
