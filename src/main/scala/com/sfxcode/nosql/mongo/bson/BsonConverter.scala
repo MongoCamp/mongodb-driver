@@ -41,6 +41,7 @@ object BsonConverter {
       case d: Double => BsonDouble(d)
       case f: Float => BsonDouble(f)
       case bd: BigDecimal => BsonDouble(bd.doubleValue())
+      case bd: java.math.BigDecimal => BsonDouble(bd.doubleValue())
       case doc: Document => BsonDocument(doc)
       case map: Map[Any, Any] =>
         var doc = Document()
