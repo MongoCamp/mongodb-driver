@@ -43,14 +43,14 @@ object BsonConverter {
       case bd: BigDecimal => BsonDouble(bd.doubleValue())
       case bd: java.math.BigDecimal => BsonDouble(bd.doubleValue())
       case doc: Document => BsonDocument(doc)
-      case map: Map[Any, Any] =>
+      case map: Map[_, _] =>
         var doc = Document()
         map.keys.foreach(key => {
           val v = map(key)
           doc.+=(key.toString -> toBson(v))
         })
         BsonDocument(doc)
-      case map: java.util.Map[Any, Any] =>
+      case map: java.util.Map[_, _] =>
         var doc = Document()
         map.keySet().asScala.foreach(key => {
           val v = map.get(key)
@@ -59,7 +59,7 @@ object BsonConverter {
         BsonDocument(doc)
       case it: Iterable[Any] =>
         BsonArray(it.map(v => toBson(v)))
-      case list: java.util.List[Any] =>
+      case list: java.util.List[_] =>
         BsonArray(list.asScala.map(v => toBson(v)))
       case v: AnyRef => converterPlugin.objectToBson(v)
       case _ =>

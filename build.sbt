@@ -3,7 +3,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.8.1"
+version := "0.8.2-SNAPSHOT"
 
 crossScalaVersions := Seq( "2.12.1","2.11.8")
 
@@ -24,7 +24,7 @@ parallelExecution in Test := false
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.8" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % "test"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.1" % "test"
 
