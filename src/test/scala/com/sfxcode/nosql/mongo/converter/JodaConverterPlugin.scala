@@ -9,7 +9,6 @@ class JodaConverterPlugin extends AbstractConverterPlugin {
   override def customClassList: List[Class[_]] = List(classOf[DateTime])
 
   override def toBson(value: Any): BsonValue = {
-    value
     value match {
       case dt: DateTime => BsonDateTime(dt.toDate)
       case _ =>
