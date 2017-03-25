@@ -15,7 +15,7 @@ class SearchSpec extends Specification with Before {
 
       val findAllResult = PersonDAO.findAll()
 
-      findAllResult.size must be equalTo PersonDAO.count().toInt
+      findAllResult.size must be equalTo PersonDAO.countResult().toInt
 
       findAllResult.head.name must not beEmpty
 

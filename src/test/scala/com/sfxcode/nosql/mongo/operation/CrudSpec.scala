@@ -5,9 +5,6 @@ import com.sfxcode.nosql.mongo.model.Line
 import com.sfxcode.nosql.mongo._
 import org.specs2.mutable.Specification
 
-/**
- * Created by tom on 22.01.17.
- */
 class CrudSpec extends Specification {
 
   sequential
@@ -15,16 +12,16 @@ class CrudSpec extends Specification {
   "Crud Operations" should {
 
     "create Documents in" in {
-      LineDAO.drop()
+      LineDAO.dropResult()
       LineDAO.insertResult(Line.line())
-      LineDAO.count() must be equalTo 1
+      LineDAO.countResult() must be equalTo 1
 
     }
 
     "update Doduments" in {
-      LineDAO.drop()
+      LineDAO.dropResult()
       LineDAO.insertResult(Line.line())
-      LineDAO.count() must be equalTo 1
+      LineDAO.countResult() must be equalTo 1
 
       val line = LineDAO.findAll().head
 
@@ -39,12 +36,12 @@ class CrudSpec extends Specification {
     }
 
     "delete Documents in" in {
-      LineDAO.drop()
+      LineDAO.dropResult()
       LineDAO.insertResult(Line.line(2))
-      LineDAO.count() must be equalTo 1
+      LineDAO.countResult() must be equalTo 1
       val line = LineDAO.find(Map("id" -> 2)).head
       LineDAO.deleteResult(line)
-      LineDAO.count() must be equalTo 0
+      LineDAO.countResult() must be equalTo 0
 
     }
 

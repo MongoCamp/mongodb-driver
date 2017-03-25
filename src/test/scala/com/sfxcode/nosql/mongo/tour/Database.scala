@@ -25,7 +25,7 @@ object Database {
 
   PersonDAO.dropResult()
 
-  val completed: Completed = PersonDAO.insertResult(Person.personList)
+  val completed: Completed = PersonDAO.insertValuesResult(Person.personList)
 
   def printDatabaseStatus(): Unit = {
     printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.count()))
