@@ -10,7 +10,7 @@ object RestaurantApp extends App {
 
   println(restaurant.get.grades)
 
-  val restaurants = RestaurantDAO.find(Map("address.zipcode"->"10075", "cuisine"->"Italian"))
+  val restaurants = RestaurantDAO.find(Map("address.zipcode" -> "10075", "cuisine" -> "Italian"))
 
   restaurants.sortBy(r => r.name).foreach(r => println(r.name))
 

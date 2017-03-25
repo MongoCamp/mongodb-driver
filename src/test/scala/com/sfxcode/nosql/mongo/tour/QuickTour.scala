@@ -3,9 +3,7 @@ package com.sfxcode.nosql.mongo.tour
 import com.sfxcode.nosql.mongo.model._
 import com.sfxcode.nosql.mongo.tour.Database._
 
-/**
- * Created by tom on 20.01.17.
- */
+
 object QuickTour extends App {
 
   println(LineDAO.dropResult())
@@ -18,7 +16,7 @@ object QuickTour extends App {
 
   val lines = (1 to 100) map { i: Int => Line(i * 10, "default", 1000 + i, Position(1, 3), Position(3, 7)) }
 
-  LineDAO.insertResult(lines)
+  LineDAO.insertValuesResult(lines)
 
   printDebugValues("LineDAO.count", LineDAO.count())
 

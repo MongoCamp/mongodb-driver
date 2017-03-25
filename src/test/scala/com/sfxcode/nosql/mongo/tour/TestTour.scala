@@ -2,25 +2,23 @@ package com.sfxcode.nosql.mongo.tour
 
 import com.sfxcode.nosql.mongo.model._
 import com.sfxcode.nosql.mongo.tour.Database._
-/**
- * Created by tom on 20.01.17.
- */
+
 object TestTour extends App {
 
   // get a handle to the "test" collection
   val collection = Database.bookCollection
 
-  BookDAO.drop()
+  BookDAO.dropResult()
 
   val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), Set(2, 4, 10))
 
   BookDAO.insertResult(scalaBook)
 
-  assert(BookDAO.count() == 1)
+  assert(BookDAO.countResult() == 1)
 
   BookDAO.deleteResult(scalaBook)
 
-  assert(BookDAO.count() == 0)
+  assert(BookDAO.countResult() == 0)
 
   BookDAO.insertResult(scalaBook)
 
