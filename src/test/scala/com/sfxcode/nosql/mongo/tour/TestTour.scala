@@ -7,8 +7,6 @@ import org.mongodb.scala.Completed
 
 object TestTour extends App {
 
-  val is = getClass.getResourceAsStream("test_data.json")
-
   // get a handle to the "test" collection
   val collection = BookDAO.collection
 
