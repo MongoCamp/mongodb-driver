@@ -1,14 +1,23 @@
 package com.sfxcode.nosql
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
-import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
-import scala.language.implicitConversions
+import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable }
 
 import scala.collection.JavaConverters._
+import scala.language.implicitConversions
 
 package object mongo extends ObservableIncludes {
+
+  implicit def observableToResult[T](obs: Observable[T]): T = obs.headResult()
+
+  implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] = obs.resultList()
+
+  implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.result()
+
+  implicit def databaseProviderToDatabase(provider: DatabaseProvider): MongoDatabase = provider.database
 
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 

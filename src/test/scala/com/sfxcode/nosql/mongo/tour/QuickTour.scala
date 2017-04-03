@@ -1,27 +1,27 @@
 package com.sfxcode.nosql.mongo.tour
 
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
 import com.sfxcode.nosql.mongo.tour.Database._
 
-
 object QuickTour extends App {
 
-  println(LineDAO.dropResult())
+  println(LineDAO.drop())
 
   val line = Line(1, "default", 3, Position(1, 3), Position(3, 7))
 
   LineDAO.insert(line)
 
-  printDebugValues("LineDAO.findAll", LineDAO.findAll())
+  printDebugValues("LineDAO.findAll", LineDAO.find())
 
   val lines = (1 to 100) map { i: Int => Line(i * 10, "default", 1000 + i, Position(1, 3), Position(3, 7)) }
 
-  LineDAO.insertValuesResult(lines)
+  LineDAO.insertValues(lines)
 
   printDebugValues("LineDAO.count", LineDAO.count())
 
-  printDebugValues("LineDAO.findOneByName", LineDAO.findOne("id", 710))
+  printDebugValues("LineDAO.findOneByName", LineDAO.find("id", 710))
 
-  println(LineDAO.distinct("index"))
+  println(LineDAO.distinct("index").resultList())
 
 }
