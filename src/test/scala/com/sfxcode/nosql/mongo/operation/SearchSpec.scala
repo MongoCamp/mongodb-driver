@@ -13,9 +13,9 @@ class SearchSpec extends Specification with Before {
 
     "support findAll" in {
 
-      val findAllResult = PersonDAO.findAll()
+      val findAllResult: List[Person] = PersonDAO.find()
 
-      findAllResult.size must be equalTo PersonDAO.countResult().toInt
+      findAllResult.size must be equalTo PersonDAO.count().headResult().toInt
 
       findAllResult.head.name must not beEmpty
 
@@ -25,9 +25,9 @@ class SearchSpec extends Specification with Before {
 
     "support findOneById" in {
 
-      val findAllResult = PersonDAO.findAll()
+      val findAllResult: List[Person] = PersonDAO.find()
 
-      val findOneByIdResult = PersonDAO.findOneById(findAllResult.head._id)
+      val findOneByIdResult: Option[Person] = PersonDAO.findById(findAllResult.head._id)
 
       findOneByIdResult must beSome[Person]
 
@@ -36,33 +36,33 @@ class SearchSpec extends Specification with Before {
 
     "support findOne with Filter" in {
 
-      val findOneResult = PersonDAO.findOne(Map("id" -> 11))
+      val findOneResult = PersonDAO.find(Map("id" -> 11)).result()
 
       findOneResult must beSome[Person]
 
       findOneResult.get.name must be equalTo "Dyer Mayer"
 
-      PersonDAO.findOne(Map("id" -> 125)).get.name must be equalTo "Gaines Valentine"
+      PersonDAO.find(Map("id" -> 125)).headResult().name must be equalTo "Gaines Valentine"
     }
 
     "support findOne with field name and value" in {
 
-      val findOneResult = PersonDAO.findOne("id", 11)
+      val findOneResult = PersonDAO.find("id", 11).result()
 
       findOneResult must beSome[Person]
 
       findOneResult.get.name must be equalTo "Dyer Mayer"
 
-      PersonDAO.findOne("name", "Gaines Valentine").get.name must be equalTo "Gaines Valentine"
+      PersonDAO.find("name", "Gaines Valentine").headResult().name must be equalTo "Gaines Valentine"
     }
 
     "support findOne with Filter" in {
 
-      val females = PersonDAO.find(Map("gender" -> "female"))
+      val females = PersonDAO.find(Map("gender" -> "female")).resultList()
 
       females.size must be equalTo 98
 
-      val males = PersonDAO.find(Map("gender" -> "male"))
+      val males = PersonDAO.find(Map("gender" -> "male")).resultList()
 
       males.size must be equalTo 102
 

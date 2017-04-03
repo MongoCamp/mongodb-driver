@@ -1,31 +1,36 @@
 package com.sfxcode.nosql.mongo.tour
 
 import com.sfxcode.nosql.mongo.MongoDAO
-import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
 import org.mongodb.scala._
 
-object Database {
+object Database extends ObservableImplicits {
 
   val mongoClient: MongoClient = MongoClient()
 
-  val database: MongoDatabase = mongoClient.getDatabase("simple_mongo_test")
+  import org.bson.codecs.configuration.CodecRegistries._
+  import org.mongodb.scala.bson.codecs.Macros._
 
-  val bookCollection: MongoCollection[Document] = database.getCollection("books")
+  private val bookRegistry = fromProviders(classOf[Book], classOf[Author])
 
-  object BookDAO extends MongoDAO[Book](Database.bookCollection)
+  private val personRegistry = fromProviders(classOf[Person], classOf[Friend])
 
-  val lineCollection: MongoCollection[Document] = database.getCollection("lines")
+  private val lineRegistry = fromProviders(classOf[Line], classOf[Position])
 
-  object LineDAO extends MongoDAO[Line](Database.lineCollection)
+  val database = DatabaseProvider("simple_mongo_test", fromRegistries(bookRegistry, personRegistry, lineRegistry))
 
-  val personCollection: MongoCollection[Document] = database.getCollection("person")
+  object BookDAO extends MongoDAO[Book](database, "books")
 
-  object PersonDAO extends MongoDAO[Person](Database.personCollection)
+  object LineDAO extends MongoDAO[Line](database, "lines")
+
+  object PersonDAO extends MongoDAO[Person](database, "person")
 
   PersonDAO.dropResult()
 
-  val completed: Completed = PersonDAO.insertValuesResult(Person.personList)
+  val persons: List[Person] = Person.personList
+
+  PersonDAO.insertValuesResult(persons)
 
   def printDatabaseStatus(): Unit = {
     printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.count()))

@@ -1,12 +1,12 @@
 package com.sfxcode.nosql.mongo.restaurant
 
-import com.sfxcode.nosql.mongo.MongoDAO
-import org.joda.time.DateTime
-import org.mongodb.scala._
-import org.mongodb.scala.bson.ObjectId
+import java.util.Date
 
-// Custom Serializer for Joda Time needed
-import com.sfxcode.nosql.mongo.json4s.JodaBsonSerializer._
+import com.sfxcode.nosql.mongo.MongoDAO
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import org.bson.codecs.configuration.CodecRegistries._
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.bson.codecs.Macros._
 
 /**
  * import mongodb restaurants sample data
@@ -15,17 +15,16 @@ object RestaurantDatabase {
 
   case class Address(street: String, building: String, zipcode: String, coord: List[Double])
 
-  case class Grade(date: DateTime, grade: String, score: Int)
+  case class Grade(date: Date, grade: String, score: Int)
 
   case class Restaurant(restaurant_id: String, name: String, borough: String, cuisine: String,
     grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
 
-  val mongoClient: MongoClient = MongoClient()
+  private val registry = fromProviders(classOf[Restaurant], classOf[Address], classOf[Grade])
 
-  val database: MongoDatabase = mongoClient.getDatabase("test")
+  val database = DatabaseProvider("test", registry)
 
-  val restaurantCollection: MongoCollection[Document] = database.getCollection("restaurants")
-
-  object RestaurantDAO extends MongoDAO[Restaurant](restaurantCollection)
+  object RestaurantDAO extends MongoDAO[Restaurant](database, "restaurants")
 
 }
+

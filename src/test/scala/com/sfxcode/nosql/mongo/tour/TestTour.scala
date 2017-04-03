@@ -1,34 +1,39 @@
 package com.sfxcode.nosql.mongo.tour
 
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
 import com.sfxcode.nosql.mongo.tour.Database._
+import org.mongodb.scala.Completed
 
 object TestTour extends App {
 
+  val is = getClass.getResourceAsStream("test_data.json")
+
   // get a handle to the "test" collection
-  val collection = Database.bookCollection
+  val collection = BookDAO.collection
 
-  BookDAO.dropResult()
+  BookDAO.drop().headResult()
 
-  val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), Set(2, 4, 10))
+  val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), List(2, 4, 10))
 
-  BookDAO.insertResult(scalaBook)
+  val completed: Completed = BookDAO.insertOne(scalaBook)
 
-  assert(BookDAO.countResult() == 1)
+  assert(BookDAO.count().headResult() == 1)
 
-  BookDAO.deleteResult(scalaBook)
+  BookDAO.deleteOne(scalaBook).headResult()
 
-  assert(BookDAO.countResult() == 0)
+  assert(BookDAO.count().headResult() == 0)
 
-  BookDAO.insertResult(scalaBook)
+  BookDAO.insert(scalaBook)
 
-  val books: List[Book] = BookDAO.findAll()
+  val books: List[Book] = BookDAO.find().resultList()
 
-  val book: Book = BookDAO.findAll().head
+  val book: Book = BookDAO.find().headResult()
 
-  val book2 = BookDAO.findOneById(book._id)
+  val book2 = BookDAO.findById(book._id).headResult()
 
   println(scalaBook)
+
   println(book)
 
   println(book._id)

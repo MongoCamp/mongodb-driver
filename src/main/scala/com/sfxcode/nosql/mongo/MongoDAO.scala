@@ -1,14 +1,17 @@
 package com.sfxcode.nosql.mongo
 
 import com.sfxcode.nosql.mongo.operation.Search
-import org.json4s.Formats
-import org.mongodb.scala.{ Document, MongoCollection }
+import org.mongodb.scala.{ MongoCollection, MongoDatabase }
+
+import scala.reflect.ClassTag
 
 /**
  * Created by tom on 20.01.17.
  */
-abstract class MongoDAO[A](collection: MongoCollection[Document])(implicit formats: Formats, mf: Manifest[A]) extends Search[A] {
+abstract class MongoDAO[A](database: MongoDatabase, collectionName: String)(implicit ct: ClassTag[A]) extends Search[A] {
 
-  def coll: MongoCollection[Document] = collection
+  val collection: MongoCollection[A] = database.getCollection[A](collectionName)
+
+  protected def coll: MongoCollection[A] = collection
 
 }

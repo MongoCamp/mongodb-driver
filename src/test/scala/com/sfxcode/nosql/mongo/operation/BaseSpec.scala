@@ -17,7 +17,7 @@ class BaseSpec extends Specification with BeforeAll {
 
       BookDAO.countResult() must be equalTo 1
 
-      val scalaBook = Book(Some(2), "Programming In Scala", 852, Author("Martin Odersky"), Set(2, 4, 10))
+      val scalaBook = Book(Some(2), "Programming In Scala", 852, Author("Martin Odersky"), List(2, 4, 10))
 
       BookDAO.insertResult(scalaBook)
 

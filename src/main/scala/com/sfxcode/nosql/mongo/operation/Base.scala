@@ -1,19 +1,22 @@
 package com.sfxcode.nosql.mongo.operation
 
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter._
-import com.sfxcode.nosql.mongo.operation.ObservableIncludes._
+
 import com.typesafe.scalalogging.LazyLogging
 import org.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.{Completed, DistinctObservable, Document, MongoCollection, Observable, Observer}
+import org.mongodb.scala.{ Completed, DistinctObservable, Document, MongoCollection, Observable, Observer }
 
-abstract class Base[A]() extends LazyLogging {
+import scala.reflect.ClassTag
 
-  def coll: MongoCollection[Document]
+abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
+
+  protected def coll: MongoCollection[A]
 
   def count(filter: Bson = Document()): Observable[Long] = coll.count(filter)
 
-  def countResult(filter: Bson = Document()): Long = count(filter).headResult()
+  def countResult(filter: Bson = Document()): Long = count(filter)
 
   def distinct[S <: Any](fieldName: String, filter: Bson = Document()): DistinctObservable[BsonValue] = {
     coll.distinct[BsonValue](fieldName, filter)
@@ -29,11 +32,11 @@ abstract class Base[A]() extends LazyLogging {
 
 }
 
-class SimpleCompletedObserver[A] extends Observer[A] with LazyLogging {
+class SimpleCompletedObserver[T] extends Observer[T] with LazyLogging {
   override def onError(e: Throwable): Unit = logger.error(e.getMessage, e)
 
   override def onComplete(): Unit = {}
 
-  override def onNext(result: A): Unit = {}
+  override def onNext(result: T): Unit = {}
 }
 
