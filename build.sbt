@@ -3,7 +3,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.9.0-SNAPSHOT"
+version := "0.9.0"
 
 crossScalaVersions := Seq( "2.12.1","2.11.8")
 
@@ -26,13 +26,13 @@ parallelExecution in Test := false
 
 libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % "test"
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.1" % "test"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.1" % "test"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.9.7"  % "test"
+libraryDependencies += "joda-time" % "joda-time" % "2.9.9"  % "test"
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.0" % "test"
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.1" % "test"
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.0.0"
 
