@@ -16,7 +16,7 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Crud[A] {
   def findById(oid: Any): FindObservable[A] = {
     oid match {
       case objectId: ObjectId => find(equal("_id", objectId))
-      case _ => find(equal("_id", oid.toString))
+      case _ => find(equal("_id", new ObjectId(oid.toString)))
     }
   }
 
