@@ -3,11 +3,11 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.9.0"
+version := "0.9.1"
 
-crossScalaVersions := Seq( "2.12.1","2.11.8")
+crossScalaVersions := Seq( "2.12.2","2.11.10")
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 scalacOptions += "-deprecation"
 
