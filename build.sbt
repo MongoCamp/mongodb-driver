@@ -3,7 +3,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.9.1"
+version := "0.9.2"
 
 crossScalaVersions := Seq( "2.12.2","2.11.10")
 
@@ -32,9 +32,9 @@ libraryDependencies += "com.typesafe" % "config" % "1.3.1" % "test"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.9.9"  % "test"
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.1" % "test"
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.2" % "test"
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.0.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0"
 
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
