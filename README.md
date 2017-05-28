@@ -1,6 +1,6 @@
 # simple-mongo
 
-A small library for case class support with the mongo-scala-driver.
+A small library for easy usage of the mongo-scala-driver.
 
 ## Version
 
