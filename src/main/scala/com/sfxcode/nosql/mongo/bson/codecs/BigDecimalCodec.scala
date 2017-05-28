@@ -6,7 +6,6 @@ import org.bson.{ BsonReader, BsonWriter }
 /**
  * A Codec for BigDecimal instances.
  *
- * @since 3.0
  */
 class BigDecimalCodec extends Codec[BigDecimal] {
 
