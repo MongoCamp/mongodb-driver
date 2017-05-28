@@ -25,44 +25,58 @@ Define MongoDB Connection and DAO objects for automatic case class conversion.
 
 
 ```scala
-import com.sfxcode.nosql.mongo.json4s.DefaultBsonSerializer._
-import org.mongodb.scala._
 
-import com.sfxcode.nosql.mongo.model._
+import java.util.Date
 
-object Database {
+import com.sfxcode.nosql.mongo.MongoDAO
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import org.bson.codecs.configuration.CodecRegistries._
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.bson.codecs.Macros._
 
-  val mongoClient: MongoClient = MongoClient()
+/**
+ * import mongodb restaurants sample data
+ */
+object RestaurantDatabase {
 
-  val database: MongoDatabase = mongoClient.getDatabase("simple_mongo_test")
+  case class Address(street: String, building: String, zipcode: String, coord: List[Double])
 
-  val bookCollection: MongoCollection[Document] = database.getCollection("books")
+  case class Grade(date: Date, grade: String, score: Int)
 
-  object BookDAO extends MongoDAO[Book](Database.bookCollection)
+  case class Restaurant(restaurant_id: String, name: String, borough: String, cuisine: String,
+    grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
+
+  private val registry = fromProviders(classOf[Restaurant], classOf[Address], classOf[Grade])
+
+  val database = DatabaseProvider("test", registry)
+
+  object RestaurantDAO extends MongoDAO[Restaurant](database, "restaurants")
+
 }
+
+
 ```
 
 
 Import the database object and execute find and CRUD functions on the DAO object.
 
 ```scala
+ import RestaurantDatabase._
+ 
+ import com.sfxcode.nosql.mongo._
+ 
+ object RestaurantApp extends App {
+ 
+   val restaurant: Option[Restaurant] = RestaurantDAO.find("name", "Dj Reynolds Pub And Restaurant")
+ 
+   println(restaurant.get.grades)
+ 
+   val restaurants: List[Restaurant] = RestaurantDAO.find(Map("address.zipcode" -> "10075", "cuisine" -> "Italian"))
+ 
+   restaurants.sortBy(r => r.name).foreach(r => println(r.name))
+ 
+ }
 
-import Database._
-
-   case class Book(id: Option[Int], title: String, pages: BigInt, author: Author, 
-    set: Set[Long] = Set(1, 2, 3), released: Boolean = true, releaseDate: Date = new Date(),
-    _id: ObjectId = new ObjectId())
-
-
-  val books: List[Book] = BookDAO.findAll()
-
-
-  val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"))
-  
-    BookDAO.insertResult(scalaBook)
-    
-    BookDAO.deleteResult(scalaBook)
-  
 ```
 
 
