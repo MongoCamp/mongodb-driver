@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo
 
 import com.sfxcode.nosql.mongo.operation.Search
-import org.mongodb.scala.{ MongoCollection, MongoDatabase }
+import org.mongodb.scala.{ Document, MongoCollection, MongoDatabase }
 
 import scala.reflect.ClassTag
 
@@ -13,5 +13,8 @@ abstract class MongoDAO[A](database: MongoDatabase, collectionName: String)(impl
   val collection: MongoCollection[A] = database.getCollection[A](collectionName)
 
   protected def coll: MongoCollection[A] = collection
+
+  // internal object for raw document access
+  object Raw extends MongoDAO[Document](database, collectionName)
 
 }

@@ -11,7 +11,7 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Crud[A] {
 
   protected def coll: MongoCollection[A]
 
-  def find(filter: Bson = Document()): FindObservable[A] = coll.find(filter)
+  def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document()): FindObservable[A] = coll.find(filter).sort(sort).projection(projection)
 
   def findById(oid: Any): FindObservable[A] = {
     oid match {

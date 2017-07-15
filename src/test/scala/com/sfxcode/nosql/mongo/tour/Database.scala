@@ -22,6 +22,8 @@ object Database extends ObservableImplicits {
 
   object BookDAO extends MongoDAO[Book](database, "books")
 
+  class BookDocumentDAO extends MongoDAO[Document](database, "books")
+
   object LineDAO extends MongoDAO[Line](database, "lines")
 
   object PersonDAO extends MongoDAO[Person](database, "person")
