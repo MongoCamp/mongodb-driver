@@ -3,9 +3,9 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-version := "0.9.3-SNAPSHOT"
+version := "1.0.0"
 
-crossScalaVersions := Seq( "2.12.2","2.11.10")
+crossScalaVersions := Seq( "2.12.2","2.11.11")
 
 scalaVersion := "2.12.2"
 
@@ -24,7 +24,7 @@ parallelExecution in Test := false
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "3.8.9" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "3.9.1" % "test"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
@@ -37,7 +37,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.2" % "test"
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0"
 
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.7.1"
 
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
