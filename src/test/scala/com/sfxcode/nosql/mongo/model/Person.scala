@@ -27,8 +27,7 @@ case class Person(
   friends: List[Friend],
   greeting: String,
   favoriteFruit: String,
-  _id: ObjectId = new ObjectId()
-)
+  _id: ObjectId = new ObjectId())
 
 case class Friend(id: Long, name: String)
 
