@@ -19,10 +19,7 @@ trait ObservableIncludes {
 
     def result(maxWait: Int = 10): Option[C] = {
       val list = Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList
-      if (list.size == 1)
-        Some(list.head)
-      else
-        None
+      list.headOption
     }
 
   }
@@ -42,7 +39,7 @@ trait ObservableIncludes {
       results().foreach(res => println(debugString(res)))
     }
 
-    def printHeadResult(initial: String = ""): Unit = println(s"${initial}${debugString(headResult())}")
+    def printHeadResult(initial: String = ""): Unit = println(s"$initial${debugString(headResult())}")
   }
 
 }

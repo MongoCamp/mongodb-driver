@@ -8,7 +8,7 @@
   </appender>
 
 
-    <logger name="com.sfxcode.sapphire.core" level="dubug" />
+    <logger name="com.sfxcode.sapphire.core" level="debug" />
 
     <root level="info">
         <appender-ref ref="STDOUT" />
