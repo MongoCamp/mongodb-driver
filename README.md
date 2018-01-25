@@ -3,8 +3,13 @@
 
 A small library for easy usage of the mongo-scala-driver.
 
-## Version
+## Documentation
 
+Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
+
+
+
+## Version
 
 Scala Version is 2.12.1 / 2.11.8.
 
