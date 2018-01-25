@@ -1,5 +1,6 @@
 # simple-mongo
 
+
 A small library for easy usage of the mongo-scala-driver.
 
 ## Version
