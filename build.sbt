@@ -1,3 +1,4 @@
+import scala.sys.process._
 
 name := "simple-mongo"
 
@@ -15,6 +16,8 @@ lazy val root = (project in file(".")).
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.sfxcode.nosql.mongo"
   )
+
+
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
@@ -44,3 +47,23 @@ buildInfoOptions += BuildInfoOption.BuildTime
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 bintrayReleaseOnPublish in ThisBuild := false
+
+// enablePlugins(SiteScaladocPlugin)
+
+version in Paradox := {
+  if (isSnapshot.value)
+    "git tag -l".!!.split("\r?\n").last
+  else version.value
+}
+
+paradoxProperties += ("app-version" -> {if (isSnapshot.value)
+  "git tag -l".!!.split("\r?\n").last
+else version.value})
+
+enablePlugins(ParadoxSitePlugin, ParadoxMaterialThemePlugin)
+sourceDirectory in Paradox := sourceDirectory.value / "main" / "paradox"
+ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox)
+
+paradoxMaterialTheme in Paradox ~= {
+  _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
+}
