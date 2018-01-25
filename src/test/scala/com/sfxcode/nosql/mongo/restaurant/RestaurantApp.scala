@@ -1,17 +1,28 @@
 package com.sfxcode.nosql.mongo.restaurant
 
+// #import
+// static import of needed DAO objects
 import com.sfxcode.nosql.mongo.restaurant.RestaurantDatabase._
 
+// static import of mongo package object for needed implicits
 import com.sfxcode.nosql.mongo._
+// #import
+
+// #app
 
 object RestaurantApp extends App {
+  // find specific restaurant key and value as Option Result
+  val restaurant = RestaurantDAO.find("name", "Dj Reynolds Pub And Restaurant")
 
-  val restaurant: Option[Restaurant] = RestaurantDAO.find("name", "Dj Reynolds Pub And Restaurant")
+  println(restaurant.get)
 
-  println(restaurant.get.grades)
-
-  val restaurants: List[Restaurant] = RestaurantDAO.find(Map("address.zipcode" -> "10075", "cuisine" -> "Italian"))
+  private val filter = Map("address.zipcode" -> "10075", "cuisine" -> "Italian")
+  // find restaurants by filter - use implicit map to document conversion
+  // as List result
+  val restaurants: List[Restaurant] = RestaurantDAO.find(filter)
 
   restaurants.sortBy(r => r.name).foreach(r => println(r.name))
 
 }
+
+// #app
