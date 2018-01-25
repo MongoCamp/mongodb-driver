@@ -4,10 +4,6 @@ A small library for easy usage of the mongo-scala-driver.
 
 Implement the DAO Pattern for easy database usage.
 
-## Documentation
-
-Documentation can be found [here](https://sfxcode.github.io/simple-mongo/)
-
 ## Dependency
 
 @@dependency[sbt,Maven,Gradle] {
