@@ -67,3 +67,8 @@ ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox)
 paradoxMaterialTheme in Paradox ~= {
   _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
 }
+
+enablePlugins(GhpagesPlugin)
+
+git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git"
+ghpagesNoJekyll := true
