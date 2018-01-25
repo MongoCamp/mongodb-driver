@@ -46,7 +46,7 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-bintrayReleaseOnPublish in ThisBuild := false
+bintrayReleaseOnPublish in ThisBuild := true
 
 // enablePlugins(SiteScaladocPlugin)
 
@@ -67,6 +67,8 @@ ParadoxMaterialThemePlugin.paradoxMaterialThemeSettings(Paradox)
 paradoxMaterialTheme in Paradox ~= {
   _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
 }
+
+enablePlugins(SiteScaladocPlugin)
 
 enablePlugins(GhpagesPlugin)
 
