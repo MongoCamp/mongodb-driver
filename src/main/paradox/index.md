@@ -2,9 +2,19 @@
 
 A small library for easy usage of the mongo-scala-driver.
 
-Implement the DAO Pattern for easy database usage.
+Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for easy database usage.
 
-## Dependency
+Enhanced [BSON](http://mongodb.github.io/mongo-scala-driver/2.2/bson/) conversion support.
+
+## Additional Documentation
+
+
+Documentation for [mongo-scala-driver](http://mongodb.github.io/mongo-scala-driver/2.2/)
+
+Documentation for [MongoDB](https://docs.mongodb.com/)
+
+
+## Dependency Setup
 
 @@dependency[sbt,Maven,Gradle] {
   group="com.sfxcode.nosql"
@@ -14,7 +24,7 @@ Implement the DAO Pattern for easy database usage.
 
 ## Licence
 
-Apache 2 License.
+[Apache 2](https://github.com/sfxcode/simple-mongo/blob/master/LICENSE)
 
 @@@ index
 

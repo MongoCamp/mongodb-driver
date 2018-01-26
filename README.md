@@ -23,11 +23,12 @@ Scala Version is 2.12.1 / 2.11.8.
 
 ## Licence
 
-Apache 2 License.
+[Apache 2 License](https://github.com/sfxcode/simple-mongo/blob/master/LICENSE).
+
 
 ## Usage
 
-Define MongoDB Connection and DAO objects for automatic case class conversion.
+Define MongoDB Connection and [DAO](https://en.wikipedia.org/wiki/Data_access_object) objects for automatic case class conversion.
 
 
 ```scala
