@@ -28,6 +28,15 @@ Scala Version is 2.12.1 / 2.11.8.
 
 ## Usage
 
+Add following lines to your build.sbt
+
+```
+resolvers += "sxfcode Bintray Repo" at "https://dl.bintray.com/sfxcode/maven/"
+
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.0.4"
+
+```
+
 Define MongoDB Connection and [DAO](https://en.wikipedia.org/wiki/Data_access_object) objects for automatic case class conversion.
 
 
