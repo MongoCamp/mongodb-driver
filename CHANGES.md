@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.0.4
+
+* update to mongo scala driver 2.2.1
+
 ### 1.0.3
 
 * gh-pages added
