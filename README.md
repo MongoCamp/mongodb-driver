@@ -11,7 +11,7 @@ Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
 
 ## Version
 
-Scala Version is 2.12.1 / 2.11.8.
+Scala Version is 2.12.x / 2.11.x.
 
 ## Travis
 
