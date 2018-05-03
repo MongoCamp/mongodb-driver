@@ -2,6 +2,11 @@
 
 ## Versions
 
+### 1.1.0
+
+* update mongo-scala-driver to 2.3.0
+* update to Scala 2.12.6
+
 ### 1.0.5
 
 * update to Scala 2.12.5
