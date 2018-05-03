@@ -6,26 +6,24 @@ organization := "com.sfxcode.nosql"
 
 crossScalaVersions := Seq("2.12.5", "2.11.11")
 
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.6"
 
 scalacOptions += "-deprecation"
 
 lazy val root = (project in file(".")).
   enablePlugins(BuildInfoPlugin).
   settings(
-    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoKeys := BuildInfoKey.ofN(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.sfxcode.nosql.mongo"
   )
-
 
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
 
-
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.0.3" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.1.0" % "test"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
@@ -35,10 +33,10 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.9" % "test"
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.3" % "test"
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.2.1"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.3.0"
 
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 

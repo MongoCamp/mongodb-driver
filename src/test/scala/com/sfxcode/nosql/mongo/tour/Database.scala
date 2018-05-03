@@ -35,7 +35,7 @@ object Database extends ObservableImplicits {
   PersonDAO.insertValuesResult(persons)
 
   def printDatabaseStatus(): Unit = {
-    printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.count()))
+    printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.countResult()))
   }
 
   def printDebugValues(name: String, result: Any): Unit = {
