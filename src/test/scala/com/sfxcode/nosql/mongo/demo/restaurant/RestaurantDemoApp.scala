@@ -1,8 +1,8 @@
-package com.sfxcode.nosql.mongo.restaurant
+package com.sfxcode.nosql.mongo.demo.restaurant
 
 // #import
 // static import of needed DAO objects
-import com.sfxcode.nosql.mongo.restaurant.RestaurantDatabase._
+import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
 
 // static import of mongo package object for needed implicits
 import com.sfxcode.nosql.mongo._
@@ -10,7 +10,7 @@ import com.sfxcode.nosql.mongo._
 
 // #app
 
-object RestaurantApp extends App {
+object RestaurantDemoApp extends App {
   // find specific restaurant key and value as Option Result
   val restaurant = RestaurantDAO.find("name", "Dj Reynolds Pub And Restaurant")
 

@@ -1,11 +1,10 @@
-package com.sfxcode.nosql.mongo.tour
+package com.sfxcode.nosql.mongo
 
-import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
 import org.mongodb.scala._
 
-object Database extends ObservableImplicits {
+object TestDatabase extends ObservableImplicits {
 
   val mongoClient: MongoClient = MongoClient()
 

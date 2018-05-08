@@ -7,8 +7,8 @@
       </encoder>
   </appender>
 
-
     <logger name="com.sfxcode.sapphire.core" level="debug" />
+    <logger name="org.mongodb" level="debug" />
 
     <root level="info">
         <appender-ref ref="STDOUT" />

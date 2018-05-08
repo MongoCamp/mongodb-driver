@@ -2,7 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.{ Author, Book }
-import com.sfxcode.nosql.mongo.tour.Database._
+import TestDatabase._
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 

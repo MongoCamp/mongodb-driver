@@ -1,4 +1,4 @@
-package com.sfxcode.nosql.mongo.restaurant
+package com.sfxcode.nosql.mongo.demo.restaurant
 
 // #import
 import java.util.Date
@@ -13,7 +13,7 @@ import org.mongodb.scala.bson.codecs.Macros._
 /**
  * import mongodb restaurants sample data
  */
-object RestaurantDatabase {
+object RestaurantDemoDatabase {
 
   // #case_classes
   case class Address(street: String, building: String,
