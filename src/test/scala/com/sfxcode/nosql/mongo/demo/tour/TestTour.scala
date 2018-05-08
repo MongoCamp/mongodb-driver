@@ -22,7 +22,7 @@ object TestTour extends App {
 
   assert(BookDAO.count().headResult() == 0)
 
-  BookDAO.insert(scalaBook)
+  BookDAO.insertOneResult(scalaBook)
 
   val books: List[Book] = BookDAO.find().resultList()
 

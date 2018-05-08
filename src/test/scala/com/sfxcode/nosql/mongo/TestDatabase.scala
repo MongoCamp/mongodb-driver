@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo
 
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
+import com.sfxcode.nosql.mongo.operation.CrudObserver
 import org.mongodb.scala._
 
 object TestDatabase extends ObservableImplicits {
@@ -23,7 +24,7 @@ object TestDatabase extends ObservableImplicits {
 
   class BookDocumentDAO extends MongoDAO[Document](database, "books")
 
-  object LineDAO extends MongoDAO[Line](database, "lines")
+  object LineDAO extends MongoDAO[Line](database, "lines") with CrudObserver[Line]
 
   object PersonDAO extends MongoDAO[Person](database, "person")
 
@@ -31,7 +32,7 @@ object TestDatabase extends ObservableImplicits {
 
   val persons: List[Person] = Person.personList
 
-  PersonDAO.insertValuesResult(persons)
+  PersonDAO.insertManyResult(persons)
 
   def printDatabaseStatus(): Unit = {
     printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.countResult()))
