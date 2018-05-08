@@ -1,8 +1,8 @@
-package com.sfxcode.nosql.mongo.tour
+package com.sfxcode.nosql.mongo.demo.tour
 
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
-import com.sfxcode.nosql.mongo.tour.Database._
+import TestDatabase._
 import org.mongodb.scala.Completed
 
 object TestTour extends App {
