@@ -13,14 +13,14 @@ class CrudSpec extends Specification {
 
     "create Documents in" in {
       LineDAO.dropResult()
-      LineDAO.insertResult(Line.line())
+      LineDAO.insertOneResult(Line.line())
       LineDAO.countResult() must be equalTo 1
 
     }
 
     "update Doduments" in {
       LineDAO.dropResult()
-      LineDAO.insertResult(Line.line())
+      LineDAO.insertOneResult(Line.line())
       LineDAO.countResult() must be equalTo 1
 
       val line = LineDAO.find().headResult()
@@ -28,7 +28,7 @@ class CrudSpec extends Specification {
       line.name must be equalTo "default"
 
       line.name = "test"
-      LineDAO.updateResult(line)
+      LineDAO.replaceOneResult(line)
 
       val line2 = LineDAO.find().headResult()
       line2.name must be equalTo "test"
@@ -37,10 +37,10 @@ class CrudSpec extends Specification {
 
     "delete Documents in" in {
       LineDAO.dropResult()
-      LineDAO.insertResult(Line.line(2))
+      LineDAO.insertOneResult(Line.line(2))
       LineDAO.countResult() must be equalTo 1
       val line = LineDAO.find(Map("id" -> 2)).headResult()
-      LineDAO.deleteByValueResult(line)
+      LineDAO.deleteOneResult(line)
       LineDAO.countResult() must be equalTo 0
 
     }

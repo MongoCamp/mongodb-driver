@@ -10,7 +10,7 @@ object QuickTour extends App {
 
   val line = Line(1, "default", 3, Position(1, 3), Position(3, 7))
 
-  LineDAO.insert(line)
+  LineDAO.insertOneResult(line)
 
   printDebugValues("LineDAO.findAll", LineDAO.find())
 

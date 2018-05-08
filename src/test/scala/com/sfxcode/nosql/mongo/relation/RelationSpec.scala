@@ -58,10 +58,10 @@ class RelationSpec extends Specification with Before {
 
     val personList = Person.personList.take(10)
     personList.foreach(person => {
-      UserDAO.insertResult(User(person.id, person.name, person.guid))
-      LoginDAO.insertResult(Login(person.guid, person.email, person.email.reverse))
+      UserDAO.insertOneResult(User(person.id, person.name, person.guid))
+      LoginDAO.insertOneResult(Login(person.guid, person.email, person.email.reverse))
       person.friends.foreach(f => {
-        FriendDAO.insertResult(Friend((person.id + 11) * (f.id + 3), f.name, person.id))
+        FriendDAO.insertOneResult(Friend((person.id + 11) * (f.id + 3), f.name, person.id))
       })
     })
 

@@ -13,13 +13,13 @@ class BaseSpec extends Specification with BeforeAll {
   "Base Operations" should {
 
     "count collection size in" in {
-      BookDAO.insertResult(Book.scalaBook())
+      BookDAO.insertOneResult(Book.scalaBook())
 
       BookDAO.countResult() must be equalTo 1
 
       val scalaBook = Book(Some(2), "Programming In Scala", 852, Author("Martin Odersky"), List(2, 4, 10))
 
-      BookDAO.insertResult(scalaBook)
+      BookDAO.insertOneResult(scalaBook)
 
       BookDAO.countResult() must be equalTo 2
 

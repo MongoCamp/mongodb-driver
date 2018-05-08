@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.mutable.{ Before, Specification }
 
@@ -58,7 +59,7 @@ class SearchSpec extends Specification with Before {
 
     "support findOne with Filter" in {
 
-      val females = PersonDAO.find(Map("gender" -> "female")).resultList()
+      val females = PersonDAO.find(Map("gender" -> "female"), sortByKey("name")).resultList()
 
       females.size must be equalTo 98
 
