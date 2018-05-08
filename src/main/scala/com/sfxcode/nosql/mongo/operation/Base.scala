@@ -1,15 +1,11 @@
 package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo._
-
-import org.mongodb.scala.model.Sorts._
-
-import com.sfxcode.nosql.mongo.bson.BsonConverter._
 import com.typesafe.scalalogging.LazyLogging
-import org.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
-import org.mongodb.scala.{ Completed, DistinctObservable, Document, MongoCollection, Observable, Observer, SingleObservable }
+import org.mongodb.scala.model.Sorts._
+import org.mongodb.scala.{Completed, Document, MongoCollection, Observable, Observer, SingleObservable}
 
 import scala.reflect.ClassTag
 
@@ -20,14 +16,6 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
   def count(filter: Bson = Document()): Observable[Long] = coll.count(filter)
 
   def countResult(filter: Bson = Document()): Long = count(filter)
-
-  def distinct[S <: Any](fieldName: String, filter: Bson = Document()): DistinctObservable[BsonValue] = {
-    coll.distinct[BsonValue](fieldName, filter)
-  }
-
-  def distinctResult[S <: Any](fieldName: String, filter: Bson = Document()): Seq[S] = {
-    distinct(fieldName, filter).results().map(v => fromBson(v).asInstanceOf[S])
-  }
 
   def drop(): Observable[Completed] = coll.drop()
 
