@@ -4,7 +4,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.12.5", "2.11.11")
+crossScalaVersions := Seq("2.12.6", "2.11.11")
 
 scalaVersion := "2.12.6"
 
@@ -23,7 +23,7 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.1.0" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.2.0" % "test"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
