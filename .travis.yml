@@ -6,6 +6,7 @@ services: mongodb
 scala:
    - 2.11.11
    - 2.12.6
+
 branches:
   only:
     - master
