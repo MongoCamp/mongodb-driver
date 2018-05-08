@@ -6,7 +6,7 @@ import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{AggregateObservable, DistinctObservable, Document, FindObservable, MongoCollection}
+import org.mongodb.scala.{ AggregateObservable, DistinctObservable, Document, FindObservable, MongoCollection }
 
 import scala.reflect.ClassTag
 

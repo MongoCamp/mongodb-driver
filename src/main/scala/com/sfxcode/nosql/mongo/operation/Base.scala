@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.{Completed, Document, MongoCollection, Observable, Observer, SingleObservable}
+import org.mongodb.scala.{ Completed, Document, MongoCollection, Observable, Observer, SingleObservable }
 
 import scala.reflect.ClassTag
 
