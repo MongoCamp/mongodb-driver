@@ -2,6 +2,12 @@
 
 ## Versions
 
+### 1.3.0
+
+* Crud refactoring
+* CrudObserver Trait (optional usage)
+
+
 ### 1.2.0
 
 * Relations added

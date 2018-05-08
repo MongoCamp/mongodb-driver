@@ -7,8 +7,6 @@ A small library for easy usage of the mongo-scala-driver.
 
 Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
 
-
-
 ## Version
 
 Scala Version is 2.12.x / 2.11.x.
@@ -33,7 +31,7 @@ Add following lines to your build.sbt
 ```
 resolvers += "sxfcode Bintray Repo" at "https://dl.bintray.com/sfxcode/maven/"
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.2.0"
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.3.0"
 
 ```
 
