@@ -38,4 +38,4 @@ A sample document in the restaurants collection:
 
 ### Scala case classes for Restaurant document
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantDatabase.scala) { #case_classes }
+@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #case_classes }
