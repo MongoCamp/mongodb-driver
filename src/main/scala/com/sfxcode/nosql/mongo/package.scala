@@ -47,4 +47,12 @@ package object mongo extends ObservableIncludes {
     result
   }
 
+  implicit def mapFromDocument(document: Document): Map[String, Any] = {
+    BsonConverter.asMap(document)
+  }
+
+  implicit def mapListFromDocuments(documents: List[Document]): List[Map[String, Any]] = {
+    BsonConverter.asMapList(documents)
+  }
+
 }

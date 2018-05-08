@@ -9,6 +9,7 @@ import org.mongodb.scala.Document
 import org.mongodb.scala.bson._
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.util.matching.Regex
 
 object BsonConverter {
@@ -87,6 +88,28 @@ object BsonConverter {
       case n: BsonNull => null
       case _ => value
     }
+  }
+
+  def asMap(document: Document): Map[String, Any] = {
+    val result = new mutable.HashMap[String, Any]()
+    document.keySet.foreach(key => {
+      val value = fromBson(document(key))
+
+      value match {
+        case d: Document =>
+          result.+=(key -> asMap(d))
+        case _ => result.+=(key -> value)
+      }
+    })
+    result.toMap
+  }
+
+  def asMapList(documents: List[Document]): List[Map[String, Any]] = {
+    val result = new mutable.ArrayBuffer[Map[String, Any]]()
+    documents.foreach(document => {
+      result.+=(asMap(document))
+    })
+    result.toList
   }
 
 }
