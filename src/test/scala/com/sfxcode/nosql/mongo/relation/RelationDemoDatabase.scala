@@ -52,12 +52,10 @@ object RelationDemoDatabase {
 
   object FriendDAO extends MongoDAO[Friend](database, "friend")
 
-
   // #registry
   private val registry = fromProviders(classOf[Node], classOf[User], classOf[Login], classOf[Friend])
 
   val database = DatabaseProvider("relation_test", registry)
-
 
   object NodeDAO extends MongoDAO[Node](database, "nodes") {
     lazy val parentRelation = OneToOneRelationship(this, "id")
