@@ -6,22 +6,22 @@ The database provides static import to our [DAO](https://en.wikipedia.org/wiki/D
 
 ## Imports
 
-@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantDatabase.scala) { #import }
+@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #import }
 
 
 ## case classes for document representation
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantDatabase.scala) { #case_classes }
+@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #case_classes }
 
 ## Registry and database
 
 scala-mongo-driver use a registry pattern for deserialization
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantDatabase.scala) { #registry }
+@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #registry }
 
 ## Restaurant DAO
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantDatabase.scala) { #dao }
+@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #dao }
 
 ## Usage
 * Create Database object

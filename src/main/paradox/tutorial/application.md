@@ -6,10 +6,10 @@ This Demo Application should demonstrate the basic usage of simple-mongo.
 
 ## Imports
 
-@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantApp.scala) { #import }
+@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #import }
 
 
 ## Simple Application
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/restaurant/RestaurantApp.scala) { #app }
+@@snip [RestaurantApp](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoApp.scala) { #app }
 
