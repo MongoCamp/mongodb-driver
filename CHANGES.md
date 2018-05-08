@@ -2,6 +2,14 @@
 
 ## Versions
 
+### 1.2.0
+
+* Relations added
+* Field added (used in Aggregation)
+* Aggregation Specs added
+* implicit Document(s) to Map(s) Conversion
+* method sort in Sort object renamed to sortByKey
+
 ### 1.1.0
 
 * update mongo-scala-driver to 2.3.0
