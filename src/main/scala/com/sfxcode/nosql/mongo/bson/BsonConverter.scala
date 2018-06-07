@@ -1,10 +1,9 @@
 package com.sfxcode.nosql.mongo.bson
 
 import java.math.BigInteger
-import java.time.{ LocalDate, LocalDateTime, ZoneId }
+import java.time.{LocalDate, LocalDateTime, ZoneId}
 import java.util.Date
 
-import org.bson.{ BsonDecimal128, BsonValue }
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson._
 
@@ -41,8 +40,8 @@ object BsonConverter {
       case bi: BigInteger => BsonInt64(bi.longValue())
       case d: Double => BsonDouble(d)
       case f: Float => BsonDouble(f)
-      case bd: BigDecimal => BsonDecimal128(bd)
-      case bd: java.math.BigDecimal => BsonDecimal128(bd)
+      case bd: BigDecimal => BsonDecimal128.apply(bd)
+      case bd: java.math.BigDecimal => BsonDecimal128.apply(bd)
       case doc: Document => BsonDocument(doc)
       case map: Map[_, _] =>
         var doc = Document()

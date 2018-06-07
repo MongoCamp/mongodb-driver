@@ -29,9 +29,9 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.3" % "test"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.9.9" % "test"
+libraryDependencies += "joda-time" % "joda-time" % "2.10" % "test"
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.3" % "test"
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.4" % "test"
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.3.0"
 
