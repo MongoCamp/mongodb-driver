@@ -22,8 +22,8 @@ class BsonConverterSpec extends Specification {
       BsonConverter.toBson(false) must be equalTo BsonBoolean(false)
       BsonConverter.toBson(true) must be equalTo BsonBoolean(true)
 
-      BsonConverter.toBson(java.math.BigDecimal.TEN) must be equalTo BsonDouble(10)
-      BsonConverter.toBson(BigDecimal(10)) must be equalTo BsonDouble(10)
+      BsonConverter.toBson(java.math.BigDecimal.TEN) must be equalTo BsonDecimal128.apply(10)
+      BsonConverter.toBson(BigDecimal(10)) must be equalTo BsonDecimal128.apply(10)
       BsonConverter.toBson(BigInt(10)) must be equalTo BsonInt64(10)
       BsonConverter.toBson(java.math.BigInteger.TEN) must be equalTo BsonInt64(10)
 
