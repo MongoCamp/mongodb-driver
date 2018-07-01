@@ -23,7 +23,7 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.2.0" % "test"
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.3.0" % "test"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % "test"
 
@@ -33,8 +33,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10" % "test"
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.5.4" % "test"
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.3.0"
-
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.4.0"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0"
 
