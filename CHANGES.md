@@ -2,6 +2,11 @@
 
 ## Versions
 
+### 1.3.1
+* update mongo-scala-driver to 2.4.0
+* Operations Base count method support CountOptions
+
+
 ### 1.3.0
 
 * Crud refactoring

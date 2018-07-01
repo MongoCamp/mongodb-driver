@@ -3,7 +3,7 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo._
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.IndexOptions
+import org.mongodb.scala.model.{ CountOptions, IndexOptions }
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.{ Completed, Document, MongoCollection, Observable, Observer, SingleObservable }
 
@@ -13,9 +13,9 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   protected def coll: MongoCollection[A]
 
-  def count(filter: Bson = Document()): Observable[Long] = coll.count(filter)
+  def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] = coll.countDocuments(filter)
 
-  def countResult(filter: Bson = Document()): Long = count(filter)
+  def countResult(filter: Bson = Document(), options: CountOptions = CountOptions()): Long = count(filter, options)
 
   def drop(): Observable[Completed] = coll.drop()
 
