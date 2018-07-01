@@ -32,7 +32,7 @@ object TestDatabase extends ObservableImplicits {
 
   val persons: List[Person] = Person.personList
 
-  PersonDAO.insertManyResult(persons)
+  PersonDAO.insertMany(persons).head()
 
   def printDatabaseStatus(): Unit = {
     printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.countResult()))
