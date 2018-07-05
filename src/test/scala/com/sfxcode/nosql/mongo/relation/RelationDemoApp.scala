@@ -7,8 +7,8 @@ import com.sfxcode.nosql.mongo.relation.RelationDemoDatabase._
 object RelationDemoApp extends App {
 
   NodeDAO.drop().headResult()
-  NodeDAO.createIndexForFieldResult("id")
-  NodeDAO.createIndexForFieldResult("parentId")
+  NodeDAO.createIndexForField("id").headResult()
+  NodeDAO.createIndexForField("parentId").headResult()
 
   NodeDAO.insertMany(List(Node(1, 0), Node(2, 1), Node(3, 1))).result()
 

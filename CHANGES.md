@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.4.0
+*  dropped operations with pattern <name>Result (use headResult, list result or implicit conversion instead)
+
+
 ### 1.3.1
 * update mongo-scala-driver to 2.4.0
 * Operations Base count method support CountOptions

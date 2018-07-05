@@ -5,7 +5,7 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.mutable.{ Before, Specification }
 
-class RelationSpec extends Specification with Before {
+class RelationDemoSpec extends Specification with Before {
 
   sequential
 
@@ -58,10 +58,10 @@ class RelationSpec extends Specification with Before {
 
     val personList = Person.personList.take(10)
     personList.foreach(person => {
-      UserDAO.insertOneResult(User(person.id, person.name, person.guid))
-      LoginDAO.insertOneResult(Login(person.guid, person.email, person.email.reverse))
+      UserDAO.insertOne(User(person.id, person.name, person.guid)).headResult()
+      LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).headResult()
       person.friends.foreach(f => {
-        FriendDAO.insertOneResult(Friend((person.id + 11) * (f.id + 3), f.name, person.id))
+        FriendDAO.insertOne(Friend((person.id + 11) * (f.id + 3), f.name, person.id)).headResult()
       })
     })
 

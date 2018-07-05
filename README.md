@@ -71,21 +71,48 @@ object RestaurantDatabase {
 
 ```
 
-
-Import the database object and execute find and CRUD functions on the DAO object.
+Import the database object and execute some find and CRUD functions on the DAO object ...
 
 ```scala
- import RestaurantDatabase._
+
+import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
+import com.sfxcode.nosql.mongo._
+
+trait RestaurantDemoDatabaseFunctions {
+
+  /**
+   * single result with implicit conversion to Entity Option
+   */
+  def findRestaurantByName(name: String): Option[Restaurant] =
+    RestaurantDAO.find("name", name)
+
+  def restaurantsSize: Long = RestaurantDAO.count()
+
+  /**
+   * result with implicit conversion to List of Entities
+   */
+  def findAllRestaurants(filterValues: Map[String, Any] = Map()): List[Restaurant] =
+    RestaurantDAO.find(filterValues)
+
+```
+
+
+Use the mongodb functions in your app ...
+
+```scala
+ object RestaurantDemoApp extends App with RestaurantDemoDatabaseFunctions {
  
- import com.sfxcode.nosql.mongo._
+   // find specific restaurant by name as Option Result
+   val restaurant = findRestaurantByName("Dj Reynolds Pub And Restaurant")
  
- object RestaurantApp extends App {
+   println(restaurant)
  
-   val restaurant: Option[Restaurant] = RestaurantDAO.find("name", "Dj Reynolds Pub And Restaurant")
+   // use count function
+   println(restaurantsSize)
  
-   println(restaurant.get.grades)
- 
-   val restaurants: List[Restaurant] = RestaurantDAO.find(Map("address.zipcode" -> "10075", "cuisine" -> "Italian"))
+   // find restaurants by filter
+   private val filter = Map("address.zipcode" -> "10075", "cuisine" -> "Italian")
+   val restaurants = findAllRestaurants(filter)
  
    restaurants.sortBy(r => r.name).foreach(r => println(r.name))
  
@@ -93,6 +120,27 @@ Import the database object and execute find and CRUD functions on the DAO object
 
 ```
 
+Write some spec tests ...
+
+````scala
+import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
+import org.specs2.mutable.Specification
+
+class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFunctions {
+
+  "RestaurantDemo" should {
+
+    "find restaurant by name in" in {
+
+      val restaurantSearch = findRestaurantByName("Dj Reynolds Pub And Restaurant")
+      restaurantSearch must beSome[Restaurant]
+      val restaurant = restaurantSearch.get
+      restaurant.borough must be equalTo "Manhattan"
+    }
+  }
+
+}
+```
 
 
 
