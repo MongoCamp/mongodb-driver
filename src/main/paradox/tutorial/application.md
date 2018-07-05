@@ -1,13 +1,8 @@
-# Tutorial Part 3 - Application
+# Tutorial Part 4 - Application
 
 ## Info
 
 This Demo Application should demonstrate the basic usage of simple-mongo.
-
-## Imports
-
-@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #import }
-
 
 ## Simple Application
 

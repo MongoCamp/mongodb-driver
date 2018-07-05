@@ -28,14 +28,15 @@ object TestDatabase extends ObservableImplicits {
 
   object PersonDAO extends MongoDAO[Person](database, "person")
 
-  PersonDAO.dropResult()
+  val dropResult: Completed = PersonDAO.drop()
 
   val persons: List[Person] = Person.personList
 
-  PersonDAO.insertMany(persons).head()
+  val insertResult: Completed = PersonDAO.insertMany(persons)
 
   def printDatabaseStatus(): Unit = {
-    printDebugValues("Database Status", "%s rows for collection person found".format(PersonDAO.countResult()))
+    val count: Long = PersonDAO.count()
+    printDebugValues("Database Status", "%s rows for collection person found".format(count))
   }
 
   def printDebugValues(name: String, result: Any): Unit = {

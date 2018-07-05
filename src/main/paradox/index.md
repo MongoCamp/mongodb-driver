@@ -30,6 +30,7 @@ Documentation for [MongoDB](https://docs.mongodb.com/)
 
  - [Tutorial Setup](tutorial/setup.md)
  - [Tutorial Database](tutorial/database.md)
+ - [Tutorial Functions](tutorial/functions.md)
  - [Tutorial Application](tutorial/application.md)
  - [MongoDAO Overview](dao/mongo_dao.md)
  - [MongoDAO Base](dao/base.md)

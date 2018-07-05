@@ -12,23 +12,23 @@ class CrudSpec extends Specification {
   "Crud Operations" should {
 
     "create Documents in" in {
-      LineDAO.dropResult()
-      LineDAO.insertOneResult(Line.line())
-      LineDAO.countResult() must be equalTo 1
+      LineDAO.drop().headResult()
+      LineDAO.insertOne(Line.line()).headResult()
+      LineDAO.count().headResult() must be equalTo 1
 
     }
 
     "update Doduments" in {
-      LineDAO.dropResult()
-      LineDAO.insertOneResult(Line.line())
-      LineDAO.countResult() must be equalTo 1
+      LineDAO.drop().headResult()
+      LineDAO.insertOne(Line.line()).headResult()
+      LineDAO.count().headResult() must be equalTo 1
 
-      val line = LineDAO.find().headResult()
+      val line: Line = LineDAO.find()
 
       line.name must be equalTo "default"
 
       line.name = "test"
-      LineDAO.replaceOneResult(line)
+      LineDAO.replaceOne(line).headResult()
 
       val line2 = LineDAO.find().headResult()
       line2.name must be equalTo "test"
@@ -36,12 +36,12 @@ class CrudSpec extends Specification {
     }
 
     "delete Documents in" in {
-      LineDAO.dropResult()
-      LineDAO.insertOneResult(Line.line(2))
-      LineDAO.countResult() must be equalTo 1
+      LineDAO.drop().headResult()
+      LineDAO.insertOne(Line.line(2)).headResult()
+      LineDAO.count().headResult() must be equalTo 1
       val line = LineDAO.find(Map("id" -> 2)).headResult()
-      LineDAO.deleteOneResult(line)
-      LineDAO.countResult() must be equalTo 0
+      LineDAO.deleteOne(line).headResult()
+      LineDAO.count().headResult() must be equalTo 0
 
     }
 
