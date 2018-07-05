@@ -4,6 +4,8 @@
 
 ### 1.4.0
 *  dropped operations with pattern <name>Result (use headResult, list result or implicit conversion instead)
+*  introduce Database Functions trait
+*  update docs
 
 
 ### 1.3.1
