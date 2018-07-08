@@ -6,8 +6,8 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
-import org.mongodb.scala.{Document, FindObservable, MongoDatabase, Observable}
+import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
+import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable }
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
@@ -31,7 +31,6 @@ package object mongo extends ObservableIncludes {
   implicit def documentFromMutableMap(map: collection.mutable.Map[String, Any]): Document = {
     documentFromScalaMap(map.toMap)
   }
-
 
   implicit def documentFromScalaMap(map: Map[String, Any]): Document = {
     var result = Document()
