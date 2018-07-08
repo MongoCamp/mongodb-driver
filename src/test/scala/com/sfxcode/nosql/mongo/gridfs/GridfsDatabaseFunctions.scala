@@ -9,8 +9,11 @@ import org.mongodb.scala.gridfs.GridFSFile
 
 trait GridfsDatabaseFunctions {
 
-  def createIndexOnImages(key:String): String =
+  def createIndexOnImages(key: String): String =
     ImageFilesDAO.createrMetadataIndex(key)
+
+  def dropIndexOnImages(key: String): Completed =
+    ImageFilesDAO.dropIndexForName(key)
 
   def deleteImage(id: ObjectId): Completed =
     ImageFilesDAO.deleteOne(id)
@@ -30,6 +33,8 @@ trait GridfsDatabaseFunctions {
 
   def findImage(id: ObjectId): GridFSFile = ImageFilesDAO.findById(id)
 
-  def findImages(key:String, value:String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
+  def findImage(key: String, value: String): GridFSFile = ImageFilesDAO.find(key, value)
+
+  def findImages(key: String, value: String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
 
 }

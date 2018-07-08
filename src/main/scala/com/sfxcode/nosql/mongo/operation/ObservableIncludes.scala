@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import org.mongodb.scala._
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 object ObservableIncludes extends ObservableIncludes
 

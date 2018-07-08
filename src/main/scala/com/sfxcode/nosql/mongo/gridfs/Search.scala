@@ -14,9 +14,7 @@ abstract class Search extends Base {
 
   def find(key: String, value: Any): GridFSFindObservable = find(equal(key, value))
 
-  def findByMetadataValue(key: String, value: Any): GridFSFindObservable =  find(createMetadataKey(key), value)
-
-
+  def findByMetadataValue(key: String, value: Any): GridFSFindObservable = find(createMetadataKey(key), value)
 
 }
 
