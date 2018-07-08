@@ -1,10 +1,12 @@
 # simple-mongo
 
-A small library for easy usage of the mongo-scala-driver.
+A library for easy usage of the mongo-scala-driver.
 
 Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for easy database usage.
 
 Enhanced [BSON](http://mongodb.github.io/mongo-scala-driver/2.2/bson/) conversion support.
+
+[GridFS](https://docs.mongodb.com/manual/core/gridfs/) support.
 
 ## Additional Documentation
 
@@ -32,10 +34,11 @@ Documentation for [MongoDB](https://docs.mongodb.com/)
  - [Tutorial Database](tutorial/database.md)
  - [Tutorial Functions](tutorial/functions.md)
  - [Tutorial Application](tutorial/application.md)
- - [MongoDAO Overview](dao/mongo_dao.md)
+ - [MongoDAO](dao/mongo_dao.md)
  - [MongoDAO Base](dao/base.md)
  - [MongoDAO CRUD](dao/crud.md)
  - [MongoDAO Search](dao/search.md)
+ - [GridFSDAO](dao/gridfs_dao.md)
  - [Feature Aggregation](features/aggregation.md)
  - [Feature Relationships](features/relationships.md)
  - [Changes ](changes.md)

@@ -1,7 +1,14 @@
 # simple-mongo
 
+A library for easy usage of the mongo-scala-driver.
 
-A small library for easy usage of the mongo-scala-driver.
+## Features
+
+* Easy Database setup
+* DAO Pattern for collection
+* DAO Pattern for GridFS
+* implicit conversions for Document, Bson, ObjectID ...
+* Example Apps
 
 ## Documentation
 
