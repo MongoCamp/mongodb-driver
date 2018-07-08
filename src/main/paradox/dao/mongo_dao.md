@@ -6,7 +6,6 @@ MongoDAO is the core of this framework.  The [DAO](https://en.wikipedia.org/wiki
 
 The MongoDAO object holds a reference to a [MongoCollection](http://mongodb.github.io/mongo-scala-driver/2.3/scaladoc/org/mongodb/scala/MongoCollection.html) and adds functions for easy collection handling.
 
-All functions support synchronous result handling (add Result to function name, e.g. drop -> dropResult, insert ->insertResult).
 
 ## Features
 
