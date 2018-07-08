@@ -10,18 +10,13 @@ import org.mongodb.scala.{ AggregateObservable, DistinctObservable, Document, Fi
 
 import scala.reflect.ClassTag
 
-abstract class Search[A]()(implicit ct: ClassTag[A]) extends Crud[A] {
+abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
 
   protected def coll: MongoCollection[A]
 
   def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document()): FindObservable[A] = coll.find(filter).sort(sort).projection(projection)
 
-  def findById(oid: Any): FindObservable[A] = {
-    oid match {
-      case objectId: ObjectId => find(equal("_id", objectId))
-      case _ => find(equal("_id", new ObjectId(oid.toString)))
-    }
-  }
+  def findById(oid: ObjectId): FindObservable[A] = find(equal("_id", oid))
 
   def find(name: String, value: Any): FindObservable[A] = find(equal(name, value))
 

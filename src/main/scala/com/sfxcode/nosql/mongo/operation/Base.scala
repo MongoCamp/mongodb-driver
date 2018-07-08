@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.{ CountOptions, IndexOptions }
-import org.mongodb.scala.{ Completed, Document, MongoCollection, Observable, Observer, SingleObservable }
+import org.mongodb.scala.{ Completed, Document, MongoCollection, Observable, SingleObservable }
 
 import scala.reflect.ClassTag
 
@@ -29,13 +29,5 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   def dropIndex(keys: Bson): SingleObservable[Completed] = coll.dropIndex(keys)
 
-}
-
-class SimpleCompletedObserver[T] extends Observer[T] with LazyLogging {
-  override def onError(e: Throwable): Unit = logger.error(e.getMessage, e)
-
-  override def onComplete(): Unit = {}
-
-  override def onNext(result: T): Unit = {}
 }
 
