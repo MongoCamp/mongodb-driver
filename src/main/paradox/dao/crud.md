@@ -2,7 +2,7 @@
 
 ## Info
 
-CRUD Collection functions. All functions support synchronous result handling (add Result to function name, e.g. drop -> dropResult).
+CRUD Collection functions. 
 
 ## Create
 
