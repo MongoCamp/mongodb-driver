@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.5.0
+* GridFSSupport
+
+
 ### 1.4.0
 *  dropped operations with pattern <name>Result (use headResult, list result or implicit conversion instead)
 *  introduce Database Functions trait

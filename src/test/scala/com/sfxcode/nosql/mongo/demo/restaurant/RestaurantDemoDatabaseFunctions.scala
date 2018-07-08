@@ -8,9 +8,10 @@ import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
 import com.sfxcode.nosql.mongo._
 // #import
 
-// #trait
 
 trait RestaurantDemoDatabaseFunctions {
+
+  // #trait
 
   /**
    * single result with implicit conversion to Entity Option
