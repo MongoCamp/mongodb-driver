@@ -9,7 +9,7 @@ import org.mongodb.scala.{ Completed, Observable }
 
 import scala.reflect.ClassTag
 
-abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Base[A] {
+abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   // create
   def insertOne(value: A): Observable[Completed] = coll.insertOne(value)
