@@ -38,7 +38,7 @@ Add following lines to your build.sbt
 ```
 resolvers += "sxfcode Bintray Repo" at "https://dl.bintray.com/sfxcode/maven/"
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.5.0"
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.5.1"
 
 ```
 
