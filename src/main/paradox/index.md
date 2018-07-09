@@ -49,6 +49,7 @@ libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % $app-version$
  - [GridFSDAO CRUD](gridfs/crud.md)
  - [Feature Aggregation](features/aggregation.md)
  - [Feature Relationships](features/relationships.md)
+ - [Feature Observable](features/observable.md)
  - [Tutorial Setup](tutorial/setup.md)
  - [Tutorial Database](tutorial/database.md)
  - [Tutorial Functions](tutorial/functions.md)

@@ -18,13 +18,13 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
     }
 
-    "find files by metadata valuein" in {
+    "find files by metadata value in" in {
       val fileName = "scala-logo.jpg"
 
       var files = findImages("group", "unknown")
       files must haveSize(0)
 
-      files = findImages("group", "templates")
+      files = findImages("group", "logos")
       files must haveSize(1)
     }
 

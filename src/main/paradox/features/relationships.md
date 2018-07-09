@@ -1,4 +1,4 @@
-# Features - Relationships
+# Feature - Relationships
 
 ## Info
 

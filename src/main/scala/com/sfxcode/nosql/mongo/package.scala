@@ -6,13 +6,13 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
-import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable }
+import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
+import org.mongodb.scala.{Document, FindObservable, MongoDatabase, Observable, ObservableImplicits}
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
-package object mongo extends ObservableIncludes {
+package object mongo extends ObservableIncludes with ObservableImplicits {
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.headResult()
 
@@ -58,17 +58,17 @@ package object mongo extends ObservableIncludes {
     BsonConverter.asMapList(documents)
   }
 
+  // ObjectId
   implicit def stringToObjectId(str: String): ObjectId = new ObjectId(str)
 
   implicit def documentToObjectId(doc: Document): ObjectId = doc.getObjectId("_id")
 
   // gridfs
 
-  implicit def gridFSindObservableToFiles(observable:GridFSFindObservable):List[GridFSFile] = observable.resultList()
+  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] = observable.resultList()
 
+  implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId = file.getObjectId
 
-  implicit def gridfSFileToObjectId(file: GridFSFile): ObjectId = file.getObjectId
-
-  implicit def gridfSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
+  implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
 
 }
