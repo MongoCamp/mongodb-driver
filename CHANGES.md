@@ -2,6 +2,12 @@
 
 ## Versions
 
+### 1.5.1
+
+* DatabaseProvider refactored
+* ObservableImplicits to package object added
+* update docs for Observable
+
 ### 1.5.0
 * GridFSSupport
 
