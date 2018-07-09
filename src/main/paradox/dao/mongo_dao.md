@@ -28,7 +28,11 @@ A Type Parameter is used for automatic Document to Class conversion (case classe
 ### Use DAO
 
 ```scala
-
+ import com.sfxcode.nosql.mongo._
+ 
+  def restaurantsSize: Long = RestaurantDAO.count()
+  
+  def findAllRestaurants:List[Restaurant] = RestaurantDAO.find()
 ```
 
 
