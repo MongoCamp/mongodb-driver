@@ -8,7 +8,6 @@ import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
 import com.sfxcode.nosql.mongo._
 // #import
 
-
 trait RestaurantDemoDatabaseFunctions {
 
   // #trait

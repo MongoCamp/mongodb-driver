@@ -1,4 +1,4 @@
-# Features - Aggregation
+# Feature - Aggregation
 
 ## Info
 
