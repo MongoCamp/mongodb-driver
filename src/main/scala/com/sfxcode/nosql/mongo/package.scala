@@ -6,8 +6,8 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
-import org.mongodb.scala.{Document, FindObservable, MongoDatabase, Observable, ObservableImplicits}
+import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
+import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable, ObservableImplicits }
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
