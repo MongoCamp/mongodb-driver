@@ -2,12 +2,16 @@
 
 A library for easy usage of the mongo-scala-driver.
 
+## MongoDB Support
+
+Support MongoDB 2.6 to 4.0.
+
 ## Features
 
 * Easy Database setup
 * DAO Pattern for collection
 * DAO Pattern for GridFS
-* implicit conversions for Document, Bson, ObjectID ...
+* Implicit conversions for Document, Bson, ObjectID ...
 * Example Apps
 
 ## Documentation
