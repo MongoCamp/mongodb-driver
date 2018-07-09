@@ -17,6 +17,13 @@ The MongoDAO object holds a reference to a [MongoCollection](http://mongodb.gith
 
 A [MongoDatabase](http://mongodb.github.io/mongo-scala-driver/2.3/scaladoc/org/mongodb/scala/MongoDatabase.html) and a collection name is needed.
 
+```scala
+
+private val registry = fromProviders(classOf[Restaurant])
+
+val database = DatabaseProvider("restaurants", registry)
+```
+
 ### Create DAO
 
 A Type Parameter is used for automatic Document to Class conversion (case classes needs to be registered).

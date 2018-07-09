@@ -4,11 +4,12 @@ A library for easy usage of the mongo-scala-driver.
 
 Features:
 
-* Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for easy MongoDB database usage.
+* Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for easy MongoDB database usage (@ref:[MongoDAO](dao/mongo_dao.md))
 
-* Enhanced [BSON](http://mongodb.github.io/mongo-scala-driver/2.2/bson/) conversion support.
+* Enhanced [BSON](http://mongodb.github.io/mongo-scala-driver/2.2/bson/) conversion support (@ref:[Converter](features/converter.md))
 
-* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) support.
+* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) support (@ref:[GridFSDAO](dao/gridfs_dao.md))
+* @ref:[Relationships](features/relationships.md)
 
 ## Additional Documentation
 
@@ -50,6 +51,7 @@ libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % $app-version$
  - [Feature Aggregation](features/aggregation.md)
  - [Feature Relationships](features/relationships.md)
  - [Feature Observable](features/observable.md)
+ - [Feature Converter](features/converter.md)
  - [Tutorial Setup](tutorial/setup.md)
  - [Tutorial Database](tutorial/database.md)
  - [Tutorial Functions](tutorial/functions.md)
