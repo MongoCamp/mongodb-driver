@@ -3,6 +3,7 @@
 ## Info
 
 GridFSDAO adds MongoDB [GridFS](https://docs.mongodb.com/manual/core/gridfs/) support.
+
 It provides easy upload, download and metadata handling.
 
 Sometimes also normal collections can be helpful for storing data.
