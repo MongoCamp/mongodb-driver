@@ -48,6 +48,7 @@ libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % $app-version$
  - [MongoDAO Search](dao/search.md)
  - [GridFSDAO](dao/gridfs_dao.md)
  - [GridFSDAO CRUD](gridfs/crud.md)
+ - [GridFSDAO Metadata](gridfs/metadata.md)
  - [Feature Aggregation](features/aggregation.md)
  - [Feature Relationships](features/relationships.md)
  - [Feature Observable](features/observable.md)

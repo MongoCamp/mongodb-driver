@@ -2,9 +2,10 @@
 
 ## Create
 
-You need a fiename, an input stream and some kind of meatadata.
+You need a filename, an input stream and some kind of metadata.
 
 Possible Metadata types:
+
 * Document
 * Map
 * Scala Case Class
@@ -28,6 +29,7 @@ Do not use GridFS if you need to update the content of the entire file atomicall
 GridFSFile will be deleted by a given ObjectID.
 
 With implicit conversion you can use for oid Parameter:
+
 * ObjectID
 * GridFSFile
 * String
