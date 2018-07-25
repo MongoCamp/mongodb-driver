@@ -5,12 +5,15 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import org.bson.types.ObjectId
 import org.mongodb.scala.Completed
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
+import org.mongodb.scala.result.UpdateResult
+
 
 trait GridfsDatabaseFunctions {
 
   def createIndexOnImages(key: String): String =
-    ImageFilesDAO.createrMetadataIndex(key)
+    ImageFilesDAO.createMetadataIndex(key)
 
   def dropIndexOnImages(key: String): Completed =
     ImageFilesDAO.dropIndexForName(key)
@@ -37,4 +40,11 @@ trait GridfsDatabaseFunctions {
 
   def findImages(key: String, value: String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
 
+  def updateMetadata(oid: ObjectId, value:Any): UpdateResult = {
+    ImageFilesDAO.updateMetadata(oid, value).headResult()
+  }
+
+  def updateMetadataElements(filter: Bson,  elements:Map[String, Any]): UpdateResult = {
+    ImageFilesDAO.updateMetadataElements(filter, elements).headResult()
+  }
 }

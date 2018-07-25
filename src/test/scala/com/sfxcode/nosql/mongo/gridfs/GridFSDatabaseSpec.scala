@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.gridfs
 
 import better.files.File
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
+import com.sfxcode.nosql.mongo._
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
@@ -28,13 +29,31 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       files must haveSize(1)
     }
 
-    "insert file in" in {
+    "insert file and in" in {
       val fileName = "scala-logo.png"
 
       val oid: ObjectId = insertImage(SourcePath + fileName, ImageMetadata("template1", group = "templates"))
 
-      val file = findImage(oid)
+      var file = findImage(oid)
       file.getFilename must be equalTo fileName
+      file.getMetadata.get("name").toString must be equalTo "template1"
+
+    }
+
+    "update metadata in" in {
+
+      val files = findImages("group", "logos")
+      files must haveSize(1)
+      files.head.getMetadata.get("name").toString must be equalTo "logo2"
+
+      // update complete metadata for one file
+      updateMetadata(files.head, ImageMetadata("logo22", group = "logos"))
+      // update metadata entry for all files
+      updateMetadataElements(Map(), Map("group"->"logos3", "newKey"-> "newEntryValue"))
+
+      val file = findImage(files.head)
+      file.getMetadata.get("name").toString must be equalTo "logo22"
+      file.getMetadata.get("newKey").toString must be equalTo "newEntryValue"
 
     }
 
