@@ -9,7 +9,6 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
 import org.mongodb.scala.result.UpdateResult
 
-
 trait GridfsDatabaseFunctions {
 
   def createIndexOnImages(key: String): String =
@@ -40,11 +39,11 @@ trait GridfsDatabaseFunctions {
 
   def findImages(key: String, value: String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
 
-  def updateMetadata(oid: ObjectId, value:Any): UpdateResult = {
+  def updateMetadata(oid: ObjectId, value: Any): UpdateResult = {
     ImageFilesDAO.updateMetadata(oid, value).headResult()
   }
 
-  def updateMetadataElements(filter: Bson,  elements:Map[String, Any]): UpdateResult = {
+  def updateMetadataElements(filter: Bson, elements: Map[String, Any]): UpdateResult = {
     ImageFilesDAO.updateMetadataElements(filter, elements).headResult()
   }
 }
