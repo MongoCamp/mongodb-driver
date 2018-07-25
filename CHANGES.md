@@ -2,6 +2,12 @@
 
 ## Versions
 
+### 1.5.2
+
+* GridFSDAO extends Metadata
+* Metadata - updateMetadata added
+* Metadata - updateMetadataElement/s added
+
 ### 1.5.1
 
 * DatabaseProvider refactored
