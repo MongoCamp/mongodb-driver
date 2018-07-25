@@ -49,7 +49,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       // update complete metadata for one file
       updateMetadata(files.head, ImageMetadata("logo22", group = "logos"))
       // update metadata entry for all files
-      updateMetadataElements(Map(), Map("group"->"logos3", "newKey"-> "newEntryValue"))
+      updateMetadataElements(Map(), Map("group" -> "logos3", "newKey" -> "newEntryValue"))
 
       val file = findImage(files.head)
       file.getMetadata.get("name").toString must be equalTo "logo22"
