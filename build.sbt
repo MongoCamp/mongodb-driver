@@ -1,3 +1,5 @@
+import sbt.url
+
 import scala.sys.process._
 
 name := "simple-mongo"
@@ -33,7 +35,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.0" % Test
 
-libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.5.0" % Test
+libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.6.0" % Test
 
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.4.0"
@@ -46,7 +48,6 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-bintrayReleaseOnPublish in ThisBuild := true
 
 version in Paradox := {
   if (isSnapshot.value)
@@ -73,4 +74,32 @@ ghpagesNoJekyll := true
 
 enablePlugins(SiteScaladocPlugin)
 siteSubdirName in SiteScaladoc := "api/latest"
+
+// publish
+
+releaseCrossBuild := true
+
+bintrayReleaseOnPublish in ThisBuild := true
+
+publishMavenStyle := true
+
+homepage := Some(url("https://github.com/sfxcode/simple-mongo"))
+
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/sfxcode/simple-mongo"),
+    "scm:https://github.com/sfxcode/simple-mongo.git"
+  )
+)
+
+developers := List(
+  Developer(
+    id    = "sfxcode",
+    name  = "Tom Lamers",
+    email = "tom@sfxcode.com",
+    url   = url("https://github.com/sfxcode")
+  )
+)
+
+
 
