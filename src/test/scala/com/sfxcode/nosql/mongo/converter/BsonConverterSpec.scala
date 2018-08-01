@@ -1,9 +1,8 @@
 package com.sfxcode.nosql.mongo.converter
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
-import org.mongodb.scala.bson._
+import org.mongodb.scala.bson.{ObjectId, _}
 import org.specs2.mutable.Specification
-
 /**
  * Created by tom on 22.01.17.
  */
@@ -27,6 +26,13 @@ class BsonConverterSpec extends Specification {
       BsonConverter.toBson(BigInt(10)) must be equalTo BsonInt64(10)
       BsonConverter.toBson(java.math.BigInteger.TEN) must be equalTo BsonInt64(10)
 
+      BsonConverter.toBson(Some(5)) must be equalTo BsonInt32(5)
+
+      BsonConverter.toBson(Some(new ObjectId("5b61455932ac3f0015ae2e7e"))) must be equalTo BsonObjectId("5b61455932ac3f0015ae2e7e")
+
+      BsonConverter.toBson(None) must be equalTo BsonNull()
+
+      BsonConverter.toBson('M') must be equalTo BsonString("M")
     }
 
     "convert values from BSON" in {
