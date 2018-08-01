@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.bson
 
 import java.math.BigInteger
-import java.time.{ LocalDate, LocalDateTime, ZoneId }
+import java.time.{LocalDate, LocalDateTime, ZoneId}
 import java.util.Date
 
 import org.mongodb.scala.Document
@@ -28,6 +28,7 @@ object BsonConverter {
         converterPlugin.toBson(v)
       case b: Boolean => BsonBoolean(b)
       case s: String => BsonString(s)
+      case c: Char => BsonString(c.toString)
       case bytes: Array[Byte] => BsonBinary(bytes)
       case r: Regex => BsonRegularExpression(r)
       case d: Date => BsonDateTime(d)
