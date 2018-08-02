@@ -2,6 +2,12 @@
 
 ## Versions
 
+### 1.5.3
+
+* scala 2.11.12
+* BsonConverter Char support
+
+
 ### 1.5.2
 
 * GridFSDAO extends Metadata
