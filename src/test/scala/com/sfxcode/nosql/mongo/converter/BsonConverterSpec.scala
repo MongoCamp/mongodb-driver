@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.converter
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
-import org.mongodb.scala.bson.{ObjectId, _}
+import org.mongodb.scala.bson.{ ObjectId, _ }
 import org.specs2.mutable.Specification
 /**
  * Created by tom on 22.01.17.
