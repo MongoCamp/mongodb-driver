@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.bson
 
 import java.math.BigInteger
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 
 import org.mongodb.scala.Document
