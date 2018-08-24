@@ -22,14 +22,6 @@ Features:
 
 Support Scala 2.11 and Scala 2.12.
 
-```
-resolvers += "sxfcode Bintray Repo" at "https://dl.bintray.com/sfxcode/maven/"
-
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % $app-version$
-
-```
-### 2.12 Dependency
-
 @@dependency[sbt,Maven,Gradle] {
   group="com.sfxcode.nosql"
   artifact="simple-mongo_2.12"
