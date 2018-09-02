@@ -72,8 +72,8 @@ enablePlugins(GhpagesPlugin)
 git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git"
 ghpagesNoJekyll := true
 
-enablePlugins(SiteScaladocPlugin)
-siteSubdirName in SiteScaladoc := "api/latest"
+// enablePlugins(SiteScaladocPlugin)
+// siteSubdirName in SiteScaladoc := "api/latest"
 
 // publish
 
