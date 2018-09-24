@@ -2,6 +2,11 @@
 
 ## Versions
 
+
+### 1.5.6
+
+* mongo-scala-driver 2.4.2
+
 ### 1.5.5
 
 * mongo-scala-driver 2.4.1
