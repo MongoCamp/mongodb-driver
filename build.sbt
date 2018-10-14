@@ -8,7 +8,7 @@ organization := "com.sfxcode.nosql"
 
 crossScalaVersions := Seq("2.12.6", "2.11.12")
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
 scalacOptions += "-deprecation"
 
@@ -25,7 +25,7 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.3.4" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.3.5" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
