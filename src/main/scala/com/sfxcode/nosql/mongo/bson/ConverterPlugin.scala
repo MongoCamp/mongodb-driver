@@ -35,7 +35,8 @@ abstract class AbstractConverterPlugin {
 }
 
 object ClassUtil {
-  private val classRegistry = new mutable.HashMap[Class[_], Map[String, Field]]()
+  private val classRegistry =
+    new mutable.HashMap[Class[_], Map[String, Field]]()
 
   def membersToMap(v: AnyRef): Map[String, Any] = {
     val result = new mutable.HashMap[String, Any]()

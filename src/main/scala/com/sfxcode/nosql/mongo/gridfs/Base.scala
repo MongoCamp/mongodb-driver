@@ -1,13 +1,19 @@
 package com.sfxcode.nosql.mongo.gridfs
 
 import java.nio.channels.AsynchronousFileChannel
-import java.nio.file.{ OpenOption, Path, StandardOpenOption }
+import java.nio.file.{OpenOption, Path, StandardOpenOption}
 
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.GridFSBucket
 import org.mongodb.scala.gridfs.helpers.AsynchronousChannelHelper.channelToOutputStream
-import org.mongodb.scala.{ Completed, Observable, ReadConcern, ReadPreference, WriteConcern }
+import org.mongodb.scala.{
+  Completed,
+  Observable,
+  ReadConcern,
+  ReadPreference,
+  WriteConcern
+}
 
 abstract class Base extends LazyLogging {
 
@@ -20,9 +26,15 @@ abstract class Base extends LazyLogging {
     metadataKey
   }
 
-  def downloadToStream(oid: ObjectId, outputPath: Path, openOptions: Seq[OpenOption] = List(StandardOpenOption.CREATE, StandardOpenOption.WRITE)): Observable[Long] = {
-    val streamToDownloadTo: AsynchronousFileChannel = AsynchronousFileChannel.open(outputPath, openOptions: _*)
-    gridfsBucket.downloadToStream(oid, channelToOutputStream(streamToDownloadTo))
+  def downloadToStream(oid: ObjectId,
+                       outputPath: Path,
+                       openOptions: Seq[OpenOption] = List(
+                         StandardOpenOption.CREATE,
+                         StandardOpenOption.WRITE)): Observable[Long] = {
+    val streamToDownloadTo: AsynchronousFileChannel =
+      AsynchronousFileChannel.open(outputPath, openOptions: _*)
+    gridfsBucket.downloadToStream(oid,
+                                  channelToOutputStream(streamToDownloadTo))
   }
 
   def drop(): Observable[Completed] = gridfsBucket.drop()
