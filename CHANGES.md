@@ -2,6 +2,11 @@
 
 ## Versions
 
+### 1.6.0
+
+* mongo-scala-driver 2.5.0
+* scalafmt support
+* scalacheck support
 
 ### 1.5.6
 
