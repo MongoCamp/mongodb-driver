@@ -6,8 +6,8 @@ import org.mongodb.scala.{ Document, MongoCollection, MongoDatabase }
 import scala.reflect.ClassTag
 
 /**
-  * Created by tom on 20.01.17.
-  */
+ * Created by tom on 20.01.17.
+ */
 abstract class MongoDAO[A](database: MongoDatabase, collectionName: String)(implicit ct: ClassTag[A]) extends Crud[A] {
 
   val collection: MongoCollection[A] = database.getCollection[A](collectionName)

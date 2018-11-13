@@ -27,13 +27,13 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   def replaceOne(value: A): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
+    val oid = document.get("_id").get
     coll.replaceOne(equal("_id", oid), value)
   }
 
   def replaceOne(value: A, options: ReplaceOptions): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
+    val oid = document.get("_id").get
     coll.replaceOne(equal("_id", oid), value, options)
   }
 
