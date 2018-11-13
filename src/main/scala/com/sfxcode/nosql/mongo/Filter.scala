@@ -28,7 +28,9 @@ object Filter extends LazyLogging {
 
   def notNullFilter(fieldName: String): Bson = not(nullFilter(fieldName))
 
-  def dateInRangeFilter(dateFieldKey: String, dateFrom: Date = null, dateUntil: Date = null): Bson = {
+  def dateInRangeFilter(dateFieldKey: String,
+                        dateFrom: Date = null,
+                        dateUntil: Date = null): Bson = {
     if (dateFrom != null && dateUntil != null)
       and(gte(dateFieldKey, dateFrom), lte(dateFieldKey, dateUntil))
     else if (dateUntil != null)

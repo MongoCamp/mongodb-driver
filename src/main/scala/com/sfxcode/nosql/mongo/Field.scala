@@ -7,7 +7,8 @@ import org.mongodb.scala.model.BsonField
 
 object Field {
 
-  def firstField(fieldName: String): BsonField = first(fieldName, "$" + fieldName)
+  def firstField(fieldName: String): BsonField =
+    first(fieldName, "$" + fieldName)
 
   def minField(fieldName: String): BsonField = min(fieldName, "$" + fieldName)
 
@@ -40,11 +41,13 @@ object Field {
   }
 
   def groupFields(fieldnames: Iterable[String]): BsonValue = {
-    val list = fieldnames.map(name => {
-      if (name.startsWith("$"))
-        name
-      else "$" + name
-    }).toList
+    val list = fieldnames
+      .map(name => {
+        if (name.startsWith("$"))
+          name
+        else "$" + name
+      })
+      .toList
     BsonConverter.toBson(Map("_id" -> list))
   }
 
