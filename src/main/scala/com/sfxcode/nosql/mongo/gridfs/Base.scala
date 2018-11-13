@@ -22,10 +22,9 @@ abstract class Base extends LazyLogging {
   }
 
   def downloadToStream(
-      oid: ObjectId,
-      outputPath: Path,
-      openOptions: Seq[OpenOption] = List(StandardOpenOption.CREATE, StandardOpenOption.WRITE)
-  ): Observable[Long] = {
+    oid: ObjectId,
+    outputPath: Path,
+    openOptions: Seq[OpenOption] = List(StandardOpenOption.CREATE, StandardOpenOption.WRITE)): Observable[Long] = {
     val streamToDownloadTo: AsynchronousFileChannel =
       AsynchronousFileChannel.open(outputPath, openOptions: _*)
     gridfsBucket.downloadToStream(oid, channelToOutputStream(streamToDownloadTo))

@@ -13,15 +13,16 @@ abstract class Crud extends Search {
 
   def deleteOne(id: ObjectId): Observable[Completed] = gridfsBucket.delete(id)
 
-  def insertOne(fileName: String,
-                stream: InputStream,
-                metadata: AnyRef = Document(),
-                chunkSizeBytes: Int = chunkSizeBytes): Observable[ObjectId] = {
+  def insertOne(
+    fileName: String,
+    stream: InputStream,
+    metadata: AnyRef = Document(),
+    chunkSizeBytes: Int = chunkSizeBytes): Observable[ObjectId] = {
     val streamToUploadFrom: AsyncInputStream = toAsyncInputStream(stream)
     val metadataDocument = {
       metadata match {
         case document: Document => document
-        case _                  => Converter.toDocument(metadata)
+        case _ => Converter.toDocument(metadata)
       }
     }
     val options: GridFSUploadOptions = new GridFSUploadOptions()

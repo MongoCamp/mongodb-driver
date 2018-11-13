@@ -16,7 +16,7 @@ abstract class Metadata(database: MongoDatabase, bucketName: String) extends Cru
 
   def updateMetadata(oid: ObjectId, value: Any): Observable[UpdateResult] = {
     val doc: BsonValue = BsonConverter.toBson(value)
-    val result         = Files.updateOne(equal("_id", oid), set("metadata", doc))
+    val result = Files.updateOne(equal("_id", oid), set("metadata", doc))
     result
   }
 
