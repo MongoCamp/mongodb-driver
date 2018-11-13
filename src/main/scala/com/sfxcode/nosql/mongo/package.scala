@@ -6,14 +6,8 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
-import org.mongodb.scala.{
-  Document,
-  FindObservable,
-  MongoDatabase,
-  Observable,
-  ObservableImplicits
-}
+import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
+import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable, ObservableImplicits }
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
@@ -25,23 +19,17 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
   implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] =
     obs.resultList()
 
-  implicit def findObservableToResultOption[T](
-      obs: FindObservable[T]): Option[T] = obs.result()
+  implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.result()
 
-  implicit def databaseProviderToDatabase(
-      provider: DatabaseProvider): MongoDatabase = provider.database
+  implicit def databaseProviderToDatabase(provider: DatabaseProvider): MongoDatabase = provider.database
 
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 
-  implicit def documentFromJavaMap(
-      map: java.util.Map[String, Any]): Document = {
+  implicit def documentFromJavaMap(map: java.util.Map[String, Any]): Document =
     documentFromScalaMap(map.asScala.toMap)
-  }
 
-  implicit def documentFromMutableMap(
-      map: collection.mutable.Map[String, Any]): Document = {
+  implicit def documentFromMutableMap(map: collection.mutable.Map[String, Any]): Document =
     documentFromScalaMap(map.toMap)
-  }
 
   implicit def documentFromScalaMap(map: Map[String, Any]): Document = {
     var result = Document()
@@ -64,14 +52,11 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
     result
   }
 
-  implicit def mapFromDocument(document: Document): Map[String, Any] = {
+  implicit def mapFromDocument(document: Document): Map[String, Any] =
     BsonConverter.asMap(document)
-  }
 
-  implicit def mapListFromDocuments(
-      documents: List[Document]): List[Map[String, Any]] = {
+  implicit def mapListFromDocuments(documents: List[Document]): List[Map[String, Any]] =
     BsonConverter.asMapList(documents)
-  }
 
   // ObjectId
   implicit def stringToObjectId(str: String): ObjectId = new ObjectId(str)
@@ -81,8 +66,7 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
 
   // gridfs
 
-  implicit def gridFSFindObservableToFiles(
-      observable: GridFSFindObservable): List[GridFSFile] =
+  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] =
     observable.resultList()
 
   implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId =

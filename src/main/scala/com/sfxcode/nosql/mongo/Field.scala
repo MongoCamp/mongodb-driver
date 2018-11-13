@@ -20,32 +20,29 @@ object Field {
 
   def groupField(fieldName: String): BsonValue = groupFields(List(fieldName))
 
-  def firstFields(fieldnames: Iterable[String]): Set[BsonField] = {
+  def firstFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => firstField(fieldname)).toSet
-  }
 
-  def minFields(fieldnames: Iterable[String]): Set[BsonField] = {
+  def minFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => minField(fieldname)).toSet
-  }
 
-  def lastFields(fieldnames: Iterable[String]): Set[BsonField] = {
+  def lastFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => lastField(fieldname)).toSet
-  }
 
-  def sumFields(fieldnames: Iterable[String]): Set[BsonField] = {
+  def sumFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => sumField(fieldname)).toSet
-  }
 
-  def avgFields(fieldnames: Iterable[String]): Set[BsonField] = {
+  def avgFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => avgField(fieldname)).toSet
-  }
 
   def groupFields(fieldnames: Iterable[String]): BsonValue = {
     val list = fieldnames
       .map(name => {
-        if (name.startsWith("$"))
+        if (name.startsWith("$")) {
           name
-        else "$" + name
+        } else {
+          "$" + name
+        }
       })
       .toList
     BsonConverter.toBson(Map("_id" -> list))
