@@ -15,8 +15,9 @@ abstract class AbstractConverterPlugin {
 
   def hasCustomClass(v: Any): Boolean = {
     customClassList.foreach(c => {
-      if (c.isAssignableFrom(v.getClass))
+      if (c.isAssignableFrom(v.getClass)) {
         return true
+      }
     })
     false
   }
@@ -26,12 +27,11 @@ abstract class AbstractConverterPlugin {
     BsonConverter.toBson(map)
   }
 
-  def toBson(value: Any): BsonValue = {
+  def toBson(value: Any): BsonValue =
     value match {
       case _ =>
         BsonNull()
     }
-  }
 }
 
 object ClassUtil {

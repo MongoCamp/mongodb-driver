@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.bson
 
 import java.math.BigInteger
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 
 import org.mongodb.scala.Document
@@ -15,15 +15,15 @@ object BsonConverter {
 
   var converterPlugin: AbstractConverterPlugin = new BaseConverterPlugin()
 
-  def toBson(value: Any): BsonValue = {
-
+  def toBson(value: Any): BsonValue =
     value match {
       case bsonValue: BsonValue => bsonValue
       case option: Option[Any] =>
-        if (option.isDefined)
+        if (option.isDefined) {
           toBson(option.get)
-        else
+        } else {
           BsonNull()
+        }
       case v: Any if converterPlugin.hasCustomClass(v) =>
         converterPlugin.toBson(v)
       case b: Boolean         => BsonBoolean(b)
@@ -33,8 +33,7 @@ object BsonConverter {
       case r: Regex           => BsonRegularExpression(r)
       case d: Date            => BsonDateTime(d)
       case ld: LocalDate =>
-        BsonDateTime(
-          Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
+        BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
       case ldt: LocalDateTime =>
         BsonDateTime(Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant))
       case oid: ObjectId            => BsonObjectId(oid)
@@ -72,9 +71,8 @@ object BsonConverter {
       case _ =>
         BsonNull()
     }
-  }
 
-  def fromBson(value: BsonValue): Any = {
+  def fromBson(value: BsonValue): Any =
     value match {
 
       case b: BsonBoolean           => b.getValue
@@ -94,7 +92,6 @@ object BsonConverter {
       case n: BsonNull => null
       case _           => value
     }
-  }
 
   def asMap(document: Document): Map[String, Any] = {
     val result = new mutable.HashMap[String, Any]()

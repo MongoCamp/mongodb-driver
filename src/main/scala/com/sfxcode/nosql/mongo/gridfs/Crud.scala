@@ -7,7 +7,7 @@ import com.sfxcode.nosql.mongo.Converter
 import org.bson.types.ObjectId
 import org.mongodb.scala.gridfs.AsyncInputStream
 import org.mongodb.scala.gridfs.helpers.AsyncStreamHelper.toAsyncInputStream
-import org.mongodb.scala.{Completed, Document, Observable}
+import org.mongodb.scala.{ Completed, Document, Observable }
 
 abstract class Crud extends Search {
 
