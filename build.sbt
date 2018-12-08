@@ -8,7 +8,7 @@ organization := "com.sfxcode.nosql"
 
 crossScalaVersions := Seq("2.12.6", "2.11.12")
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 
 scalacOptions += "-deprecation"
 
@@ -35,7 +35,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.1" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.2" % Test
 
-libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.6.0" % Test
+libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.7.0" % Test
 
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.5.0"
