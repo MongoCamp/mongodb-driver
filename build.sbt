@@ -6,7 +6,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.12.6", "2.11.12")
+crossScalaVersions := Seq("2.12.8", "2.11.12")
 
 scalaVersion := "2.12.8"
 
