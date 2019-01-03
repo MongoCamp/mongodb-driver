@@ -2,6 +2,10 @@
 
 ## Versions
 
+
+### 1.6.1
+* sbt.version = 1.2.7
+
 ### 1.6.0
 
 * mongo-scala-driver 2.5.0
