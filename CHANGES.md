@@ -3,6 +3,11 @@
 ## Versions
 
 
+### 1.6.2
+* mongo-scala-driver 2.6.0
+* MongoDB Driver Async 3.10.0
+* sbt.version = 1.2.8
+
 ### 1.6.1
 * sbt.version = 1.2.7
 
