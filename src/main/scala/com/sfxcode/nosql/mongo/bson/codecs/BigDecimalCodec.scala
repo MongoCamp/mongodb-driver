@@ -13,7 +13,7 @@ class BigDecimalCodec extends Codec[BigDecimal] {
     BigDecimal(reader.readDouble())
 
   override def encode(writer: BsonWriter, value: BigDecimal, encoderContext: EncoderContext): Unit =
-    writer.writeDouble(value.doubleValue())
+    writer.writeDouble(value.toDouble)
 
   override def getEncoderClass: Class[BigDecimal] = classOf[BigDecimal]
 }
