@@ -39,7 +39,7 @@ object BsonConverter {
       case oid: ObjectId => BsonObjectId(oid)
       case i: Int => BsonInt32(i)
       case l: Long => BsonInt64(l)
-      case bi: BigInt => BsonInt64(bi.longValue())
+      case bi: BigInt => BsonInt64(bi.toLong)
       case bi: BigInteger => BsonInt64(bi.longValue())
       case d: Double => BsonDouble(d)
       case f: Float => BsonDouble(f)
