@@ -33,7 +33,7 @@ object RestaurantDemoDatabase {
     classOf[Restaurant],
     classOf[Address], classOf[Grade])
 
-  val database = DatabaseProvider("test", registry)
+  val database = DatabaseProvider.fromConfigPath("test.mongo", registry)
 
   // #registry
 

@@ -21,7 +21,7 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
   override def beforeAll(): Unit = {
     // needed if no restaurants imported
     val count = restaurantsSize
-    val testRestaurant: Restaurant = Restaurant.testData
+    val testRestaurant: Restaurant = RestaurantReader.testData
 
     if (count == 0) {
       RestaurantDAO.insertOne(testRestaurant).headResult()
