@@ -1,4 +1,4 @@
-# Tutorial Part 1 - Setup
+# Part 1 - Setup
 
 
 ## MongoDB Demo Database
@@ -38,4 +38,4 @@ A sample document in the restaurants collection:
 
 ### Scala case classes for Restaurant document
 
-@@snip [RestaurantDatabase](../../../test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #case_classes }
+@@snip [RestaurantDatabase](/src/test/scala/com/sfxcode/nosql/mongo/demo/restaurant/RestaurantDemoDatabase.scala) { #case_classes }

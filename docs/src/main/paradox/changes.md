@@ -5,4 +5,4 @@
 
 ## History
 
-@@snip [Changes.md](../../../CHANGES.md)
+@@snip [Changes.md](/CHANGES.md)
