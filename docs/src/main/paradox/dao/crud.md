@@ -1,8 +1,8 @@
-# MongoDAO - CRUD Functions
+# CRUD Functions
 
 ## Info
 
-CRUD Collection functions. 
+@ref:[MongoDAO](index.md) CRUD Collection functions.
 
 ## Create
 

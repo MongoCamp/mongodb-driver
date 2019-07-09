@@ -34,3 +34,9 @@ A [MongoDatabase](http://mongodb.github.io/mongo-scala-driver/2.3/scaladoc/org/m
 
 ```
 
+@@@@ index
+
+ - [CRUD](crud.md)
+ - [Metadata](metadata.md)
+
+@@@@
