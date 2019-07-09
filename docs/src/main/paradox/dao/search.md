@@ -1,6 +1,8 @@
-# MongoDAO - Search Functions
+# Search Functions
 
 ## Info
+
+@ref:[MongoDAO](index.md) Search Functions
 
 ## Demo
 

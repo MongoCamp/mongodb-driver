@@ -1,6 +1,6 @@
-# GridFSDAO - Metadata
+# Metadata
 
-Metadata can be updated by the GridFSDAO.
+Metadata can be updated by the @ref:[GridFSDAO](index.md) object.
 
 ## Update complete Metadata
 

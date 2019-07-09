@@ -1,4 +1,4 @@
-# Feature - Relationships
+# Relationships
 
 ## Info
 
@@ -37,7 +37,7 @@ For relationship setup we create two Relationships in the UserDAO.
 * OneToOne loginRelation  (LoginDAO, key is id in user collection)
 * OneToMany friendsRelation (FriendDAO, key is userId in friend collection)
 
-@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/relation/RelationDemoDatabase.scala) { #user_dao }
+@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/relation/RelationDemoDatabase.scala) { #user_dao }
 
 
 We extend the User case class with the Relations trait and add relation specific functions.
@@ -45,6 +45,6 @@ We extend the User case class with the Relations trait and add relation specific
 * login (create an Option of Login)
 * friends (create a List of Friend)
 
-@@snip [RestaurantDatabase.scala](../../../test/scala/com/sfxcode/nosql/mongo/relation/RelationDemoDatabase.scala) { #user_class }
+@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/relation/RelationDemoDatabase.scala) { #user_class }
 
 

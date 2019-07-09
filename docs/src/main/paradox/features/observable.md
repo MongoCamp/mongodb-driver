@@ -1,4 +1,4 @@
-# Feature - Observable
+# Observable
 
 ## Info
 

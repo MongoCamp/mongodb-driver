@@ -1,4 +1,4 @@
-# GridFSDAO - CRUD Functions
+# CRUD Functions
 
 ## Create
 
@@ -28,7 +28,7 @@ Do not use GridFS if you need to update the content of the entire file atomicall
 
 GridFSFile will be deleted by a given ObjectID.
 
-With implicit conversion you can use for oid Parameter:
+With implicit conversion you can use for OID Parameter:
 
 * ObjectID
 * GridFSFile
