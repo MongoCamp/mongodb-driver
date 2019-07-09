@@ -1,42 +1,77 @@
 package com.sfxcode.nosql.mongo.database
 
+import java.util.concurrent.TimeUnit
+
+import com.mongodb.MongoCredential.createCredential
 import com.sfxcode.nosql.mongo.database.MongoConfig._
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{ Config, ConfigFactory }
+import org.mongodb.scala.connection.{ ClusterSettings, ConnectionPoolSettings }
+import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 
-case class MongoConfig(
-                        host: String = DefaultHost,
-                        port: Int = DefaultPort,
-                        database: String,
-                        user: Option[String] = None,
-                        password: Option[String] = None,
-                        authDatabase: String = DefaultAuthenticationDatabaseName,
-                        options: Map[String, Int] = Map()) {
+import scala.collection.JavaConverters._
 
-  def maxConnectionIdleTime: Int = options.getOrElse("maxConnectionIdleTime", DefaultMaxConnectionIdleTime)
-  def maxSize: Int = options.getOrElse("maxSize", DefaultMaxSize)
-  def minSize: Int = options.getOrElse("minSize", DefaultMinSize)
-  def maxWaitQueueSize: Int = options.getOrElse("maxWaitQueueSize", DefaultMaxWaitQueueSize)
-  def maintenanceInitialDelay: Int = options.getOrElse("maintenanceInitialDelay", DefaultMaintenanceInitialDelay)
+case class MongoConfig(database: String,
+                       host: String = DefaultHost,
+                       port: Int = DefaultPort,
+                       applicationName: String = DefaultApplicationName,
+                       userName: Option[String] = None,
+                       password: Option[String] = None,
+                       authDatabase: String = DefaultAuthenticationDatabaseName,
+                       options: MongoPoolOptions = MongoPoolOptions(),
+                       customClientSettings: Option[MongoClientSettings] = None) {
 
+  val clientSettings: MongoClientSettings = {
+    if (customClientSettings.isDefined) {
+      customClientSettings.get
+    } else {
+      val clusterSettings: ClusterSettings =
+        ClusterSettings.builder().hosts(List(new ServerAddress(host, port)).asJava).build()
+
+      val connectionPoolSettings = ConnectionPoolSettings
+        .builder()
+        .maxConnectionIdleTime(options.maxConnectionIdleTime, TimeUnit.SECONDS)
+        .maxSize(options.maxSize)
+        .minSize(options.minSize)
+        .maxWaitQueueSize(options.maxWaitQueueSize)
+        .maintenanceInitialDelay(options.maintenanceInitialDelay, TimeUnit.SECONDS)
+        .build()
+
+      val builder = MongoClientSettings
+        .builder()
+        .applyToConnectionPoolSettings(
+          (b: com.mongodb.connection.ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings)
+        )
+        .applyToClusterSettings((b: com.mongodb.connection.ClusterSettings.Builder) => b.applySettings(clusterSettings))
+
+      if (userName.isDefined && password.isDefined) {
+        val credential: MongoCredential = createCredential(userName.get, authDatabase, password.get.toCharArray)
+
+        builder.credential(credential).applicationName(applicationName).build()
+      } else {
+        builder.applicationName(applicationName).build()
+      }
+    }
+  }
 }
 
 object MongoConfig {
-  val DefaultHost = "127.0.0.1"
-  val DefaultPort = 27017
+  val DefaultHost                       = "127.0.0.1"
+  val DefaultPort                       = 27017
   val DefaultAuthenticationDatabaseName = "admin"
+  val DefaultApplicationName            = "simple-mongo-app"
 
-  val DefaultMaxConnectionIdleTime = 60
-  val DefaultMaxSize = 50
-  val DefaultMinSize = 0
-  val DefaultMaxWaitQueueSize = 500
-  val DefaultMaintenanceInitialDelay = 0
+  val DefaultPoolMaxConnectionIdleTime   = 60
+  val DefaultPoolMaxSize                 = 50
+  val DefaultPoolMinSize                 = 0
+  val DefaultPoolMaxWaitQueueSize        = 500
+  val DefaultPoolMaintenanceInitialDelay = 0
 
   val DefaultConfigPathPrefix = "mongo"
 
-  val conf: Config = ConfigFactory.load()
+  def fromPath(configPath: String = DefaultConfigPathPrefix): MongoConfig = {
+    val conf: Config = ConfigFactory.load()
 
-  def fromConfigPath(configPath:String):MongoConfig = {
-    def stringConfig(key:String, default:String = ""):Option[String] = {
+    def stringConfig(key: String, default: String = ""): Option[String] =
       if (conf.hasPath("%s.%s".format(configPath, key))) {
         Some(conf.getString("%s.%s".format(configPath, key)))
       } else {
@@ -46,41 +81,38 @@ object MongoConfig {
           None
         }
       }
-    }
 
-    def optionConfig(key:String, default:Int):Int = {
-      if (conf.hasPath("%s.options.%s".format(configPath, key))) {
-        conf.getInt("%s.options.%s".format(configPath, key))
+    def poolOptionsConfig(key: String, default: Int): Int =
+      if (conf.hasPath("%s.pool.%s".format(configPath, key))) {
+        conf.getInt("%s.pool.%s".format(configPath, key))
       } else {
         default
       }
-    }
 
-    def portConfig:Int = {
+    def portConfig: Int =
       if (conf.hasPath("%s.port".format(configPath))) {
         conf.getInt("%s.port".format(configPath))
       } else {
         DefaultPort
       }
-    }
 
-    val host = stringConfig("host", DefaultHost).get
-    val port = portConfig
-    val database = stringConfig("database").get
-    val user = stringConfig("user")
-    val password = stringConfig("password")
-    val authDatabase = stringConfig("authDatabase", DefaultAuthenticationDatabaseName).get
+    val host            = stringConfig("host", DefaultHost).get
+    val port            = portConfig
+    val database        = stringConfig("database").get
+    val userName        = stringConfig("userName")
+    val password        = stringConfig("password")
+    val authDatabase    = stringConfig("authDatabase", DefaultAuthenticationDatabaseName).get
+    val applicationName = stringConfig("applicationName", DefaultApplicationName).get
 
-    val options = Map(
-      "maxConnectionIdleTime" -> optionConfig("maxConnectionIdleTime", DefaultMaxConnectionIdleTime),
-      "maxSize" -> optionConfig("maxSize", DefaultMaxSize),
-      "minSize" -> optionConfig("minSize", DefaultMinSize),
-      "maxWaitQueueSize" -> optionConfig("maxWaitQueueSize", DefaultMaxWaitQueueSize),
-      "maintenanceInitialDelay" -> optionConfig("maintenanceInitialDelay", DefaultMaintenanceInitialDelay)
+    val poolOptions = MongoPoolOptions(
+      poolOptionsConfig("maxConnectionIdleTime", DefaultPoolMaxConnectionIdleTime),
+      poolOptionsConfig("maxSize", DefaultPoolMaxSize),
+      poolOptionsConfig("minSize", DefaultPoolMinSize),
+      poolOptionsConfig("maxWaitQueueSize", DefaultPoolMaxWaitQueueSize),
+      poolOptionsConfig("maintenanceInitialDelay", DefaultPoolMaintenanceInitialDelay)
     )
 
-    MongoConfig(host, port, database, user, password, authDatabase, options)
+    MongoConfig(database, host, port, applicationName, userName, password, authDatabase, poolOptions)
   }
-
 
 }
