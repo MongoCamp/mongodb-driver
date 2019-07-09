@@ -1,71 +1,82 @@
 package com.sfxcode.nosql.mongo.database
 
-import java.util.concurrent.TimeUnit
-
-import com.mongodb.MongoCredential.createCredential
+import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
 import org.bson.codecs.configuration.CodecRegistry
+import org.mongodb.scala._
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
-import org.mongodb.scala.connection.{ClusterSettings, ConnectionPoolSettings}
-import org.mongodb.scala.{MongoClient, MongoClientSettings, MongoCredential, MongoDatabase, Observable, ServerAddress}
 
-import scala.collection.JavaConverters._
+import scala.collection.mutable
 
-class DatabaseProvider(databaseName: String, registry: CodecRegistry, client: MongoClient) {
+case class DatabaseProvider(config: MongoConfig, registry: CodecRegistry) {
+  private val cachedDatabaseMap = new mutable.HashMap[String, MongoDatabase]()
+  private val cachedMongoDAOMap = new mutable.HashMap[String, MongoDAO[Document]]()
 
-  val database: MongoDatabase =
-    client.getDatabase(databaseName).withCodecRegistry(registry)
+  private var cachedClient: Option[MongoClient] = None
 
-  def listDatabaseNames(): Observable[String] = client.listDatabaseNames()
+  def client: MongoClient = {
+    if (isClosed) {
+      cachedDatabaseMap.clear()
+      cachedMongoDAOMap.clear()
+      cachedClient = Some(MongoClient(config.clientSettings))
+    }
+    cachedClient.get
+  }
+
+  def isClosed: Boolean = cachedClient.isEmpty
+
+  def closeClient(): Unit = {
+    client.close()
+    cachedClient = None
+  }
+
+  def dropDatabase(databaseName: String): SingleObservable[Completed] = database(databaseName).drop()
+
+  def database(databaseName: String = config.database): MongoDatabase = {
+    if (!cachedDatabaseMap.contains(databaseName)) {
+      cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName).withCodecRegistry(registry))
+    }
+    cachedDatabaseMap(databaseName)
+  }
+
+  def collection(collectionName: String): MongoCollection[Document] =
+    dao(collectionName).collection
+
+  def dao(collectionName: String): MongoDAO[Document] = {
+    if (!cachedMongoDAOMap.contains(collectionName)) {
+      cachedMongoDAOMap.put(collectionName, DocumentDao(this, collectionName))
+    }
+    cachedMongoDAOMap(collectionName)
+  }
+
+  def usedDatabaseNames(): List[String] = cachedDatabaseMap.keys.toList
+
+  def databaseNames(): Observable[String] = client.listDatabaseNames()
+
+  def usedCollectionNames(): List[String] = cachedMongoDAOMap.keys.toList
+
+  def collectionNames(name: String = config.database): Observable[String] =
+    database(name).listCollectionNames()
+
+  case class DocumentDao(provider: DatabaseProvider, collectionName: String)
+      extends MongoDAO[Document](this, collectionName)
 
 }
 
 object DatabaseProvider {
+  val CollectionSeparator = ":"
 
   private val CustomRegistry = fromProviders(CustomCodecProvider())
 
   private val codecRegistry: CodecRegistry =
     fromRegistries(CustomRegistry, DEFAULT_CODEC_REGISTRY)
 
-  def apply(databaseName: String, registry: CodecRegistry = codecRegistry, client: MongoClient = MongoClient()): DatabaseProvider =
-    new DatabaseProvider(databaseName, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY), client)
+  def apply(config: MongoConfig, registry: CodecRegistry = codecRegistry): DatabaseProvider =
+    new DatabaseProvider(config, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
-  def fromConfigPath(configPath:String = MongoConfig.DefaultConfigPathPrefix, registry: CodecRegistry = codecRegistry):DatabaseProvider = {
-    fromConfig(MongoConfig.fromConfigPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
-  }
+  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix,
+               registry: CodecRegistry = codecRegistry): DatabaseProvider =
+    apply(MongoConfig.fromPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
-  def fromConfig(mongoConfig: MongoConfig, registry: CodecRegistry = codecRegistry):DatabaseProvider = {
-
-    val clusterSettings: ClusterSettings =
-      ClusterSettings.builder().hosts(List(new ServerAddress(mongoConfig.host, mongoConfig.port)).asJava).build()
-
-    val connectionPoolSettings = ConnectionPoolSettings
-      .builder()
-      .maxConnectionIdleTime(mongoConfig.maxConnectionIdleTime, TimeUnit.SECONDS)
-      .maxSize(mongoConfig.maxSize)
-      .minSize(mongoConfig.minSize)
-      .maxWaitQueueSize(mongoConfig.maxWaitQueueSize)
-      .maintenanceInitialDelay(mongoConfig.maintenanceInitialDelay, TimeUnit.SECONDS)
-      .build()
-
-    val builder = MongoClientSettings
-      .builder()
-      .applyToConnectionPoolSettings(
-        (b: com.mongodb.connection.ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings)
-      )
-      .applyToClusterSettings((b: com.mongodb.connection.ClusterSettings.Builder) => b.applySettings(clusterSettings))
-
-    if (mongoConfig.user.isDefined && mongoConfig.password.isDefined)  {
-      val credential: MongoCredential = createCredential(mongoConfig.user.get,
-        mongoConfig.authDatabase, mongoConfig.password.get.toCharArray)
-
-      val clientSettings: MongoClientSettings = builder.credential(credential).build()
-      new DatabaseProvider(mongoConfig.database, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY), MongoClient(clientSettings))
-    }
-    else {
-      val clientSettings: MongoClientSettings = builder.build()
-      new DatabaseProvider(mongoConfig.database, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY), MongoClient(clientSettings))
-    }
-  }
 }
