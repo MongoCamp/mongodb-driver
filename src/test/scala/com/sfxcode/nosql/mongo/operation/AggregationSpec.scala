@@ -1,9 +1,7 @@
 package com.sfxcode.nosql.mongo.operation
 
 // #agg_imports
-import com.sfxcode.nosql.mongo.Field._
-import com.sfxcode.nosql.mongo.Filter._
-import com.sfxcode.nosql.mongo.Sort._
+import com.sfxcode.nosql.mongo.Aggregate._
 import com.sfxcode.nosql.mongo._
 // #agg_imports
 
