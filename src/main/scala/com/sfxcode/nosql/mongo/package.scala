@@ -1,18 +1,19 @@
 package com.sfxcode.nosql
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
-import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import com.sfxcode.nosql.mongo.database.MongoConfig
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
-import org.mongodb.scala.{ Document, FindObservable, MongoDatabase, Observable, ObservableImplicits }
+import org.mongodb.scala.{ Document, FindObservable, Observable, ObservableImplicits }
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 package object mongo extends ObservableIncludes with ObservableImplicits {
+  implicit def stringToConfig(database: String): MongoConfig = MongoConfig(database)
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.headResult()
 
@@ -20,8 +21,6 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
     obs.resultList()
 
   implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.result()
-
-  implicit def databaseProviderToDatabase(provider: DatabaseProvider): MongoDatabase = provider.database
 
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 

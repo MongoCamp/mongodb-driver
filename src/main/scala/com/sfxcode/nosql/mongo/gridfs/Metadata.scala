@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.gridfs
 
 import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.bson.BsonConverter
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
@@ -10,7 +11,7 @@ import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.{ Document, MongoDatabase, Observable }
 
-abstract class Metadata(database: MongoDatabase, bucketName: String) extends Crud {
+abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 
   def filesCollectionName: String = "%s.%s".format(bucketName, "files")
 
@@ -41,6 +42,6 @@ abstract class Metadata(database: MongoDatabase, bucketName: String) extends Cru
   def updateMetadataElement(filter: Bson, key: String, value: Any): Observable[UpdateResult] =
     updateMetadataElements(filter, Map(key -> value))
 
-  object Files extends MongoDAO[Document](database, filesCollectionName)
+  object Files extends MongoDAO[Document](provider, filesCollectionName)
 
 }
