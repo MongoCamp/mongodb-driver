@@ -9,7 +9,7 @@ import org.mongodb.scala.model.Filters._
 
 object Filter extends Filter
 
-trait Filter  {
+trait Filter {
   val DefaultBson: Bson = BsonDocument(Document())
 
   def valueFilter(key: String, value: Any): Bson =
