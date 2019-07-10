@@ -42,22 +42,22 @@ object RelationDemoDatabase {
   case class Friend(id: Long, name: String, userId: Long)
 
   // #user_dao
-  object UserDAO extends MongoDAO[User](database, "user") {
+  object UserDAO extends MongoDAO[User](provider, "user") {
     lazy val loginRelation = OneToOneRelationship(LoginDAO, "id")
     lazy val friendsRelation = OneToManyRelationship(FriendDAO, "userId")
   }
   // #user_dao
 
-  object LoginDAO extends MongoDAO[Login](database, "login")
+  object LoginDAO extends MongoDAO[Login](provider, "login")
 
-  object FriendDAO extends MongoDAO[Friend](database, "friend")
+  object FriendDAO extends MongoDAO[Friend](provider, "friend")
 
   // #registry
   private val registry = fromProviders(classOf[Node], classOf[User], classOf[Login], classOf[Friend])
 
-  val database = DatabaseProvider("relation_test", registry)
+  val provider = DatabaseProvider("relation_test", registry)
 
-  object NodeDAO extends MongoDAO[Node](database, "nodes") {
+  object NodeDAO extends MongoDAO[Node](provider, "nodes") {
     lazy val parentRelation = OneToOneRelationship(this, "id")
     lazy val childrenRelation = OneToManyRelationship(this, "parentId")
   }

@@ -33,12 +33,12 @@ object RestaurantDemoDatabase {
     classOf[Restaurant],
     classOf[Address], classOf[Grade])
 
-  val database = DatabaseProvider.fromConfigPath("test.mongo", registry)
+  val provider = DatabaseProvider.fromPath("test.mongo", registry)
 
   // #registry
 
   // #dao
-  object RestaurantDAO extends MongoDAO[Restaurant](database, "restaurants")
+  object RestaurantDAO extends MongoDAO[Restaurant](provider, "another_database_name:restaurants")
 
   // #dao
 }
