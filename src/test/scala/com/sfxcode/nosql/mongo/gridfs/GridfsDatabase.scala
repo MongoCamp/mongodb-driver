@@ -14,7 +14,7 @@ object GridfsDatabase {
 
   val provider = DatabaseProvider("test")
 
-  object ImageFilesDAO extends GridFSDAO(provider, "another_database_name:images")
+  object ImageFilesDAO extends GridFSDAO(provider, "images")
 
 }
 
