@@ -11,15 +11,15 @@ import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 import scala.collection.JavaConverters._
 
 case class MongoConfig(
-                        database: String,
-                        host: String = DefaultHost,
-                        port: Int = DefaultPort,
-                        applicationName: String = DefaultApplicationName,
-                        userName: Option[String] = None,
-                        password: Option[String] = None,
-                        authDatabase: String = DefaultAuthenticationDatabaseName,
-                        poolOptions: MongoPoolOptions = MongoPoolOptions(),
-                        customClientSettings: Option[MongoClientSettings] = None) {
+  database: String,
+  host: String = DefaultHost,
+  port: Int = DefaultPort,
+  applicationName: String = DefaultApplicationName,
+  userName: Option[String] = None,
+  password: Option[String] = None,
+  authDatabase: String = DefaultAuthenticationDatabaseName,
+  poolOptions: MongoPoolOptions = MongoPoolOptions(),
+  customClientSettings: Option[MongoClientSettings] = None) {
 
   val clientSettings: MongoClientSettings = {
     if (customClientSettings.isDefined) {
