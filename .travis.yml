@@ -4,7 +4,6 @@ language: scala
 services: mongodb
 
 scala:
-   - 2.11.12
    - 2.12.8
 
 branches:
