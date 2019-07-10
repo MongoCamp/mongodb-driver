@@ -12,9 +12,9 @@ object GridfsDatabase {
 
   case class ImageMetadata(name: String, group: String = "logos", version: Int = 1, indexSet: Set[Int] = Set(1, 2, 3))
 
-  val database = DatabaseProvider("test")
+  val provider = DatabaseProvider("test")
 
-  object ImageFilesDAO extends GridFSDAO(database, "images")
+  object ImageFilesDAO extends GridFSDAO(provider, "another_database_name:images")
 
 }
 
