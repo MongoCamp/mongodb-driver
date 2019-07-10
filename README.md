@@ -20,7 +20,7 @@ Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
 
 ## Version
 
-Scala Version is 2.12.x / 2.11.x.
+Scala Version is 2.12.x.
 
 ## Travis
 
@@ -73,9 +73,9 @@ object RestaurantDatabase {
 
   private val registry = fromProviders(classOf[Restaurant], classOf[Address], classOf[Grade])
 
-  val database = DatabaseProvider("test", registry)
+  val provider = DatabaseProvider("test", registry)
 
-  object RestaurantDAO extends MongoDAO[Restaurant](database, "restaurants")
+  object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
 
 }
 

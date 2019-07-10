@@ -2,6 +2,13 @@
 
 ## Versions
 
+### 1.6.5
+* MongoConfig added (also for config values in application.conf)
+* MongoPoolOptions added
+* Codecs prepared for Scala 2.13
+* Additional index functions added
+* Drop Scala 2.11 support
+* Docs updated
 
 ### 1.6.2
 * mongo-scala-driver 2.6.0
