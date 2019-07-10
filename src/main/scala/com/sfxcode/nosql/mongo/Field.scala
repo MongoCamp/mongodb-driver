@@ -5,7 +5,9 @@ import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.BsonField
 
-object Field {
+object Field extends Field
+
+trait Field {
 
   def firstField(fieldName: String): BsonField =
     first(fieldName, "$" + fieldName)

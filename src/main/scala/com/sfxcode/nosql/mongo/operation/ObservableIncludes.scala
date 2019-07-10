@@ -14,7 +14,7 @@ trait ObservableIncludes {
   val DefaultMaxWait = 10
 
   implicit class GenericObservable[C](val observable: Observable[C]) extends ImplicitObservable[C] {
-    override val debugString: C => String = (doc) => doc.toString
+    override val debugString: C => String = doc => doc.toString
 
     def resultList(maxWait: Int = DefaultMaxWait): List[C] =
       Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList
