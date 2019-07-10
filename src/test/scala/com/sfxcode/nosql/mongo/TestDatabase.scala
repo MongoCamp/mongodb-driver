@@ -18,15 +18,13 @@ object TestDatabase extends ObservableImplicits {
 
   private val lineRegistry = fromProviders(classOf[Line], classOf[Position])
 
-  val database = DatabaseProvider("simple_mongo_test", fromRegistries(bookRegistry, personRegistry, lineRegistry))
+  val provider = DatabaseProvider("simple_mongo_test", fromRegistries(bookRegistry, personRegistry, lineRegistry))
 
-  object BookDAO extends MongoDAO[Book](database, "books")
+  object BookDAO extends MongoDAO[Book](provider, "books")
 
-  class BookDocumentDAO extends MongoDAO[Document](database, "books")
+  object LineDAO extends MongoDAO[Line](provider, "lines") with CrudObserver[Line]
 
-  object LineDAO extends MongoDAO[Line](database, "lines") with CrudObserver[Line]
-
-  object PersonDAO extends MongoDAO[Person](database, "person")
+  object PersonDAO extends MongoDAO[Person](provider, "person")
 
   val dropResult: Completed = PersonDAO.drop()
 

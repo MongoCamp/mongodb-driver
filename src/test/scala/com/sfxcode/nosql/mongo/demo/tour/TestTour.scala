@@ -38,7 +38,7 @@ object TestTour extends App {
 
   println(book.equals(scalaBook))
 
-  val bookJson = new BookDocumentDAO().find(projection = Map("title" -> 1)).headResult().toJson()
+  val bookJson = provider.dao("books").find(projection = Map("title" -> 1)).headResult().toJson()
 
   println(bookJson)
 
