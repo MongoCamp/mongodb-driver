@@ -5,8 +5,8 @@ import org.bson.codecs.configuration.{ CodecProvider, CodecRegistry }
 
 case class CustomCodecProvider() extends CodecProvider {
 
-  val BigIntClass = classOf[BigInt]
-  val BigDecimalClass = classOf[BigDecimal]
+  val BigIntClass: Class[BigInt] = classOf[BigInt]
+  val BigDecimalClass: Class[BigDecimal] = classOf[BigDecimal]
 
   // scalastyle:off null
   @SuppressWarnings(Array("unchecked"))

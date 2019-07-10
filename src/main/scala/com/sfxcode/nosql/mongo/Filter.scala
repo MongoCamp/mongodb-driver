@@ -2,13 +2,14 @@ package com.sfxcode.nosql.mongo
 
 import java.util.Date
 
-import com.typesafe.scalalogging.LazyLogging
 import org.bson.conversions.Bson
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Filters._
 
-object Filter extends LazyLogging {
+object Filter extends Filter
+
+trait Filter  {
   val DefaultBson: Bson = BsonDocument(Document())
 
   def valueFilter(key: String, value: Any): Bson =
@@ -22,7 +23,7 @@ object Filter extends LazyLogging {
       case _ => DefaultBson
     }
 
-  def nullFilter(fieldName: String): Bson = equal(fieldName, null)
+  def nullFilter(fieldName: String): Bson = equal(fieldName, value = null)
 
   def notNullFilter(fieldName: String): Bson = not(nullFilter(fieldName))
 
