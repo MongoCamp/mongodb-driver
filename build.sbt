@@ -6,8 +6,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-// crossScalaVersions := Seq("2.12.8", "2.13.0")
-crossScalaVersions := Seq("2.12.8")
+crossScalaVersions := Seq("2.13.0", "2.12.9")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -28,7 +27,6 @@ lazy val docs = (project in file("docs"))
     name := "simple mongo docs",
     publish / skip := true,
     ghpagesNoJekyll := true,
-    paradoxExpectedNumberOfRoots := 1,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
     Compile / paradoxMaterialTheme ~= {
       _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
@@ -43,7 +41,7 @@ resolvers +=
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.6.0" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.7.0" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
@@ -53,9 +51,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7" % Test
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0" % Test
 
-// libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0-17-ge348ba1-SNAPSHOT"
-//libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.7.0"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.4"
 
