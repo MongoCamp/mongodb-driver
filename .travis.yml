@@ -4,7 +4,8 @@ language: scala
 services: mongodb
 
 scala:
-   - 2.12.8
+  - 2.12.9
+  - 2.13.0
 
 branches:
   only:
@@ -15,7 +16,6 @@ notifications:
       - tom@sfxcode.com
 jdk:
   - openjdk11
-  - oraclejdk8
 
 addons:
   apt:
