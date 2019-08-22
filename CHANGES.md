@@ -2,6 +2,11 @@
 
 ## Versions
 
+### 1.6.6
+* Scala 2.13
+* mongo-scala-driver 2.7.0
+* MongoDB Driver Async 3.11.0
+
 ### 1.6.5
 * MongoConfig added (also for config values in application.conf)
 * MongoPoolOptions added
