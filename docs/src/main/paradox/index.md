@@ -19,7 +19,7 @@ Features:
 
 ## Dependency Setup
 
-Support Scala 2.11 and Scala 2.12.
+Support Scala 2.12 and Scala 2.13.
 
 @@dependency[sbt,Maven,Gradle] {
   group="com.sfxcode.nosql"
