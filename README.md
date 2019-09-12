@@ -4,7 +4,7 @@ A library for easy usage of the mongo-scala-driver.
 
 ## MongoDB Support
 
-Support MongoDB 2.6 to 4.0.
+Support MongoDB 2.6 to 4.2.
 
 ## Features
 
@@ -20,7 +20,7 @@ Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
 
 ## Version
 
-Scala Version is 2.12.x.
+Scala Version is 2.13.x / 2.12.x.
 
 ## Travis
 
