@@ -133,7 +133,8 @@ Use the mongodb functions in your app ...
 
 Write some spec tests ...
 
-````scala
+```scala
+
 import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
 import org.specs2.mutable.Specification
 
@@ -151,7 +152,14 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
   }
 
 }
+
 ```
+## Supporters
+
+JetBrains is supporting this open source project with:
+
+[![Intellij IDEA](http://www.jetbrains.com/img/logos/logo_intellij_idea.png)](http://www.jetbrains.com/idea/)
+
 
 
 
