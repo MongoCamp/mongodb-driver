@@ -5,6 +5,7 @@ import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 
 import org.mongodb.scala.Document
+import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.bson._
 
 import scala.collection.JavaConverters._
@@ -64,9 +65,9 @@ object BsonConverter {
           })
         BsonDocument(doc)
       case it: Iterable[Any] =>
-        BsonArray(it.map(v => toBson(v)))
+        fromIterable(it.map(v => toBson(v)))
       case list: java.util.List[_] =>
-        BsonArray(list.asScala.map(v => toBson(v)))
+        fromIterable(list.asScala.map(v => toBson(v)))
       case v: AnyRef => converterPlugin.objectToBson(v)
       case _ =>
         BsonNull()
