@@ -2,6 +2,9 @@
 
 ## Versions
 
+### 1.6.7
+* Typesave Config 1.4.0
+
 ### 1.6.6
 * Scala 2.13
 * mongo-scala-driver 2.7.0
