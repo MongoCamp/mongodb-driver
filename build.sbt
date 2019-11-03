@@ -39,11 +39,11 @@ resolvers +=
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.7.1" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.0" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.3" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.5" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7" % Test
 
