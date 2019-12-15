@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.7.0
+* mongo-scala-driver 2.8.0
+* MongoDB Driver Async 3.12.0
+* 
 ### 1.6.7
 * Typesave Config 1.4.0
 
