@@ -39,7 +39,7 @@ resolvers +=
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.1" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.8.3" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
