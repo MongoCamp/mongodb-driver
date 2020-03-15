@@ -3,9 +3,11 @@
 ## Versions
 
 ### 1.7.1
+* [mongo-scala-driver 2.9.0](https://mongodb.github.io/mongo-scala-driver/2.9/changelog/)
+
 
 ### 1.7.0
-* mongo-scala-driver 2.8.0
+* [mongo-scala-driver 2.8.0](https://mongodb.github.io/mongo-scala-driver/2.8/changelog/)
 * MongoDB Driver Async 3.12.0
 * 
 ### 1.6.7
