@@ -1,6 +1,7 @@
 # Changes #
 
 ## Versions
+* mongo-scala-driver 4.0.2
 
 ### 1.7.1
 * [mongo-scala-driver 2.9.0](https://mongodb.github.io/mongo-scala-driver/2.9/changelog/)

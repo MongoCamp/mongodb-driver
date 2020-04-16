@@ -8,13 +8,13 @@
 
 ```scala
 
-def insertOne(value: A): Observable[Completed]
+def insertOne(value: A): Observable[Void]
 
-def insertOne(value: A), options: InsertOneOptions: Observable[Completed]
+def insertOne(value: A), options: InsertOneOptions: Observable[Void]
 
-def insertMany(values: Seq[A]): Observable[Completed]
+def insertMany(values: Seq[A]): Observable[Void]
 
-def insertMany(values: Seq[A], options: InsertManyOptions): Observable[Completed]
+def insertMany(values: Seq[A], options: InsertManyOptions): Observable[Void]
 
 ```
 

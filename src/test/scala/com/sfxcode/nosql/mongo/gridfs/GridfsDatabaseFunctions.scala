@@ -4,7 +4,7 @@ import better.files.File
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import org.bson.types.ObjectId
-import org.mongodb.scala.Completed
+import org.mongodb.scala.Void
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
 import org.mongodb.scala.result.UpdateResult
@@ -14,13 +14,13 @@ trait GridfsDatabaseFunctions {
   def createIndexOnImages(key: String): String =
     ImageFilesDAO.createMetadataIndex(key)
 
-  def dropIndexOnImages(key: String): Completed =
+  def dropIndexOnImages(key: String): Void =
     ImageFilesDAO.dropIndexForName(key)
 
-  def deleteImage(id: ObjectId): Completed =
+  def deleteImage(id: ObjectId): Void =
     ImageFilesDAO.deleteOne(id)
 
-  def dropImages: Completed = ImageFilesDAO.drop()
+  def dropImages: Void = ImageFilesDAO.drop()
 
   def imagesCount: Long = ImageFilesDAO.count()
 

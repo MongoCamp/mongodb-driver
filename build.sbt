@@ -39,7 +39,7 @@ resolvers +=
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.9.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.9.3" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
@@ -49,7 +49,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7" % Test
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.9.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 

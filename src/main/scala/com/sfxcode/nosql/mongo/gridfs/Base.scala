@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.GridFSBucket
 import org.mongodb.scala.gridfs.helpers.AsynchronousChannelHelper.channelToOutputStream
-import org.mongodb.scala.{ Completed, Observable, ReadConcern, ReadPreference, WriteConcern }
+import org.mongodb.scala.{ Observable, ReadConcern, ReadPreference, WriteConcern }
 
 abstract class Base extends LazyLogging {
 
@@ -30,7 +30,7 @@ abstract class Base extends LazyLogging {
     gridfsBucket.downloadToStream(oid, channelToOutputStream(streamToDownloadTo))
   }
 
-  def drop(): Observable[Completed] = gridfsBucket.drop()
+  def drop(): Observable[Void] = gridfsBucket.drop()
 
   def bucketName: String = gridfsBucket.bucketName
 
@@ -41,7 +41,5 @@ abstract class Base extends LazyLogging {
   def readPreference: ReadPreference = gridfsBucket.readPreference
 
   def readConcern: ReadConcern = gridfsBucket.readConcern
-
-  def disableMD5: Boolean = gridfsBucket.disableMD5
 
 }

@@ -2,10 +2,10 @@ package com.sfxcode.nosql.mongo.database
 
 import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
+import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.bson.codecs.configuration.CodecRegistry
+import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala._
-import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 
 import scala.collection.mutable
 
@@ -31,7 +31,7 @@ class DatabaseProvider(config: MongoConfig, registry: CodecRegistry) extends Ser
     cachedClient = None
   }
 
-  def dropDatabase(databaseName: String): SingleObservable[Completed] = database(databaseName).drop()
+  def dropDatabase(databaseName: String): SingleObservable[Void] = database(databaseName).drop()
 
   def database(databaseName: String = config.database): MongoDatabase = {
     if (!cachedDatabaseMap.contains(databaseName)) {

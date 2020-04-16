@@ -51,7 +51,7 @@ Simply call Raw on your DAO Object.
 Drop Collection.
 
 ```scala
-def drop(): Observable[Completed]
+def drop(): Observable[Void]
 ```
 
 ### Count
@@ -71,9 +71,9 @@ def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObserv
 // Simple Index creation
 def createIndexForField(field: String, sortAscending: Boolean = true): SingleObservable[String]
 
-def dropIndex(keys: Bson): SingleObservable[Completed]
+def dropIndex(keys: Bson): SingleObservable[Void]
 
 // Simple Index delete
-def dropIndexForName(name: String): SingleObservable[Completed]
+def dropIndexForName(name: String): SingleObservable[Void]
 
 ```

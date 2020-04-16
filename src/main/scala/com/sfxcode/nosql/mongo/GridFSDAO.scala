@@ -4,13 +4,13 @@ import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.gridfs.Metadata
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSFile }
+import org.mongodb.scala.gridfs.{GridFSBucket, GridFSFile}
 import org.mongodb.scala.model.CountOptions
-import org.mongodb.scala.{ Completed, Document, MongoDatabase, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern }
+import org.mongodb.scala.{Document, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern}
 
 abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends Metadata(provider, bucketName) {
 
-  var bucket = {
+  var bucket: GridFSBucket = {
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName = bucketName.substring(0, bucketName.indexOf(DatabaseProvider.CollectionSeparator))
       val newBucketName = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
@@ -28,13 +28,13 @@ abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends
   def createMetadataIndex(key: String, sortAscending: Boolean = true): SingleObservable[String] =
     Files.createIndexForField(createMetadataKey(key), sortAscending)
 
-  def dropIndexForName(name: String): SingleObservable[Completed] =
+  def dropIndexForName(name: String): SingleObservable[Void] =
     Files.dropIndexForName(name)
 
-  def renameFile(id: ObjectId, newFilename: String): Observable[Completed] =
+  def renameFile(id: ObjectId, newFilename: String): Observable[Void] =
     gridfsBucket.rename(id, newFilename)
 
-  def renameFile(file: GridFSFile, newFilename: String): Observable[Completed] =
+  def renameFile(file: GridFSFile, newFilename: String): Observable[Void] =
     gridfsBucket.rename(file.getId, newFilename)
 
   def withReadConcern(readConcern: ReadConcern): Unit =
@@ -48,8 +48,5 @@ abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends
 
   def withReadPreference(readPreference: ReadPreference): Unit =
     bucket = GridFSBucket(provider.database(), bucketName).withReadPreference(readPreference)
-
-  def withDisableMD5(disableMD5: Boolean): Unit =
-    bucket = GridFSBucket(provider.database(), bucketName).withDisableMD5(disableMD5)
 
 }

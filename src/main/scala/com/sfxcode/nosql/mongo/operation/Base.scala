@@ -5,7 +5,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Indexes.hashed
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions }
-import org.mongodb.scala.{ Completed, Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
+import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.reflect.ClassTag
 
@@ -16,7 +16,7 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
   def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] =
     coll.countDocuments(filter, options)
 
-  def drop(): Observable[Completed] = coll.drop()
+  def drop(): Observable[Void] = coll.drop()
 
   def createIndexForField(field: String, sortAscending: Boolean = true, options: IndexOptions = IndexOptions()): SingleObservable[String] =
     if (sortAscending) {
@@ -34,10 +34,10 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
   def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObservable[String] =
     coll.createIndex(key, options)
 
-  def dropIndexForName(name: String, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Completed] =
+  def dropIndexForName(name: String, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Void] =
     coll.dropIndex(name, options)
 
-  def dropIndex(keys: Bson, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Completed] = coll.dropIndex(keys, options)
+  def dropIndex(keys: Bson, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Void] = coll.dropIndex(keys, options)
 
   def createHashedIndex(
     fieldName: String,
