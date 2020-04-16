@@ -1,26 +1,26 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.{ Converter, _ }
+import com.sfxcode.nosql.mongo.{Converter, _}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model._
-import org.mongodb.scala.result.{ DeleteResult, UpdateResult }
-import org.mongodb.scala.{ Completed, Observable }
+import org.mongodb.scala.result.{DeleteResult, InsertManyResult, InsertOneResult, UpdateResult}
+import org.mongodb.scala.Observable
 
 import scala.reflect.ClassTag
 
 abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   // create
-  def insertOne(value: A): Observable[Completed] = coll.insertOne(value)
+  def insertOne(value: A): Observable[InsertOneResult] = coll.insertOne(value)
 
-  def insertOne(value: A, options: InsertOneOptions): Observable[Completed] =
+  def insertOne(value: A, options: InsertOneOptions): Observable[InsertOneResult] =
     coll.insertOne(value, options)
 
-  def insertMany(values: Seq[A]): Observable[Completed] =
+  def insertMany(values: Seq[A]): Observable[InsertManyResult] =
     coll.insertMany(values)
 
-  def insertMany(values: Seq[A], options: InsertManyOptions): Observable[Completed] =
+  def insertMany(values: Seq[A], options: InsertManyOptions): Observable[InsertManyResult] =
     coll.insertMany(values, options)
 
   // update

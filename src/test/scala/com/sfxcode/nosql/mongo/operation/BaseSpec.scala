@@ -3,7 +3,7 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.{ Author, Book }
 import TestDatabase._
-import org.mongodb.scala.Completed
+import org.mongodb.scala.Void
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
@@ -14,7 +14,7 @@ class BaseSpec extends Specification with BeforeAll {
   "Base Operations" should {
 
     "count collection size in" in {
-      var insertOneResult: Completed = BookDAO.insertOne(Book.scalaBook())
+      var insertOneResult: Void = BookDAO.insertOne(Book.scalaBook())
 
       var count: Long = BookDAO.count()
       count must be equalTo 1
@@ -50,7 +50,7 @@ class BaseSpec extends Specification with BeforeAll {
 
       PersonDAO.createIndexForField("name").headResult() must be equalTo "name_1"
 
-      val dropIndexResult: Completed = PersonDAO.dropIndexForName("name_1")
+      val dropIndexResult: Void = PersonDAO.dropIndexForName("name_1")
 
       dropIndexResult.toString() must not beEmpty
 
