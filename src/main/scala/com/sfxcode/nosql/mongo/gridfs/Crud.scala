@@ -3,15 +3,16 @@ package com.sfxcode.nosql.mongo.gridfs
 import java.io.InputStream
 
 import com.mongodb.client.gridfs.model.GridFSUploadOptions
+import com.mongodb.internal.async.client.gridfs.AsyncInputStream
 import com.sfxcode.nosql.mongo.Converter
 import org.bson.types.ObjectId
 import org.mongodb.scala.gridfs.AsyncInputStream
-import org.mongodb.scala.gridfs.helpers.AsyncStreamHelper.toAsyncInputStream
-import org.mongodb.scala.{ Completed, Document, Observable }
+import org.mongodb.scala.gridfs.AsyncStreamHelper.toAsyncInputStream
+import org.mongodb.scala.{Document, Observable}
 
 abstract class Crud extends Search {
 
-  def deleteOne(id: ObjectId): Observable[Completed] = gridfsBucket.delete(id)
+  def deleteOne(id: ObjectId): Observable[Void] = gridfsBucket.delete(id)
 
   def insertOne(
     fileName: String,
