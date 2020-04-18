@@ -1,8 +1,8 @@
 package com.sfxcode.nosql.mongo.gridfs
 
 import better.files.File
-import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll

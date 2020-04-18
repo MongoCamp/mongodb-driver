@@ -1,9 +1,9 @@
 package com.sfxcode.nosql.mongo.demo.tour
 
+import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
-import TestDatabase._
-import org.mongodb.scala.result.{InsertManyResult, InsertOneResult}
+import org.mongodb.scala.result.{ InsertManyResult, InsertOneResult }
 
 object QuickTour extends App {
 
@@ -15,7 +15,9 @@ object QuickTour extends App {
 
   printDebugValues("LineDAO.findAll", LineDAO.find())
 
-  val lines = (1 to 100) map { i: Int => Line(i * 10, "default", 1000 + i, Position(1, 3), Position(3, 7)) }
+  val lines = (1 to 100) map { i: Int =>
+    Line(i * 10, "default", 1000 + i, Position(1, 3), Position(3, 7))
+  }
 
   val insertManyResult: InsertManyResult = LineDAO.insertMany(lines)
 

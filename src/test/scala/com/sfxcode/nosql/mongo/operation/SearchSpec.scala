@@ -1,8 +1,8 @@
 package com.sfxcode.nosql.mongo.operation
 
+import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.mutable.{ Before, Specification }
 

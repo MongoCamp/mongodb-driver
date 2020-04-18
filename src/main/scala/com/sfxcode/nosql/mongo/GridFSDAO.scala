@@ -4,16 +4,16 @@ import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.gridfs.Metadata
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSBucket, GridFSFile}
+import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSFile }
 import org.mongodb.scala.model.CountOptions
-import org.mongodb.scala.{Document, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern}
+import org.mongodb.scala.{ Document, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern }
 
 abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends Metadata(provider, bucketName) {
 
   var bucket: GridFSBucket = {
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName = bucketName.substring(0, bucketName.indexOf(DatabaseProvider.CollectionSeparator))
-      val newBucketName = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
+      val newBucketName   = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
       GridFSBucket(provider.database(newDatabaseName), newBucketName)
     } else {
       GridFSBucket(provider.database(), bucketName)

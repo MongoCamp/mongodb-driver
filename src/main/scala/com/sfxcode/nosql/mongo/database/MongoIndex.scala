@@ -4,17 +4,21 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.mongodb.scala.ListIndexesObservable
 import org.mongodb.scala.model.IndexOptions
 
-case class MongoIndex(name: String, key: String, ascending: Int, version: Int, namespace: String, keys:Map[String, Any] = Map())
+case class MongoIndex(name: String,
+                      key: String,
+                      ascending: Int,
+                      version: Int,
+                      namespace: String,
+                      keys: Map[String, Any] = Map())
 
 object MongoIndex extends ObservableIncludes {
 
-  def indexOptionsWithName(name: Option[String]): IndexOptions = {
+  def indexOptionsWithName(name: Option[String]): IndexOptions =
     if (name.isDefined) {
       IndexOptions().name(name.get)
     } else {
       IndexOptions()
     }
-  }
 
   def hasIndexForFieldWithName(listIndexesObservable: ListIndexesObservable[Map[String, Any]],
                                fieldName: String,
