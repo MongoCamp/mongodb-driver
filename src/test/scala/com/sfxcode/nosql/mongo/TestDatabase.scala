@@ -4,6 +4,7 @@ import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
 import com.sfxcode.nosql.mongo.operation.CrudObserver
 import org.mongodb.scala._
+import org.mongodb.scala.result.InsertManyResult
 
 object TestDatabase extends ObservableImplicits {
 
@@ -30,7 +31,7 @@ object TestDatabase extends ObservableImplicits {
 
   val persons: List[Person] = Person.personList
 
-  val insertResult: Void = PersonDAO.insertMany(persons)
+  val insertResult: InsertManyResult = PersonDAO.insertMany(persons)
 
   def printDatabaseStatus(): Unit = {
     val count: Long = PersonDAO.count()
