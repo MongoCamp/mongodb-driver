@@ -2,7 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.model.Line
+import com.sfxcode.nosql.mongo.model.{ CodecTest, Line }
 import org.specs2.mutable.Specification
 
 class CrudSpec extends Specification {
@@ -43,6 +43,14 @@ class CrudSpec extends Specification {
       LineDAO.deleteOne(line).headResult()
       LineDAO.count().headResult() must be equalTo 0
 
+    }
+
+    "create Documents in" in {
+      CodecDao.drop().headResult()
+      CodecDao.insertOne(CodecTest()).headResult()
+      CodecDao.count().headResult() must be equalTo 1
+      val findOneResult = CodecDao.find("id", 1).result()
+      findOneResult must beSome[CodecTest]
     }
 
   }
