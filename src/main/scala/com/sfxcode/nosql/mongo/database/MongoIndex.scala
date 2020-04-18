@@ -4,12 +4,13 @@ import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.mongodb.scala.ListIndexesObservable
 import org.mongodb.scala.model.IndexOptions
 
-case class MongoIndex(name: String,
-                      key: String,
-                      ascending: Int,
-                      version: Int,
-                      namespace: String,
-                      keys: Map[String, Any] = Map())
+case class MongoIndex(
+  name: String,
+  key: String,
+  ascending: Int,
+  version: Int,
+  namespace: String,
+  keys: Map[String, Any] = Map())
 
 object MongoIndex extends ObservableIncludes {
 
@@ -20,13 +21,15 @@ object MongoIndex extends ObservableIncludes {
       IndexOptions()
     }
 
-  def hasIndexForFieldWithName(listIndexesObservable: ListIndexesObservable[Map[String, Any]],
-                               fieldName: String,
-                               maxWait: Int = DefaultMaxWait): Boolean =
+  def hasIndexForFieldWithName(
+    listIndexesObservable: ListIndexesObservable[Map[String, Any]],
+    fieldName: String,
+    maxWait: Int = DefaultMaxWait): Boolean =
     convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index => index.key == fieldName)
 
-  def convertIndexDocumentsToMongoIndexList(listIndexesObservable: ListIndexesObservable[Map[String, Any]],
-                                            maxWait: Int = DefaultMaxWait): List[MongoIndex] = {
+  def convertIndexDocumentsToMongoIndexList(
+    listIndexesObservable: ListIndexesObservable[Map[String, Any]],
+    maxWait: Int = DefaultMaxWait): List[MongoIndex] = {
     var result = List[MongoIndex]()
     try {
       result = listIndexesObservable
@@ -54,9 +57,7 @@ object MongoIndex extends ObservableIncludes {
               },
               indexOptions("v").toString.toInt,
               indexOptions("ns").toString,
-              indexOptions("key").asInstanceOf[Map[String, _]]
-          )
-        )
+              indexOptions("key").asInstanceOf[Map[String, _]]))
     }
     result
   }

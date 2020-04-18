@@ -17,7 +17,7 @@ class RelationDemoSpec extends Specification with Before {
 
       list.size must be equalTo 1
 
-      val user  = list.head
+      val user = list.head
       val login = user.login
 
       login must beSome[Login]
