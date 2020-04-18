@@ -1,8 +1,8 @@
 package com.sfxcode.nosql.mongo.operation
 
+import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.model.{Author, Book}
-import TestDatabase._
+import com.sfxcode.nosql.mongo.model.{ Author, Book }
 import org.mongodb.scala.result.InsertOneResult
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
@@ -40,24 +40,6 @@ class BaseSpec extends Specification with BeforeAll {
       val genderList = PersonDAO.distinctResult("gender", Map("gender" -> "male"))
 
       genderList must have size 1
-    }
-
-    "must create / drop indexes for key" in {
-
-      var createIndexResult: String = PersonDAO.createIndexForField("name")
-
-      createIndexResult must be equalTo "name_1"
-
-      PersonDAO.createIndexForField("name").headResult() must be equalTo "name_1"
-
-      val dropIndexResult: Void = PersonDAO.dropIndexForName("name_1")
-
-      createIndexResult = PersonDAO.createIndexForField("name")
-
-      createIndexResult must be equalTo "name_1"
-
-
-
     }
 
   }
