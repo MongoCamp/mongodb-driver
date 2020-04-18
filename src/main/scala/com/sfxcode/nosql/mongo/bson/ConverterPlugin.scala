@@ -13,14 +13,8 @@ abstract class AbstractConverterPlugin {
 
   def customClassList: List[Class[_]] = List()
 
-  def hasCustomClass(v: Any): Boolean = {
-    customClassList.foreach(c => {
-      if (c.isAssignableFrom(v.getClass)) {
-        return true
-      }
-    })
-    false
-  }
+  def hasCustomClass(v: Any): Boolean =
+    customClassList.exists(c => c.isAssignableFrom(v.getClass))
 
   def objectToBson(value: AnyRef): BsonValue = {
     val map: Map[String, Any] = ClassUtil.membersToMap(value)
