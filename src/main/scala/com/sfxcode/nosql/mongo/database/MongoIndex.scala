@@ -8,16 +8,18 @@ case class MongoIndex(name: String, key: String, ascending: Int, version: Int, n
 
 object MongoIndex extends ObservableIncludes {
 
-  def indexOptionsWithName(name: Option[String]) =
-    if (name.isDefined)
+  def indexOptionsWithName(name: Option[String]): IndexOptions = {
+    if (name.isDefined) {
       IndexOptions().name(name.get)
-    else
+    } else {
       IndexOptions()
+    }
+  }
 
   def hasIndexForFieldWithName(listIndexesObservable: ListIndexesObservable[Map[String, Any]],
                                fieldName: String,
                                maxWait: Int = DefaultMaxWait): Boolean =
-    convertIndexDocumentsToMongoIndexList(listIndexesObservable).exists(index => index.key == fieldName)
+    convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index => index.key == fieldName)
 
   def convertIndexDocumentsToMongoIndexList(listIndexesObservable: ListIndexesObservable[Map[String, Any]],
                                             maxWait: Int = DefaultMaxWait): List[MongoIndex] = {
