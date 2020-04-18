@@ -86,3 +86,7 @@ developers := List(
     url = url("https://github.com/sfxcode")
   )
 )
+
+coverageMinimum := 60
+
+coverageFailOnMinimum := true
