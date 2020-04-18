@@ -1,10 +1,13 @@
 package com.sfxcode.nosql.mongo.gridfs
 
+import java.io.FileOutputStream
+import java.nio.ByteBuffer
+
 import better.files.File
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import org.bson.types.ObjectId
-import org.mongodb.scala.Void
+import org.mongodb.scala.Observable
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
 import org.mongodb.scala.result.UpdateResult
@@ -26,12 +29,19 @@ trait GridfsDatabaseFunctions {
 
   def insertImage(path: String, metadata: AnyRef): ObjectId = {
     val file = File(path)
-    val stream = file.newInputStream
-    ImageFilesDAO.insertOne(file.name, stream, metadata)
+    val buffer = ByteBuffer.wrap(file.loadBytes)
+    ImageFilesDAO.upload(file.name, Observable(Seq(buffer)), metadata)
   }
 
-  def downloadImage(id: ObjectId, path: String): Long =
-    ImageFilesDAO.downloadToStream(id, File(path).path)
+  def downloadImage(id: ObjectId, path: String):Unit = {
+    val file = File(path).touch()
+
+    val result = ImageFilesDAO.download(id)
+
+    val fc = file.fileChannel.get
+    fc.write(result.asReadOnlyBuffer())
+    fc.close()
+  }
 
   def findImage(id: ObjectId): GridFSFile = ImageFilesDAO.findById(id)
 

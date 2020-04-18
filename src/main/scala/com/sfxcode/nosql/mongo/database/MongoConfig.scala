@@ -33,7 +33,6 @@ case class MongoConfig(
         .maxConnectionIdleTime(poolOptions.maxConnectionIdleTime, TimeUnit.SECONDS)
         .maxSize(poolOptions.maxSize)
         .minSize(poolOptions.minSize)
-        .maxWaitQueueSize(poolOptions.maxWaitQueueSize)
         .maintenanceInitialDelay(poolOptions.maintenanceInitialDelay, TimeUnit.SECONDS)
         .build()
 
@@ -107,7 +106,6 @@ object MongoConfig {
       poolOptionsConfig("maxConnectionIdleTime", DefaultPoolMaxConnectionIdleTime),
       poolOptionsConfig("maxSize", DefaultPoolMaxSize),
       poolOptionsConfig("minSize", DefaultPoolMinSize),
-      poolOptionsConfig("maxWaitQueueSize", DefaultPoolMaxWaitQueueSize),
       poolOptionsConfig("maintenanceInitialDelay", DefaultPoolMaintenanceInitialDelay))
 
     MongoConfig(database, host, port, applicationName, userName, password, authDatabase, poolOptions)

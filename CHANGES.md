@@ -2,6 +2,8 @@
 
 ## Versions
 * mongo-scala-driver 4.0.2
+* maxWaitQueueSize is removed since 4.0.0
+* 
 
 ### 1.7.1
 * [mongo-scala-driver 2.9.0](https://mongodb.github.io/mongo-scala-driver/2.9/changelog/)
