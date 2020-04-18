@@ -8,7 +8,7 @@ import org.mongodb.scala.model.Filters.equal
 
 abstract class Search extends Base {
 
-  def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document()): GridFSFindObservable =
+  def find(filter: Bson = Document(), sort: Bson = Document()): GridFSFindObservable =
     gridfsBucket.find(filter).sort(sort)
 
   def findById(oid: ObjectId): GridFSFindObservable = find(equal("_id", oid))
@@ -18,6 +18,5 @@ abstract class Search extends Base {
 
   def findByMetadataValue(key: String, value: Any): GridFSFindObservable =
     find(createMetadataKey(key), value)
-
 
 }

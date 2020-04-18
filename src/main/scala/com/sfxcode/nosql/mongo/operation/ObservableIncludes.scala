@@ -41,7 +41,9 @@ trait ObservableIncludes {
 
     def printResults(initial: String = ""): Unit = {
       if (initial.length > 0) print(initial)
-      results().foreach(res => println(debugString(res)))
+      results().foreach(res => {
+        println(debugString(res))
+      })
     }
 
     def printHeadResult(initial: String = ""): Unit =
