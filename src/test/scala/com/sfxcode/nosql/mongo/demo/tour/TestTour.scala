@@ -3,7 +3,7 @@ package com.sfxcode.nosql.mongo.demo.tour
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
 import TestDatabase._
-import org.mongodb.scala.Void
+import org.mongodb.scala.result.InsertOneResult
 
 object TestTour extends App {
 
@@ -14,7 +14,7 @@ object TestTour extends App {
 
   val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), List(2, 4, 10))
 
-  val completed: Void = BookDAO.insertOne(scalaBook)
+  val completed: InsertOneResult = BookDAO.insertOne(scalaBook)
 
   assert(BookDAO.count().headResult() == 1)
 

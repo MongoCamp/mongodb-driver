@@ -3,7 +3,6 @@ package com.sfxcode.nosql.mongo.demo.tour
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
 import TestDatabase._
-import org.mongodb.scala.Void
 import org.mongodb.scala.result.{InsertManyResult, InsertOneResult}
 
 object QuickTour extends App {
