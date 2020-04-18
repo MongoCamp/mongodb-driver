@@ -1,13 +1,9 @@
 package com.sfxcode.nosql.mongo.gridfs
 
-import java.io.FileOutputStream
-import java.nio.ByteBuffer
-
 import better.files.File
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
 import org.bson.types.ObjectId
-import org.mongodb.scala.Observable
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
 import org.mongodb.scala.result.UpdateResult
@@ -29,18 +25,12 @@ trait GridfsDatabaseFunctions {
 
   def insertImage(path: String, metadata: AnyRef): ObjectId = {
     val file = File(path)
-    val buffer = ByteBuffer.wrap(file.loadBytes)
-    ImageFilesDAO.upload(file.name, Observable(Seq(buffer)), metadata)
+    ImageFilesDAO.insertOne(file.name, file.newInputStream, metadata, bufferSize = 1024 * 4)
   }
 
-  def downloadImage(id: ObjectId, path: String):Unit = {
+  def downloadImage(id: ObjectId, path: String): Unit = {
     val file = File(path).touch()
-
-    val result = ImageFilesDAO.download(id)
-
-    val fc = file.fileChannel.get
-    fc.write(result.asReadOnlyBuffer())
-    fc.close()
+    ImageFilesDAO.downloadToStream(id, file.newOutputStream)
   }
 
   def findImage(id: ObjectId): GridFSFile = ImageFilesDAO.findById(id)
@@ -49,11 +39,9 @@ trait GridfsDatabaseFunctions {
 
   def findImages(key: String, value: String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
 
-  def updateMetadata(oid: ObjectId, value: Any): UpdateResult = {
+  def updateMetadata(oid: ObjectId, value: Any): UpdateResult =
     ImageFilesDAO.updateMetadata(oid, value).headResult()
-  }
 
-  def updateMetadataElements(filter: Bson, elements: Map[String, Any]): UpdateResult = {
+  def updateMetadataElements(filter: Bson, elements: Map[String, Any]): UpdateResult =
     ImageFilesDAO.updateMetadataElements(filter, elements).headResult()
-  }
 }

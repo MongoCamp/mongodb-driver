@@ -1,9 +1,13 @@
 # Changes #
 
 ## Versions
+
+### 1.8.0
+
 * mongo-scala-driver 4.0.2
-* maxWaitQueueSize is removed since 4.0.0
-* 
+* maxWaitQueueSize is removed (since mongo-scala-driver 4.0.0)
+* GridFS Refactoring (Download / Upload use now reactive streams)
+* More Index Functions added
 
 ### 1.7.1
 * [mongo-scala-driver 2.9.0](https://mongodb.github.io/mongo-scala-driver/2.9/changelog/)
