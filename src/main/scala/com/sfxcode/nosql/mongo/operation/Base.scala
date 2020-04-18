@@ -40,10 +40,10 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).unique(true))
 
   def createHashedIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
-    createIndex(Indexes.hashed(fieldName), IndexOptions())
+    createIndex(Indexes.hashed(fieldName), options)
 
   def createTextIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
-    createIndex(Indexes.text(fieldName), IndexOptions())
+    createIndex(Indexes.text(fieldName), options)
 
   def createExpiringIndexForField(fieldName: String,
                                   duration: Duration,
@@ -66,6 +66,6 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   def indexList(): List[MongoIndex] = MongoIndex.convertIndexDocumentsToMongoIndexList(listIndexes)
 
-  def hasIndexForField(fieldName: String) = MongoIndex.hasIndexForFieldWithName(listIndexes, fieldName)
+  def hasIndexForField(fieldName: String): Boolean = MongoIndex.hasIndexForFieldWithName(listIndexes, fieldName)
 
 }
