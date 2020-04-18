@@ -11,8 +11,8 @@ import org.mongodb.scala.bson.codecs.Macros._
 // #import
 
 /**
-  * import mongodb restaurants sample data
-  */
+ * import mongodb restaurants sample data
+ */
 object RestaurantDemoDatabase {
 
   // #case_classes
@@ -20,13 +20,14 @@ object RestaurantDemoDatabase {
 
   case class Grade(date: Date, grade: String, score: Int)
 
-  case class Restaurant(restaurant_id: String,
-                        name: String,
-                        borough: String,
-                        cuisine: String,
-                        grades: List[Grade],
-                        address: Address,
-                        _id: ObjectId = new ObjectId())
+  case class Restaurant(
+    restaurant_id: String,
+    name: String,
+    borough: String,
+    cuisine: String,
+    grades: List[Grade],
+    address: Address,
+    _id: ObjectId = new ObjectId())
 
   // #case_classes
 

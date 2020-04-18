@@ -3,14 +3,15 @@ package com.sfxcode.nosql.mongo.model
 import org.mongodb.scala.bson.ObjectId
 
 /**
-  * Created by tom on 20.01.17.
-  */
-case class Line(var id: Long,
-                var name: String,
-                index: Int,
-                bottomLeft: Position,
-                bottomRight: Position,
-                _id: ObjectId = new ObjectId())
+ * Created by tom on 20.01.17.
+ */
+case class Line(
+  var id: Long,
+  var name: String,
+  index: Int,
+  bottomLeft: Position,
+  bottomRight: Position,
+  _id: ObjectId = new ObjectId())
 
 object Line {
   def line(id: Long = 1) = Line(id, "default", 3, Position(1, 3), Position(3, 7))

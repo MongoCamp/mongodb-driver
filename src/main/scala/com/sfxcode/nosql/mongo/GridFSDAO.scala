@@ -13,7 +13,7 @@ abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends
   var bucket: GridFSBucket = {
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName = bucketName.substring(0, bucketName.indexOf(DatabaseProvider.CollectionSeparator))
-      val newBucketName   = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
+      val newBucketName = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
       GridFSBucket(provider.database(newDatabaseName), newBucketName)
     } else {
       GridFSBucket(provider.database(), bucketName)

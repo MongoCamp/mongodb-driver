@@ -8,10 +8,10 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.{ Observable, Observer, Subscription }
 
 case class GridFSStreamObservable(inputStream: InputStream, bufferSize: Int = 1024 * 64)
-    extends Observable[ByteBuffer]
-    with LazyLogging {
+  extends Observable[ByteBuffer]
+  with LazyLogging {
   val isPublishing = new AtomicBoolean(false)
-  val buffer       = new Array[Byte](bufferSize)
+  val buffer = new Array[Byte](bufferSize)
 
   override def subscribe(subscriber: Observer[_ >: ByteBuffer]): Unit = {
     isPublishing.set(true)

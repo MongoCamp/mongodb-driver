@@ -11,6 +11,7 @@ Support MongoDB 2.6 to 4.2.
 * Easy Database setup
 * DAO Pattern for collection
 * DAO Pattern for GridFS
+* GridFS: Upload from InputStream, Download to OutputStream
 * Implicit conversions for Document, Bson, ObjectID ...
 * Example Apps
 
@@ -40,9 +41,8 @@ Scala Version is 2.13.x / 2.12.x.
 Add following lines to your build.sbt
 
 ```
-resolvers += "sxfcode Bintray Repo" at "https://dl.bintray.com/sfxcode/maven/"
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.6.5"
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.8.0"
 
 ```
 

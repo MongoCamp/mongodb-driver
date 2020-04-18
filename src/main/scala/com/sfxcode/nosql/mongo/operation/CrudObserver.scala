@@ -19,7 +19,7 @@ trait CrudObserver[A] extends Crud[A] {
     replaceOne(value).subscribe(observer)
 
   def deleteValue(value: A, observer: Observer[DeleteResult] = new SimpleObserver[DeleteResult]): Unit = {
-    val oid    = Converter.toDocument(value).get("_id").get
+    val oid = Converter.toDocument(value).get("_id").get
     val filter = equal("_id", oid)
     deleteOne(filter).subscribe(observer)
   }
