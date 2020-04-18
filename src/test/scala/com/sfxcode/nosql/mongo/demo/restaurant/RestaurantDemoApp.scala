@@ -14,7 +14,7 @@ object RestaurantDemoApp extends App with RestaurantDemoDatabaseFunctions {
 
   // find restaurants by filter
   private val filter = Map("address.zipcode" -> "10075", "cuisine" -> "Italian")
-  val restaurants    = findAllRestaurants(filter)
+  val restaurants = findAllRestaurants(filter)
 
   restaurants.sortBy(r => r.name).foreach(r => println(r.name))
 

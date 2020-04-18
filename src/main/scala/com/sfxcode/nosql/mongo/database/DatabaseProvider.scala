@@ -60,7 +60,7 @@ class DatabaseProvider(config: MongoConfig, registry: CodecRegistry) extends Ser
     database(name).listCollectionNames()
 
   case class DocumentDao(provider: DatabaseProvider, collectionName: String)
-      extends MongoDAO[Document](this, collectionName)
+    extends MongoDAO[Document](this, collectionName)
 
 }
 
@@ -75,8 +75,9 @@ object DatabaseProvider {
   def apply(config: MongoConfig, registry: CodecRegistry = codecRegistry): DatabaseProvider =
     new DatabaseProvider(config, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
-  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix,
-               registry: CodecRegistry = codecRegistry): DatabaseProvider =
+  def fromPath(
+    configPath: String = MongoConfig.DefaultConfigPathPrefix,
+    registry: CodecRegistry = codecRegistry): DatabaseProvider =
     apply(MongoConfig.fromPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
 }

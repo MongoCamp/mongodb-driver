@@ -17,7 +17,7 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
 
   def updateMetadata(oid: ObjectId, value: Any): Observable[UpdateResult] = {
     val doc: BsonValue = BsonConverter.toBson(value)
-    val result         = Files.updateOne(equal("_id", oid), set("metadata", doc))
+    val result = Files.updateOne(equal("_id", oid), set("metadata", doc))
     result
   }
 

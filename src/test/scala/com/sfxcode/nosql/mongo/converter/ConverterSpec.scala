@@ -6,8 +6,8 @@ import org.specs2.mutable.Specification
 import scala.reflect.ClassTag
 
 /**
-  * Created by tom on 22.01.17.
-  */
+ * Created by tom on 22.01.17.
+ */
 class ConverterSpec extends Specification {
 
   sequential

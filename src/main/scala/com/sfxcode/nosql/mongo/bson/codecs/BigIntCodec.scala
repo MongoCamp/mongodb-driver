@@ -4,10 +4,10 @@ import org.bson.codecs.{ Codec, DecoderContext, EncoderContext }
 import org.bson.{ BsonReader, BsonWriter }
 
 /**
-  * A Codec for BigInt instances.
-  *
-  * @since 3.0
-  */
+ * A Codec for BigInt instances.
+ *
+ * @since 3.0
+ */
 class BigIntCodec extends Codec[BigInt] {
 
   override def decode(reader: BsonReader, decoderContext: DecoderContext): BigInt =
