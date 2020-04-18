@@ -16,13 +16,9 @@ class AggregationSpec extends Specification with Before {
   sequential
 
   // #agg_stages
-  val filterStage: Bson = filter(and(
-    equal("gender", "female"),
-    notNullFilter("balance")))
+  val filterStage: Bson = filter(and(equal("gender", "female"), notNullFilter("balance")))
 
-  val groupStage: Bson = group(
-    Map("age" -> "$age"),
-    sumField("balance"), firstField("age"))
+  val groupStage: Bson = group(Map("age" -> "$age"), sumField("balance"), firstField("age"))
 
   val sortStage: Bson = sort(sortByKey("age"))
   // #agg_stages

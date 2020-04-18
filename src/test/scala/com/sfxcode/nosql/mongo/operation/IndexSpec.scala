@@ -18,10 +18,10 @@ class IndexSpec extends Specification with BeforeAll {
       list must haveSize(1)
 
       val mongoIndex: MongoIndex = list.head
-      mongoIndex.name must be equalTo  "_id_"
-      mongoIndex.key must be equalTo  "_id"
-      mongoIndex.ascending must be equalTo  1
-      mongoIndex.namespace must be equalTo  "simple_mongo_test.person"
+      mongoIndex.name must be equalTo "_id_"
+      mongoIndex.key must be equalTo "_id"
+      mongoIndex.ascending must be equalTo 1
+      mongoIndex.namespace must be equalTo "simple_mongo_test.person"
       mongoIndex.version must be equalTo 2
       mongoIndex.keys must haveSize(1)
       mongoIndex.keys.head._1 must be equalTo "_id"
@@ -64,7 +64,8 @@ class IndexSpec extends Specification with BeforeAll {
 
     "create unique index for key" in {
 
-      var createIndexResult: String = PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex"))
+      var createIndexResult: String =
+        PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex"))
 
       createIndexResult must be equalTo "myUniqueIndex"
 
@@ -87,7 +88,6 @@ class IndexSpec extends Specification with BeforeAll {
 
       PersonDAO.indexList must haveSize(1)
     }
-
 
   }
 

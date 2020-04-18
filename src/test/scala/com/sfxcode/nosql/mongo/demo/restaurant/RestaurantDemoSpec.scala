@@ -1,9 +1,9 @@
 package com.sfxcode.nosql.mongo.demo.restaurant
 
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
-import com.sfxcode.nosql.mongo._
 
 class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFunctions with BeforeAll {
 
@@ -20,7 +20,7 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
 
   override def beforeAll(): Unit = {
     // needed if no restaurants imported
-    val count = restaurantsSize
+    val count                      = restaurantsSize
     val testRestaurant: Restaurant = RestaurantReader.testData
 
     if (count == 0) {
