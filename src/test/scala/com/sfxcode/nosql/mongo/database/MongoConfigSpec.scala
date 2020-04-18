@@ -22,8 +22,7 @@ class MongoConfigSpec extends Specification {
 
     "be created with Properties " in {
 
-      val config = MongoConfig("config_test", host = "localhost",
-        applicationName = "Awesome Application Name")
+      val config = MongoConfig("config_test", host = "localhost", applicationName = "Awesome Application Name")
 
       config.database must beEqualTo("config_test")
       val shortDescription =

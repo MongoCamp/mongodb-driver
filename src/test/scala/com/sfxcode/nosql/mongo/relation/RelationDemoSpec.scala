@@ -1,8 +1,8 @@
 package com.sfxcode.nosql.mongo.relation
 
-import com.sfxcode.nosql.mongo.relation.RelationDemoDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
+import com.sfxcode.nosql.mongo.relation.RelationDemoDatabase._
 import org.specs2.mutable.{ Before, Specification }
 
 class RelationDemoSpec extends Specification with Before {
@@ -17,7 +17,7 @@ class RelationDemoSpec extends Specification with Before {
 
       list.size must be equalTo 1
 
-      val user = list.head
+      val user  = list.head
       val login = user.login
 
       login must beSome[Login]

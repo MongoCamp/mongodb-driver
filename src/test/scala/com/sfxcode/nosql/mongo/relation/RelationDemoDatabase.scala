@@ -11,9 +11,8 @@ object RelationDemoDatabase {
 
   case class Node(id: Long, parentId: Long, _id: ObjectId = new ObjectId()) extends Relations {
 
-    def parent: Option[Node] = {
+    def parent: Option[Node] =
       relatedRecordForOneToOne(NodeDAO.parentRelation, parentId)
-    }
 
     def setParent(node: Node): UpdateResult = {
       NodeDAO.parentRelation.removeFromCache(parentId)
@@ -22,9 +21,8 @@ object RelationDemoDatabase {
       NodeDAO.replaceOne(newNode).headResult()
     }
 
-    def children: List[Node] = {
+    def children: List[Node] =
       relatedRecordForOneToMany(NodeDAO.childrenRelation, id)
-    }
   }
 
   // #user_class
@@ -43,7 +41,7 @@ object RelationDemoDatabase {
 
   // #user_dao
   object UserDAO extends MongoDAO[User](provider, "user") {
-    lazy val loginRelation = OneToOneRelationship(LoginDAO, "id")
+    lazy val loginRelation   = OneToOneRelationship(LoginDAO, "id")
     lazy val friendsRelation = OneToManyRelationship(FriendDAO, "userId")
   }
   // #user_dao
@@ -58,7 +56,7 @@ object RelationDemoDatabase {
   val provider = DatabaseProvider("relation_test", registry)
 
   object NodeDAO extends MongoDAO[Node](provider, "nodes") {
-    lazy val parentRelation = OneToOneRelationship(this, "id")
+    lazy val parentRelation   = OneToOneRelationship(this, "id")
     lazy val childrenRelation = OneToManyRelationship(this, "parentId")
   }
 

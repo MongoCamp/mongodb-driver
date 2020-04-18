@@ -6,7 +6,14 @@ import org.bson.types.ObjectId
 
 case class Author(var name: String)
 
-case class Book(id: Option[Int], title: String, pages: BigInt, author: Author, indexes: List[Long] = List(1, 2, 3), released: Boolean = true, releaseDate: Date = new Date(), _id: ObjectId = new ObjectId())
+case class Book(id: Option[Int],
+                title: String,
+                pages: BigInt,
+                author: Author,
+                indexes: List[Long] = List(1, 2, 3),
+                released: Boolean = true,
+                releaseDate: Date = new Date(),
+                _id: ObjectId = new ObjectId())
 
 object Book {
 

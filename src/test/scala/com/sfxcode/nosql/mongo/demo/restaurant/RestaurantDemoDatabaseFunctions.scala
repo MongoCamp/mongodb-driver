@@ -13,16 +13,16 @@ trait RestaurantDemoDatabaseFunctions {
   // #trait
 
   /**
-   * single result with implicit conversion to Entity Option
-   */
+    * single result with implicit conversion to Entity Option
+    */
   def findRestaurantByName(name: String): Option[Restaurant] =
     RestaurantDAO.find("name", name)
 
   def restaurantsSize: Long = RestaurantDAO.count()
 
   /**
-   * result with implicit conversion to List of Entities
-   */
+    * result with implicit conversion to List of Entities
+    */
   def findAllRestaurants(filterValues: Map[String, Any] = Map()): List[Restaurant] =
     RestaurantDAO.find(filterValues)
 

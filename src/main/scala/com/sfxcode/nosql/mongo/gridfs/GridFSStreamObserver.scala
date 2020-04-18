@@ -20,7 +20,6 @@ case class GridFSStreamObserver(outputStream: OutputStream) extends Observer[Byt
     outputStream.close()
   }
 
-  override def onComplete(): Unit = {
+  override def onComplete(): Unit =
     outputStream.close()
-  }
 }

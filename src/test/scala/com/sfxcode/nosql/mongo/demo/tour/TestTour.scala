@@ -1,8 +1,8 @@
 package com.sfxcode.nosql.mongo.demo.tour
 
+import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model._
-import TestDatabase._
 import org.mongodb.scala.result.InsertOneResult
 
 object TestTour extends App {
@@ -43,4 +43,3 @@ object TestTour extends App {
   println(bookJson)
 
 }
-

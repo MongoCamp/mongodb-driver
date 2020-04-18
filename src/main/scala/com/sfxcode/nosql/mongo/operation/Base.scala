@@ -29,10 +29,9 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
     }
 
   def createIndexForFieldWithName(fieldName: String,
-                          sortAscending: Boolean = true,
-                          name: String): SingleObservable[String] = {
+                                  sortAscending: Boolean = true,
+                                  name: String): SingleObservable[String] =
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(Some(name)))
-  }
 
   def createUniqueIndexForField(fieldName: String,
                                 sortAscending: Boolean = true,
