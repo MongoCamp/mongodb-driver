@@ -44,7 +44,7 @@ class BaseSpec extends Specification with BeforeAll {
 
     "must create / drop indexes for key" in {
 
-      val createIndexResult: String = PersonDAO.createIndexForField("name")
+      var createIndexResult: String = PersonDAO.createIndexForField("name")
 
       createIndexResult must be equalTo "name_1"
 
@@ -52,7 +52,11 @@ class BaseSpec extends Specification with BeforeAll {
 
       val dropIndexResult: Void = PersonDAO.dropIndexForName("name_1")
 
-      dropIndexResult.toString() must not beEmpty
+      createIndexResult = PersonDAO.createIndexForField("name")
+
+      createIndexResult must be equalTo "name_1"
+
+
 
     }
 

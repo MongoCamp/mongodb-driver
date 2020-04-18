@@ -12,7 +12,7 @@ class MongoConfigSpec extends Specification {
       val config = MongoConfig("config_test")
       config.database must beEqualTo("config_test")
       val shortDescription =
-        "{hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}"
+        "{hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
       config.clientSettings.getApplicationName must be equalTo "simple-mongo-app"
       config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
@@ -27,7 +27,7 @@ class MongoConfigSpec extends Specification {
 
       config.database must beEqualTo("config_test")
       val shortDescription =
-        "{hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}"
+        "{hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
       config.clientSettings.getApplicationName must be equalTo "Awesome Application Name"
       config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
@@ -39,7 +39,7 @@ class MongoConfigSpec extends Specification {
       val config = MongoConfig.fromPath("config.test.mongo")
       config.database must beEqualTo("config_path_test")
       val shortDescription =
-        "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}"
+        "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
       config.clientSettings.getApplicationName must be equalTo "simple-mongo-config-test"
       config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
@@ -53,7 +53,7 @@ class MongoConfigSpec extends Specification {
       val config = MongoConfig.fromPath("config.test.auth.mongo")
       config.database must beEqualTo("config_path_test")
       val shortDescription =
-        "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}"
+        "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
       config.clientSettings.getApplicationName must be equalTo "simple-mongo-config-test-with-auth"
       config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
