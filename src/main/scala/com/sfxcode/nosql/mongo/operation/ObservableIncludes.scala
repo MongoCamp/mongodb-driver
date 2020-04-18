@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import java.util.concurrent.TimeUnit
 
+import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala._
 
 import scala.concurrent.duration.Duration
@@ -27,7 +28,7 @@ trait ObservableIncludes {
 
   }
 
-  trait ImplicitObservable[C] {
+  trait ImplicitObservable[C] extends LazyLogging {
     val observable: Observable[C]
     val debugString: C => String
 
@@ -39,15 +40,6 @@ trait ObservableIncludes {
     def headResult(maxWait: Int = DefaultMaxWait): C =
       Await.result(observable.head(), Duration(maxWait, TimeUnit.SECONDS))
 
-    def printResults(initial: String = ""): Unit = {
-      if (initial.length > 0) print(initial)
-      results().foreach(res => {
-        println(debugString(res))
-      })
-    }
-
-    def printHeadResult(initial: String = ""): Unit =
-      println(s"$initial${debugString(headResult())}")
   }
 
 }
