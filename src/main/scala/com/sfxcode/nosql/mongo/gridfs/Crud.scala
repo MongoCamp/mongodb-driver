@@ -1,38 +1,19 @@
 package com.sfxcode.nosql.mongo.gridfs
 
-import java.nio.ByteBuffer
+import java.io.InputStream
 
-import com.mongodb.client.gridfs.model.GridFSUploadOptions
-import com.sfxcode.nosql.mongo.Converter
-import org.bson.types.ObjectId
-import org.mongodb.scala.{ Document, Observable }
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.{Document, Observable}
 
 abstract class Crud extends Search {
 
   def deleteOne(id: ObjectId): Observable[Void] = gridfsBucket.delete(id)
 
-  def insertOne(fileName: String,
-                source: Observable[ByteBuffer],
-                metadata: AnyRef = Document(),
-                chunkSizeBytes: Int = 1024 * 1204): Observable[ObjectId] = {
-    val metadataDocument = {
-      metadata match {
-        case document: Document => document
-        case _                  => Converter.toDocument(metadata)
-      }
-    }
-    val options: GridFSUploadOptions = new GridFSUploadOptions()
-      .chunkSizeBytes(chunkSizeBytes)
-      .metadata(metadataDocument)
-    gridfsBucket.uploadFromObservable(fileName, source, options)
+  def insertOne( fileName: String,
+                 stream: InputStream,
+                 metadata: AnyRef = Document(),
+                 chunkSizeBytes: Int = 1204 * 256, bufferSize:Int = 1024 * 64): Observable[ObjectId] = {
+    upload(fileName, GridFSStreamObservable(stream, bufferSize), metadata, chunkSizeBytes)
   }
-
-  def upload(fileName: String,
-             source: Observable[ByteBuffer],
-             metadata: AnyRef = Document(),
-             chunkSizeBytes: Int = 1024 * 1204): Observable[ObjectId] =
-    insertOne(fileName, source, metadata, chunkSizeBytes)
-
-
 
 }

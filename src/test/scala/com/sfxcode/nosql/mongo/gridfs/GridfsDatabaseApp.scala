@@ -1,11 +1,8 @@
 package com.sfxcode.nosql.mongo.gridfs
 
-import java.io.FileOutputStream
-import java.nio.ByteBuffer
-
 import com.sfxcode.nosql.mongo._
-import org.bson.types.ObjectId
 import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
+import org.bson.types.ObjectId
 
 object GridfsDatabaseApp extends App with GridfsDatabaseFunctions {
 
