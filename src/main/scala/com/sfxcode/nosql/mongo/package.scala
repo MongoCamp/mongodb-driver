@@ -74,7 +74,7 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
 
   implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
 
-  implicit def observerToResult(observer: GridFSStreamObserver): Int = {
+  implicit def observerToResultLength(observer: GridFSStreamObserver): Long = {
     while (!observer.completed.get) {}
     observer.resultLength.get()
   }
