@@ -29,8 +29,14 @@ trait GridfsDatabaseFunctions {
   }
 
   def downloadImage(id: ObjectId, path: String): Unit = {
-    val file = File(path).touch()
-    ImageFilesDAO.downloadToStream(id, file.newOutputStream)
+    val file      = File(path)
+    val start     = System.currentTimeMillis()
+    val size: Int = ImageFilesDAO.downloadToStream(id, file.newOutputStream)
+
+    println(
+      "file: %s with size %s Bytes written in %s ms "
+        .format(file.pathAsString, size, System.currentTimeMillis() - start)
+    )
   }
 
   def findImage(id: ObjectId): GridFSFile = ImageFilesDAO.findById(id)

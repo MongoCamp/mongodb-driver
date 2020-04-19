@@ -34,15 +34,14 @@ abstract class Base extends LazyLogging {
 
   def readConcern: ReadConcern = gridfsBucket.readConcern
 
-  def upload(
-    fileName: String,
-    source: Observable[ByteBuffer],
-    metadata: AnyRef = Document(),
-    chunkSizeBytes: Int = 1024 * 256): Observable[ObjectId] = {
+  def upload(fileName: String,
+             source: Observable[ByteBuffer],
+             metadata: AnyRef = Document(),
+             chunkSizeBytes: Int = 1024 * 256): Observable[ObjectId] = {
     val metadataDocument = {
       metadata match {
         case document: Document => document
-        case _ => Converter.toDocument(metadata)
+        case _                  => Converter.toDocument(metadata)
       }
     }
     val options: GridFSUploadOptions = new GridFSUploadOptions()
@@ -54,9 +53,11 @@ abstract class Base extends LazyLogging {
   def download(oid: ObjectId): GridFSDownloadObservable =
     gridfsBucket.downloadToObservable(oid)
 
-  def downloadToStream(oid: ObjectId, outputStream: OutputStream): Unit = {
+  def downloadToStream(oid: ObjectId, outputStream: OutputStream): GridFSStreamObserver = {
     val observable: GridFSDownloadObservable = gridfsBucket.downloadToObservable(oid)
-    observable.subscribe(GridFSStreamObserver(outputStream))
+    val observer                             = GridFSStreamObserver(outputStream)
+    observable.subscribe(observer)
+    observer
   }
 
 }
