@@ -16,3 +16,5 @@ notifications:
       - tom@sfxcode.com
 jdk:
   - openjdk11
+  - oraclejdk8
+
