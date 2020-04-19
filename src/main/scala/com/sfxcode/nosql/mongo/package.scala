@@ -2,6 +2,7 @@ package com.sfxcode.nosql
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.database.MongoConfig
+import com.sfxcode.nosql.mongo.gridfs.GridFSStreamObserver
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
@@ -72,5 +73,10 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
     file.getObjectId
 
   implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
+
+  implicit def observerToResult(observer: GridFSStreamObserver): Int = {
+    while (!observer.completed.get) {}
+    observer.resultLength.get()
+  }
 
 }

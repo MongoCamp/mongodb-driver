@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.8.1
+
+* GridFSStreamObserver suports now completed and resultLength
+
 ### 1.8.0
 
 * mongo-scala-driver 4.0.2
