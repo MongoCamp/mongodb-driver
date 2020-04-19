@@ -9,7 +9,7 @@ import org.mongodb.scala.Observer
 
 case class GridFSStreamObserver(outputStream: OutputStream) extends Observer[ByteBuffer] with LazyLogging {
   val completed    = new AtomicBoolean(false)
-  val resultLength = new AtomicInteger(0)
+  val resultLength = new AtomicLong(0)
 
   override def onNext(buffer: ByteBuffer): Unit = {
     val bytes = new Array[Byte](buffer.remaining())

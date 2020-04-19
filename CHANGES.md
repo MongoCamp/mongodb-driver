@@ -2,9 +2,10 @@
 
 ## Versions
 
-### 1.8.1
+### 1.8.2
 
 * GridFSStreamObserver suports now completed and resultLength
+* implcit resultLength (in bytes) for GridFSStreamObserver
 
 ### 1.8.0
 
