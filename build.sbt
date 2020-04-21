@@ -51,6 +51,10 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
 
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.3" % Provided
+
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.4-9" % Provided
+
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"

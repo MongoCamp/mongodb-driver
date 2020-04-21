@@ -19,8 +19,8 @@ object JsonDateTimeConverter {
 }
 
 class JsonDateTimeConverter(dateFormat: DateFormat = JsonDateTimeConverter.DateFormat)
-    extends Converter[java.lang.Long]
-    with LazyLogging {
+  extends Converter[java.lang.Long]
+  with LazyLogging {
   override def convert(value: java.lang.Long, writer: StrictJsonWriter): Unit =
     try {
       val s = dateFormat.format(value)
