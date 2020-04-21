@@ -2,6 +2,14 @@
 
 ## Versions
 
+### 1.9.0
+
+* ObservableIncludes changed method names for better understanding =>
+  - result (A), results (Seq[A]), resultOption (Option[A]), resultList (List[A])
+  - **Breaking Change** : dropped => headResult (use now result)
+  - **Breaking Change** :  changed => result (old Option[A], new A) => use resultOption instead
+* Add Bulkwrite to Crud Operations
+
 ### 1.8.2
 
 * GridFSStreamObserver suports now completed and resultLength
@@ -83,7 +91,7 @@
 
 
 ### 1.4.0
-*  dropped operations with pattern <name>Result (use headResult, list result or implicit conversion instead)
+*  dropped operations with pattern <name>Result (use result, list result or implicit conversion instead)
 *  introduce Database Functions trait
 *  update docs
 

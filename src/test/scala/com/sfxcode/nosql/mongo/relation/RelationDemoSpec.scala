@@ -49,19 +49,19 @@ class RelationDemoSpec extends Specification with Before {
   override def before: Any = {
 
     try {
-      UserDAO.drop().headResult()
-      LoginDAO.drop().headResult()
-      FriendDAO.drop().headResult()
+      UserDAO.drop().result()
+      LoginDAO.drop().result()
+      FriendDAO.drop().result()
     } catch {
       case e: Exception =>
     }
 
     val personList = Person.personList.take(10)
     personList.foreach(person => {
-      UserDAO.insertOne(User(person.id, person.name, person.guid)).headResult()
-      LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).headResult()
+      UserDAO.insertOne(User(person.id, person.name, person.guid)).result()
+      LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).result()
       person.friends.foreach(f => {
-        FriendDAO.insertOne(Friend((person.id + 11) * (f.id + 3), f.name, person.id)).headResult()
+        FriendDAO.insertOne(Friend((person.id + 11) * (f.id + 3), f.name, person.id)).result()
       })
     })
 

@@ -28,7 +28,7 @@ trait GridfsDatabaseFunctions {
     ImageFilesDAO.insertOne(file.name, file.newInputStream, metadata, bufferSize = 1024 * 4)
   }
 
-  def downloadImage(id: ObjectId, path: String): Unit = {
+  def downloadImage(id: ObjectId, path: String): Long = {
     val file = File(path)
     val start = System.currentTimeMillis()
     val size: Long = ImageFilesDAO.downloadToStream(id, file.newOutputStream)
@@ -36,6 +36,8 @@ trait GridfsDatabaseFunctions {
     println(
       "file: %s with size %s Bytes written in %s ms "
         .format(file.pathAsString, size, System.currentTimeMillis() - start))
+
+    size
   }
 
   def findImage(id: ObjectId): GridFSFile = ImageFilesDAO.findById(id)
@@ -45,8 +47,8 @@ trait GridfsDatabaseFunctions {
   def findImages(key: String, value: String): List[GridFSFile] = ImageFilesDAO.findByMetadataValue(key, value)
 
   def updateMetadata(oid: ObjectId, value: Any): UpdateResult =
-    ImageFilesDAO.updateMetadata(oid, value).headResult()
+    ImageFilesDAO.updateMetadata(oid, value).result()
 
   def updateMetadataElements(filter: Bson, elements: Map[String, Any]): UpdateResult =
-    ImageFilesDAO.updateMetadataElements(filter, elements).headResult()
+    ImageFilesDAO.updateMetadataElements(filter, elements).result()
 }

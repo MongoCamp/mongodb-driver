@@ -17,15 +17,6 @@ trait ObservableIncludes {
   implicit class GenericObservable[C](val observable: Observable[C]) extends ImplicitObservable[C] {
     override val debugString: C => String = doc => doc.toString
 
-    def resultList(maxWait: Int = DefaultMaxWait): List[C] =
-      Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList
-
-    def result(maxWait: Int = DefaultMaxWait): Option[C] = {
-      val list =
-        Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList
-      list.headOption
-    }
-
   }
 
   trait ImplicitObservable[C] extends LazyLogging {
@@ -34,11 +25,17 @@ trait ObservableIncludes {
 
     def asFuture(): Future[Seq[C]] = observable.toFuture()
 
+    def result(maxWait: Int = DefaultMaxWait): C =
+      Await.result(observable.head(), Duration(maxWait, TimeUnit.SECONDS))
+
     def results(maxWait: Int = DefaultMaxWait): Seq[C] =
       Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS))
 
-    def headResult(maxWait: Int = DefaultMaxWait): C =
-      Await.result(observable.head(), Duration(maxWait, TimeUnit.SECONDS))
+    def resultList(maxWait: Int = DefaultMaxWait): List[C] =
+      Await.result(asFuture(), Duration(maxWait, TimeUnit.SECONDS)).toList
+
+    def resultOption(maxWait: Int = DefaultMaxWait): Option[C] =
+      Await.result(observable.headOption(), Duration(maxWait, TimeUnit.SECONDS))
 
   }
 

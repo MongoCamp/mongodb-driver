@@ -27,6 +27,8 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
       files = findImages("group", "logos")
       files must haveSize(1)
+      files.head.getFilename must be equalTo fileName
+
     }
 
     "insert file and in" in {
@@ -34,9 +36,16 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
       val oid: ObjectId = insertImage(SourcePath + fileName, ImageMetadata("template1", group = "templates"))
 
-      var file = findImage(oid)
+      val file = findImage(oid)
       file.getFilename must be equalTo fileName
       file.getMetadata.get("name").toString must be equalTo "template1"
+
+      val downloadPath = "/tmp/download_" + fileName
+      val result: Long = downloadImage(oid, downloadPath)
+
+      result must not be equalTo(-1)
+
+      File(downloadPath).exists must beTrue
 
     }
 

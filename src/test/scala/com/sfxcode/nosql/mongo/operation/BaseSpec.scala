@@ -44,6 +44,6 @@ class BaseSpec extends Specification with BeforeAll {
 
   }
 
-  override def beforeAll: Unit = BookDAO.drop().headResult()
+  override def beforeAll: Unit = BookDAO.drop().result()
 
 }
