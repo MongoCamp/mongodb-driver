@@ -10,25 +10,25 @@ object TestTour extends App {
   // get a handle to the "test" collection
   val collection = BookDAO.collection
 
-  BookDAO.drop().headResult()
+  BookDAO.drop().result()
 
   val scalaBook = Book(Some(1), "Programming In Scala", 852, Author("Martin Odersky"), List(2, 4, 10))
 
   val completed: InsertOneResult = BookDAO.insertOne(scalaBook)
 
-  assert(BookDAO.count().headResult() == 1)
+  assert(BookDAO.count().result() == 1)
 
-  BookDAO.deleteOne(scalaBook).headResult()
+  BookDAO.deleteOne(scalaBook).result()
 
-  assert(BookDAO.count().headResult() == 0)
+  assert(BookDAO.count().result() == 0)
 
-  BookDAO.insertOne(scalaBook).headResult()
+  BookDAO.insertOne(scalaBook).result()
 
   val books: List[Book] = BookDAO.find().resultList()
 
-  val book: Book = BookDAO.find().headResult()
+  val book: Book = BookDAO.find().result()
 
-  val book2 = BookDAO.findById(book._id).headResult()
+  val book2 = BookDAO.findById(book._id).result()
 
   println(scalaBook)
 
@@ -38,7 +38,7 @@ object TestTour extends App {
 
   println(book.equals(scalaBook))
 
-  val bookJson = provider.dao("books").find(projection = Map("title" -> 1)).headResult().toJson()
+  val bookJson = provider.dao("books").find(projection = Map("title" -> 1)).result().toJson()
 
   println(bookJson)
 

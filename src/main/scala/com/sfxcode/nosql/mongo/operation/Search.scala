@@ -14,8 +14,16 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
 
   protected def coll: MongoCollection[A]
 
-  def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document()): FindObservable[A] =
-    coll.find(filter).sort(sort).projection(projection)
+  def find(
+    filter: Bson = Document(),
+    sort: Bson = Document(),
+    projection: Bson = Document(),
+    limit: Int = 0): FindObservable[A] =
+    if (limit > 0) {
+      coll.find(filter).sort(sort).projection(projection).limit(limit)
+    } else {
+      coll.find(filter).sort(sort).projection(projection)
+    }
 
   def findById(oid: ObjectId): FindObservable[A] = find(equal("_id", oid))
 
@@ -26,9 +34,9 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
     coll.distinct[BsonValue](fieldName, filter)
 
   def distinctResult[S <: Any](fieldName: String, filter: Bson = Document()): Seq[S] =
-    distinct(fieldName, filter).results().map(v => fromBson(v).asInstanceOf[S])
+    distinct(fieldName, filter).resultList().map(v => fromBson(v).asInstanceOf[S])
 
-  def findAggregated(aggregator: Seq[Bson]): AggregateObservable[A] =
-    coll.aggregate(aggregator)
+  def findAggregated(aggregator: Seq[Bson], allowDiskUse: Boolean = false): AggregateObservable[A] =
+    coll.aggregate(aggregator).allowDiskUse(allowDiskUse)
 
 }

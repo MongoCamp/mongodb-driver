@@ -24,7 +24,7 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
     val testRestaurant: Restaurant = RestaurantReader.testData
 
     if (count == 0) {
-      RestaurantDAO.insertOne(testRestaurant).headResult()
+      RestaurantDAO.insertOne(testRestaurant).result()
     }
   }
 }

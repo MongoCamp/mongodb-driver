@@ -18,7 +18,7 @@ object RelationDemoDatabase {
       NodeDAO.parentRelation.removeFromCache(parentId)
       NodeDAO.childrenRelation.removeFromCache(node.id)
       val newNode = copy(parentId = node.id)
-      NodeDAO.replaceOne(newNode).headResult()
+      NodeDAO.replaceOne(newNode).result()
     }
 
     def children: List[Node] =

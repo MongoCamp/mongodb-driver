@@ -27,7 +27,7 @@ import com.sfxcode.nosql.mongo._
 
 and append
 
-* .headResult() for Single Result object
+* .result() for Single Result object
 * .resultList() for List result object
 
 or use implicit conversion:

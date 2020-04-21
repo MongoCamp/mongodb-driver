@@ -3,12 +3,11 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.database.DatabaseSpec
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.mutable.{ Before, Specification }
 
-class SearchSpec extends Specification with Before {
-
-  sequential
+class SearchSpec extends DatabaseSpec {
 
   "Search Operations" should {
 
@@ -16,7 +15,7 @@ class SearchSpec extends Specification with Before {
 
       val findAllResult: List[Person] = PersonDAO.find()
 
-      findAllResult.size must be equalTo PersonDAO.count().headResult().toInt
+      findAllResult.size must be equalTo PersonDAO.count().result().toInt
 
       findAllResult.head.name must not beEmpty
 
@@ -37,24 +36,24 @@ class SearchSpec extends Specification with Before {
 
     "support findOne with Filter" in {
 
-      val findOneResult = PersonDAO.find(Map("id" -> 11)).result()
+      val findOneResult = PersonDAO.find(Map("id" -> 11)).resultOption()
 
       findOneResult must beSome[Person]
 
       findOneResult.get.name must be equalTo "Dyer Mayer"
 
-      PersonDAO.find(Map("id" -> 125)).headResult().name must be equalTo "Gaines Valentine"
+      PersonDAO.find(Map("id" -> 125)).result().name must be equalTo "Gaines Valentine"
     }
 
     "support findOne with field name and value" in {
 
-      val findOneResult = PersonDAO.find("id", 11).result()
+      val findOneResult = PersonDAO.find("id", 11).resultOption()
 
       findOneResult must beSome[Person]
 
       findOneResult.get.name must be equalTo "Dyer Mayer"
 
-      PersonDAO.find("name", "Gaines Valentine").headResult().name must be equalTo "Gaines Valentine"
+      PersonDAO.find("name", "Gaines Valentine").result().name must be equalTo "Gaines Valentine"
     }
 
     "support findOne with Filter" in {
@@ -71,5 +70,4 @@ class SearchSpec extends Specification with Before {
 
   }
 
-  override def before: Any = printDatabaseStatus()
 }

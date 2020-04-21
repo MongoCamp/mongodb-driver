@@ -1,12 +1,13 @@
 package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.{ Converter, _ }
-import org.mongodb.scala.Observable
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
+import org.mongodb.scala.{ BulkWriteResult, Document, Observable, SingleObservable }
 
+import scala.collection.mutable.{ ArrayBuffer, ListBuffer }
 import scala.reflect.ClassTag
 
 abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
@@ -22,6 +23,19 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   def insertMany(values: Seq[A], options: InsertManyOptions): Observable[InsertManyResult] =
     coll.insertMany(values, options)
+
+  // bulk write
+
+  def bulkWrite(requests: List[WriteModel[_ <: A]], ordered: Boolean = true): SingleObservable[BulkWriteResult] =
+    coll.bulkWrite(requests, BulkWriteOptions().ordered(ordered))
+
+  def bulkWriteMany(values: Seq[A], ordered: Boolean = true): SingleObservable[BulkWriteResult] = {
+    val requests: ArrayBuffer[WriteModel[_ <: A]] = ArrayBuffer()
+    values.foreach(value => {
+      requests.append(InsertOneModel(value))
+    })
+    bulkWrite(requests.toList, ordered)
+  }
 
   // update
 
