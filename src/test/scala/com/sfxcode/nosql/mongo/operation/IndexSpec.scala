@@ -57,7 +57,7 @@ class IndexSpec extends Specification with BeforeAll {
 
       PersonDAO.indexList must haveSize(2)
 
-      PersonDAO.dropIndexForName(createIndexResult).headResult()
+      PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
     }
@@ -71,7 +71,7 @@ class IndexSpec extends Specification with BeforeAll {
 
       PersonDAO.indexList must haveSize(2)
 
-      PersonDAO.dropIndexForName(createIndexResult).headResult()
+      PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
     }
@@ -84,13 +84,13 @@ class IndexSpec extends Specification with BeforeAll {
 
       PersonDAO.indexList must haveSize(2)
 
-      PersonDAO.dropIndexForName(createIndexResult).headResult()
+      PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
     }
 
   }
 
-  override def beforeAll: Unit = BookDAO.drop().headResult()
+  override def beforeAll: Unit = BookDAO.drop().result()
 
 }

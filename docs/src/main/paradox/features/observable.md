@@ -25,12 +25,12 @@ See [MongoDB Scala Driver Documentation](http://mongodb.github.io/mongo-scala-dr
 
 Convert Observable to result object. Import mongo package is needed.
 
-Functions headResult anf resultList have an optional maxWait in seconds parameter (Default maxWait = 10 seconds).
+Functions result anf resultList have an optional maxWait in seconds parameter (Default maxWait = 10 seconds).
 
 ```scala
   import com.sfxcode.nosql.mongo._
 
-  def restaurantsSize = RestaurantDAO.count().headResult()
+  def restaurantsSize = RestaurantDAO.count().result()
   
   def findAllRestaurants = RestaurantDAO.find().resultList(maxWait = 20)
 

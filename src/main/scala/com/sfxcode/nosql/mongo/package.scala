@@ -1,10 +1,13 @@
 package com.sfxcode.nosql
 
+import com.sfxcode.nosql.mongo.Converter
 import com.sfxcode.nosql.mongo.bson.BsonConverter
+import com.sfxcode.nosql.mongo.bson.convert.JsonDateTimeConverter
 import com.sfxcode.nosql.mongo.database.MongoConfig
 import com.sfxcode.nosql.mongo.gridfs.GridFSStreamObserver
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
+import org.bson.json.{ JsonMode, JsonWriterSettings }
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
@@ -13,16 +16,50 @@ import org.mongodb.scala.{ Document, FindObservable, Observable, ObservableImpli
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
-package object mongo extends ObservableIncludes with ObservableImplicits {
+package object mongo extends MongoIncludes with DocumentIncludes {
+
+  implicit class DocumentExtensions[A <: Document](val document: A) extends AnyVal {
+
+    def asPlainMap: Map[String, Any] =
+      BsonConverter.asMap(document)
+
+    def asPlainJson: String = {
+      val builder = JsonWriterSettings.builder
+        .dateTimeConverter(new JsonDateTimeConverter())
+        .outputMode(JsonMode.RELAXED)
+      document.toJson(builder.build())
+    }
+  }
+}
+
+trait MongoIncludes extends ObservableIncludes with ObservableImplicits {
   implicit def stringToConfig(database: String): MongoConfig = MongoConfig(database)
 
-  implicit def observableToResult[T](obs: Observable[T]): T = obs.headResult()
+  implicit def observableToResult[T](obs: Observable[T]): T = obs.result()
 
   implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] =
     obs.resultList()
 
-  implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.result()
+  implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.resultOption()
 
+  // gridfs
+
+  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] =
+    observable.resultList()
+
+  implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId =
+    file.getObjectId
+
+  implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
+
+  implicit def observerToResultLength(observer: GridFSStreamObserver): Long = {
+    while (!observer.completed.get) {}
+    observer.resultLength.get()
+  }
+
+}
+
+trait DocumentIncludes {
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 
   implicit def documentFromJavaMap(map: java.util.Map[String, Any]): Document =
@@ -63,20 +100,4 @@ package object mongo extends ObservableIncludes with ObservableImplicits {
 
   implicit def documentToObjectId(doc: Document): ObjectId =
     doc.getObjectId("_id")
-
-  // gridfs
-
-  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] =
-    observable.resultList()
-
-  implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId =
-    file.getObjectId
-
-  implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
-
-  implicit def observerToResultLength(observer: GridFSStreamObserver): Long = {
-    while (!observer.completed.get) {}
-    observer.resultLength.get()
-  }
-
 }
