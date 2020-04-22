@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.database.MongoIndex
+import com.sfxcode.nosql.mongo.database.{ ChangeObserver, MongoIndex }
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
@@ -19,26 +19,23 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   def drop(): Observable[Void] = coll.drop()
 
-  def createIndexForField(
-    fieldName: String,
-    sortAscending: Boolean = true,
-    options: IndexOptions = IndexOptions()): SingleObservable[String] =
+  def createIndexForField(fieldName: String,
+                          sortAscending: Boolean = true,
+                          options: IndexOptions = IndexOptions()): SingleObservable[String] =
     if (sortAscending) {
       createIndex(ascending(fieldName), options)
     } else {
       createIndex(descending(fieldName), options)
     }
 
-  def createIndexForFieldWithName(
-    fieldName: String,
-    sortAscending: Boolean = true,
-    name: String): SingleObservable[String] =
+  def createIndexForFieldWithName(fieldName: String,
+                                  sortAscending: Boolean = true,
+                                  name: String): SingleObservable[String] =
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(Some(name)))
 
-  def createUniqueIndexForField(
-    fieldName: String,
-    sortAscending: Boolean = true,
-    name: Option[String] = None): SingleObservable[String] =
+  def createUniqueIndexForField(fieldName: String,
+                                sortAscending: Boolean = true,
+                                name: Option[String] = None): SingleObservable[String] =
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).unique(true))
 
   def createHashedIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
@@ -47,15 +44,13 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
   def createTextIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
     createIndex(Indexes.text(fieldName), options)
 
-  def createExpiringIndexForField(
-    fieldName: String,
-    duration: Duration,
-    sortAscending: Boolean = true,
-    name: Option[String] = None): SingleObservable[String] =
-    createIndexForField(
-      fieldName,
-      sortAscending,
-      MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2))
+  def createExpiringIndexForField(fieldName: String,
+                                  duration: Duration,
+                                  sortAscending: Boolean = true,
+                                  name: Option[String] = None): SingleObservable[String] =
+    createIndexForField(fieldName,
+                        sortAscending,
+                        MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2))
 
   def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObservable[String] =
     coll.createIndex(key, options)
@@ -71,5 +66,10 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
   def indexList(): List[MongoIndex] = MongoIndex.convertIndexDocumentsToMongoIndexList(listIndexes)
 
   def hasIndexForField(fieldName: String): Boolean = MongoIndex.hasIndexForFieldWithName(listIndexes, fieldName)
+
+  def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
+    coll.watch[A]().subscribe(observer)
+    observer
+  }
 
 }
