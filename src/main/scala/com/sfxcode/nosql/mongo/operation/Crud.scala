@@ -1,5 +1,6 @@
 package com.sfxcode.nosql.mongo.operation
 
+import better.files.File
 import com.sfxcode.nosql.mongo.{ Converter, _ }
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
