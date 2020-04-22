@@ -15,7 +15,7 @@ class CrudSpec extends PersonSpecification with LazyLogging {
   override def beforeAll(): Unit = {
     super.beforeAll()
     CodecDao.drop().result()
-    CodecDao.addChangeObserver(ChangeObserver(consumeCodecChanges))
+    // CodecDao.addChangeObserver(ChangeObserver(consumeCodecChanges))
     CodecDao.insertOne(CodecTest()).result()
 
     def consumeCodecChanges(changeStreamDocument: ChangeStreamDocument[CodecTest]): Unit =
