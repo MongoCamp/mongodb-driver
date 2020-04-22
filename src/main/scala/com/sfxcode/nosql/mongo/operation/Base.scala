@@ -67,9 +67,4 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   def hasIndexForField(fieldName: String): Boolean = MongoIndex.hasIndexForFieldWithName(listIndexes, fieldName)
 
-  def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
-    coll.watch[A]().subscribe(observer)
-    observer
-  }
-
 }
