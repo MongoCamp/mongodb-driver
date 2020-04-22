@@ -66,6 +66,15 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
     }
 
+    "find stats in file in" in {
+      val fileStats  = ImageFilesDAO.fileStats.result()
+      val chunkStats = ImageFilesDAO.chunkStats.result()
+
+      fileStats.count must be greaterThan 0
+      chunkStats.storageSize must be greaterThan 0
+
+    }
+
   }
 
   override def beforeAll(): Unit = {

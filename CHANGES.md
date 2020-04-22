@@ -2,6 +2,12 @@
 
 ## Versions
 
+### 1.9.1
+* database provider: runCommand added
+* database provider: addChangeObserver added
+* DAO changeObserver added
+* DAO stats (GridFSDAO fileStats, chunkStats) as case class added
+
 ### 1.9.0
 
 * ObservableIncludes changed method names for better understanding =>
