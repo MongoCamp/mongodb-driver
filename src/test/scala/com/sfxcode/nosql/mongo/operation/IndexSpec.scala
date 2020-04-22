@@ -18,14 +18,14 @@ class IndexSpec extends Specification with BeforeAll {
       list must haveSize(1)
 
       val mongoIndex: MongoIndex = list.head
-      mongoIndex.name must be equalTo "_id_"
-      mongoIndex.key must be equalTo "_id"
-      mongoIndex.ascending must be equalTo 1
-      mongoIndex.namespace must contain("person")
-      mongoIndex.version must be equalTo 2
+      mongoIndex.name mustEqual "_id_"
+      mongoIndex.key mustEqual "_id"
+      mongoIndex.ascending mustEqual 1
+      mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
+      mongoIndex.version mustEqual 2
       mongoIndex.keys must haveSize(1)
-      mongoIndex.keys.head._1 must be equalTo "_id"
-      mongoIndex.keys.head._2 must be equalTo 1
+      mongoIndex.keys.head._1 mustEqual "_id"
+      mongoIndex.keys.head._2 mustEqual 1
 
     }
 
@@ -33,7 +33,7 @@ class IndexSpec extends Specification with BeforeAll {
 
       var createIndexResult: String = PersonDAO.createIndexForField("name")
 
-      createIndexResult must be equalTo "name_1"
+      createIndexResult mustEqual "name_1"
 
       PersonDAO.indexList must haveSize(2)
 
@@ -53,7 +53,7 @@ class IndexSpec extends Specification with BeforeAll {
 
       var createIndexResult: String = PersonDAO.createIndexForFieldWithName("name", sortAscending = false, "myIndex")
 
-      createIndexResult must be equalTo "myIndex"
+      createIndexResult mustEqual "myIndex"
 
       PersonDAO.indexList must haveSize(2)
 
@@ -67,7 +67,7 @@ class IndexSpec extends Specification with BeforeAll {
       var createIndexResult: String =
         PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex"))
 
-      createIndexResult must be equalTo "myUniqueIndex"
+      createIndexResult mustEqual "myUniqueIndex"
 
       PersonDAO.indexList must haveSize(2)
 
@@ -80,7 +80,7 @@ class IndexSpec extends Specification with BeforeAll {
 
       var createIndexResult: String = PersonDAO.createHashedIndexForField("email")
 
-      createIndexResult must be equalTo "email_hashed"
+      createIndexResult mustEqual "email_hashed"
 
       PersonDAO.indexList must haveSize(2)
 

@@ -17,6 +17,7 @@ It is used for DatabaseProvider creation.
 | userName             | used for Authentification |                    |
 | password             | used for Authentification |                    |
 | poolOptions          |                           | MongoPoolOptions() |
+| compressors          | List: zlib, snappy, zstd  | List()             |
 | customClientSettings |                           | None               |
 
 
@@ -27,7 +28,6 @@ It is used for DatabaseProvider creation.
 | maxConnectionIdleTime          | 60            |
 | maxSize                        | 50            |
 | minSize                        | 0             |
-| maxWaitQueueSize               | 500           |
 | DefaultMaintenanceInitialDelay | 0             |
 
 

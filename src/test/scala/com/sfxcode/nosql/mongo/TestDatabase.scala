@@ -2,9 +2,7 @@ package com.sfxcode.nosql.mongo
 
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
-import com.sfxcode.nosql.mongo.operation.CrudObserver
 import org.mongodb.scala._
-import org.mongodb.scala.result.InsertManyResult
 
 object TestDatabase extends ObservableImplicits {
 
@@ -13,31 +11,20 @@ object TestDatabase extends ObservableImplicits {
   import org.bson.codecs.configuration.CodecRegistries._
   import org.mongodb.scala.bson.codecs.Macros._
 
-  private val bookRegistry = fromProviders(classOf[Book], classOf[Author])
-
-  private val personRegistry = fromProviders(classOf[Person], classOf[Friend])
-
-  private val lineRegistry = fromProviders(classOf[Line], classOf[Position])
-  private val codecTestRegistry = fromProviders(classOf[CodecTest])
+  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest])
+  private val universityRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])
 
   val provider =
-    DatabaseProvider.fromPath(
-      "unit.test.mongo",
-      fromRegistries(bookRegistry, personRegistry, lineRegistry, codecTestRegistry))
+    DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry, universityRegistry))
+
+  object PersonDAO extends MongoDAO[Person](provider, "people")
 
   object BookDAO extends MongoDAO[Book](provider, "books")
 
-  object LineDAO extends MongoDAO[Line](provider, "lines") with CrudObserver[Line]
+  object CodecDao extends MongoDAO[CodecTest](provider, "codec:codec-test")
 
-  object PersonDAO extends MongoDAO[Person](provider, "person")
-
-  object CodecDao extends MongoDAO[CodecTest](provider, "codec-test")
-
-  val dropResult: Void = PersonDAO.drop()
-
-  val persons: List[Person] = Person.personList
-
-  val insertResult: InsertManyResult = PersonDAO.insertMany(persons)
+  object StudentDAO extends MongoDAO[Book](provider, "university-students")
+  object GradeDAO extends MongoDAO[Book](provider, "university-grades")
 
   def printDatabaseStatus(): Unit = {
     val count: Long = PersonDAO.count()
