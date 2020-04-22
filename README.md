@@ -1,6 +1,6 @@
 # simple-mongo
 
-A library for easy usage of the mongo-scala-driver (4.x).
+A library for easy usage of the mongo-scala-driver (4.x). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
 
@@ -8,12 +8,15 @@ Support MongoDB 2.6 to 4.2.
 
 ## Features
 
-* Easy Database setup
+* Easy Database setup with Config file
+* Compressor Support
+* Database Commands, Changes Stream, ...
 * DAO Pattern for collection
 * DAO Pattern for GridFS
 * GridFS: Upload from InputStream, Download to OutputStream
 * Implicit conversions for Document, Bson, ObjectID ...
-* Json loading
+* Reactive Streams Support
+* Json loading from File, Conversion to plain Json
 * ...
 
 ## Documentation
