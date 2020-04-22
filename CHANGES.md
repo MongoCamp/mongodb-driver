@@ -9,6 +9,7 @@
   - **Breaking Change** : dropped => headResult (use now result)
   - **Breaking Change** :  changed => result (old Option[A], new A) => use resultOption instead
 * Add Bulkwrite to Crud Operations
+* MongoDAO supports Json Import from File
 
 ### 1.8.2
 

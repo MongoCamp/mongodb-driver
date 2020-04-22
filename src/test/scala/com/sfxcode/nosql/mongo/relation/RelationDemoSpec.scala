@@ -1,5 +1,6 @@
 package com.sfxcode.nosql.mongo.relation
 
+import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
 import com.sfxcode.nosql.mongo.relation.RelationDemoDatabase._
@@ -51,17 +52,17 @@ class RelationDemoSpec extends Specification with Before {
     try {
       UserDAO.drop().result()
       LoginDAO.drop().result()
-      FriendDAO.drop().result()
+      SimplePersonDAO.drop().result()
     } catch {
       case e: Exception =>
     }
 
-    val personList = Person.personList.take(10)
+    val personList = PersonDAO.find().resultList()
     personList.foreach(person => {
       UserDAO.insertOne(User(person.id, person.name, person.guid)).result()
       LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).result()
       person.friends.foreach(f => {
-        FriendDAO.insertOne(Friend((person.id + 11) * (f.id + 3), f.name, person.id)).result()
+        SimplePersonDAO.insertOne(SimplePerson((person.id + 11) * (f.id + 3), f.name, person.id)).result()
       })
     })
 

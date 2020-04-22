@@ -36,7 +36,7 @@ class MongoConfigSpec extends Specification {
 
     "be created by config " in {
       val config = MongoConfig.fromPath("config.test.mongo")
-      config.database must beEqualTo("config_path_test")
+      config.database must beEqualTo("simple-mongo-unit-test")
       val shortDescription =
         "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
@@ -50,7 +50,7 @@ class MongoConfigSpec extends Specification {
 
     "be created by config with auth " in {
       val config = MongoConfig.fromPath("config.test.auth.mongo")
-      config.database must beEqualTo("config_path_test")
+      config.database must beEqualTo("simple-mongo-unit-test")
       val shortDescription =
         "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
       config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription

@@ -1,4 +1,4 @@
-package com.sfxcode.nosql.mongo.converter
+package com.sfxcode.nosql.mongo.bson
 
 import java.util.Date
 

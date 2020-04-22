@@ -1,9 +1,15 @@
 package com.sfxcode.nosql.mongo
 
+import java.nio.charset.Charset
+
+import better.files.{ File, Scanner }
+import com.sfxcode.nosql.mongo.bson.DocumentHelper
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.operation.Crud
-import org.mongodb.scala.{ Document, MongoCollection }
+import org.bson.json.JsonParseException
+import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, SingleObservable }
 
+import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
 /**
@@ -26,5 +32,19 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   // internal object for raw document access
   object Raw extends MongoDAO[Document](provider, collectionName)
+
+  def importJsonFile(file: File): SingleObservable[BulkWriteResult] = {
+    val docs = new ArrayBuffer[Document]()
+    try {
+      if (file.exists) {
+        val iterator = file.lineIterator(Charset.forName("UTF-8"))
+        iterator.foreach(line => docs.+=(DocumentHelper.documentFromJsonString(line).get))
+      }
+    } catch {
+      case e: JsonParseException =>
+        logger.error(e.getMessage, e)
+    }
+    Raw.bulkWriteMany(docs.toSeq)
+  }
 
 }

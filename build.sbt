@@ -10,6 +10,8 @@ scalaVersion := crossScalaVersions.value.head
 
 scalacOptions += "-deprecation"
 
+parallelExecution in Test := false
+
 lazy val root = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
