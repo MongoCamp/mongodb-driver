@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo
 
-import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import com.sfxcode.nosql.mongo.database.{ ChangeObserver, CollectionStats, DatabaseProvider }
 import com.sfxcode.nosql.mongo.gridfs.Metadata
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
@@ -13,12 +13,18 @@ abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends
   var bucket: GridFSBucket = {
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName = bucketName.substring(0, bucketName.indexOf(DatabaseProvider.CollectionSeparator))
-      val newBucketName = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
+      val newBucketName   = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
       GridFSBucket(provider.database(newDatabaseName), newBucketName)
     } else {
       GridFSBucket(provider.database(), bucketName)
     }
   }
+  def addChangeObserver(observer: ChangeObserver[Document]): ChangeObserver[Document] =
+    Files.addChangeObserver(observer: ChangeObserver[Document])
+
+  def fileStats: Observable[CollectionStats] = Files.stats
+
+  def chunkStats: Observable[CollectionStats] = Chunks.stats
 
   protected def gridfsBucket: GridFSBucket = bucket
 

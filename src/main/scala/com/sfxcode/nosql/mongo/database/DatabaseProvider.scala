@@ -45,6 +45,9 @@ class DatabaseProvider(config: MongoConfig, registry: CodecRegistry) extends Ser
     observer
   }
 
+  def runCommand(document: Document, databaseName: String = config.database): SingleObservable[Document] =
+    database(databaseName).runCommand(document)
+
   def collection(collectionName: String): MongoCollection[Document] =
     dao(collectionName).collection
 
