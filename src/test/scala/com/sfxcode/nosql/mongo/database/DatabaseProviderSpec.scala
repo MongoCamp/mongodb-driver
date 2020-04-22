@@ -18,7 +18,7 @@ class DatabaseProviderSpec extends Specification {
 
     "must evaluate collectionInfo" in {
 
-      val result: Document = provider.runCommand(Map("collStats" -> "books")).result()
+      val result: Document = provider.runCommand(Map("collStats" -> "people")).result()
 
       val s = result.asPlainJson
       result must not beEmpty
