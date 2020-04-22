@@ -6,13 +6,7 @@ import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
-class PersonDAOSpec extends Specification with BeforeAll {
-  sequential
-
-  override def beforeAll(): Unit = {
-    PersonDAO.drop().result()
-    PersonDAO.importJsonFile(File(Resource.getUrl("json/people.json"))).result()
-  }
+class PersonDAOSpec extends PersonSpecification {
 
   "PersonDAO" should {
 

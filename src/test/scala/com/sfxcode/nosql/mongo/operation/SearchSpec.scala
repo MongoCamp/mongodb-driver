@@ -4,16 +4,11 @@ import better.files.{ File, Resource }
 import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.database.DatabaseSpec
+import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.Person
 import org.specs2.specification.BeforeAll
 
-class SearchSpec extends DatabaseSpec with BeforeAll {
-
-  override def beforeAll(): Unit = {
-    PersonDAO.drop().result()
-    PersonDAO.importJsonFile(File(Resource.getUrl("json/people.json"))).result()
-  }
+class SearchSpec extends PersonSpecification {
 
   "Search Operations" should {
 

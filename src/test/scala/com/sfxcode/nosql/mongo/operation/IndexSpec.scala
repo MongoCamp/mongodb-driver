@@ -2,13 +2,12 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.database.MongoIndex
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
-class IndexSpec extends Specification with BeforeAll {
-
-  sequential
+class IndexSpec extends PersonSpecification {
 
   "Base Index Operations" should {
 
@@ -90,7 +89,5 @@ class IndexSpec extends Specification with BeforeAll {
     }
 
   }
-
-  override def beforeAll: Unit = BookDAO.drop().result()
 
 }

@@ -3,6 +3,8 @@ package com.sfxcode.nosql.mongo.operation
 // #agg_imports
 import com.sfxcode.nosql.mongo.Aggregate._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.dao.PersonSpecification
+import org.specs2.specification.BeforeAll
 // #agg_imports
 
 import com.sfxcode.nosql.mongo.TestDatabase._
@@ -11,9 +13,7 @@ import org.mongodb.scala.model.Aggregates.{ filter, group, sort }
 import org.mongodb.scala.model.Filters.{ and, equal }
 import org.specs2.mutable.{ Before, Specification }
 
-class AggregationSpec extends Specification with Before {
-
-  sequential
+class AggregationSpec extends PersonSpecification {
 
   // #agg_stages
   val filterStage: Bson = filter(and(equal("gender", "female"), notNullFilter("balance")))
@@ -57,5 +57,4 @@ class AggregationSpec extends Specification with Before {
 
   }
 
-  override def before: Any = printDatabaseStatus()
 }
