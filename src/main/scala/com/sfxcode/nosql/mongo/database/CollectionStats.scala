@@ -5,36 +5,36 @@ import java.util.Date
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.bson.Document
 
-case class CollectionStats(
-  ns: String,
-  collectionType: String,
-  size: Double,
-  count: Long,
-  storageSize: Double,
-  avgObjSize: Double,
-  nindexes: Double,
-  indexSizes: Map[String, Int],
-  totalIndexSize: Double,
-  indexDetails: Map[String, Map[String, Any]],
-  scaleFactor: Double,
-  ok: Long,
-  fetched: Date = new Date())
+case class CollectionStats(ns: String,
+                           collectionType: String,
+                           scaleFactor: Int,
+                           size: Double,
+                           count: Int,
+                           storageSize: Int,
+                           avgObjSize: Int,
+                           nindexes: Int,
+                           indexSizes: Map[String, Int],
+                           totalIndexSize: Int,
+                           indexDetails: Map[String, Map[String, Any]],
+                           ok: Int,
+                           fetched: Date = new Date())
 
 object CollectionStats {
   def apply(document: Document): CollectionStats = {
     val map = document.asPlainMap
     CollectionStats(
-      map("ns").toString,
+      map.getOrElse("ns", "-").toString,
       map.getOrElse("type", "Standard").toString,
-      map("size").asInstanceOf[Int],
-      map("count").asInstanceOf[Int],
-      map("storageSize").asInstanceOf[Int],
-      map("avgObjSize").asInstanceOf[Int],
-      map("nindexes").asInstanceOf[Int],
-      map("indexSizes").asInstanceOf[Map[String, Int]],
-      map("totalIndexSize").asInstanceOf[Int],
-      map("indexDetails").asInstanceOf[Map[String, Map[String, Any]]],
-      map("scaleFactor").asInstanceOf[Int],
-      map("ok").asInstanceOf[Double].toInt)
+      map.getOrElse("scaleFactor", 0).asInstanceOf[Int],
+      map.getOrElse("size", 0).asInstanceOf[Int],
+      map.getOrElse("count", 0).asInstanceOf[Int],
+      map.getOrElse("storageSize", 0).asInstanceOf[Int],
+      map.getOrElse("avgObjSize", 0).asInstanceOf[Int],
+      map.getOrElse("nindexes", 0).asInstanceOf[Int],
+      map.getOrElse("indexSizes", Map).asInstanceOf[Map[String, Int]],
+      map.getOrElse("totalIndexSize", 0).asInstanceOf[Int],
+      map.getOrElse("indexDetails", Map()).asInstanceOf[Map[String, Map[String, Any]]],
+      map.getOrElse("ok", 0).asInstanceOf[Double].toInt
+    )
   }
 }
