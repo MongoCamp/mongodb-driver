@@ -3,10 +3,6 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
-import com.sfxcode.nosql.mongo.model.Book
-import org.mongodb.scala.result.InsertOneResult
-import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeAll
 
 class BaseSpec extends PersonSpecification {
 
