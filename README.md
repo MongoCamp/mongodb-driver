@@ -1,6 +1,6 @@
 # simple-mongo
 
-A library for easy usage of the mongo-scala-driver.
+A library for easy usage of the mongo-scala-driver (4.x).
 
 ## MongoDB Support
 
@@ -13,7 +13,8 @@ Support MongoDB 2.6 to 4.2.
 * DAO Pattern for GridFS
 * GridFS: Upload from InputStream, Download to OutputStream
 * Implicit conversions for Document, Bson, ObjectID ...
-* Example Apps
+* Json loading
+* ...
 
 ## Documentation
 
@@ -42,7 +43,7 @@ Add following lines to your build.sbt
 
 ```
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.8.0"
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.0"
 
 ```
 
