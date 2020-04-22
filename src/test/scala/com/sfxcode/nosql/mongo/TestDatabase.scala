@@ -17,7 +17,7 @@ object TestDatabase extends LazyLogging {
   val provider =
     DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry, universityRegistry))
 
-  provider.addChangeObserver(ChangeObserver(consumeDatabaseChanges))
+  // provider.addChangeObserver(ChangeObserver(consumeDatabaseChanges))
 
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit =
     if (changeStreamDocument.getOperationType != OperationType.INSERT) {
