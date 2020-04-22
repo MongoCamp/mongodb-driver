@@ -5,8 +5,8 @@ import org.mongodb.scala.model.changestream.ChangeStreamDocument
 import org.mongodb.scala.{ Observer, Subscription }
 
 case class ChangeObserver[A](onChangeCallback: ChangeStreamDocument[A] => Unit)
-    extends Observer[ChangeStreamDocument[A]]
-    with LazyLogging {
+  extends Observer[ChangeStreamDocument[A]]
+  with LazyLogging {
 
   override def onSubscribe(subscription: Subscription): Unit = subscription.request(Long.MaxValue) // Request data
 
