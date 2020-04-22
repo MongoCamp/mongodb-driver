@@ -21,7 +21,7 @@ class IndexSpec extends Specification with BeforeAll {
       mongoIndex.name must be equalTo "_id_"
       mongoIndex.key must be equalTo "_id"
       mongoIndex.ascending must be equalTo 1
-      mongoIndex.namespace must be equalTo "simple_mongo_test.person"
+      mongoIndex.namespace must contain("person")
       mongoIndex.version must be equalTo 2
       mongoIndex.keys must haveSize(1)
       mongoIndex.keys.head._1 must be equalTo "_id"

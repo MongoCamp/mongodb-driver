@@ -9,24 +9,25 @@ import org.mongodb.scala.bson.ObjectId
 
 import scala.io.Source
 
-case class Person(id: Long,
-                  guid: String,
-                  isActive: Boolean,
-                  balance: Double,
-                  picture: String,
-                  age: Int,
-                  name: String,
-                  gender: String,
-                  email: String,
-                  phone: String,
-                  address: String,
-                  about: String,
-                  registered: Date,
-                  tags: List[String],
-                  friends: List[Friend],
-                  greeting: String,
-                  favoriteFruit: String,
-                  _id: ObjectId = new ObjectId())
+case class Person(
+  id: Long,
+  guid: String,
+  isActive: Boolean,
+  balance: Double,
+  picture: String,
+  age: Int,
+  name: String,
+  gender: String,
+  email: String,
+  phone: String,
+  address: String,
+  about: String,
+  registered: Date,
+  tags: List[String],
+  friends: List[Friend],
+  greeting: String,
+  favoriteFruit: String,
+  _id: ObjectId = new ObjectId())
 
 case class Friend(id: Long, name: String)
 

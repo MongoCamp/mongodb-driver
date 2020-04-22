@@ -3,6 +3,7 @@ package com.sfxcode.nosql.mongo.gridfs
 import java.io.OutputStream
 import java.nio.ByteBuffer
 
+import better.files.File
 import com.mongodb.client.gridfs.model.GridFSUploadOptions
 import com.sfxcode.nosql.mongo.Converter
 import com.typesafe.scalalogging.LazyLogging
@@ -51,10 +52,21 @@ abstract class Base extends LazyLogging {
     gridfsBucket.uploadFromObservable(fileName, source, options)
   }
 
+  def uploadFile(
+    fileName: String,
+    file: File,
+    metadata: AnyRef = Document(),
+    chunkSizeBytes: Int = 1204 * 256,
+    bufferSize: Int = 1024 * 64): Observable[ObjectId] =
+    upload(fileName, GridFSStreamObservable(file.newInputStream, bufferSize), metadata, chunkSizeBytes)
+
   def download(oid: ObjectId): GridFSDownloadObservable =
     gridfsBucket.downloadToObservable(oid)
 
-  def downloadToStream(oid: ObjectId, outputStream: OutputStream): GridFSStreamObserver = {
+  def download(id: ObjectId, file: File): GridFSStreamObserver =
+    download(id, file.newOutputStream)
+
+  def download(oid: ObjectId, outputStream: OutputStream): GridFSStreamObserver = {
     val observable: GridFSDownloadObservable = gridfsBucket.downloadToObservable(oid)
     val observer = GridFSStreamObserver(outputStream)
     observable.subscribe(observer)

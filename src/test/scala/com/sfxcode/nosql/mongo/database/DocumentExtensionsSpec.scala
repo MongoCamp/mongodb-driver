@@ -30,9 +30,9 @@ class DocumentExtensionsSpec extends DatabaseSpec {
     "be converted to plain json " in {
       val document: Document = PersonDAO.Raw.find(Map("id" -> 11)).result()
 
-      val s                = document.asPlainJson
+      val s = document.asPlainJson
       implicit val formats = DefaultFormats
-      val person: Person   = read[Person](s)
+      val person: Person = read[Person](s)
       person.id mustEqual 11
 
       val tags = person.tags

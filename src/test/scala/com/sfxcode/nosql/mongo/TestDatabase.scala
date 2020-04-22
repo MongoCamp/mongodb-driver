@@ -17,12 +17,13 @@ object TestDatabase extends ObservableImplicits {
 
   private val personRegistry = fromProviders(classOf[Person], classOf[Friend])
 
-  private val lineRegistry      = fromProviders(classOf[Line], classOf[Position])
+  private val lineRegistry = fromProviders(classOf[Line], classOf[Position])
   private val codecTestRegistry = fromProviders(classOf[CodecTest])
 
   val provider =
-    DatabaseProvider.fromPath("unit.test.mongo",
-                              fromRegistries(bookRegistry, personRegistry, lineRegistry, codecTestRegistry))
+    DatabaseProvider.fromPath(
+      "unit.test.mongo",
+      fromRegistries(bookRegistry, personRegistry, lineRegistry, codecTestRegistry))
 
   object BookDAO extends MongoDAO[Book](provider, "books")
 
