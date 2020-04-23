@@ -47,7 +47,7 @@ object BsonConverter {
       case bd: BigDecimal => BsonDecimal128.apply(bd)
       case bd: java.math.BigDecimal => BsonDecimal128.apply(bd)
       case doc: Document => BsonDocument(doc)
-      case map: Map[_, _] =>
+      case map: scala.collection.Map[_, _] =>
         var doc = Document()
         map.keys.foreach(key => {
           val v = map(key)

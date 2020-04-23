@@ -1,8 +1,9 @@
 package com.sfxcode.nosql.mongo.bson
 
-import com.sfxcode.nosql.mongo.bson.BsonConverter
 import org.mongodb.scala.bson.{ ObjectId, _ }
 import org.specs2.mutable.Specification
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Created by tom on 22.01.17.
@@ -35,6 +36,18 @@ class BsonConverterSpec extends Specification {
       BsonConverter.toBson(None) must be equalTo BsonNull()
 
       BsonConverter.toBson('M') must be equalTo BsonString("M")
+    }
+
+    "convert Map to BSON" in {
+      BsonConverter.toBson(Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
+      BsonConverter.toBson(scala.collection.mutable.Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
+    }
+
+    "convert List to BSON" in {
+      BsonConverter.toBson(List(("test"))) must beAnInstanceOf[org.bson.BsonArray]
+      val buffer = new ArrayBuffer[String]()
+      buffer.+=("Test")
+      BsonConverter.toBson(buffer) must beAnInstanceOf[org.bson.BsonArray]
     }
 
     "convert values from BSON" in {
