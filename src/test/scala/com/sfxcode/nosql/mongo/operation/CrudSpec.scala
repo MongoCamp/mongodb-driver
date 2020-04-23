@@ -20,10 +20,10 @@ class CrudSpec extends PersonSpecification with LazyLogging {
 
     def consumeCodecChanges(changeStreamDocument: ChangeStreamDocument[CodecTest]): Unit =
       logger.info(
-        "codec changed %s:%s with ID: %s".format(changeStreamDocument.getNamespace,
-                                                 changeStreamDocument.getOperationType,
-                                                 changeStreamDocument.getDocumentKey)
-      )
+        "codec changed %s:%s with ID: %s".format(
+          changeStreamDocument.getNamespace,
+          changeStreamDocument.getOperationType,
+          changeStreamDocument.getDocumentKey))
 
   }
 

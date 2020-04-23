@@ -11,7 +11,7 @@ import org.mongodb.scala.model.changestream.ChangeStreamDocument
 
 object TestDatabase extends LazyLogging {
 
-  private val registry           = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest])
+  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest])
   private val universityRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])
 
   val provider =
@@ -22,10 +22,10 @@ object TestDatabase extends LazyLogging {
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit =
     if (changeStreamDocument.getOperationType != OperationType.INSERT) {
       logger.info(
-        "changed %s:%s with ID: %s".format(changeStreamDocument.getNamespace,
-                                           changeStreamDocument.getOperationType,
-                                           changeStreamDocument.getDocumentKey)
-      )
+        "changed %s:%s with ID: %s".format(
+          changeStreamDocument.getNamespace,
+          changeStreamDocument.getOperationType,
+          changeStreamDocument.getDocumentKey))
     }
 
   object PersonDAO extends MongoDAO[Person](provider, "people")
