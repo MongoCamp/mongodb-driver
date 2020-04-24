@@ -38,15 +38,14 @@ trait Field {
     fieldnames.map(fieldname => avgField(fieldname)).toSet
 
   def groupFields(fieldnames: Iterable[String]): BsonValue = {
-    val list = fieldnames
-      .map(name => {
-        if (name.startsWith("$")) {
-          name
-        } else {
-          "$" + name
-        }
-      })
-      .toList
+    val list = fieldnames.map { name =>
+      if (name.startsWith("$")) {
+        name
+      }
+      else {
+        "$" + name
+      }
+    }.toList
     BsonConverter.toBson(Map("_id" -> list))
   }
 

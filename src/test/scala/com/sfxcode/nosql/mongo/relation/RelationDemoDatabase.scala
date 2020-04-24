@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.relation
 
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
-import com.sfxcode.nosql.mongo.{ MongoDAO, _ }
+import com.sfxcode.nosql.mongo.{MongoDAO, _}
 import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.codecs.Macros._
@@ -41,7 +41,7 @@ object RelationDemoDatabase {
 
   // #user_dao
   object UserDAO extends MongoDAO[User](provider, "user") {
-    lazy val loginRelation = OneToOneRelationship(LoginDAO, "id")
+    lazy val loginRelation   = OneToOneRelationship(LoginDAO, "id")
     lazy val friendsRelation = OneToManyRelationship(SimplePersonDAO, "userId")
   }
   // #user_dao
@@ -56,7 +56,7 @@ object RelationDemoDatabase {
   val provider = DatabaseProvider("relation_test", registry)
 
   object NodeDAO extends MongoDAO[Node](provider, "nodes") {
-    lazy val parentRelation = OneToOneRelationship(this, "id")
+    lazy val parentRelation   = OneToOneRelationship(this, "id")
     lazy val childrenRelation = OneToManyRelationship(this, "parentId")
   }
 

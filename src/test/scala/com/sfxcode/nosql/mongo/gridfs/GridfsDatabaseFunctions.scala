@@ -29,13 +29,14 @@ trait GridfsDatabaseFunctions {
   }
 
   def downloadImage(id: ObjectId, path: String): Long = {
-    val file = File(path)
-    val start = System.currentTimeMillis()
+    val file       = File(path)
+    val start      = System.currentTimeMillis()
     val size: Long = ImageFilesDAO.download(id, file)
 
     println(
       "file: %s with size %s Bytes written in %s ms "
-        .format(file.pathAsString, size, System.currentTimeMillis() - start))
+        .format(file.pathAsString, size, System.currentTimeMillis() - start)
+    )
 
     size
   }

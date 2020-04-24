@@ -4,8 +4,6 @@ import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.database.MongoIndex
-import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeAll
 
 class IndexSpec extends PersonSpecification {
 

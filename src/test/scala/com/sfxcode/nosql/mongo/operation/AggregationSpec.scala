@@ -4,14 +4,12 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo.Aggregate._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
-import org.specs2.specification.BeforeAll
 // #agg_imports
 
 import com.sfxcode.nosql.mongo.TestDatabase._
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{ filter, group, sort }
-import org.mongodb.scala.model.Filters.{ and, equal }
-import org.specs2.mutable.{ Before, Specification }
+import org.mongodb.scala.model.Aggregates.{filter, group, sort}
+import org.mongodb.scala.model.Filters.{and, equal}
 
 class AggregationSpec extends PersonSpecification {
 

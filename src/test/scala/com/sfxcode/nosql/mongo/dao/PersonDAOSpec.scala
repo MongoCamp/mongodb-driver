@@ -1,10 +1,7 @@
 package com.sfxcode.nosql.mongo.dao
 
-import better.files.{ File, Resource }
-import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
-import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeAll
+import com.sfxcode.nosql.mongo._
 
 class PersonDAOSpec extends PersonSpecification {
 

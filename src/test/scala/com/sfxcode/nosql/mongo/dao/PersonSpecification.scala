@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.dao
 
-import better.files.{ File, Resource }
+import better.files.{File, Resource}
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import org.specs2.mutable.Specification

@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.dao
 
-import better.files.{ File, Resource }
-import com.sfxcode.nosql.mongo.TestDatabase.{ BookDAO, GradeDAO, StudentDAO }
+import better.files.{File, Resource}
+import com.sfxcode.nosql.mongo.TestDatabase.{GradeDAO, StudentDAO}
 import com.sfxcode.nosql.mongo._
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
