@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.9.2
+* scala 2.13.2
+* Minor Fixes
+
 ### 1.9.1
 * database provider: runCommand added
 * database provider: addChangeObserver added
