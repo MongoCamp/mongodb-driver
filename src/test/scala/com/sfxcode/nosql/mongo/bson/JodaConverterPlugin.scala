@@ -1,9 +1,8 @@
 package com.sfxcode.nosql.mongo.bson
 
-import com.sfxcode.nosql.mongo.bson.AbstractConverterPlugin
 import org.bson.BsonValue
 import org.joda.time.DateTime
-import org.mongodb.scala.bson.{ BsonDateTime, BsonNull }
+import org.mongodb.scala.bson.{BsonDateTime, BsonNull}
 
 class JodaConverterPlugin extends AbstractConverterPlugin {
   override def customClassList: List[Class[_]] = List(classOf[DateTime])

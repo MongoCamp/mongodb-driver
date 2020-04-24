@@ -11,7 +11,8 @@ trait Aggregate extends Field with Filter with Sort {
   def compositeProjection(resultFieldName: String, keys: List[String]): Bson =
     computed(
       resultFieldName,
-      Map[String, Any]("$concat" -> keys.map(key => Map[String, Any]("$substr" -> List("$" + key, 0, 99999)))))
+      Map[String, Any]("$concat" -> keys.map(key => Map[String, Any]("$substr" -> List("$" + key, 0, 99999))))
+    )
 
   def divideProjection(resultFieldName: String, dividendFieldName: String, divisorFieldName: String): Bson =
     computed(resultFieldName, Map[String, Any]("$divide" -> List("$" + dividendFieldName, "$" + divisorFieldName)))

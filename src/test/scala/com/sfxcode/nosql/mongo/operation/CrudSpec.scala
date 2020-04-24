@@ -3,7 +3,6 @@ package com.sfxcode.nosql.mongo.operation
 import com.sfxcode.nosql.mongo.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
-import com.sfxcode.nosql.mongo.database.ChangeObserver
 import com.sfxcode.nosql.mongo.model.CodecTest
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
@@ -23,7 +22,9 @@ class CrudSpec extends PersonSpecification with LazyLogging {
         "codec changed %s:%s with ID: %s".format(
           changeStreamDocument.getNamespace,
           changeStreamDocument.getOperationType,
-          changeStreamDocument.getDocumentKey))
+          changeStreamDocument.getDocumentKey
+        )
+      )
 
   }
 

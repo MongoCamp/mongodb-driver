@@ -1,16 +1,12 @@
 package com.sfxcode.nosql.mongo.database
 
-import java.text.SimpleDateFormat
-
-import better.files.{ File, Resource }
-import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.Person
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.read
 import org.mongodb.scala.Document
-import org.specs2.specification.BeforeAll
 
 class DocumentExtensionsSpec extends PersonSpecification {
 
@@ -31,9 +27,9 @@ class DocumentExtensionsSpec extends PersonSpecification {
     "be converted to plain json " in {
       val document: Document = PersonDAO.Raw.find(Map("id" -> 11)).result()
 
-      val s = document.asPlainJson
+      val s                = document.asPlainJson
       implicit val formats = DefaultFormats
-      val person: Person = read[Person](s)
+      val person: Person   = read[Person](s)
       person.id mustEqual 11
 
       val tags = person.tags
