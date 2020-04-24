@@ -1,10 +1,10 @@
 package com.sfxcode.nosql.mongo.bson.convert
 
-import java.text.{DateFormat, SimpleDateFormat}
+import java.text.{ DateFormat, SimpleDateFormat }
 import java.util.TimeZone
 
 import com.typesafe.scalalogging.LazyLogging
-import org.bson.json.{Converter, StrictJsonWriter}
+import org.bson.json.{ Converter, StrictJsonWriter }
 
 object JsonDateTimeConverter {
   val Converter = new JsonDateTimeConverter
@@ -19,14 +19,13 @@ object JsonDateTimeConverter {
 }
 
 class JsonDateTimeConverter(dateFormat: DateFormat = JsonDateTimeConverter.DateFormat)
-    extends Converter[java.lang.Long]
-    with LazyLogging {
+  extends Converter[java.lang.Long]
+  with LazyLogging {
   override def convert(value: java.lang.Long, writer: StrictJsonWriter): Unit =
     try {
       val s = dateFormat.format(value)
       writer.writeString(s)
-    }
-    catch {
+    } catch {
       case e: Exception =>
         logger.error(String.format("Failed to convert value %d to JSON date", value), e)
     }

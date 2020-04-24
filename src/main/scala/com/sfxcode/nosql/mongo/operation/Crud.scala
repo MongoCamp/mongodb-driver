@@ -1,11 +1,11 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.{Converter, _}
+import com.sfxcode.nosql.mongo.{ Converter, _ }
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model._
-import org.mongodb.scala.result.{DeleteResult, InsertManyResult, InsertOneResult, UpdateResult}
-import org.mongodb.scala.{BulkWriteResult, Observable, SingleObservable}
+import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
+import org.mongodb.scala.{ BulkWriteResult, Observable, SingleObservable }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
@@ -41,13 +41,13 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   def replaceOne(value: A): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
+    val oid = document.get("_id").get
     coll.replaceOne(equal("_id", oid), value)
   }
 
   def replaceOne(value: A, options: ReplaceOptions): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
+    val oid = document.get("_id").get
     coll.replaceOne(equal("_id", oid), value, options)
   }
 

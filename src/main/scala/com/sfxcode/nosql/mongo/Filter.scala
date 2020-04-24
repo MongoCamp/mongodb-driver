@@ -30,14 +30,11 @@ trait Filter {
   def dateInRangeFilter(dateFieldKey: String, dateFrom: Date = null, dateUntil: Date = null): Bson =
     if (dateFrom != null && dateUntil != null) {
       and(gte(dateFieldKey, dateFrom), lte(dateFieldKey, dateUntil))
-    }
-    else if (dateUntil != null) {
+    } else if (dateUntil != null) {
       lte(dateFieldKey, dateUntil)
-    }
-    else if (dateFrom != null) {
+    } else if (dateFrom != null) {
       gte(dateFieldKey, dateFrom)
-    }
-    else {
+    } else {
       Map()
     }
 

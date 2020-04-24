@@ -1,12 +1,12 @@
 package com.sfxcode.nosql.mongo.bson.codecs
 
-import org.bson.codecs.{Codec, DecoderContext, EncoderContext}
-import org.bson.{BsonReader, BsonWriter}
+import org.bson.codecs.{ Codec, DecoderContext, EncoderContext }
+import org.bson.{ BsonReader, BsonWriter }
 
 /**
-  * A Codec for BigDecimal instances.
-  *
-  */
+ * A Codec for BigDecimal instances.
+ *
+ */
 class BigDecimalCodec extends Codec[BigDecimal] {
 
   override def decode(reader: BsonReader, decoderContext: DecoderContext): BigDecimal =

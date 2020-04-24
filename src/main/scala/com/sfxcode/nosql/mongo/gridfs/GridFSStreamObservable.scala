@@ -5,13 +5,13 @@ import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
 
 import com.typesafe.scalalogging.LazyLogging
-import org.mongodb.scala.{Observable, Observer, Subscription}
+import org.mongodb.scala.{ Observable, Observer, Subscription }
 
 case class GridFSStreamObservable(inputStream: InputStream, bufferSize: Int = 1024 * 64)
-    extends Observable[ByteBuffer]
-    with LazyLogging {
+  extends Observable[ByteBuffer]
+  with LazyLogging {
   val isPublishing = new AtomicBoolean(false)
-  val buffer       = new Array[Byte](bufferSize)
+  val buffer = new Array[Byte](bufferSize)
 
   override def subscribe(subscriber: Observer[_ >: ByteBuffer]): Unit = {
     isPublishing.set(true)
@@ -26,13 +26,11 @@ case class GridFSStreamObservable(inputStream: InputStream, bufferSize: Int = 10
         if (len >= 0 && isPublishing.get()) {
           val byteBuffer = ByteBuffer.wrap(buffer, 0, len)
           subscriber.onNext(byteBuffer)
-        }
-        else {
+        } else {
           subscriber.onComplete()
           inputStream.close()
         }
-      }
-      catch {
+      } catch {
         case e: InterruptedException =>
           Thread.currentThread.interrupt()
           subscriber.onError(e)

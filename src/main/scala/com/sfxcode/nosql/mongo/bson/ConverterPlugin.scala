@@ -51,8 +51,7 @@ object ClassUtil {
         result.+=(name -> value)
       }
 
-    }
-    else {
+    } else {
       val fields = classRegistry(clazz)
       fields.keys.foreach { name =>
         val value = fields(name).get(v)

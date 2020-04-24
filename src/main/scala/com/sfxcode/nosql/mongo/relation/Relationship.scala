@@ -1,7 +1,7 @@
 package com.sfxcode.nosql.mongo.relation
 
 import com.sfxcode.nosql.mongo.relation.RelationCache._
-import com.sfxcode.nosql.mongo.{MongoDAO, _}
+import com.sfxcode.nosql.mongo.{ MongoDAO, _ }
 
 abstract class Relationship {
   val id: String = hashCode().toString
