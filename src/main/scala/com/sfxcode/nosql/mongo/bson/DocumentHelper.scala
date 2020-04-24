@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.bson
 
-import better.files.{ Scanner, StringSplitter }
+import better.files.{Scanner, StringSplitter}
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Document
 
@@ -14,11 +14,12 @@ object DocumentHelper extends LazyLogging {
 
     try {
       result = Some(Document(json))
-    } catch {
+    }
+    catch {
       case e: Exception if e.getMessage.contains("parse string as a date") => {
         logger.debug("parse error - try to replace iso date")
-        val scanner = Scanner(json, splitter = StringSplitter.on(SplitterDelimeter))
-        var i = 0
+        val scanner      = Scanner(json, splitter = StringSplitter.on(SplitterDelimeter))
+        var i            = 0
         var datePosition = 0
         val resultBuffer = new StringBuffer()
 
@@ -32,10 +33,12 @@ object DocumentHelper extends LazyLogging {
               resultBuffer.append(s.substring(0, 27))
               resultBuffer.append(":")
               resultBuffer.append(s.substring(27))
-            } else {
+            }
+            else {
               resultBuffer.append(s)
             }
-          } else {
+          }
+          else {
             resultBuffer.append(s)
           }
           resultBuffer.append(SplitterDelimeter)

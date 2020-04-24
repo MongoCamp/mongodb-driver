@@ -41,7 +41,8 @@ trait Field {
     val list = fieldnames.map { name =>
       if (name.startsWith("$")) {
         name
-      } else {
+      }
+      else {
         "$" + name
       }
     }.toList

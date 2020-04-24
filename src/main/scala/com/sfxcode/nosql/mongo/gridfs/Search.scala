@@ -11,7 +11,8 @@ abstract class Search extends Base {
   def find(filter: Bson = Document(), sort: Bson = Document(), limit: Int = 0): GridFSFindObservable =
     if (limit > 0) {
       gridfsBucket.find(filter).sort(sort).limit(0)
-    } else {
+    }
+    else {
       gridfsBucket.find(filter).sort(sort)
     }
 
