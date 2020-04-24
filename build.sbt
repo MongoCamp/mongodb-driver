@@ -99,7 +99,6 @@ releaseProcess := Seq[ReleaseStep](
   inquireVersions,           // : ReleaseStep
   runClean,                  // : ReleaseStep
   runTest,                   // : ReleaseStep
-  releaseStepTask(scalafmt), // : ReleaseStep
   setReleaseVersion,         // : ReleaseStep
   commitReleaseVersion,      // : ReleaseStep, performs the initial git checks
   tagRelease,                // : ReleaseStep

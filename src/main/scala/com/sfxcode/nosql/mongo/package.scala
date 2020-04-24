@@ -7,11 +7,11 @@ import com.sfxcode.nosql.mongo.database.MongoConfig
 import com.sfxcode.nosql.mongo.gridfs.GridFSStreamObserver
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
-import org.bson.json.{JsonMode, JsonWriterSettings}
+import org.bson.json.{ JsonMode, JsonWriterSettings }
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
-import org.mongodb.scala.{Document, FindObservable, Observable, ObservableImplicits}
+import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
+import org.mongodb.scala.{ Document, FindObservable, Observable, ObservableImplicits }
 
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions

@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
-import org.mongodb.scala.{Document, Observable}
+import org.mongodb.scala.{ Document, Observable }
 
 abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 
@@ -19,7 +19,7 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
 
   def updateMetadata(oid: ObjectId, value: Any): Observable[UpdateResult] = {
     val doc: BsonValue = BsonConverter.toBson(value)
-    val result         = Files.updateOne(equal("_id", oid), set("metadata", doc))
+    val result = Files.updateOne(equal("_id", oid), set("metadata", doc))
     result
   }
 
@@ -44,7 +44,7 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
   def updateMetadataElement(filter: Bson, key: String, value: Any): Observable[UpdateResult] =
     updateMetadataElements(filter, Map(key -> value))
 
-  object Files  extends MongoDAO[Document](provider, filesCollectionName)
+  object Files extends MongoDAO[Document](provider, filesCollectionName)
   object Chunks extends MongoDAO[Document](provider, chunksCollectionName)
 
 }

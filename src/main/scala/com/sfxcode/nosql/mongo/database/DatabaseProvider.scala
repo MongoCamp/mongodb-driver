@@ -2,7 +2,7 @@ package com.sfxcode.nosql.mongo.database
 
 import com.sfxcode.nosql.mongo.MongoDAO
 import com.sfxcode.nosql.mongo.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala._
@@ -68,7 +68,7 @@ class DatabaseProvider(config: MongoConfig, registry: CodecRegistry) extends Ser
     database(name).listCollectionNames()
 
   case class DocumentDao(provider: DatabaseProvider, collectionName: String)
-      extends MongoDAO[Document](this, collectionName)
+    extends MongoDAO[Document](this, collectionName)
 
 }
 
@@ -84,9 +84,8 @@ object DatabaseProvider {
     new DatabaseProvider(config, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
   def fromPath(
-      configPath: String = MongoConfig.DefaultConfigPathPrefix,
-      registry: CodecRegistry = codecRegistry
-  ): DatabaseProvider =
+    configPath: String = MongoConfig.DefaultConfigPathPrefix,
+    registry: CodecRegistry = codecRegistry): DatabaseProvider =
     apply(MongoConfig.fromPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
 
 }
