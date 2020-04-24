@@ -1,4 +1,5 @@
 import sbt.url
+import ReleaseTransformations._
 
 name := "simple-mongo"
 
@@ -91,6 +92,21 @@ developers := List(
     email = "tom@sfxcode.com",
     url = url("https://github.com/sfxcode")
   )
+)
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies, // : ReleaseStep
+  inquireVersions,           // : ReleaseStep
+  runClean,                  // : ReleaseStep
+  runTest,                   // : ReleaseStep
+  releaseStepTask(scalafmt), // : ReleaseStep
+  setReleaseVersion,         // : ReleaseStep
+  commitReleaseVersion,      // : ReleaseStep, performs the initial git checks
+  tagRelease,                // : ReleaseStep
+  publishArtifacts,          // : ReleaseStep, checks whether `publishTo` is properly set up
+  setNextVersion,            // : ReleaseStep
+  commitNextVersion,         // : ReleaseStep
+  pushChanges                // : ReleaseStep, also checks that an upstream branch is properly configured
 )
 
 coverageMinimum := 60
