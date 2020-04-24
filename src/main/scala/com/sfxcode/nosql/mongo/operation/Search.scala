@@ -6,7 +6,7 @@ import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{ AggregateObservable, DistinctObservable, Document, FindObservable, MongoCollection }
+import org.mongodb.scala.{AggregateObservable, DistinctObservable, Document, FindObservable, MongoCollection}
 
 import scala.reflect.ClassTag
 
@@ -15,13 +15,15 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
   protected def coll: MongoCollection[A]
 
   def find(
-    filter: Bson = Document(),
-    sort: Bson = Document(),
-    projection: Bson = Document(),
-    limit: Int = 0): FindObservable[A] =
+      filter: Bson = Document(),
+      sort: Bson = Document(),
+      projection: Bson = Document(),
+      limit: Int = 0
+  ): FindObservable[A] =
     if (limit > 0) {
       coll.find(filter).sort(sort).projection(projection).limit(limit)
-    } else {
+    }
+    else {
       coll.find(filter).sort(sort).projection(projection)
     }
 

@@ -1,13 +1,13 @@
 package com.sfxcode.nosql.mongo.bson
 
-import org.mongodb.scala.bson.{ ObjectId, _ }
+import org.mongodb.scala.bson.{ObjectId, _}
 import org.specs2.mutable.Specification
 
 import scala.collection.mutable.ArrayBuffer
 
 /**
- * Created by tom on 22.01.17.
- */
+  * Created by tom on 22.01.17.
+  */
 class BsonConverterSpec extends Specification {
 
   sequential
@@ -16,7 +16,7 @@ class BsonConverterSpec extends Specification {
 
     "convert values to BSON" in {
       BsonConverter.toBson(3) must be equalTo BsonInt32(3)
-      BsonConverter.toBson(3l) must be equalTo BsonInt64(3)
+      BsonConverter.toBson(3L) must be equalTo BsonInt64(3)
       BsonConverter.toBson(3f) must be equalTo BsonDouble(3)
       BsonConverter.toBson(3d) must be equalTo BsonDouble(3)
 
@@ -31,7 +31,8 @@ class BsonConverterSpec extends Specification {
       BsonConverter.toBson(Some(5)) must be equalTo BsonInt32(5)
 
       BsonConverter.toBson(Some(new ObjectId("5b61455932ac3f0015ae2e7e"))) must be equalTo BsonObjectId(
-        "5b61455932ac3f0015ae2e7e")
+        "5b61455932ac3f0015ae2e7e"
+      )
 
       BsonConverter.toBson(None) must be equalTo BsonNull()
 
@@ -39,7 +40,7 @@ class BsonConverterSpec extends Specification {
     }
 
     "convert Map to BSON" in {
-      BsonConverter.toBson(Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
+      BsonConverter.toBson(Map(("test"                          -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
       BsonConverter.toBson(scala.collection.mutable.Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
     }
 
@@ -52,7 +53,7 @@ class BsonConverterSpec extends Specification {
 
     "convert values from BSON" in {
       BsonConverter.fromBson(BsonInt32(3)) must be equalTo 3
-      BsonConverter.fromBson(BsonInt64(3)) must be equalTo 3l
+      BsonConverter.fromBson(BsonInt64(3)) must be equalTo 3L
 
       BsonConverter.fromBson(BsonDouble(3)) must be equalTo 3.0
 

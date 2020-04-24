@@ -67,7 +67,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     }
 
     "find stats in file in" in {
-      val fileStats = ImageFilesDAO.fileStats.result()
+      val fileStats  = ImageFilesDAO.fileStats.result()
       val chunkStats = ImageFilesDAO.chunkStats.result()
 
       fileStats.count must be greaterThan 0

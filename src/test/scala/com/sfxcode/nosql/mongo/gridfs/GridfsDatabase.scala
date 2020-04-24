@@ -5,8 +5,8 @@ import com.sfxcode.nosql.mongo.GridFSDAO
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 
 /**
- * GridFS Database Sample
- */
+  * GridFS Database Sample
+  */
 object GridfsDatabase {
   val SourcePath = "src/test/resources/images/"
   val TargetPath = "/tmp/_files/"
