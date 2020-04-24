@@ -37,7 +37,6 @@ Support Scala 2.12 and Scala 2.13.
  - [MongoDAO](dao/index.md)
  - [GridFSDAO](gridfs/index.md)
  - [Features](features/index.md)
- - [Tutorial](tutorial/index.md)
  - [Changes ](changes.md)
 
 @@@
