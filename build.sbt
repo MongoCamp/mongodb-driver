@@ -108,6 +108,8 @@ releaseProcess := Seq[ReleaseStep](
   pushChanges                // : ReleaseStep, also checks that an upstream branch is properly configured
 )
 
+scalafmtOnCompile := false
+
 coverageMinimum := 60
 
 coverageFailOnMinimum := true
