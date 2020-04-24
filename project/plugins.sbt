@@ -1,10 +1,6 @@
-addSbtPlugin("com.orrsella" % "sbt-stats" % "1.0.7")
-
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.2")
-
-addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
@@ -17,6 +13,8 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
 addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.5.6")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
+
+addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
 
 // paradox
 addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.7.0")

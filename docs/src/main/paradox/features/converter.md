@@ -52,5 +52,5 @@ BSON converter is used for bidirectional converting of BSON data.
 
 ### Example
 
-@@snip [JodaConverterPlugin](/src/test/scala/com/sfxcode/nosql/mongo/converter/JodaConverterPlugin.scala)
+@@snip [JodaConverterPlugin](/src/test/scala/com/sfxcode/nosql/mongo/bson/JodaConverterPlugin.scala)
 

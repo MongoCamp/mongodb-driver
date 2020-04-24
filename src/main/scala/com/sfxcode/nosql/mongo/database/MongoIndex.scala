@@ -10,7 +10,10 @@ case class MongoIndex(
     ascending: Int,
     version: Int,
     namespace: String,
-    keys: Map[String, Any] = Map()
+    keys: Map[String, Any] = Map(),
+    expire: Boolean,
+    expireAfterSeconds: Long = -1,
+    text: Boolean
 )
 
 object MongoIndex extends ObservableIncludes {
@@ -63,7 +66,10 @@ object MongoIndex extends ObservableIncludes {
             },
             indexOptions("v").toString.toInt,
             indexOptions("ns").toString,
-            indexOptions("key").asInstanceOf[Map[String, _]]
+            indexOptions("key").asInstanceOf[Map[String, _]],
+            indexOptions.get("expireAfterSeconds").isDefined,
+            indexOptions.getOrElse("expireAfterSeconds", -1).toString.toLong,
+            indexOptions.contains("textIndexVersion")
           )
         )
     }
