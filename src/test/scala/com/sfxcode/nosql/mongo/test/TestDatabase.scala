@@ -1,15 +1,21 @@
-package com.sfxcode.nosql.mongo
+package com.sfxcode.nosql.mongo.test
 
+import better.files.File
 import com.mongodb.client.model.changestream.OperationType
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.model._
+import com.sfxcode.nosql.mongo.{GridFSDAO, MongoDAO}
 import com.typesafe.scalalogging.LazyLogging
-import org.bson.codecs.configuration.CodecRegistries._
+import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.Document
-import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
+import org.mongodb.scala.bson.codecs.Macros._
 
 object TestDatabase extends LazyLogging {
+  val ImageDAOSourcePath = "src/test/resources/images/"
+  val ImageDAOTargetPath = "/tmp/_download/"
+
+  File(ImageDAOTargetPath).createIfNotExists()
 
   private val registry           = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest])
   private val universityRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])
@@ -39,5 +45,7 @@ object TestDatabase extends LazyLogging {
   object StudentDAO extends MongoDAO[Book](provider, "university-students")
 
   object GradeDAO extends MongoDAO[Book](provider, "university-grades")
+
+  object ImageFilesDAO extends GridFSDAO(provider, "images")
 
 }

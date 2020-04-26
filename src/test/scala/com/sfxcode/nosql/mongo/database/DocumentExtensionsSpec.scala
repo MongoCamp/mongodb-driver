@@ -1,9 +1,9 @@
 package com.sfxcode.nosql.mongo.database
 
-import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.Person
+import com.sfxcode.nosql.mongo.test.TestDatabase.PersonDAO
 import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.read
 import org.mongodb.scala.Document

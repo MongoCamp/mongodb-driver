@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.TestDatabase._
+import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.CodecTest
@@ -33,7 +33,7 @@ class CrudSpec extends PersonSpecification with LazyLogging {
     "create Documents in" in {
 
       CodecDao.count().result() must be equalTo 1
-      val findOneResult = CodecDao.find("id", 1).resultOption()
+      val findOneResult: Option[CodecTest] = CodecDao.find("id", 1).resultOption()
       findOneResult must beSome[CodecTest]
     }
 

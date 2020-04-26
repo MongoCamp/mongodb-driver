@@ -2,7 +2,8 @@ package com.sfxcode.nosql.mongo.gridfs
 
 import better.files.File
 import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.gridfs.GridfsDatabase._
+import com.sfxcode.nosql.mongo.test.TestDatabase._
+import com.sfxcode.nosql.mongo.model.ImageMetadata
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
@@ -34,7 +35,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     "insert file and in" in {
       val fileName = "scala-logo.png"
 
-      val oid: ObjectId = insertImage(SourcePath + fileName, ImageMetadata("template1", group = "templates"))
+      val oid: ObjectId = insertImage(ImageDAOSourcePath + fileName, ImageMetadata("template1", group = "templates"))
 
       val file = findImage(oid)
       file.getFilename must be equalTo fileName
@@ -79,10 +80,10 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
   override def beforeAll(): Unit = {
     dropImages
-    insertImage(SourcePath + "scala-logo.jpg", ImageMetadata("logo2", indexSet = Set(5, 6, 7)))
+    insertImage(ImageDAOSourcePath + "scala-logo.jpg", ImageMetadata("logo2", indexSet = Set(5, 6, 7)))
     imagesCount must be equalTo 1
 
-    val file = File(TargetPath)
+    val file = File(ImageDAOTargetPath)
     if (!file.exists)
       file.createDirectory()
   }

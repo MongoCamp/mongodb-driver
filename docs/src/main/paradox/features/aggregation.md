@@ -8,11 +8,11 @@ MongoDB support an easy to use [Aggregation Handling](https://docs.mongodb.com/m
 
 ### Setup imports
 
-@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_imports }
+@@snip [Scala Sources](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_imports }
 
 ### Define stages
 
-@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_stages }
+@@snip [Scala Sources](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_stages }
 
 ### Execute Aggregation
 
@@ -22,10 +22,10 @@ In most cases we have to use the RAW attribute, because the aggregation result n
 
 @@@
 
-@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_execute }
+@@snip [Scala Sources](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_execute }
 
 ### Convert Result
 
 For easy result handling, using the implicit Document to Map conversion can be useful.
 
-@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_convert }
+@@snip [Scala Sources](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_convert }

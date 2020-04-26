@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.database
 
-import com.sfxcode.nosql.mongo.TestDatabase._
+import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.Document
 import org.specs2.mutable.Specification

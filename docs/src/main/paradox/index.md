@@ -4,18 +4,17 @@ A library for easy usage of the mongo-scala-driver.
 
 Features:
 
-* Easy Config with @ref:[DatabaseProvider](database_provider.md)
-* Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for simple MongoDB database usage (@ref:[MongoDAO](dao/index.md))
-* Enhanced [BSON](http://mongodb.github.io/mongo-scala-driver/2.2/bson/) conversion support (@ref:[Converter](features/converter.md))
-
-* [GridFS](https://docs.mongodb.com/manual/core/gridfs/) support (@ref:[GridFSDAO](gridfs/index.md))
+* Easy Database Config with @ref:[DatabaseProvider](database_provider.md) and MongoConfig
+* Implement the [DAO](https://en.wikipedia.org/wiki/Data_access_object) Pattern for simple MongoDB usage (@ref:[MongoDAO](dao/index.md))
+* [GridFS](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/tutorials/gridfs/) support (@ref:[GridFSDAO](gridfs/index.md))
+* [Reactive Streams](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/getting-started/quick-start-primer/) support (@ref:[Usage in simple-mongo](reactive_streams.md))
+* Enhanced [BSON](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/bson/) conversion support (@ref:[Bson Converter](features/converter.md))
 * @ref:[Relationships](features/relationships.md)
 
 ## Additional Documentation
 
-* [mongo-scala-driver](http://mongodb.github.io/mongo-scala-driver/2.2/)
+* [mongo-scala-driver](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/)
 * [MongoDB](https://docs.mongodb.com/)
-
 
 ## Dependency Setup
 
@@ -23,7 +22,7 @@ Support Scala 2.12 and Scala 2.13.
 
 @@dependency[sbt,Maven,Gradle] {
   group="com.sfxcode.nosql"
-  artifact="simple-mongo_2.12"
+  artifact="simple-mongo_2.13"
   version="$project.version$"
 }
 
@@ -31,11 +30,14 @@ Support Scala 2.12 and Scala 2.13.
 
 [Apache 2](https://github.com/sfxcode/simple-mongo/blob/master/LICENSE)
 
+
+
 @@@ index
 
  - [Database Provider](database_provider.md)
  - [MongoDAO](dao/index.md)
  - [GridFSDAO](gridfs/index.md)
+ - [reactive_streams](reactive_streams.md)
  - [Features](features/index.md)
  - [Changes ](changes.md)
 

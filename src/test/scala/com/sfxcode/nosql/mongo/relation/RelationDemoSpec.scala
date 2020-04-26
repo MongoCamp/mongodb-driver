@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.relation
 
-import com.sfxcode.nosql.mongo.TestDatabase.PersonDAO
+import com.sfxcode.nosql.mongo.test.TestDatabase.PersonDAO
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.relation.RelationDemoDatabase._
 import org.specs2.mutable.{Before, Specification}

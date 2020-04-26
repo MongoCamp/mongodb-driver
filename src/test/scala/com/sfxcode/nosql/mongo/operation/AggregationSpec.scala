@@ -6,7 +6,7 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 // #agg_imports
 
-import com.sfxcode.nosql.mongo.TestDatabase._
+import com.sfxcode.nosql.mongo.test.TestDatabase._
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Aggregates.{filter, group, sort}
 import org.mongodb.scala.model.Filters.{and, equal}
