@@ -14,6 +14,8 @@ trait Field {
 
   def minField(fieldName: String): BsonField = min(fieldName, "$" + fieldName)
 
+  def maxField(fieldName: String): BsonField = max(fieldName, "$" + fieldName)
+
   def lastField(fieldName: String): BsonField = last(fieldName, "$" + fieldName)
 
   def sumField(fieldName: String): BsonField = sum(fieldName, "$" + fieldName)
@@ -27,6 +29,9 @@ trait Field {
 
   def minFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => minField(fieldname)).toSet
+
+  def maxFields(fieldnames: Iterable[String]): Set[BsonField] =
+    fieldnames.map(fieldname => maxField(fieldname)).toSet
 
   def lastFields(fieldnames: Iterable[String]): Set[BsonField] =
     fieldnames.map(fieldname => lastField(fieldname)).toSet

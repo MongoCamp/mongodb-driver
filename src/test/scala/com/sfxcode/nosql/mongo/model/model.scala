@@ -2,7 +2,9 @@ package com.sfxcode.nosql.mongo.model
 
 import java.util.Date
 
+import org.bson.codecs.pojo.annotations.BsonId
 import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.bson.conversions.Bson
 
 case class Book(
     _id: Double,
@@ -52,11 +54,15 @@ case class Product(
     available: Boolean
 )
 
-case class Student(_id: Long, name: String, scores: List[Score])
+// #model_student
+
+case class Student(_id: Long, name: String, scores: List[Score], image: Option[ObjectId])
 
 case class Score(score: Double, `type`: String)
 
 case class Grade(_id: ObjectId, student_id: Long, class_id: Long, scores: List[Score])
+
+// #model_student
 
 case class CodecTest(
     id: Long = 1,

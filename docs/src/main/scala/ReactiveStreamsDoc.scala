@@ -10,11 +10,16 @@ import scala.concurrent.{Await, Future}
 
 object ReactiveStreamsDoc {
 
+  // #max_wait
+  val listWithCustomMaxWait: List[Person] = PersonDAO.find().resultList(maxWait = 15)
+  // #max_wait
+
   // #implicit_result_conversion
   val imagesCount: Long      = ImageFilesDAO.count()
   val seq: Seq[Person]       = PersonDAO.find()
   val list: List[Person]     = PersonDAO.find()
   val option: Option[Person] = PersonDAO.find("id", 42)
+
   // #implicit_result_conversion
 
   // #as_future

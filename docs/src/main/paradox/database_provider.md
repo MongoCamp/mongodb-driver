@@ -12,7 +12,7 @@ DatabaseProvider is the central repository for MongoClient, registries, database
 
 Every @ref:[MongoDAO](dao/index.md) / @ref:[GridFSDAO](gridfs/index.md) Instance needs this class.
 
-@@snip [Mongo Conf](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider }
+@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider }
 
 
 ## Create MongoConfig with application.conf
@@ -21,19 +21,19 @@ Every @ref:[MongoDAO](dao/index.md) / @ref:[GridFSDAO](gridfs/index.md) Instance
 
 Default path in application.conf: mongo
 
-@@snip [Mongo Conf](/docs/src/main/resources/docs.conf) { #sample_config }
+@@snip [Scala Sources](/docs/src/main/resources/docs.conf) { #sample_config }
 
 Scala Code Snippet
 
-@@snip [Mongo Conf](/docs/src/main/scala/DatabaseProviderDoc.scala) { #sample_config_from_path }
+@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #sample_config_from_path }
 
 ### With custom path
 
-@@snip [Mongo Conf](/docs/src/main/resources/docs.conf) { #sample_config_custom }
+@@snip [Scala Sources](/docs/src/main/resources/docs.conf) { #sample_config_custom }
 
 Scala Code Snippet
 
-@@snip [Mongo Conf](/docs/src/main/scala/DatabaseProviderDoc.scala) { #sample_config_from_custom_path }
+@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #sample_config_from_custom_path }
 
 
 ## Create MongoConfig with custom ClientSettings
@@ -54,11 +54,11 @@ Additional Info for [Registries](https://mongodb.github.io/mongo-java-driver/4.0
 
 ### Create Case Classes
 
-@@snip [Mongo Conf](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry_classes }
+@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry_classes }
 
 ### Create Registry
 
-@@snip [Mongo Conf](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry }
+@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry }
 
 
 ## MongoConfig Options

@@ -41,6 +41,9 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       file.getFilename must be equalTo fileName
       file.getMetadata.get("name").toString must be equalTo "template1"
 
+      ImageFilesDAO.renameFile(oid, "test.png").result()
+      findImage(oid).getFilename must be equalTo "test.png"
+
       val downloadPath = "/tmp/download_" + fileName
       val result: Long = downloadImage(oid, downloadPath)
 
@@ -68,8 +71,8 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     }
 
     "find stats in file in" in {
-      val fileStats  = ImageFilesDAO.fileStats.result()
-      val chunkStats = ImageFilesDAO.chunkStats.result()
+      val fileStats  = ImageFilesDAO.fileCollectionStatus.result()
+      val chunkStats = ImageFilesDAO.chunkCollectionStats.result()
 
       fileStats.count must be greaterThan 0
       chunkStats.storageSize must be greaterThan 0
