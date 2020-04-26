@@ -4,7 +4,7 @@ import java.nio.charset.Charset
 
 import better.files.File
 import com.sfxcode.nosql.mongo.bson.DocumentHelper
-import com.sfxcode.nosql.mongo.database.{ChangeObserver, CollectionStats, DatabaseProvider}
+import com.sfxcode.nosql.mongo.database.{ChangeObserver, CollectionStatus, DatabaseProvider}
 import com.sfxcode.nosql.mongo.operation.Crud
 import org.bson.json.JsonParseException
 import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
@@ -18,24 +18,19 @@ import scala.reflect.ClassTag
 abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A])
     extends Crud[A] {
 
-  val collection: MongoCollection[A] = {
-    if (collectionName.contains(DatabaseProvider.CollectionSeparator)) {
-      val newDatabaseName   = collectionName.substring(0, collectionName.indexOf(DatabaseProvider.CollectionSeparator))
-      val newCollectionName = collectionName.substring(collectionName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
-      provider.database(newDatabaseName).getCollection[A](newCollectionName)
-    }
-    else {
-      provider.database().getCollection[A](collectionName)
-    }
-  }
+  val databaseName: String = provider.guessDatabaseName(collectionName)
+
+  val name: String = provider.guessName(collectionName)
+
+  val collection: MongoCollection[A] = provider.collection[A](collectionName)
 
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
     coll.watch[A]().subscribe(observer)
     observer
   }
 
-  def stats: Observable[CollectionStats] =
-    provider.runCommand(Map("collStats" -> collectionName)).map(document => CollectionStats(document))
+  def collectionStatus: Observable[CollectionStatus] =
+    provider.runCommand(Map("collStats" -> collectionName)).map(document => CollectionStatus(document))
 
   protected def coll: MongoCollection[A] = collection
 
@@ -57,4 +52,5 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     Raw.bulkWriteMany(docs.toSeq)
   }
 
+  override def toString: String = "%s:%s@%s, %s".format(databaseName, collectionName, provider.config, super.toString)
 }

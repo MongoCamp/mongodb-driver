@@ -1,8 +1,9 @@
 package com.sfxcode.nosql.mongo.dao
 
 import better.files.{File, Resource}
-import com.sfxcode.nosql.mongo.test.TestDatabase.{GradeDAO, StudentDAO}
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.model.Student
+import com.sfxcode.nosql.mongo.test.UniversityDatabase.{GradeDAO, StudentDAO}
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
@@ -18,11 +19,17 @@ class StudentDAOSpec extends Specification with BeforeAll {
 
   "StudentDAO" should {
     "support count" in {
-      val students: Long = StudentDAO.count().result()
+      val students: Long = StudentDAO.count()
       students mustEqual 200
 
-      val grades: Long = GradeDAO.count().result()
+      val grades: Long = GradeDAO.count()
       grades mustEqual 280
+
+    }
+
+    "support count" in {
+      val student: Option[Student] = StudentDAO.find("name", "Aurelia Menendez")
+      student.get.scores must haveSize(3)
 
     }
   }

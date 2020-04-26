@@ -5,7 +5,7 @@ import java.util.Date
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.bson.Document
 
-case class CollectionStats(
+case class CollectionStatus(
     ns: String,
     collectionType: String,
     scaleFactor: Int,
@@ -16,15 +16,15 @@ case class CollectionStats(
     nindexes: Int,
     indexSizes: Map[String, Int],
     totalIndexSize: Int,
-    indexDetails: Map[String, Map[String, Any]],
     ok: Int,
-    fetched: Date = new Date()
+    fetched: Date,
+    document: Document
 )
 
-object CollectionStats {
-  def apply(document: Document): CollectionStats = {
+object CollectionStatus {
+  def apply(document: Document): CollectionStatus = {
     val map = document.asPlainMap
-    CollectionStats(
+    CollectionStatus(
       map.getOrElse("ns", "-").toString,
       map.getOrElse("type", "Standard").toString,
       map.getOrElse("scaleFactor", 0).asInstanceOf[Int],
@@ -35,8 +35,9 @@ object CollectionStats {
       map.getOrElse("nindexes", 0).asInstanceOf[Int],
       map.getOrElse("indexSizes", Map).asInstanceOf[Map[String, Int]],
       map.getOrElse("totalIndexSize", 0).asInstanceOf[Int],
-      map.getOrElse("indexDetails", Map()).asInstanceOf[Map[String, Map[String, Any]]],
-      map.getOrElse("ok", 0).asInstanceOf[Double].toInt
+      map.getOrElse("ok", 0).asInstanceOf[Double].toInt,
+      new Date(),
+      document
     )
   }
 }

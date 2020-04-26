@@ -29,6 +29,7 @@ lazy val docs = (project in file("docs"))
     scalaVersion := "2.13.2",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
     libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.3",
+    libraryDependencies += "org.xerial.snappy" % "snappy-java"   % "1.1.7.3",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
@@ -113,6 +114,6 @@ releaseProcess := Seq[ReleaseStep](
 
 scalafmtOnCompile := false
 
-coverageMinimum := 60
+coverageMinimum := 70
 
 coverageFailOnMinimum := true

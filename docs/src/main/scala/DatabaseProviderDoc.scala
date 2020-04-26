@@ -1,4 +1,4 @@
-import com.sfxcode.nosql.mongo.database.{DatabaseProvider, MongoConfig}
+import com.sfxcode.nosql.mongo.database.{CollectionInfo, DatabaseProvider, MongoConfig}
 import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.ObjectId
@@ -28,8 +28,8 @@ object DatabaseProviderDoc {
 
   val database: MongoDatabase = provider.database()
 
-  val databaseNames: Observable[String]   = provider.databaseNames()
-  val collectionNames: Observable[String] = provider.collectionNames()
+  // Infos for all collections in the default database
+  val collectionInfos: List[CollectionInfo] = provider.collectionInfos()
   // #provider
 
   // #provider_with_registry
