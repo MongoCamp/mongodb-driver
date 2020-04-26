@@ -65,3 +65,5 @@ case class CodecTest(
 )
 
 case class Restaurant(address: String, name: String)
+
+case class ImageMetadata(name: String, group: String = "logos", version: Int = 1, indexSet: Set[Int] = Set(1, 2, 3))

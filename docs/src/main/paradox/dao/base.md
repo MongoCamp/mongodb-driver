@@ -42,7 +42,7 @@ Sometimes we need Raw Support (DAO maps to Document).
 This is automatically included in the MongoDAO class.
 Simply call Raw on your DAO Object.
 
-@@snip [RestaurantDatabase.scala](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_execute }
+@@snip [Scala Sources](/src/test/scala/com/sfxcode/nosql/mongo/operation/AggregationSpec.scala) { #agg_execute }
 
 ## Base Functions
 

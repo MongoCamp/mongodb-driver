@@ -13,7 +13,7 @@ scalacOptions += "-deprecation"
 
 parallelExecution in Test := false
 
-lazy val root = (project in file("."))
+lazy val simple_mongo = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     buildInfoKeys := BuildInfoKey.ofN(name, version, scalaVersion, sbtVersion),
@@ -26,6 +26,9 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(GhpagesPlugin)
   .settings(
     name := "simple mongo docs",
+    scalaVersion := "2.13.2",
+    resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
+    libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.3",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
@@ -34,11 +37,11 @@ lazy val docs = (project in file("docs"))
 
     }
   )
+  .dependsOn(simple_mongo)
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
-resolvers +=
-  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 // Test
 

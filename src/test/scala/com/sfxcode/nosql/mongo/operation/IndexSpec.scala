@@ -2,7 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import java.util.concurrent.TimeUnit
 
-import com.sfxcode.nosql.mongo.TestDatabase._
+import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.database.MongoIndex
