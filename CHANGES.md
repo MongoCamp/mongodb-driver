@@ -2,6 +2,11 @@
 
 ## Versions
 
+### 1.9.4
+* Rewrite Docs and Samples
+* Specs Setup Redesign
+* Added more Specs (Coverage min from 60 to 70)
+
 ### 1.9.2
 * scala 2.13.2
 * Minor Fixes

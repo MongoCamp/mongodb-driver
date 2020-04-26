@@ -8,8 +8,8 @@ import com.sfxcode.nosql.mongo.{GridFSDAO, MongoDAO}
 import com.typesafe.scalalogging.LazyLogging
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.Document
-import org.mongodb.scala.model.changestream.ChangeStreamDocument
 import org.mongodb.scala.bson.codecs.Macros._
+import org.mongodb.scala.model.changestream.ChangeStreamDocument
 
 object TestDatabase extends LazyLogging {
   val ImageDAOSourcePath = "src/test/resources/images/"
@@ -17,11 +17,10 @@ object TestDatabase extends LazyLogging {
 
   File(ImageDAOTargetPath).createIfNotExists()
 
-  private val registry           = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest])
-  private val universityRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])
+  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest], classOf[Book])
 
   val provider =
-    DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry, universityRegistry))
+    DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
 
   // provider.addChangeObserver(ChangeObserver(consumeDatabaseChanges))
 
@@ -41,10 +40,6 @@ object TestDatabase extends LazyLogging {
   object BookDAO extends MongoDAO[Book](provider, "books")
 
   object CodecDao extends MongoDAO[CodecTest](provider, "codec:codec-test")
-
-  object StudentDAO extends MongoDAO[Book](provider, "university-students")
-
-  object GradeDAO extends MongoDAO[Book](provider, "university-grades")
 
   object ImageFilesDAO extends GridFSDAO(provider, "images")
 

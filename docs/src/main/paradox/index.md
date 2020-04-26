@@ -30,7 +30,17 @@ Support Scala 2.12 and Scala 2.13.
 
 [Apache 2](https://github.com/sfxcode/simple-mongo/blob/master/LICENSE)
 
+## Demo
 
+### Model
+
+Create custom model classes.
+
+@@snip [model.scala](../../../../src/test/scala/com/sfxcode/nosql/mongo/model/model.scala) { #model_student }
+
+### Database
+
+@@snip [UniversityDatabase.scala](../../../../src/test/scala/com/sfxcode/nosql/mongo/test/UniversityDatabase.scala)
 
 @@@ index
 

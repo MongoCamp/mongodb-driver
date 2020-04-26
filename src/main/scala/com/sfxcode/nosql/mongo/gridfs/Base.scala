@@ -6,6 +6,7 @@ import java.nio.ByteBuffer
 import better.files.File
 import com.mongodb.client.gridfs.model.GridFSUploadOptions
 import com.sfxcode.nosql.mongo.Converter
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.{GridFSBucket, GridFSDownloadObservable}

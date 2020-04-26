@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo
 
-import com.sfxcode.nosql.mongo.database.{ChangeObserver, CollectionStats, DatabaseProvider}
+import com.sfxcode.nosql.mongo.database.{ChangeObserver, CollectionStatus, DatabaseProvider}
 import com.sfxcode.nosql.mongo.gridfs.Metadata
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
@@ -10,22 +10,16 @@ import org.mongodb.scala.{Document, Observable, ReadConcern, ReadPreference, Sin
 
 abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends Metadata(provider, bucketName) {
 
-  var bucket: GridFSBucket = {
-    if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
-      val newDatabaseName = bucketName.substring(0, bucketName.indexOf(DatabaseProvider.CollectionSeparator))
-      val newBucketName   = bucketName.substring(bucketName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
-      GridFSBucket(provider.database(newDatabaseName), newBucketName)
-    }
-    else {
-      GridFSBucket(provider.database(), bucketName)
-    }
-  }
+  var bucket: GridFSBucket = provider.bucket(bucketName)
+
+  val databaseName: String = provider.guessDatabaseName(bucketName)
+
   def addChangeObserver(observer: ChangeObserver[Document]): ChangeObserver[Document] =
     Files.addChangeObserver(observer: ChangeObserver[Document])
 
-  def fileStats: Observable[CollectionStats] = Files.stats
+  def fileCollectionStatus: Observable[CollectionStatus] = Files.collectionStatus
 
-  def chunkStats: Observable[CollectionStats] = Chunks.stats
+  def chunkCollectionStats: Observable[CollectionStatus] = Chunks.collectionStatus
 
   protected def gridfsBucket: GridFSBucket = bucket
 
@@ -55,5 +49,7 @@ abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends
 
   def withReadPreference(readPreference: ReadPreference): Unit =
     bucket = GridFSBucket(provider.database(), bucketName).withReadPreference(readPreference)
+
+  override def toString: String = "%s:%s@%s, %s".format(databaseName, bucketName, provider.config, super.toString)
 
 }
