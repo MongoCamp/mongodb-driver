@@ -1,19 +1,6 @@
-# Database
+# MongConfig
 
-Database Connection can be done using MongConfig.
-
-DatabaseProvider Instance contains setup for registries and databases.
-
-Database provider will ues database by name from MongoConfig by default.
-Multiple databases access is supported on the same client is supported. For different MongoDBs you have to use different providers.
-
-## DatabaseProvider
-DatabaseProvider is the central repository for MongoClient, registries, databases and collections.
-
-Every @ref:[MongoDAO](dao/index.md) / @ref:[GridFSDAO](gridfs/index.md) Instance needs this class.
-
-@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider }
-
+Database Configuration can be done using MongConfig.
 
 ## Create MongoConfig with application.conf
 
@@ -42,24 +29,6 @@ Scala Code Snippet
 
 val config = MongoConfig("my_database", customClientSettings = Some(myClientSettings))
 ```
-
-
-## Registries
-
-@@@ note { title=ScalaDriverDocs }
-
-Additional Info for [Registries](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/getting-started/quick-start-case-class/#configuring-case-classes)
-
-@@@
-
-### Create Case Classes
-
-@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry_classes }
-
-### Create Registry
-
-@@snip [Scala Sources](/docs/src/main/scala/DatabaseProviderDoc.scala) { #provider_with_registry }
-
 
 ## MongoConfig Options
 

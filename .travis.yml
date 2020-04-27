@@ -18,3 +18,10 @@ jdk:
   - openjdk11
   - openjdk8
 
+before_script:
+  - echo "replSet = myReplSetName" | sudo tee -a /etc/mongodb.conf
+  - sudo service mongodb restart
+  - sleep 20
+  - mongo --eval 'rs.initiate()'
+  - sleep 15
+

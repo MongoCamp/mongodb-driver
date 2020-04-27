@@ -35,8 +35,9 @@ lazy val docs = (project in file("docs"))
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
     Compile / paradoxMaterialTheme ~= {
       _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
-
-    }
+    },
+    (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
+          ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
   )
   .dependsOn(simple_mongo)
 
