@@ -1,19 +1,24 @@
 package com.sfxcode.nosql.mongo.database
 
+import java.util.Date
+
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.mongodb.scala.ListIndexesObservable
 import org.mongodb.scala.model.IndexOptions
 
 case class MongoIndex(
     name: String,
-    key: String,
-    ascending: Int,
+    fields: List[String],
+    unique: Boolean,
     version: Int,
     namespace: String,
-    keys: Map[String, Any] = Map(),
+    keys: Map[String, Any],
+    weights: Map[String, Any],
     expire: Boolean,
-    expireAfterSeconds: Long = -1,
-    text: Boolean
+    expireAfterSeconds: Long,
+    text: Boolean,
+    fetched: Date,
+    map: Map[String, Any]
 )
 
 object MongoIndex extends ObservableIncludes {
@@ -31,48 +36,38 @@ object MongoIndex extends ObservableIncludes {
       fieldName: String,
       maxWait: Int = DefaultMaxWait
   ): Boolean =
-    convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index => index.key == fieldName)
+    convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index =>
+      index.fields.contains(fieldName)
+    )
 
   def convertIndexDocumentsToMongoIndexList(
       listIndexesObservable: ListIndexesObservable[Map[String, Any]],
       maxWait: Int = DefaultMaxWait
   ): List[MongoIndex] = {
     var result = List[MongoIndex]()
-    try {
-      result = listIndexesObservable
-        .resultList(maxWait)
-        .map(indexOptions =>
-          MongoIndex(
-            indexOptions("name").toString, {
-              if (indexOptions.contains("textIndexVersion")) {
-                indexOptions("name").toString.substring(0, indexOptions("name").toString.indexOf("_"))
-              }
-              else {
-                indexOptions("key").asInstanceOf[Map[String, _]].head.asInstanceOf[(String, Int)]._1
-              }
-            }, {
-              if (indexOptions.contains("textIndexVersion")) {
-                indexOptions("textIndexVersion").toString.toInt
-              }
-              else {
-                val value = indexOptions("key").asInstanceOf[Map[String, _]].head._2.toString
-                if (value.matches("[0-9]")) {
-                  value.toInt
-                }
-                else {
-                  0
-                }
-              }
-            },
-            indexOptions("v").toString.toInt,
-            indexOptions("ns").toString,
-            indexOptions("key").asInstanceOf[Map[String, _]],
-            indexOptions.get("expireAfterSeconds").isDefined,
-            indexOptions.getOrElse("expireAfterSeconds", -1).toString.toLong,
-            indexOptions.contains("textIndexVersion")
-          )
+    try result = listIndexesObservable
+      .resultList(maxWait)
+      .map(indexOptions =>
+        MongoIndex(
+          indexOptions("name").toString,
+          if (indexOptions.contains("textIndexVersion")) {
+            indexOptions.getOrElse("weights", Map()).asInstanceOf[Map[String, _]].keys.toList
+          }
+          else {
+            indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]].keys.toList
+          },
+          indexOptions.getOrElse("unique", false).asInstanceOf[Boolean],
+          indexOptions.getOrElse("v", -1).asInstanceOf[Int],
+          indexOptions.getOrElse("ns", "").toString,
+          indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]],
+          indexOptions.getOrElse("weights", Map()).asInstanceOf[Map[String, _]],
+          indexOptions.contains("expireAfterSeconds"),
+          indexOptions.getOrElse("expireAfterSeconds", -1).toString.toLong,
+          indexOptions.contains("textIndexVersion"),
+          new Date(),
+          indexOptions
         )
-    }
+      )
     result
   }
 
