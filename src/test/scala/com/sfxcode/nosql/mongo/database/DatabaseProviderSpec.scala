@@ -56,7 +56,7 @@ class DatabaseProviderSpec extends PersonSpecification {
     "must add ChangeObserver" in {
       val observer = ChangeObserver(consumeDatabaseChanges)
       // todo enable change log at test machine
-      //provider.addChangeObserver(observer)
+      provider.addChangeObserver(observer)
       true must beTrue
     }
 

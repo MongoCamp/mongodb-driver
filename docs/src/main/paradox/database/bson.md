@@ -1,6 +1,6 @@
-# Converter
+# Bson
 
-## Info
+## BSON converter
 
 BSON converter is used for bidirectional converting of BSON data.
 
