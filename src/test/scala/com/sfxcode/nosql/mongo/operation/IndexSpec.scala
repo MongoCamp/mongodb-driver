@@ -20,8 +20,7 @@ class IndexSpec extends PersonSpecification {
 
       val mongoIndex: MongoIndex = list.head
       mongoIndex.name mustEqual "_id_"
-      mongoIndex.key mustEqual "_id"
-      mongoIndex.ascending mustEqual 1
+      mongoIndex.fields must contain("_id")
       mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
       mongoIndex.version mustEqual 2
       mongoIndex.keys must haveSize(1)
@@ -117,8 +116,8 @@ class IndexSpec extends PersonSpecification {
 
       PersonDAO.indexList must haveSize(2)
 
-      val indes: MongoIndex = PersonDAO.indexForName("email_1").get
-      indes.expire must beTrue
+      val index: MongoIndex = PersonDAO.indexForName("email_1").get
+      index.expire must beTrue
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 

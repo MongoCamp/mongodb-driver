@@ -78,6 +78,6 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   def indexForName(name: String): Option[MongoIndex] = indexList.find(_.name.equals(name))
 
-  def hasIndexForField(fieldName: String): Boolean = indexList().exists(index => index.key.equals(fieldName))
+  def hasIndexForField(fieldName: String): Boolean = indexList().exists(index => index.fields.contains(fieldName))
 
 }

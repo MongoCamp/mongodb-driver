@@ -4,6 +4,7 @@ import java.util.Date
 
 import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.bson.Document
+import com.sfxcode.nosql.mongo._
 
 case class CollectionStatus(
     ns: String,
@@ -18,7 +19,7 @@ case class CollectionStatus(
     totalIndexSize: Int,
     ok: Int,
     fetched: Date,
-    document: Document
+    map: Map[String, Any]
 )
 
 object CollectionStatus {
@@ -37,7 +38,7 @@ object CollectionStatus {
       map.getOrElse("totalIndexSize", 0).asInstanceOf[Int],
       map.getOrElse("ok", 0).asInstanceOf[Double].toInt,
       new Date(),
-      document
+      map
     )
   }
 }
