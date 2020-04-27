@@ -22,9 +22,7 @@ jdk:
 
 before_script:
   - echo "replSet = myReplSetName" | sudo tee -a /etc/mongodb.conf
-  - sudo systemctl enable mongod.service
-  - sudo systemctl unmask mongod
-  - sudo service mongodb restart
+  - sudo systemctl unmask mongod && sudo service mongod start
   - sleep 20
   - mongo --eval 'rs.initiate()'
   - sleep 15
