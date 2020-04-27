@@ -2,9 +2,7 @@ package com.sfxcode.nosql.mongo.model
 
 import java.util.Date
 
-import org.bson.codecs.pojo.annotations.BsonId
 import org.mongodb.scala.bson.ObjectId
-import org.mongodb.scala.bson.conversions.Bson
 
 case class Book(
     _id: Double,
@@ -70,6 +68,16 @@ case class CodecTest(
     bi: BigInt = BigInt(BigInt.getClass.getSimpleName.length)
 )
 
-case class Restaurant(address: String, name: String)
-
 case class ImageMetadata(name: String, group: String = "logos", version: Int = 1, indexSet: Set[Int] = Set(1, 2, 3))
+
+case class Place(
+    _id: ObjectId,
+    name: String,
+    location: Location,
+    category: String
+)
+
+case class Location(
+    locationType: String,
+    coordinates: List[Double]
+)

@@ -41,6 +41,8 @@ object TestDatabase extends LazyLogging {
 
   object CodecDao extends MongoDAO[CodecTest](provider, "codec:codec-test")
 
+  object PlacesDAO extends MongoDAO[Place](provider, "places")
+
   object ImageFilesDAO extends GridFSDAO(provider, "images")
 
 }

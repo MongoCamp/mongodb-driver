@@ -12,12 +12,11 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) extends Serializable {
-  private val cachedDatabaseMap = new mutable.HashMap[String, MongoDatabase]()
-  private val cachedMongoDAOMap = new mutable.HashMap[String, MongoDAO[Document]]()
+  private val cachedDatabaseMap                 = new mutable.HashMap[String, MongoDatabase]()
+  private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
+  private var cachedClient: Option[MongoClient] = None
 
   val DefaultDatabaseName: String = config.database
-
-  private var cachedClient: Option[MongoClient] = None
 
   def client: MongoClient = {
     if (isClosed) {
@@ -120,9 +119,9 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
     cachedMongoDAOMap(collectionName)
   }
 
-  def usedDatabaseNames(): List[String] = cachedDatabaseMap.keys.toList
+  def cachedDatabaseNames(): List[String] = cachedDatabaseMap.keys.toList
 
-  def usedCollectionNames(): List[String] = cachedMongoDAOMap.keys.toList
+  def cachedCollectionNames(): List[String] = cachedMongoDAOMap.keys.toList
 
   case class DocumentDao(provider: DatabaseProvider, collectionName: String)
       extends MongoDAO[Document](this, collectionName)

@@ -1,0 +1,3 @@
+{ "_id" : { "$oid" : "5ea689e8b71eb92c608831b2" }, "name" : "Polo Grounds", "location" : { "type" : "Point", "coordinates" : [ -73.9375, 40.8303 ] }, "category" : "Stadiums" }
+{ "_id" : { "$oid" : "5ea68a12b71eb92c608831b3" }, "name" : "Sara D. Roosevelt Park", "location" : { "type" : "Point", "coordinates" : [ -73.9928, 40.7193 ] }, "category" : "Parks" }
+{ "_id" : { "$oid" : "5ea68a17b71eb92c608831b4" }, "name" : "Central Park", "location" : { "type" : "Point", "coordinates" : [ -73.97, 40.77 ] }, "category" : "Parks" }
