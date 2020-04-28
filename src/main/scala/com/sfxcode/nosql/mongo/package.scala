@@ -46,7 +46,7 @@ package object mongo extends MongoIncludes with DocumentIncludes {
       val value = getValue(key)
       value match {
         case n: Number => n.longValue()
-        case s: String => s.toLongOption.getOrElse(0)
+        case s: String => s.toLong
         case _         => 0
       }
     }
@@ -56,7 +56,7 @@ package object mongo extends MongoIncludes with DocumentIncludes {
     def getDoubleValue(key: String): Double =
       getValue(key) match {
         case n: Number => n.doubleValue()
-        case s: String => s.toDoubleOption.getOrElse(0)
+        case s: String => s.toDouble
         case _         => 0
       }
 
