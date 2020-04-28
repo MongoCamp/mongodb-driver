@@ -3,6 +3,7 @@ package com.sfxcode.nosql.mongo.database
 import java.util.Date
 
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
+import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.ListIndexesObservable
 import org.mongodb.scala.model.IndexOptions
 
@@ -21,7 +22,7 @@ case class MongoIndex(
     map: Map[String, Any]
 )
 
-object MongoIndex extends ObservableIncludes {
+object MongoIndex extends ObservableIncludes with LazyLogging {
 
   def indexOptionsWithName(name: Option[String]): IndexOptions =
     if (name.isDefined) {
@@ -68,6 +69,10 @@ object MongoIndex extends ObservableIncludes {
           indexOptions
         )
       )
+    catch {
+      case e: Exception => logger.error(e.getMessage, e)
+    }
+
     result
   }
 
