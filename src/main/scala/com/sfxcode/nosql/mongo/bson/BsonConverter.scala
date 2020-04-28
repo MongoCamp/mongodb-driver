@@ -7,12 +7,84 @@ import java.util.Date
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.bson._
+import org.mongodb.scala.bson.{ObjectId, _}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
 object BsonConverter {
+  val DocumentKeyDivider = "."
+
+  def hasRelation(key: String): Boolean = key.indexOf(DocumentKeyDivider) != -1
+
+  def relationKey(key: String): String = key.substring(0, key.indexOf(DocumentKeyDivider))
+
+  def newKeyFromRelation(key: String): String = key.substring(key.indexOf(DocumentKeyDivider) + 1)
+
+  def lastKeyFromRelation(key: String): String = key.substring(key.lastIndexOf(DocumentKeyDivider) + 1)
+
+  def documentValueOption(document: Document, key: String): Option[Any] =
+    if (hasRelation(key)) {
+      val newKey   = newKeyFromRelation(key)
+      val relation = relationKey(key)
+
+      if (document.contains(relation) && documentValueOption(document, relation)
+            .isInstanceOf[Option[Document]]) {
+        val relatedDocument = documentValueOption(document, relation).asInstanceOf[Option[Document]].get
+        documentValueOption(relatedDocument, newKey)
+      }
+      else {
+        None
+      }
+    }
+    else {
+      if (document.contains(key)) {
+        Some(fromBson(document(key)))
+      }
+      else {
+        None
+      }
+    }
+
+  def updateDocumentValue(document: Document, key: String, value: Any): Document = {
+    val doc    = org.mongodb.scala.bson.collection.mutable.Document(document)
+    val result = updateDocumentValueInternal(doc, key, value)
+    Document(result)
+  }
+
+  private def updateDocumentValueInternal(
+      document: org.mongodb.scala.bson.collection.mutable.Document,
+      key: String,
+      value: Any,
+      root: Option[org.mongodb.scala.bson.collection.mutable.Document] = None
+  ): org.mongodb.scala.bson.collection.mutable.Document =
+    if (hasRelation(key)) {
+      val newKey   = newKeyFromRelation(key)
+      val relation = relationKey(key)
+
+      var relatedDocument = Document()
+      val relationValue   = documentValueOption(Document(document), relation)
+      if (relationValue.isDefined && relationValue.isInstanceOf[Option[Document]]) {
+        relatedDocument = relationValue.asInstanceOf[Option[Document]].get
+      }
+      val mutableDoc = org.mongodb.scala.bson.collection.mutable.Document(relatedDocument)
+      document.put(relation, mutableDoc)
+      if (root.isEmpty)
+        updateDocumentValueInternal(mutableDoc, newKey, value, Some(document))
+      else
+        updateDocumentValueInternal(mutableDoc, newKey, value, root)
+
+    }
+    else {
+      document.put(key, toBson(value))
+      if (root.isEmpty) {
+        document
+      }
+      else {
+        root.get
+      }
+    }
 
   var converterPlugin: AbstractConverterPlugin = new BaseConverterPlugin()
 
