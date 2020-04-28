@@ -6,7 +6,6 @@ import java.util.Date
 
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray.fromIterable
-import org.mongodb.scala.bson._
 import org.mongodb.scala.bson.{ObjectId, _}
 
 import scala.collection.JavaConverters._
@@ -29,10 +28,14 @@ object BsonConverter {
       val newKey   = newKeyFromRelation(key)
       val relation = relationKey(key)
 
-      if (document.contains(relation) && documentValueOption(document, relation)
-            .isInstanceOf[Option[Document]]) {
-        val relatedDocument = documentValueOption(document, relation).asInstanceOf[Option[Document]].get
-        documentValueOption(relatedDocument, newKey)
+      if (document.contains(relation) && documentValueOption(document, relation).isDefined) {
+        val value = documentValueOption(document, relation).get
+        value match {
+          case document: Document =>
+            documentValueOption(document, newKey)
+          case _ =>
+            None
+        }
       }
       else {
         None
@@ -48,9 +51,9 @@ object BsonConverter {
     }
 
   def updateDocumentValue(document: Document, key: String, value: Any): Document = {
-    val doc    = org.mongodb.scala.bson.collection.mutable.Document(document)
+    val doc    = org.mongodb.scala.bson.collection.mutable.Document(document.toJson())
     val result = updateDocumentValueInternal(doc, key, value)
-    Document(result)
+    Document(result.toJson())
   }
 
   private def updateDocumentValueInternal(
@@ -64,11 +67,16 @@ object BsonConverter {
       val relation = relationKey(key)
 
       var relatedDocument = Document()
-      val relationValue   = documentValueOption(Document(document), relation)
-      if (relationValue.isDefined && relationValue.isInstanceOf[Option[Document]]) {
-        relatedDocument = relationValue.asInstanceOf[Option[Document]].get
+      val relationValue   = documentValueOption(Document(document.toJson()), relation)
+      if (relationValue.isDefined) {
+        val value = relationValue.get
+        value match {
+          case document: Document =>
+            relatedDocument = document
+          case _ =>
+        }
       }
-      val mutableDoc = org.mongodb.scala.bson.collection.mutable.Document(relatedDocument)
+      val mutableDoc = org.mongodb.scala.bson.collection.mutable.Document.apply(relatedDocument.toJson())
       document.put(relation, mutableDoc)
       if (root.isEmpty)
         updateDocumentValueInternal(mutableDoc, newKey, value, Some(document))

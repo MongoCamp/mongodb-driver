@@ -62,7 +62,7 @@ class BsonConverterSpec extends Specification {
     }
 
     "evaluate dot notation" in {
-      val document: mutable.Document = mutable.Document(Document())
+      val document: mutable.Document = mutable.Document()
       val secondLevelDocument        = mutable.Document()
       secondLevelDocument.put("test", 42)
       document.put("secondLevelDocument", secondLevelDocument)
@@ -71,13 +71,13 @@ class BsonConverterSpec extends Specification {
 
       document.get("secondLevelDocument.test") must beNone
 
-      val v = BsonConverter.documentValueOption(Document(document), "secondLevelDocument.test")
+      val v = BsonConverter.documentValueOption(Document(document.toJson()), "secondLevelDocument.test")
 
       true must beTrue
     }
 
     "evaluate get with dot notation" in {
-      val document: mutable.Document = mutable.Document(Document())
+      val document: mutable.Document = mutable.Document()
       val secondLevelDocument        = mutable.Document()
       secondLevelDocument.put("test", 42)
       document.put("secondLevelDocument", secondLevelDocument)
@@ -86,7 +86,7 @@ class BsonConverterSpec extends Specification {
 
       document.get("secondLevelDocument.test") must beNone
 
-      val v = BsonConverter.documentValueOption(Document(document), "secondLevelDocument.test")
+      val v = BsonConverter.documentValueOption(Document(document.toJson()), "secondLevelDocument.test")
 
       true must beTrue
     }
