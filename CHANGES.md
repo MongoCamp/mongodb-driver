@@ -2,7 +2,7 @@
 
 ## Versions
 
-### 1.9.5
+### 1.9.7
 * Support for Dot notation in documents
 * extend Document functions with getValue. updateValue, getIntValue ... (with dot support)
 
