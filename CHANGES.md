@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 1.9.5
+* Support for Dot notation in documents
+* extend Document functions with getValue. updateValue, getIntValue ... (with dot support)
+
 ### 1.9.4
 * Rewrite Docs and Samples
 * Specs Setup Redesign

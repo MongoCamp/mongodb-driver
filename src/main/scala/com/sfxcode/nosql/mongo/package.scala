@@ -1,5 +1,7 @@
 package com.sfxcode.nosql
 
+import java.util.Date
+
 import com.sfxcode.nosql.mongo.Converter
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.bson.convert.JsonDateTimeConverter
@@ -29,6 +31,46 @@ package object mongo extends MongoIncludes with DocumentIncludes {
         .outputMode(JsonMode.RELAXED)
       document.toJson(builder.build())
     }
+
+    def getValueOption(key: String): Option[Any] = BsonConverter.documentValueOption(document, key)
+
+    def getValue(key: String): Any = getValueOption(key).orNull
+
+    def getStringValue(key: String): String =
+      getValue(key) match {
+        case n: Any => n.toString
+        case _      => ""
+      }
+
+    def getLongValue(key: String): Long = {
+      val value = getValue(key)
+      value match {
+        case n: Number => n.longValue()
+        case s: String => s.toLongOption.getOrElse(0)
+        case _         => 0
+      }
+    }
+
+    def getIntValue(key: String): Int = getLongValue(key).intValue()
+
+    def getDoubleValue(key: String): Double =
+      getValue(key) match {
+        case n: Number => n.doubleValue()
+        case s: String => s.toDoubleOption.getOrElse(0)
+        case _         => 0
+      }
+
+    def getDateValue(key: String): Date = {
+      val value = getValue(key)
+      value match {
+        case date: Date => date
+        case _          => null
+      }
+    }
+
+    def getFloatValue(key: String): Float = getDoubleValue(key).floatValue()
+
+    def updateValue(key: String, value: Any): Any = BsonConverter.updateDocumentValue(document, key, value)
   }
 }
 

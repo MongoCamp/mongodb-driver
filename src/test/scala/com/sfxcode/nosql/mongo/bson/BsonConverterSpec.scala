@@ -1,9 +1,11 @@
 package com.sfxcode.nosql.mongo.bson
 
+import org.mongodb.scala.bson.collection.mutable
 import org.mongodb.scala.bson.{ObjectId, _}
 import org.specs2.mutable.Specification
 
 import scala.collection.mutable.ArrayBuffer
+import com.sfxcode.nosql.mongo._
 
 /**
   * Created by tom on 22.01.17.
@@ -57,6 +59,49 @@ class BsonConverterSpec extends Specification {
 
       BsonConverter.fromBson(BsonDouble(3)) must be equalTo 3.0
 
+    }
+
+    "evaluate dot notation" in {
+      val document: mutable.Document = mutable.Document(Document())
+      val secondLevelDocument        = mutable.Document()
+      secondLevelDocument.put("test", 42)
+      document.put("secondLevelDocument", secondLevelDocument)
+
+      document.get("secondLevelDocument") must beSome
+
+      document.get("secondLevelDocument.test") must beNone
+
+      val v = BsonConverter.documentValueOption(Document(document), "secondLevelDocument.test")
+
+      true must beTrue
+    }
+
+    "evaluate get with dot notation" in {
+      val document: mutable.Document = mutable.Document(Document())
+      val secondLevelDocument        = mutable.Document()
+      secondLevelDocument.put("test", 42)
+      document.put("secondLevelDocument", secondLevelDocument)
+
+      document.get("secondLevelDocument") must beSome
+
+      document.get("secondLevelDocument.test") must beNone
+
+      val v = BsonConverter.documentValueOption(Document(document), "secondLevelDocument.test")
+
+      true must beTrue
+    }
+
+    "evaluate put with dot notation" in {
+      val document = Document()
+
+      var updated: Document = BsonConverter.updateDocumentValue(document, "test", 42)
+
+      updated.getIntValue("test") mustEqual (42)
+
+      updated = BsonConverter.updateDocumentValue(document, "test.test.test.test", 42)
+
+      updated.getIntValue("test.test.test.test") mustEqual 42
+      true must beTrue
     }
 
   }
