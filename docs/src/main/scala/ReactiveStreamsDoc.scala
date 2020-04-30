@@ -1,5 +1,6 @@
 import java.util.concurrent.TimeUnit
 
+import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
 import com.sfxcode.nosql.mongo.test.TestDatabase.{ImageFilesDAO, PersonDAO}
@@ -8,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-object ReactiveStreamsDoc {
+object ReactiveStreamsDoc extends MongoImplicits {
 
   // #max_wait
   val listWithCustomMaxWait: List[Person] = PersonDAO.find().resultList(maxWait = 15)
