@@ -5,6 +5,7 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.CodecTest
 import com.typesafe.scalalogging.LazyLogging
+import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
 
 class CrudSpec extends PersonSpecification with LazyLogging {
@@ -19,6 +20,8 @@ class CrudSpec extends PersonSpecification with LazyLogging {
 
     val list: List[CodecTest] = CodecDao.find().resultList()
     list.size mustEqual 1
+
+    list.head._id must haveClass[ObjectId]
 
     def consumeCodecChanges(changeStreamDocument: ChangeStreamDocument[CodecTest]): Unit =
       logger.info(
