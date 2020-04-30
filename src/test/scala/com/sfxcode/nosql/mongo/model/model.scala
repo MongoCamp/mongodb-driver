@@ -65,7 +65,8 @@ case class Grade(_id: ObjectId, student_id: Long, class_id: Long, scores: List[S
 case class CodecTest(
     id: Long = 1,
     bd: BigDecimal = BigDecimal(BigDecimal.getClass.getSimpleName.length.toDouble),
-    bi: BigInt = BigInt(BigInt.getClass.getSimpleName.length)
+    bi: BigInt = BigInt(BigInt.getClass.getSimpleName.length),
+    _id: ObjectId = new ObjectId()
 )
 
 case class ImageMetadata(name: String, group: String = "logos", version: Int = 1, indexSet: Set[Int] = Set(1, 2, 3))
