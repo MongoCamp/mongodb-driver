@@ -1,13 +1,14 @@
 package com.sfxcode.nosql.mongo.dao
 
 import better.files.{File, Resource}
+import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Student
 import com.sfxcode.nosql.mongo.test.UniversityDatabase.{GradeDAO, StudentDAO}
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
-class StudentDAOSpec extends Specification with BeforeAll {
+class StudentDAOSpec extends Specification with BeforeAll with MongoImplicits {
   sequential
 
   override def beforeAll(): Unit = {

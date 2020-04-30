@@ -1,6 +1,7 @@
 package com.sfxcode.nosql.mongo.gridfs
 
 import better.files.File
+import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.test.TestDatabase.ImageFilesDAO
 import org.bson.types.ObjectId
@@ -8,7 +9,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile
 import org.mongodb.scala.result.UpdateResult
 
-trait GridfsDatabaseFunctions {
+trait GridfsDatabaseFunctions extends MongoImplicits {
 
   def createIndexOnImages(key: String): String =
     ImageFilesDAO.createMetadataIndex(key)

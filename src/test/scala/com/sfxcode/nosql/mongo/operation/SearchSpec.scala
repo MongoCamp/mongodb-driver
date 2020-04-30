@@ -1,12 +1,13 @@
 package com.sfxcode.nosql.mongo.operation
 
+import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo.Sort._
 import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.Person
 
-class SearchSpec extends PersonSpecification {
+class SearchSpec extends PersonSpecification with MongoImplicits {
 
   "Search Operations" should {
 
