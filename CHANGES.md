@@ -2,6 +2,9 @@
 
 ## Versions
 
+### 2.0.0
+* mongo package no longer extends MongoImplcits => Use MongoImplcits trait if needed
+
 ### 1.9.7
 * Support for Dot notation in documents
 * extend Document functions with getValue. updateValue, getIntValue ... (with dot support)
