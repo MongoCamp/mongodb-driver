@@ -53,7 +53,7 @@ object RelationDemoDatabase {
   // #registry
   private val registry = fromProviders(classOf[Node], classOf[User], classOf[Login], classOf[SimplePerson])
 
-  val provider = DatabaseProvider.fromPath("relation_test", registry)
+  val provider = DatabaseProvider.fromPath("unit.test.mongo", registry)
 
   object NodeDAO extends MongoDAO[Node](provider, "nodes") {
     lazy val parentRelation   = OneToOneRelationship(this, "id")
