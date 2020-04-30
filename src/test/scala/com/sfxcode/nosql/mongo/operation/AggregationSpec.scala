@@ -46,7 +46,7 @@ class AggregationSpec extends PersonSpecification {
       // #agg_convert
       val list: List[Map[String, Any]] = aggregated
       // #agg_convert
-      list.foreach(m => println(m("age") + " -> " + m("balance")))
+      list.foreach(m => println(m("age").toString + " -> " + m("balance")))
 
       list.head("age") must be equalTo 20
       list.head("balance") must be equalTo 8333.0

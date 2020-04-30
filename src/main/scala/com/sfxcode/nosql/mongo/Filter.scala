@@ -23,6 +23,9 @@ trait Filter {
       case _ => DefaultBson
     }
 
+  def fieldComparisonFilter(firstFieldName: String, secondFieldName: String, operator: String): Bson =
+    where("this.%s %s this.%s".format(firstFieldName, operator, secondFieldName))
+
   def nullFilter(fieldName: String): Bson = equal(fieldName, value = null)
 
   def notNullFilter(fieldName: String): Bson = not(nullFilter(fieldName))

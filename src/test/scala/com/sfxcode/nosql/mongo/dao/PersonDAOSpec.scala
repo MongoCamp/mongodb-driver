@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.dao
 
 import java.util.concurrent.TimeUnit
 
+import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo.test.TestDatabase.PersonDAO
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
@@ -10,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-class PersonDAOSpec extends PersonSpecification {
+class PersonDAOSpec extends PersonSpecification with MongoImplicits {
 
   "PersonDAO" should {
 
