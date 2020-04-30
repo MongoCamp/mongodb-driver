@@ -69,11 +69,21 @@ abstract class Base extends LazyLogging {
   def download(id: ObjectId, file: File): GridFSStreamObserver =
     download(id, file.newOutputStream)
 
+  def downloadFileResult(id: ObjectId, file: File): Long = streamObserverResult(download(id, file))
+
   def download(oid: ObjectId, outputStream: OutputStream): GridFSStreamObserver = {
     val observable: GridFSDownloadObservable = gridfsBucket.downloadToObservable(oid)
     val observer                             = GridFSStreamObserver(outputStream)
     observable.subscribe(observer)
     observer
+  }
+
+  def downloadStreamResult(id: ObjectId, outputStream: OutputStream): Long =
+    streamObserverResult(download(id, outputStream))
+
+  protected def streamObserverResult(observer: GridFSStreamObserver): Long = {
+    while (!observer.completed.get) {}
+    observer.resultLength.get()
   }
 
 }

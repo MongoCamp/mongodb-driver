@@ -74,7 +74,7 @@ package object mongo extends ObservableIncludes with DocumentIncludes {
   }
 }
 
-trait MongoImplicits extends ObservableImplicits with ObservableIncludes {
+trait MongoImplicits extends ObservableIncludes with ObservableImplicits {
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.result()
 
@@ -92,11 +92,6 @@ trait MongoImplicits extends ObservableImplicits with ObservableIncludes {
     file.getObjectId
 
   implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
-
-  implicit def observerToResultLength(observer: GridFSStreamObserver): Long = {
-    while (!observer.completed.get) {}
-    observer.resultLength.get()
-  }
 
 }
 
