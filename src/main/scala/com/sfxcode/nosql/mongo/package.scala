@@ -18,7 +18,7 @@ import org.mongodb.scala.{Document, FindObservable, Observable, ObservableImplic
 import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
-package object mongo extends MongoIncludes with DocumentIncludes {
+package object mongo extends ObservableIncludes with DocumentIncludes {
 
   implicit class DocumentExtensions[A <: Document](val document: A) extends AnyVal {
 
@@ -74,8 +74,7 @@ package object mongo extends MongoIncludes with DocumentIncludes {
   }
 }
 
-trait MongoIncludes extends ObservableIncludes with ObservableImplicits {
-  implicit def stringToConfig(database: String): MongoConfig = MongoConfig(database)
+trait MongoImplicits extends ObservableImplicits with ObservableIncludes {
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.result()
 

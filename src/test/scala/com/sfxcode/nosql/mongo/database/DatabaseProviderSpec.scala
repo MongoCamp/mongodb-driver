@@ -1,12 +1,10 @@
 package com.sfxcode.nosql.mongo.database
 
 import better.files.{File, Resource}
-import com.mongodb.MongoBulkWriteException
-import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
+import com.sfxcode.nosql.mongo.test.TestDatabase._
 import org.mongodb.scala.Document
-import org.specs2.mutable.Specification
 
 class DatabaseProviderSpec extends PersonSpecification {
 
@@ -24,7 +22,7 @@ class DatabaseProviderSpec extends PersonSpecification {
 
     "must evaluate dao by name" in {
       val dao         = provider.dao("people")
-      val count: Long = dao.count()
+      val count: Long = dao.count().result()
       count mustEqual 200
     }
 
@@ -36,7 +34,7 @@ class DatabaseProviderSpec extends PersonSpecification {
       provider.dropDatabase(databaseName).result()
 
       dao.importJsonFile(File(Resource.getUrl("json/people.json"))).result()
-      val count: Long = dao.count()
+      val count: Long = dao.count().result()
       count mustEqual 200
     }
 

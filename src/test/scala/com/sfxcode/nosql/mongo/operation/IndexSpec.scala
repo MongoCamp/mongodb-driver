@@ -31,7 +31,7 @@ class IndexSpec extends PersonSpecification {
 
     "create / drop indexes for key" in {
 
-      var createIndexResult: String = PersonDAO.createIndexForField("name")
+      var createIndexResult: String = PersonDAO.createIndexForField("name").result()
 
       createIndexResult mustEqual "name_1"
 
@@ -39,7 +39,7 @@ class IndexSpec extends PersonSpecification {
       val index: MongoIndex = PersonDAO.indexForName("name_1").get
       index.expire must beFalse
 
-      val dropIndexResult: Void = PersonDAO.dropIndexForName(createIndexResult)
+      val dropIndexResult: Void = PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
     }
@@ -53,7 +53,8 @@ class IndexSpec extends PersonSpecification {
 
     "create descending index for key" in {
 
-      var createIndexResult: String = PersonDAO.createIndexForFieldWithName("name", sortAscending = false, "myIndex")
+      var createIndexResult: String =
+        PersonDAO.createIndexForFieldWithName("name", sortAscending = false, "myIndex").result()
 
       createIndexResult mustEqual "myIndex"
 
@@ -68,7 +69,7 @@ class IndexSpec extends PersonSpecification {
     "create unique index for key" in {
 
       var createIndexResult: String =
-        PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex"))
+        PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex")).result()
 
       createIndexResult mustEqual "myUniqueIndex"
 
@@ -82,7 +83,7 @@ class IndexSpec extends PersonSpecification {
 
     "create text index for key" in {
 
-      var createIndexResult: String = PersonDAO.createTextIndexForField("email")
+      var createIndexResult: String = PersonDAO.createTextIndexForField("email").result()
 
       createIndexResult mustEqual "email_text"
 
@@ -96,7 +97,7 @@ class IndexSpec extends PersonSpecification {
 
     "create hashed index for key" in {
 
-      var createIndexResult: String = PersonDAO.createHashedIndexForField("email")
+      var createIndexResult: String = PersonDAO.createHashedIndexForField("email").result()
 
       createIndexResult mustEqual "email_hashed"
 
@@ -110,7 +111,8 @@ class IndexSpec extends PersonSpecification {
 
     "create expiring index for key" in {
 
-      var createIndexResult: String = PersonDAO.createExpiringIndexForField("email", Duration(1, TimeUnit.SECONDS))
+      var createIndexResult: String =
+        PersonDAO.createExpiringIndexForField("email", Duration(1, TimeUnit.SECONDS)).result()
 
       createIndexResult mustEqual "email_1"
 
