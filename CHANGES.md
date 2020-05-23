@@ -4,6 +4,7 @@
 
 ### 2.0.1
 * Mongo Java Server Support
+* LocalServer, ServerConfig added
 
 ### 2.0.0
 * mongo package no longer extends MongoImplcits => Use MongoImplcits trait if needed

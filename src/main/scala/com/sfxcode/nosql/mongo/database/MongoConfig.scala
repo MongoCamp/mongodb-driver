@@ -75,7 +75,40 @@ case class MongoConfig(
   }
 }
 
-object MongoConfig {
+trait ConfigHelper {
+  val conf: Config = ConfigFactory.load()
+
+  def stringConfig(configPath: String, key: String, default: String = ""): Option[String] =
+    if (conf.hasPath("%s.%s".format(configPath, key))) {
+      Some(conf.getString("%s.%s".format(configPath, key)))
+    }
+    else {
+      if (default.nonEmpty) {
+        Some(default)
+      }
+      else {
+        None
+      }
+    }
+
+  def intConfig(configPath: String, key: String, default: Int = 0): Int =
+    if (conf.hasPath("%s.%s".format(configPath, key))) {
+      conf.getInt("%s.%s".format(configPath, key))
+    }
+    else {
+      default
+    }
+
+  def booleanConfig(configPath: String, key: String, default: Boolean = false): Boolean =
+    if (conf.hasPath("%s.%s".format(configPath, key))) {
+      conf.getBoolean("%s.%s".format(configPath, key))
+    }
+    else {
+      default
+    }
+}
+
+object MongoConfig extends ConfigHelper {
   val DefaultHost                       = "127.0.0.1"
   val DefaultPort                       = 27017
   val DefaultAuthenticationDatabaseName = "admin"
@@ -94,20 +127,6 @@ object MongoConfig {
   val DefaultConfigPathPrefix = "mongo"
 
   def fromPath(configPath: String = DefaultConfigPathPrefix): MongoConfig = {
-    val conf: Config = ConfigFactory.load()
-
-    def stringConfig(key: String, default: String = ""): Option[String] =
-      if (conf.hasPath("%s.%s".format(configPath, key))) {
-        Some(conf.getString("%s.%s".format(configPath, key)))
-      }
-      else {
-        if (default.nonEmpty) {
-          Some(default)
-        }
-        else {
-          None
-        }
-      }
 
     def poolOptionsConfig(key: String, default: Int): Int =
       if (conf.hasPath("%s.pool.%s".format(configPath, key))) {
@@ -117,13 +136,7 @@ object MongoConfig {
         default
       }
 
-    val port: Int =
-      if (conf.hasPath("%s.port".format(configPath))) {
-        conf.getInt("%s.port".format(configPath))
-      }
-      else {
-        DefaultPort
-      }
+    val port: Int = intConfig(configPath, "port", DefaultPort)
 
     val compressors: List[String] =
       if (conf.hasPath("%s.compressors".format(configPath))) {
@@ -133,12 +146,12 @@ object MongoConfig {
         List()
       }
 
-    val host            = stringConfig("host", DefaultHost).get
-    val database        = stringConfig("database").get
-    val userName        = stringConfig("userName")
-    val password        = stringConfig("password")
-    val authDatabase    = stringConfig("authDatabase", DefaultAuthenticationDatabaseName).get
-    val applicationName = stringConfig("applicationName", DefaultApplicationName).get
+    val host            = stringConfig(configPath, "host", DefaultHost).get
+    val database        = stringConfig(configPath, "database").get
+    val userName        = stringConfig(configPath, "userName")
+    val password        = stringConfig(configPath, "password")
+    val authDatabase    = stringConfig(configPath, "authDatabase", DefaultAuthenticationDatabaseName).get
+    val applicationName = stringConfig(configPath, "applicationName", DefaultApplicationName).get
 
     val poolOptions = MongoPoolOptions(
       poolOptionsConfig("maxConnectionIdleTime", DefaultPoolMaxConnectionIdleTime),

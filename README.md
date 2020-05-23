@@ -17,6 +17,7 @@ Support MongoDB 2.6 to 4.2.
 * Implicit conversions for Document, Bson, ObjectID ...
 * Reactive Streams Support
 * Json loading from File, Conversion to plain Json
+* Local Server Support [mongo-java-server](https://github.com/bwaldvogel/mongo-java-server)
 * ...
 
 ## Documentation
