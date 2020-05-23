@@ -42,9 +42,9 @@ class BookDAOSpec extends Specification with BeforeAll {
       val dateFilter     = dateInRangeFilter("publishedDate", From, new Date())
 
       val filterStage = filter(and(categoryFilter, dateFilter))
-      val aggregator  = List(filterStage, projectStage)
+      val pipeline    = List(filterStage, projectStage)
 
-      val list = BookDAO.Raw.findAggregated(aggregator).resultList()
+      val list = BookDAO.Raw.findAggregated(pipeline).resultList()
       list must haveSize(8)
     }
 
@@ -53,9 +53,9 @@ class BookDAOSpec extends Specification with BeforeAll {
       val groupStage: Bson =
         group("$categories", Field.sumField("pageCount"), Field.minField("pageCount"), Field.maxField("pageCount"))
 
-      val aggregator = List(groupStage)
+      val pipeline = List(groupStage)
 
-      val list = BookDAO.Raw.findAggregated(aggregator).resultList().map(doc => doc.asPlainMap)
+      val list = BookDAO.Raw.findAggregated(pipeline).resultList().map(doc => doc.asPlainMap)
       list must haveSize(58)
     }
   }

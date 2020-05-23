@@ -25,9 +25,9 @@ class AggregationSpec extends PersonSpecification {
 
     "support aggregation filter" in {
 
-      val aggregator = List(filterStage, sortStage)
+      val pipeline = List(filterStage, sortStage)
 
-      val aggregated = PersonDAO.findAggregated(aggregator).resultList()
+      val aggregated = PersonDAO.findAggregated(pipeline).resultList()
 
       aggregated.size must be equalTo 98
 
@@ -35,9 +35,9 @@ class AggregationSpec extends PersonSpecification {
 
     "support aggregation filter and group" in {
       // #agg_execute
-      val aggregator = List(filterStage, groupStage, sortStage)
+      val pipeline = List(filterStage, groupStage, sortStage)
 
-      val aggregated = PersonDAO.Raw.findAggregated(aggregator).resultList()
+      val aggregated = PersonDAO.Raw.findAggregated(pipeline).resultList()
 
       // #agg_execute
 

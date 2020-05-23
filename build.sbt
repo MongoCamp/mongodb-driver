@@ -59,6 +59,8 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.3" % Provide
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.4-9" % Provided
 
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % "1.28.0" % Provided
+
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
