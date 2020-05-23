@@ -4,11 +4,13 @@ import better.files.{File, Resource}
 import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Student
+import com.sfxcode.nosql.mongo.test.UniversityDatabase
 import com.sfxcode.nosql.mongo.test.UniversityDatabase.{GradeDAO, StudentDAO}
 import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeAll
+import org.specs2.specification.core.Fragments
+import org.specs2.specification.{AfterAll, AfterSpec, BeforeAll}
 
-class StudentDAOSpec extends Specification with BeforeAll with MongoImplicits {
+class StudentDAOSpec extends Specification with BeforeAll with AfterAll with MongoImplicits {
   sequential
 
   override def beforeAll(): Unit = {
@@ -34,4 +36,7 @@ class StudentDAOSpec extends Specification with BeforeAll with MongoImplicits {
 
     }
   }
+
+  override def afterAll(): Unit =
+    UniversityDatabase.LocalTestServer.shutdown()
 }
