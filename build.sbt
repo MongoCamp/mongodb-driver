@@ -47,25 +47,25 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.9.3" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.9.4" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.5" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.6" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7" % Test
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.8" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.3"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.3" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.5" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.4-9" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.4-11" % Provided
 
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % "1.28.0" % Provided
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % "1.29.1" % Provided
 
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % "1.28.0" % Provided
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % "1.29.1" % Provided
 
-libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
+libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 

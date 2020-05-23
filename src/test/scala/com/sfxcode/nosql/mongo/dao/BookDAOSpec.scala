@@ -13,6 +13,7 @@ import org.mongodb.scala.model.Filters.and
 import org.mongodb.scala.model.Projections
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
+import org.mongodb.scala.model.Updates._
 
 class BookDAOSpec extends Specification with BeforeAll {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
@@ -57,6 +58,11 @@ class BookDAOSpec extends Specification with BeforeAll {
 
       val list = BookDAO.Raw.findAggregated(pipeline).resultList().map(doc => doc.asPlainMap)
       list must haveSize(58)
+    }
+
+    "update one" in {
+      BookDAO.updateOne(Map("_id" -> 10), set("title", "new title")).result()
+      BookDAO.find("_id", 10).result().title mustEqual "new title"
     }
   }
 }
