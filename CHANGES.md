@@ -2,6 +2,10 @@
 
 ## Versions
 
+### 2.0.2
+* mongo-scala-driver 4.0.3
+* dependency updates
+
 ### 2.0.1
 * Mongo Java Server Support
 * LocalServer, ServerConfig added
