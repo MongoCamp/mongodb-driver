@@ -38,7 +38,7 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
   def distinctResult[S <: Any](fieldName: String, filter: Bson = Document()): Seq[S] =
     distinct(fieldName, filter).resultList().map(v => fromBson(v).asInstanceOf[S])
 
-  def findAggregated(aggregator: Seq[Bson], allowDiskUse: Boolean = false): AggregateObservable[A] =
-    coll.aggregate(aggregator).allowDiskUse(allowDiskUse)
+  def findAggregated(pipeline: Seq[Bson], allowDiskUse: Boolean = false): AggregateObservable[A] =
+    coll.aggregate(pipeline).allowDiskUse(allowDiskUse)
 
 }
