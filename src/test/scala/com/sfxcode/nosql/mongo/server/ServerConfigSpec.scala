@@ -21,7 +21,7 @@ class ServerConfigSpec extends Specification {
       config.port mustEqual 28028
       config.serverName mustEqual "local-unit-test-server"
       config.h2BackendConfig.get.inMemory must beFalse
-      config.h2BackendConfig.get.path mustEqual "/tmp/local-unit-test-server.mv"
+      config.h2BackendConfig.get.path mustEqual ""
     }
   }
 }
