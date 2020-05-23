@@ -46,6 +46,7 @@ Create custom model classes.
  - [MongoDAO](dao/index.md)
  - [GridFSDAO](gridfs/index.md)
  - [Features](collection/index.md)
+ - [server](server.md)
  - [Changes ](changes.md)
 
 @@@
