@@ -55,13 +55,15 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.5" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7" % Test
 
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
+
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.3" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.4-9" % Provided
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % "1.28.0" % Provided
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.2"
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % "1.28.0" % Provided
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0"
 
