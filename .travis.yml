@@ -27,3 +27,6 @@ before_script:
   - mongo --eval 'rs.initiate()'
   - sleep 15
 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
