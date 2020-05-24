@@ -5,7 +5,7 @@ import java.util.Date
 import com.sfxcode.nosql.mongo.Converter
 import com.sfxcode.nosql.mongo.bson.BsonConverter
 import com.sfxcode.nosql.mongo.bson.convert.JsonDateTimeConverter
-import com.sfxcode.nosql.mongo.database.MongoConfig
+import com.sfxcode.nosql.mongo.database.{DatabaseProvider, MongoConfig}
 import com.sfxcode.nosql.mongo.gridfs.GridFSStreamObserver
 import com.sfxcode.nosql.mongo.operation.ObservableIncludes
 import org.bson.BsonValue
@@ -135,5 +135,5 @@ trait DocumentIncludes {
   implicit def stringToObjectId(str: String): ObjectId = new ObjectId(str)
 
   implicit def documentToObjectId(doc: Document): ObjectId =
-    doc.getObjectId("_id")
+    doc.getObjectId(DatabaseProvider.ObjectIdKey)
 }

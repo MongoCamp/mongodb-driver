@@ -6,6 +6,7 @@ import java.util.Date
 import better.files.{File, Resource}
 import com.sfxcode.nosql.mongo.Filter._
 import com.sfxcode.nosql.mongo._
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.test.TestDatabase.BookDAO
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Aggregates._
@@ -61,8 +62,8 @@ class BookDAOSpec extends Specification with BeforeAll {
     }
 
     "update one" in {
-      BookDAO.updateOne(Map("_id" -> 10), set("title", "new title")).result()
-      BookDAO.find("_id", 10).result().title mustEqual "new title"
+      BookDAO.updateOne(Map(DatabaseProvider.ObjectIdKey -> 10), set("title", "new title")).result()
+      BookDAO.find(DatabaseProvider.ObjectIdKey, 10).result().title mustEqual "new title"
     }
   }
 }

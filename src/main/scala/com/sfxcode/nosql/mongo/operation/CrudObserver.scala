@@ -1,6 +1,7 @@
 package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo.Converter
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Observer
 import org.mongodb.scala.bson.conversions.Bson
@@ -19,8 +20,8 @@ trait CrudObserver[A] extends Crud[A] {
     replaceOne(value).subscribe(observer)
 
   def deleteValue(value: A, observer: Observer[DeleteResult] = new SimpleObserver[DeleteResult]): Unit = {
-    val oid    = Converter.toDocument(value).get("_id").get
-    val filter = equal("_id", oid)
+    val oid    = Converter.toDocument(value).get(DatabaseProvider.ObjectIdKey).get
+    val filter = equal(DatabaseProvider.ObjectIdKey, oid)
     deleteOne(filter).subscribe(observer)
   }
 
