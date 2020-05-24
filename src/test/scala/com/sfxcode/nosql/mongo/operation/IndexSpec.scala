@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import com.sfxcode.nosql.mongo.test.TestDatabase._
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
-import com.sfxcode.nosql.mongo.database.MongoIndex
+import com.sfxcode.nosql.mongo.database.{DatabaseProvider, MongoIndex}
 
 import scala.concurrent.duration.Duration
 
@@ -20,11 +20,11 @@ class IndexSpec extends PersonSpecification {
 
       val mongoIndex: MongoIndex = list.head
       mongoIndex.name mustEqual "_id_"
-      mongoIndex.fields must contain("_id")
+      mongoIndex.fields must contain(DatabaseProvider.ObjectIdKey)
       mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
       mongoIndex.version mustEqual 2
       mongoIndex.keys must haveSize(1)
-      mongoIndex.keys.head._1 mustEqual "_id"
+      mongoIndex.keys.head._1 mustEqual DatabaseProvider.ObjectIdKey
       mongoIndex.keys.head._2 mustEqual 1
 
     }
@@ -46,7 +46,7 @@ class IndexSpec extends PersonSpecification {
 
     "evaluate has index" in {
 
-      PersonDAO.hasIndexForField("_id") must beTrue
+      PersonDAO.hasIndexForField(DatabaseProvider.ObjectIdKey) must beTrue
 
       PersonDAO.hasIndexForField("unknown") must beFalse
     }

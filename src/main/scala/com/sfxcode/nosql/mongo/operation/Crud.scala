@@ -1,9 +1,10 @@
 package com.sfxcode.nosql.mongo.operation
 
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.{Converter, _}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model._
+import org.mongodb.scala.model.{BulkWriteOptions, _}
 import org.mongodb.scala.result.{DeleteResult, InsertManyResult, InsertOneResult, UpdateResult}
 import org.mongodb.scala.{BulkWriteResult, Observable, SingleObservable}
 
@@ -26,14 +27,21 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   // bulk write
 
+  def bulkWrite(requests: List[WriteModel[_ <: A]], options: BulkWriteOptions): SingleObservable[BulkWriteResult] =
+    coll.bulkWrite(requests, options)
+
   def bulkWrite(requests: List[WriteModel[_ <: A]], ordered: Boolean = true): SingleObservable[BulkWriteResult] =
-    coll.bulkWrite(requests, BulkWriteOptions().ordered(ordered))
+    bulkWrite(requests, BulkWriteOptions().ordered(ordered))
+
+  def bulkWriteMany(values: Seq[A], options: BulkWriteOptions): SingleObservable[BulkWriteResult] = {
+    val requests: ArrayBuffer[WriteModel[_ <: A]] = ArrayBuffer()
+    values.foreach(value => requests.append(InsertOneModel(value)))
+    bulkWrite(requests.toList, options)
+  }
 
   def bulkWriteMany(values: Seq[A], ordered: Boolean = true): SingleObservable[BulkWriteResult] = {
     val requests: ArrayBuffer[WriteModel[_ <: A]] = ArrayBuffer()
-    values.foreach { value =>
-      requests.append(InsertOneModel(value))
-    }
+    values.foreach(value => requests.append(InsertOneModel(value)))
     bulkWrite(requests.toList, ordered)
   }
 
@@ -41,14 +49,14 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   def replaceOne(value: A): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
-    coll.replaceOne(equal("_id", oid), value)
+    val oid      = document.get(DatabaseProvider.ObjectIdKey).get
+    coll.replaceOne(equal(DatabaseProvider.ObjectIdKey, oid), value)
   }
 
   def replaceOne(value: A, options: ReplaceOptions): Observable[UpdateResult] = {
     val document = Converter.toDocument(value)
-    val oid      = document.get("_id").get
-    coll.replaceOne(equal("_id", oid), value, options)
+    val oid      = document.get(DatabaseProvider.ObjectIdKey).get
+    coll.replaceOne(equal(DatabaseProvider.ObjectIdKey, oid), value, options)
   }
 
   def replaceOne(filter: Bson, value: A): Observable[UpdateResult] =
@@ -77,8 +85,8 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
     coll.deleteOne(filter, options)
 
   def deleteOne(value: A): Observable[DeleteResult] = {
-    val oid = Converter.toDocument(value).get("_id").get
-    coll.deleteOne(equal("_id", oid))
+    val oid = Converter.toDocument(value).get(DatabaseProvider.ObjectIdKey).get
+    coll.deleteOne(equal(DatabaseProvider.ObjectIdKey, oid))
   }
 
   def deleteMany(filter: Bson): Observable[DeleteResult] =

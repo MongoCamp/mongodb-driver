@@ -1,6 +1,7 @@
 package com.sfxcode.nosql.mongo
 
 import com.sfxcode.nosql.mongo.bson.BsonConverter
+import com.sfxcode.nosql.mongo.database.DatabaseProvider._
 import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.BsonField
@@ -51,7 +52,7 @@ trait Field {
         "$" + name
       }
     }.toList
-    BsonConverter.toBson(Map("_id" -> list))
+    BsonConverter.toBson(Map(ObjectIdKey -> list))
   }
 
 }

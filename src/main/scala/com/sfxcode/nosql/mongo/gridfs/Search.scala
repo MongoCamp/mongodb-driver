@@ -1,5 +1,6 @@
 package com.sfxcode.nosql.mongo.gridfs
 
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
@@ -16,7 +17,7 @@ abstract class Search extends Base {
       gridfsBucket.find(filter).sort(sort)
     }
 
-  def findById(oid: ObjectId): GridFSFindObservable = find(equal("_id", oid))
+  def findById(oid: ObjectId): GridFSFindObservable = find(equal(DatabaseProvider.ObjectIdKey, oid))
 
   def find(key: String, value: Any): GridFSFindObservable =
     find(equal(key, value))

@@ -19,7 +19,7 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
 
   def updateMetadata(oid: ObjectId, value: Any): Observable[UpdateResult] = {
     val doc: BsonValue = BsonConverter.toBson(value)
-    val result         = Files.updateOne(equal("_id", oid), set("metadata", doc))
+    val result         = Files.updateOne(equal(DatabaseProvider.ObjectIdKey, oid), set("metadata", doc))
     result
   }
 
@@ -36,10 +36,10 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
   }
 
   def updateMetadataElements(oid: ObjectId, elements: Map[String, Any]): Observable[UpdateResult] =
-    updateMetadataElements(equal("_id", oid), elements)
+    updateMetadataElements(equal(DatabaseProvider.ObjectIdKey, oid), elements)
 
   def updateMetadataElement(oid: ObjectId, key: String, value: Any): Observable[UpdateResult] =
-    updateMetadataElements(equal("_id", oid), Map(key -> value))
+    updateMetadataElements(equal(DatabaseProvider.ObjectIdKey, oid), Map(key -> value))
 
   def updateMetadataElement(filter: Bson, key: String, value: Any): Observable[UpdateResult] =
     updateMetadataElements(filter, Map(key -> value))

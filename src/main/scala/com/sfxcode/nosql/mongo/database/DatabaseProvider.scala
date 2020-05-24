@@ -129,6 +129,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 }
 
 object DatabaseProvider {
+  val ObjectIdKey         = "_id"
   val CollectionSeparator = ":"
 
   private val CustomRegistry = fromProviders(CustomCodecProvider())

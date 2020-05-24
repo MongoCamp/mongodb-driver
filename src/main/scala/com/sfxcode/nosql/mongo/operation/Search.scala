@@ -2,6 +2,7 @@ package com.sfxcode.nosql.mongo.operation
 
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.bson.BsonConverter._
+import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
@@ -27,7 +28,7 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
       coll.find(filter).sort(sort).projection(projection)
     }
 
-  def findById(oid: ObjectId): FindObservable[A] = find(equal("_id", oid))
+  def findById(oid: ObjectId): FindObservable[A] = find(equal(DatabaseProvider.ObjectIdKey, oid))
 
   def find(name: String, value: Any): FindObservable[A] =
     find(equal(name, value))
