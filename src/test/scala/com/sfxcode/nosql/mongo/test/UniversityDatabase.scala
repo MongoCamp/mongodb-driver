@@ -10,7 +10,7 @@ import org.mongodb.scala.bson.codecs.Macros._
 
 object UniversityDatabase {
   // create local test server (mongo-java-server)
-  val LocalTestServer = LocalServer.fromPath("unit.test.local.mongo.server")
+  var LocalTestServer: LocalServer = _
 
   // create codecs for custom classes
   private val universityRegistry: CodecRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])

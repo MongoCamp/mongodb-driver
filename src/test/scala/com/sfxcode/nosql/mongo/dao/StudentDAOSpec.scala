@@ -4,6 +4,7 @@ import better.files.{File, Resource}
 import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Student
+import com.sfxcode.nosql.mongo.server.LocalServer
 import com.sfxcode.nosql.mongo.test.UniversityDatabase
 import com.sfxcode.nosql.mongo.test.UniversityDatabase.{GradeDAO, StudentDAO}
 import org.specs2.mutable.Specification
@@ -14,11 +15,15 @@ class StudentDAOSpec extends Specification with BeforeAll with AfterAll with Mon
   sequential
 
   override def beforeAll(): Unit = {
+    UniversityDatabase.LocalTestServer = LocalServer.fromPath("unit.test.local.mongo.server")
     StudentDAO.drop().result()
     StudentDAO.importJsonFile(File(Resource.getUrl("json/university/students.json"))).result()
     GradeDAO.drop().result()
     GradeDAO.importJsonFile(File(Resource.getUrl("json/university/grades.json"))).result()
   }
+
+  override def afterAll(): Unit =
+    UniversityDatabase.LocalTestServer.shutdown()
 
   "StudentDAO" should {
     "support count" in {
@@ -37,6 +42,4 @@ class StudentDAOSpec extends Specification with BeforeAll with AfterAll with Mon
     }
   }
 
-  override def afterAll(): Unit =
-    UniversityDatabase.LocalTestServer.shutdown()
 }
