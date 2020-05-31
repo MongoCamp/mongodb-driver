@@ -14,7 +14,7 @@ import org.mongodb.scala.model.Updates._
 
 object SyncStrategy extends Enumeration {
   type SyncStrategy = Value
-  val Replcace = Value
+  val SyncAll = Value
 }
 
 object SyncDirection extends Enumeration {
@@ -27,7 +27,7 @@ case class MongoSyncException(message: String) extends Exception(message)
 case class MongoSyncOperation(
     collectionName: String,
     syncDirection: SyncDirection = SyncDirection.SourceToTarget,
-    syncStrategy: SyncStrategy = SyncStrategy.Replcace,
+    syncStrategy: SyncStrategy = SyncStrategy.SyncAll,
     idColumnName: String = DatabaseProvider.ObjectIdKey
 ) extends LazyLogging
     with Filter {
@@ -69,12 +69,12 @@ case class MongoSyncOperation(
       left: DatabaseProvider,
       right: DatabaseProvider,
       countBefore: Int,
-      diff: Seq[Document]
+      documentsToSync: Seq[Document]
   ): MongoSyncResult = {
     val start    = System.currentTimeMillis()
     val syncDate = new Date()
-    if (diff.nonEmpty) {
-      val idSet: Set[ObjectId]           = diff.map(doc => doc.getObjectId(idColumnName)).toSet
+    if (documentsToSync.nonEmpty) {
+      val idSet: Set[ObjectId]           = documentsToSync.map(doc => doc.getObjectId(idColumnName)).toSet
       val documentsToSync: Seq[Document] = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results()
       right.dao(collectionName).bulkWriteMany(documentsToSync).result()
       val update = combine(
@@ -89,7 +89,7 @@ case class MongoSyncOperation(
       collectionName,
       syncDate,
       true,
-      diff.size,
+      documentsToSync.size,
       countBefore,
       countAfter,
       (System.currentTimeMillis() - start)

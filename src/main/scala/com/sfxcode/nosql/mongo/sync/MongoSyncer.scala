@@ -7,8 +7,13 @@ import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable
 
-case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig) {
-  private val registry = fromProviders(classOf[MongoSyncResult])
+case class MongoSyncer(
+    sourceConfig: MongoConfig,
+    targetConfig: MongoConfig,
+    syncOperations: List[MongoSyncOperation] = List()
+) {
+  private val registry     = fromProviders(classOf[MongoSyncResult])
+  private val operationMap = new mutable.HashMap[String, MongoSyncOperation]()
 
   val source: DatabaseProvider = DatabaseProvider(sourceConfig, registry)
   val target: DatabaseProvider = DatabaseProvider(targetConfig)
@@ -17,7 +22,7 @@ case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig) {
 
   var terminated = false
 
-  private val operationMap = new mutable.HashMap[String, MongoSyncOperation]()
+  syncOperations.foreach(operation => addOperation(operation))
 
   def addOperation(operation: MongoSyncOperation): Option[MongoSyncOperation] =
     operationMap.put(operation.collectionName, operation)
