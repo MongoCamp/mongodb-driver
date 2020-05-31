@@ -71,20 +71,29 @@ case class MongoSyncOperation(
       countBefore: Int,
       diff: Seq[Document]
   ): MongoSyncResult = {
-    val syncInfo: MongoSyncInfo = MongoSyncInfo()
+    val start    = System.currentTimeMillis()
+    val syncDate = new Date()
     if (diff.nonEmpty) {
       val idSet: Set[ObjectId]           = diff.map(doc => doc.getObjectId(idColumnName)).toSet
       val documentsToSync: Seq[Document] = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results()
       right.dao(collectionName).bulkWriteMany(documentsToSync).result()
       val update = combine(
-        set(MongoSyncOperation.SyncColumnLastSync, syncInfo.syncDate),
-        set(MongoSyncOperation.SyncColumnLastUpdate, syncInfo.updateDate)
+        set(MongoSyncOperation.SyncColumnLastSync, syncDate),
+        set(MongoSyncOperation.SyncColumnLastUpdate, syncDate)
       )
       left.dao(collectionName).updateMany(Map(), update).result()
       right.dao(collectionName).updateMany(Map(), update).result()
     }
     val countAfter: Int = right.dao(collectionName).count().result().toInt
-    MongoSyncResult(collectionName, true, diff.size, countBefore, countAfter, syncInfo)
+    MongoSyncResult(
+      collectionName,
+      syncDate,
+      true,
+      diff.size,
+      countBefore,
+      countAfter,
+      (System.currentTimeMillis() - start)
+    )
   }
 }
 
@@ -97,16 +106,20 @@ object MongoSyncOperation extends ConfigHelper {
   val SyncColumnLastUpdate: String =
     stringConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
 
+  val WriteSyncLogOnMaster = booleanConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "writeSyncLogOnMaster")
+  val SyncLogTableName: String =
+    stringConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "syncLogTableName", default = "mongo-sync-log").get
 }
 
-case class MongoSyncInfo(id: Any = new ObjectId(), syncDate: Date = new Date(), updateDate: Date = new Date())
+//case class MongoSyncInfo(id: Any = new ObjectId(), syncDate: Date = new Date(), updateDate: Date = new Date())
 
 case class MongoSyncResult(
     collectionName: String,
+    syncDate: Date = new Date(),
     acknowleged: Boolean = false,
     synced: Int = -1,
     countBefore: Int = -1,
     countAfter: Int = -1,
-    syncInfo: MongoSyncInfo = MongoSyncInfo(),
+    syncTime: Long = -1,
     exception: Option[Exception] = None
 )
