@@ -1,12 +1,19 @@
 package com.sfxcode.nosql.mongo.sync
 
+import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.{DatabaseProvider, MongoConfig}
+import org.bson.codecs.configuration.CodecRegistries.fromProviders
+import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable
 
 case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig) {
-  val source: DatabaseProvider = DatabaseProvider(sourceConfig)
+  private val registry = fromProviders(classOf[MongoSyncResult])
+
+  val source: DatabaseProvider = DatabaseProvider(sourceConfig, registry)
   val target: DatabaseProvider = DatabaseProvider(targetConfig)
+
+  object MongoSyncResultDAO extends MongoDAO[MongoSyncResult](source, MongoSyncOperation.SyncLogTableName)
 
   var terminated = false
 
@@ -19,10 +26,16 @@ case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig) {
     if (terminated) {
       throw MongoSyncException("MongoSyncer already terminated")
     }
-    operationMap
+
+    val result = operationMap
       .get(collectionName)
       .map(op => op.excecute(source, target))
       .getOrElse(List(MongoSyncResult(collectionName)))
+
+    if (MongoSyncOperation.WriteSyncLogOnMaster) {
+      MongoSyncResultDAO.insertMany(result).results()
+    }
+    result
   }
 
   def syncAll(): List[MongoSyncResult] = operationMap.keys.flatMap(key => sync(key)).toList

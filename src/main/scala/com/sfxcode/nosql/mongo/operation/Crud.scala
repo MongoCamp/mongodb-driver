@@ -1,5 +1,7 @@
 package com.sfxcode.nosql.mongo.operation
 
+import java.util.Date
+
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.{Converter, _}
 import org.mongodb.scala.bson.conversions.Bson
@@ -10,6 +12,8 @@ import org.mongodb.scala.{BulkWriteResult, Observable, SingleObservable}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
+import Updates._
+import com.sfxcode.nosql.mongo.sync.MongoSyncOperation
 
 abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
@@ -76,6 +80,9 @@ abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
 
   def updateMany(filter: Bson, update: Bson, options: UpdateOptions): Observable[UpdateResult] =
     coll.updateMany(filter, update, options)
+
+  def touchInternal(filter: Bson): Observable[UpdateResult] =
+    updateMany(filter, set(MongoSyncOperation.SyncColumnLastUpdate, new Date()))
 
   // delete
 
