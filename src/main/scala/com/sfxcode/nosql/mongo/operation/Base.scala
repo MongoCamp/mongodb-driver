@@ -1,6 +1,6 @@
 package com.sfxcode.nosql.mongo.operation
 
-import com.sfxcode.nosql.mongo.database.MongoIndex
+import com.sfxcode.nosql.mongo.database.{ConfigHelper, MongoIndex}
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
