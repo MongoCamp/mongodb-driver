@@ -2,7 +2,6 @@ package com.sfxcode.nosql.mongo.database
 
 import java.util.Date
 
-import com.sfxcode.nosql.mongo._
 import org.mongodb.scala.bson.Document
 import com.sfxcode.nosql.mongo._
 
@@ -34,7 +33,7 @@ object CollectionStatus {
       map.getOrElse("storageSize", 0).asInstanceOf[Int],
       map.getOrElse("avgObjSize", 0).asInstanceOf[Int],
       map.getOrElse("nindexes", 0).asInstanceOf[Int],
-      map.getOrElse("indexSizes", Map).asInstanceOf[Map[String, Int]],
+      map.getOrElse("indexSizes", Map()).asInstanceOf[Map[String, Int]],
       map.getOrElse("totalIndexSize", 0).asInstanceOf[Int],
       map.getOrElse("ok", 0).asInstanceOf[Double].toInt,
       new Date(),
