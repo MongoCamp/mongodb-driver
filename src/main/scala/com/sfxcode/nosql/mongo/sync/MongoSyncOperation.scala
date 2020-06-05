@@ -71,12 +71,13 @@ case class MongoSyncOperation(
       countBefore: Int,
       documentsToSync: Seq[Document]
   ): MongoSyncResult = {
-    val start    = System.currentTimeMillis()
-    val syncDate = new Date()
+    val start                   = System.currentTimeMillis()
+    val syncDate                = new Date()
+    var filteredDocumentsToSync = Seq[Document]()
     if (documentsToSync.nonEmpty) {
-      val idSet: Set[ObjectId]           = documentsToSync.map(doc => doc.getObjectId(idColumnName)).toSet
-      val documentsToSync: Seq[Document] = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results()
-      right.dao(collectionName).bulkWriteMany(documentsToSync).result()
+      val idSet: Set[ObjectId] = documentsToSync.map(doc => doc.getObjectId(idColumnName)).toSet
+      filteredDocumentsToSync = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results()
+      right.dao(collectionName).bulkWriteMany(filteredDocumentsToSync).result()
       val update = combine(
         set(MongoSyncOperation.SyncColumnLastSync, syncDate),
         set(MongoSyncOperation.SyncColumnLastUpdate, syncDate)
@@ -89,7 +90,7 @@ case class MongoSyncOperation(
       collectionName,
       syncDate,
       true,
-      documentsToSync.size,
+      filteredDocumentsToSync.size,
       countBefore,
       countAfter,
       (System.currentTimeMillis() - start)

@@ -12,8 +12,8 @@ case class LocalServer(serverConfig: ServerConfig = ServerConfig()) {
   private val server: MongoServer = {
     if (ServerBackend.H2 == serverConfig.backend) {
       if (serverConfig.h2BackendConfig.isDefined && !serverConfig.h2BackendConfig.get.inMemory) {
-        if (serverConfig.h2BackendConfig.get.path.nonEmpty) {
-          h2Path = serverConfig.h2BackendConfig.get.path
+        if (serverConfig.h2BackendConfig.get.path.isDefined) {
+          h2Path = serverConfig.h2BackendConfig.get.path.get
         }
         else {
           h2Path = File.temporaryFile().get().path.toString

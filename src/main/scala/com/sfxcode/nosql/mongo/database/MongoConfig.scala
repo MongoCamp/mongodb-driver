@@ -80,7 +80,13 @@ trait ConfigHelper {
 
   def stringConfig(configPath: String, key: String, default: String = ""): Option[String] =
     if (conf.hasPath("%s.%s".format(configPath, key))) {
-      Some(conf.getString("%s.%s".format(configPath, key)))
+      val str = conf.getString("%s.%s".format(configPath, key))
+      if (str.nonEmpty) {
+        Some(str)
+      }
+      else {
+        None
+      }
     }
     else {
       if (default.nonEmpty) {

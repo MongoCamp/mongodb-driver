@@ -11,7 +11,7 @@ case class ServerConfig(
     h2BackendConfig: Option[H2BackendConfig] = None
 )
 
-case class H2BackendConfig(inMemory: Boolean = true, path: String = "")
+case class H2BackendConfig(inMemory: Boolean = true, path: Option[String] = None)
 
 object ServerBackend extends Enumeration {
   type ServerBackend = Value
@@ -46,7 +46,7 @@ object ServerConfig extends ConfigHelper {
     val h2BackendConfig: Option[H2BackendConfig] = {
       if (serverBackend == ServerBackend.H2 && conf.hasPath("%s.%s".format(configPath, "h2.inMemory"))) {
         val inMemory = booleanConfig(configPath, "h2.inMemory")
-        val path     = stringConfig(configPath, "h2.path").get
+        val path     = stringConfig(configPath, "h2.path")
         Some(H2BackendConfig(inMemory, path))
       }
       else {
