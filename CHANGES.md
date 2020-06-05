@@ -6,7 +6,7 @@
 ### 2.0.2
 * mongo-scala-driver 4.0.3
 * dependency updates
-* Sync for collections added
+* Sync for collections between databases added
 
 ### 2.0.1
 * Mongo Java Server Support
