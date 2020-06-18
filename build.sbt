@@ -53,17 +53,19 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.6" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.8" % Test
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.9" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.3"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.4"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.5" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-2" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-4" % Provided
 
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % "1.29.1" % Provided
+val MongoJavaServerVersion = "1.30.0"
 
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % "1.29.1" % Provided
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
+
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 
