@@ -6,6 +6,10 @@
 ### 2.0.3
 * Bugfix CollectionStatus
 
+### 2.0.4
+* mongo-scala-driver 4.0.3
+* dependency updates
+
 ### 2.0.2
 * mongo-scala-driver 4.0.3
 * dependency updates
