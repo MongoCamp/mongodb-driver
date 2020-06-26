@@ -5,7 +5,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.13.2", "2.12.11")
+crossScalaVersions := Seq("2.13.3", "2.12.11")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -47,7 +47,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.9.4" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.0" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
@@ -61,7 +61,7 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.5" % Provide
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-4" % Provided
 
-val MongoJavaServerVersion = "1.30.0"
+val MongoJavaServerVersion = "1.32.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
