@@ -3,8 +3,9 @@
 
 ## Versions
 
-### 2.0.3
+### 2.0.6
 * Bugfix CollectionStatus
+* mongo-scala-driver 4.0.5
 
 ### 2.0.5
 * mongo-scala-driver 4.0.4
