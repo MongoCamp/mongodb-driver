@@ -5,7 +5,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.13.3", "2.12.11")
+crossScalaVersions := Seq("2.13.3", "2.12.12")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -55,13 +55,13 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.6" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.9" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.4"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.0.5"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.5" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.6" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-4" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-6" % Provided
 
-val MongoJavaServerVersion = "1.32.0"
+val MongoJavaServerVersion = "1.33.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
