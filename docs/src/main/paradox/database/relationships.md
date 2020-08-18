@@ -9,8 +9,8 @@ However, sometimes there is a need for [relationsips beetween collections](https
 
 The Relations trait extends DAO case classes with relationship functions.
 
-* relatedRecordForOneToOne (OneToOneRelationship and reference vlue needed)
-* relatedRecordsForOneToMany (OneToManyRelationship and reference vlue needed)
+* relatedRecordForOneToOne (OneToOneRelationship and reference value needed)
+* relatedRecordsForOneToMany (OneToManyRelationship and reference value needed)
 
 ## Demo
 
