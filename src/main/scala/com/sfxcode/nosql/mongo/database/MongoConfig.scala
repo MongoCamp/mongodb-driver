@@ -9,7 +9,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.mongodb.scala.connection._
 import org.mongodb.scala.{MongoClientSettings, MongoCredential, ServerAddress}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
 
 case class MongoConfig(

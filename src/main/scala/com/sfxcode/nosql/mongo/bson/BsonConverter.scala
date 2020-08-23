@@ -8,7 +8,7 @@ import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.bson.{ObjectId, _}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
@@ -191,9 +191,7 @@ object BsonConverter {
 
   def asMapList(documents: List[Document]): List[Map[String, Any]] = {
     val result = new mutable.ArrayBuffer[Map[String, Any]]()
-    documents.foreach { document =>
-      result.+=(asMap(document))
-    }
+    documents.foreach(document => result.+=(asMap(document)))
     result.toList
   }
 

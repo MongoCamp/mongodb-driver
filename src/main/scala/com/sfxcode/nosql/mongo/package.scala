@@ -15,7 +15,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.{GridFSFile, GridFSFindObservable}
 import org.mongodb.scala.{Document, FindObservable, Observable, ObservableImplicits}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
 
 package object mongo extends ObservableIncludes with DocumentIncludes {
