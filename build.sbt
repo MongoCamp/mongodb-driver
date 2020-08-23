@@ -16,7 +16,7 @@ parallelExecution in Test := false
 lazy val simple_mongo = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
-    buildInfoKeys := BuildInfoKey.ofN(name, version, scalaVersion, sbtVersion),
+    buildInfoKeys ++= Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "com.sfxcode.nosql.mongo"
   )
 
@@ -47,7 +47,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.3" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
@@ -72,6 +72,8 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
