@@ -18,6 +18,7 @@ Support MongoDB 2.6 to 4.2.
 * Reactive Streams Support
 * Json loading from File, Conversion to plain Json
 * Local Server Support [mongo-java-server](https://github.com/bwaldvogel/mongo-java-server)
+* Collection Sync
 * ...
 
 ## Documentation
@@ -43,11 +44,11 @@ Scala Version is 2.13.x / 2.12.x.
 
 ## Usage
 
-Add following lines to your build.sbt
+Add following lines to your build.sbt (replace x.x with the actual Version)
 
 ```
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.0"
+libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "2.x.x"
 
 ```
 
