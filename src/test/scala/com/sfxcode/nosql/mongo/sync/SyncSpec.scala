@@ -8,6 +8,9 @@ import org.specs2.specification.{AfterAll, BeforeAll}
 
 class SyncSpec extends Specification with BeforeAll with AfterAll {
 
+  val CountSmall  = 5
+  val CountMedium = 500
+
   sequential
 
   override def beforeAll(): Unit =
@@ -23,7 +26,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
     "be synced from source to target" in {
       var result: MongoSyncResult = TestSync.mongoSyncer.sync(TestCollectionSourceTargetName).head
       result.acknowleged must beTrue
-      TestSync.insertIntoSource(500, TestCollectionSourceTargetName)
+      TestSync.insertIntoSource(CountMedium, TestCollectionSourceTargetName)
       result = TestSync.mongoSyncer.sync(TestCollectionSourceTargetName).head
       result.acknowleged must beTrue
       result.synced mustEqual 500
@@ -35,7 +38,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
       result.countBefore mustEqual 500
       result.synced mustEqual 0
 
-      TestSync.insertIntoSource(5, TestCollectionSourceTargetName)
+      TestSync.insertIntoSource(CountSmall, TestCollectionSourceTargetName)
       result = TestSync.mongoSyncer.sync(TestCollectionSourceTargetName).head
       result.acknowleged must beTrue
       result.countBefore mustEqual 500
@@ -43,7 +46,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
       result.synced mustEqual 5
       TestSync.targetCount(TestCollectionSourceTargetName) mustEqual 505
 
-      TestSync.insertIntoTarget(5, TestCollectionSourceTargetName)
+      TestSync.insertIntoTarget(CountSmall, TestCollectionSourceTargetName)
       TestSync.targetCount(TestCollectionSourceTargetName) mustEqual 510
       val resultList = TestSync.mongoSyncer.sync(TestCollectionSourceTargetName)
       result = resultList.head
@@ -56,7 +59,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
     "be synced two way" in {
       var result: MongoSyncResult = TestSync.mongoSyncer.sync(TestCollectionTwoWayName).head
       result.acknowleged must beTrue
-      TestSync.insertIntoSource(500, TestCollectionTwoWayName)
+      TestSync.insertIntoSource(CountMedium, TestCollectionTwoWayName)
       result = TestSync.mongoSyncer.sync(TestCollectionTwoWayName).head
       result.acknowleged must beTrue
       result.synced mustEqual 500
@@ -68,7 +71,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
       result.countBefore mustEqual 500
       result.synced mustEqual 0
 
-      TestSync.insertIntoSource(5, TestCollectionTwoWayName)
+      TestSync.insertIntoSource(CountSmall, TestCollectionTwoWayName)
       result = TestSync.mongoSyncer.sync(TestCollectionTwoWayName).head
       result.acknowleged must beTrue
       result.countBefore mustEqual 500
@@ -76,7 +79,7 @@ class SyncSpec extends Specification with BeforeAll with AfterAll {
       result.synced mustEqual 5
       TestSync.targetCount(TestCollectionTwoWayName) mustEqual 505
 
-      TestSync.insertIntoTarget(5, TestCollectionTwoWayName)
+      TestSync.insertIntoTarget(CountSmall, TestCollectionTwoWayName)
       TestSync.targetCount(TestCollectionTwoWayName) mustEqual 510
       val resultList = TestSync.mongoSyncer.sync(TestCollectionTwoWayName)
       result = resultList.head
