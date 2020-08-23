@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit
 
 import com.sfxcode.nosql.MongoImplicits
 import com.sfxcode.nosql.mongo.test.TestDatabase.PersonDAO
-import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.model.Person
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -18,6 +17,11 @@ class PersonDAOSpec extends PersonSpecification with MongoImplicits {
     "support count" in {
       val count: Long = PersonDAO.count()
       count mustEqual 200
+    }
+
+    "support columnNames" in {
+      val columnNames = PersonDAO.columnNames(100)
+      columnNames.size mustEqual 18
     }
 
     "support results" in {

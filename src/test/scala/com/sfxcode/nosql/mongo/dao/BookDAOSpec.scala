@@ -34,6 +34,11 @@ class BookDAOSpec extends Specification with BeforeAll {
       val count: Long = BookDAO.count().result()
       count mustEqual 431
     }
+
+    "support columnNames" in {
+      val columnNames = BookDAO.columnNames()
+      columnNames.size mustEqual 11
+    }
   }
 
   "BookDAO Aggregation" should {
