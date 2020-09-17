@@ -39,7 +39,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   /**
     *
-    * @param sampleSize use sample size greate 0 for better performance on big collections
+    * @param sampleSize use sample size greater 0 for better performance on big collections
     * @return List of column names
     */
   def columnNames(sampleSize: Int = 0): List[String] = {

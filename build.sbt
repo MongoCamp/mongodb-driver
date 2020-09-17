@@ -29,7 +29,7 @@ lazy val docs = (project in file("docs"))
     scalaVersion := "2.13.2",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
     libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.3",
-    libraryDependencies += "org.xerial.snappy" % "snappy-java"   % "1.1.7.3",
+    libraryDependencies += "org.xerial.snappy"  % "snappy-java"  % "1.1.7.3",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
@@ -57,7 +57,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.9" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.0"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.6" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.7" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-6" % Provided
 
@@ -73,7 +73,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.0"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
