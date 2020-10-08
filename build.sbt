@@ -26,10 +26,10 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(GhpagesPlugin)
   .settings(
     name := "simple mongo docs",
-    scalaVersion := "2.13.2",
+    scalaVersion := "2.13.3",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
-    libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "1.9.3",
-    libraryDependencies += "org.xerial.snappy"  % "snappy-java"  % "1.1.7.3",
+    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.0.5",
+    libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.7.3",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
@@ -53,7 +53,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.6" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.9" % Test
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.0"
 
@@ -61,7 +61,7 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.7" % Provide
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-6" % Provided
 
-val MongoJavaServerVersion = "1.34.0"
+val MongoJavaServerVersion = "1.36.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
