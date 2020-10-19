@@ -47,7 +47,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.3" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.5" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
@@ -55,11 +55,11 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.6" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.7.7" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-6" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-7" % Provided
 
 val MongoJavaServerVersion = "1.36.0"
 
