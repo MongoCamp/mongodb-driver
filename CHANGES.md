@@ -5,6 +5,7 @@
 
 ### 2.0.8
 * MongoDAO add method columnNames
+* mongo-scala-driver [4.1.1](https://mongodb.github.io/mongo-java-driver/4.1/driver-scala/)
 
 ### 2.0.7
 * mongo-scala-driver [4.1.0](https://mongodb.github.io/mongo-java-driver/4.1/whats-new/)
