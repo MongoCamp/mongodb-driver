@@ -3,6 +3,9 @@
 
 ## Versions
 
+### 2.0.10
+- Size, Storagesize needs Double
+
 ### 2.0.9
 - Ensure Int value for collection status
 
