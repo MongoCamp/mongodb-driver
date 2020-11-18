@@ -3,6 +3,9 @@
 
 ## Versions
 
+### 2.0.9
+- Ensure Int value for collection status
+
 ### 2.0.8
 * MongoDAO add method columnNames
 * mongo-scala-driver [4.1.1](https://mongodb.github.io/mongo-java-driver/4.1/driver-scala/)
