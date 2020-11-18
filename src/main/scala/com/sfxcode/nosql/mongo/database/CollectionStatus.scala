@@ -28,16 +28,24 @@ object CollectionStatus {
       map.getOrElse("ns", "-").toString,
       map.getOrElse("type", "Standard").toString,
       map.getOrElse("scaleFactor", 0).asInstanceOf[Int],
-      map.getOrElse("size", 0).asInstanceOf[Int],
-      map.getOrElse("count", 0).asInstanceOf[Int],
-      map.getOrElse("storageSize", 0).asInstanceOf[Int],
-      map.getOrElse("avgObjSize", 0).asInstanceOf[Int],
-      map.getOrElse("nindexes", 0).asInstanceOf[Int],
+      intValue(map, "size"),
+      intValue(map, "count"),
+      intValue(map, "storageSize"),
+      intValue(map, "avgObjSize"),
+      intValue(map, "nindexes"),
       map.getOrElse("indexSizes", Map()).asInstanceOf[Map[String, Int]],
-      map.getOrElse("totalIndexSize", 0).asInstanceOf[Int],
-      map.getOrElse("ok", 0).asInstanceOf[Double].toInt,
+      intValue(map, "totalIndexSize"),
+      intValue(map, "ok"),
       new Date(),
       map
     )
   }
+
+  def intValue(map: Map[String, Any], key: String): Int =
+    map.getOrElse(key, 0) match {
+      case i: Int    => i
+      case l: Long   => l.intValue()
+      case d: Double => d.intValue()
+      case _         => 0
+    }
 }
