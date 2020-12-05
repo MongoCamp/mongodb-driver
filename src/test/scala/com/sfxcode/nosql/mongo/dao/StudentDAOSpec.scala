@@ -27,6 +27,11 @@ class StudentDAOSpec extends Specification with BeforeAll with AfterAll with Mon
 
   "StudentDAO" should {
     "support count" in {
+      StudentDAO.name mustEqual "university-students"
+      StudentDAO.databaseName mustEqual "simple-mongo-unit-test"
+    }
+
+    "support count" in {
       val students: Long = StudentDAO.count()
       students mustEqual 200
 
