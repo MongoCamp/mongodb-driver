@@ -44,9 +44,8 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
   def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Void] = database(databaseName).drop()
 
   def database(databaseName: String = DefaultDatabaseName): MongoDatabase = {
-    if (!cachedDatabaseMap.contains(databaseName)) {
+    if (!cachedDatabaseMap.contains(databaseName))
       cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName).withCodecRegistry(registry))
-    }
     cachedDatabaseMap(databaseName)
   }
 
@@ -82,25 +81,20 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
       val newCollectionName: String = guessName(collectionName)
       database(newDatabaseName).getCollection[A](newCollectionName)
     }
-    else {
+    else
       database().getCollection[A](collectionName)
-    }
 
   def guessDatabaseName(maybeSeparatedName: String): String =
-    if (maybeSeparatedName.contains(DatabaseProvider.CollectionSeparator)) {
+    if (maybeSeparatedName.contains(DatabaseProvider.CollectionSeparator))
       maybeSeparatedName.substring(0, maybeSeparatedName.indexOf(DatabaseProvider.CollectionSeparator))
-    }
-    else {
+    else
       DefaultDatabaseName
-    }
 
   def guessName(maybeSeparatedName: String): String =
-    if (maybeSeparatedName.contains(DatabaseProvider.CollectionSeparator)) {
+    if (maybeSeparatedName.contains(DatabaseProvider.CollectionSeparator))
       maybeSeparatedName.substring(maybeSeparatedName.indexOf(DatabaseProvider.CollectionSeparator) + 1)
-    }
-    else {
-      DefaultDatabaseName
-    }
+    else
+      maybeSeparatedName
 
   def bucket(bucketName: String): GridFSBucket =
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
@@ -108,14 +102,12 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
       val newBucketName   = guessName(bucketName)
       GridFSBucket(database(newDatabaseName), newBucketName)
     }
-    else {
+    else
       GridFSBucket(database(), bucketName)
-    }
 
   def dao(collectionName: String): MongoDAO[Document] = {
-    if (!cachedMongoDAOMap.contains(collectionName)) {
+    if (!cachedMongoDAOMap.contains(collectionName))
       cachedMongoDAOMap.put(collectionName, DocumentDao(this, collectionName))
-    }
     cachedMongoDAOMap(collectionName)
   }
 

@@ -5,7 +5,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.13.3", "2.12.12")
+crossScalaVersions := Seq("2.13.4", "2.12.12")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -57,7 +57,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.1"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.1" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.2" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.5-12" % Provided
 
@@ -73,7 +73,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.1"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
