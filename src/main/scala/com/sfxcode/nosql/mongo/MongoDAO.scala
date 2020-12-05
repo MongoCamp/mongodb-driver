@@ -48,7 +48,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     val groupStage   = group("_id", addToSet("keySet", "$tempArray.k"))
     val pipeline = {
       if (sampleSize > 0)
-        List(projectStage, unwindStage, groupStage, sample(sampleSize))
+        List(sample(sampleSize), projectStage, unwindStage, groupStage)
       else
         List(projectStage, unwindStage, groupStage)
     }

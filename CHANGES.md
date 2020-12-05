@@ -6,6 +6,10 @@
 ### 2.0.10
 - Size, Storagesize needs Double
 
+### 2.1.0
+* BUGFIX DAO name
+* add github actions
+
 ### 2.0.9
 - Ensure Int value for collection status
 
