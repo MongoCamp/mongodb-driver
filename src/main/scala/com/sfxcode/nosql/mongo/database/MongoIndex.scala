@@ -25,12 +25,10 @@ case class MongoIndex(
 object MongoIndex extends ObservableIncludes with LazyLogging {
 
   def indexOptionsWithName(name: Option[String]): IndexOptions =
-    if (name.isDefined) {
+    if (name.isDefined)
       IndexOptions().name(name.get)
-    }
-    else {
+    else
       IndexOptions()
-    }
 
   def hasIndexForFieldWithName(
       listIndexesObservable: ListIndexesObservable[Map[String, Any]],
@@ -51,12 +49,10 @@ object MongoIndex extends ObservableIncludes with LazyLogging {
       .map(indexOptions =>
         MongoIndex(
           indexOptions("name").toString,
-          if (indexOptions.contains("textIndexVersion")) {
+          if (indexOptions.contains("textIndexVersion"))
             indexOptions.getOrElse("weights", Map()).asInstanceOf[Map[String, _]].keys.toList
-          }
-          else {
-            indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]].keys.toList
-          },
+          else
+            indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]].keys.toList,
           indexOptions.getOrElse("unique", false).asInstanceOf[Boolean],
           indexOptions.getOrElse("v", -1).asInstanceOf[Int],
           indexOptions.getOrElse("ns", "").toString,

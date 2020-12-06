@@ -24,12 +24,10 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
       sortAscending: Boolean = true,
       options: IndexOptions = IndexOptions()
   ): SingleObservable[String] =
-    if (sortAscending) {
+    if (sortAscending)
       createIndex(ascending(fieldName), options)
-    }
-    else {
+    else
       createIndex(descending(fieldName), options)
-    }
 
   def createIndexForFieldWithName(
       fieldName: String,

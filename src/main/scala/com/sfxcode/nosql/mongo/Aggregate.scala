@@ -26,23 +26,18 @@ trait Aggregate extends Field with Filter with Sort {
       divisorFieldName: String,
       zeroDividendStrategy: ZeroDividendStrategy = ZeroDividendStrategy.None
   ): Bson =
-    if (ZeroDividendStrategy.None == zeroDividendStrategy) {
+    if (ZeroDividendStrategy.None == zeroDividendStrategy)
       computed(resultFieldName, Map[String, Any]("$divide" -> List("$" + dividendFieldName, "$" + divisorFieldName)))
-    }
     else {
       val outcome: Any = {
-        if (ZeroDividendStrategy.OutcomeDivisor == zeroDividendStrategy) {
+        if (ZeroDividendStrategy.OutcomeDivisor == zeroDividendStrategy)
           "$" + dividendFieldName
-        }
-        else if (ZeroDividendStrategy.OutcomeZero == zeroDividendStrategy) {
+        else if (ZeroDividendStrategy.OutcomeZero == zeroDividendStrategy)
           0
-        }
-        else if (ZeroDividendStrategy.OutcomeOne == zeroDividendStrategy) {
+        else if (ZeroDividendStrategy.OutcomeOne == zeroDividendStrategy)
           1
-        }
-        else {
+        else
           0
-        }
       }
       computed(
         resultFieldName,
@@ -68,12 +63,10 @@ trait Aggregate extends Field with Filter with Sort {
       spherical: Boolean = true
   ): Bson = {
     var additionalParameters: Map[String, Any] = Map.empty
-    if (minDistanceInMeters.isDefined) {
+    if (minDistanceInMeters.isDefined)
       additionalParameters ++= Map("minDistance" -> minDistanceInMeters.get)
-    }
-    if (maxDistanceInMeters.isDefined) {
+    if (maxDistanceInMeters.isDefined)
       additionalParameters ++= Map("maxDistance" -> maxDistanceInMeters.get)
-    }
     Map[String, Any](
       "$geoNear" -> (Map(
             "near"          -> Map("type" -> "Point", "coordinates" -> List(long, lat)),

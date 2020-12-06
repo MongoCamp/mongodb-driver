@@ -28,18 +28,16 @@ case class MongoSyncer(
     operationMap.put(operation.collectionName, operation)
 
   def sync(collectionName: String): List[MongoSyncResult] = {
-    if (terminated) {
+    if (terminated)
       throw MongoSyncException("MongoSyncer already terminated")
-    }
 
     val result = operationMap
       .get(collectionName)
       .map(op => op.excecute(source, target))
       .getOrElse(List(MongoSyncResult(collectionName)))
 
-    if (MongoSyncOperation.WriteSyncLogOnMaster) {
+    if (MongoSyncOperation.WriteSyncLogOnMaster)
       MongoSyncResultDAO.insertMany(result).results()
-    }
     result
   }
 
