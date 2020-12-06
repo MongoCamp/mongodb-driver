@@ -42,7 +42,7 @@ class BsonConverterSpec extends Specification {
     }
 
     "convert Map to BSON" in {
-      BsonConverter.toBson(Map(("test"                          -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
+      BsonConverter.toBson(Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
       BsonConverter.toBson(scala.collection.mutable.Map(("test" -> 1))) must beAnInstanceOf[org.bson.BsonDocument]
     }
 

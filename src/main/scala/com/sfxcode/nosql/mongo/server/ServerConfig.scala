@@ -26,12 +26,10 @@ object ServerConfig extends ConfigHelper {
   val DefaultPort       = 28018
 
   def serverBackendFromString(backendName: String): ServerBackend.Value =
-    if (ServerBackend.H2.toString.toLowerCase.equals(backendName.toLowerCase)) {
+    if (ServerBackend.H2.toString.toLowerCase.equals(backendName.toLowerCase))
       ServerBackend.H2
-    }
-    else {
+    else
       ServerBackend.Memory
-    }
 
   def fromPath(configPath: String = DefaultServerConfigPathPrefix): ServerConfig = {
 
@@ -49,9 +47,8 @@ object ServerConfig extends ConfigHelper {
         val path     = stringConfig(configPath, "h2.path")
         Some(H2BackendConfig(inMemory, path))
       }
-      else {
+      else
         None
-      }
     }
 
     ServerConfig(name, host, port, serverBackend, h2BackendConfig)
