@@ -26,9 +26,8 @@ case class MongoConfig(
 ) {
 
   val clientSettings: MongoClientSettings = {
-    if (customClientSettings.isDefined) {
+    if (customClientSettings.isDefined)
       customClientSettings.get
-    }
     else {
       val clusterSettings: ClusterSettings =
         ClusterSettings.builder().hosts(List(new ServerAddress(host, port)).asJava).build()
@@ -43,15 +42,12 @@ case class MongoConfig(
 
       val compressorList = new ArrayBuffer[MongoCompressor]()
       compressors.foreach { compression =>
-        if (ComressionSnappy.equalsIgnoreCase(compression)) {
+        if (ComressionSnappy.equalsIgnoreCase(compression))
           compressorList.+=(MongoCompressor.createSnappyCompressor())
-        }
-        else if (ComressionZlib.equalsIgnoreCase(compression)) {
+        else if (ComressionZlib.equalsIgnoreCase(compression))
           compressorList.+=(MongoCompressor.createZlibCompressor())
-        }
-        else if (ComressionZstd.equalsIgnoreCase(compression)) {
+        else if (ComressionZstd.equalsIgnoreCase(compression))
           compressorList.+=(MongoCompressor.createZstdCompressor())
-        }
       }
 
       val builder = MongoClientSettings
@@ -68,9 +64,8 @@ case class MongoConfig(
 
         builder.credential(credential).build()
       }
-      else {
+      else
         builder.build()
-      }
     }
   }
 }
@@ -81,37 +76,27 @@ trait ConfigHelper {
   def stringConfig(configPath: String, key: String, default: String = ""): Option[String] =
     if (conf.hasPath("%s.%s".format(configPath, key))) {
       val str = conf.getString("%s.%s".format(configPath, key))
-      if (str.nonEmpty) {
+      if (str.nonEmpty)
         Some(str)
-      }
-      else {
+      else
         None
-      }
     }
-    else {
-      if (default.nonEmpty) {
-        Some(default)
-      }
-      else {
-        None
-      }
-    }
+    else if (default.nonEmpty)
+      Some(default)
+    else
+      None
 
   def intConfig(configPath: String, key: String, default: Int = 0): Int =
-    if (conf.hasPath("%s.%s".format(configPath, key))) {
+    if (conf.hasPath("%s.%s".format(configPath, key)))
       conf.getInt("%s.%s".format(configPath, key))
-    }
-    else {
+    else
       default
-    }
 
   def booleanConfig(configPath: String, key: String, default: Boolean = false): Boolean =
-    if (conf.hasPath("%s.%s".format(configPath, key))) {
+    if (conf.hasPath("%s.%s".format(configPath, key)))
       conf.getBoolean("%s.%s".format(configPath, key))
-    }
-    else {
+    else
       default
-    }
 }
 
 object MongoConfig extends ConfigHelper {
@@ -135,22 +120,18 @@ object MongoConfig extends ConfigHelper {
   def fromPath(configPath: String = DefaultConfigPathPrefix): MongoConfig = {
 
     def poolOptionsConfig(key: String, default: Int): Int =
-      if (conf.hasPath("%s.pool.%s".format(configPath, key))) {
+      if (conf.hasPath("%s.pool.%s".format(configPath, key)))
         conf.getInt("%s.pool.%s".format(configPath, key))
-      }
-      else {
+      else
         default
-      }
 
     val port: Int = intConfig(configPath, "port", DefaultPort)
 
     val compressors: List[String] =
-      if (conf.hasPath("%s.compressors".format(configPath))) {
+      if (conf.hasPath("%s.compressors".format(configPath)))
         conf.getStringList("%s.compressors".format(configPath)).asScala.toList
-      }
-      else {
+      else
         List()
-      }
 
     val host            = stringConfig(configPath, "host", DefaultHost).get
     val database        = stringConfig(configPath, "database").get

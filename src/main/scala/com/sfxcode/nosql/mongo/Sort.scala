@@ -8,11 +8,9 @@ object Sort extends Sort
 trait Sort {
 
   def sortByKey(key: String, sortAscending: Boolean = true): Bson =
-    if (sortAscending) {
+    if (sortAscending)
       orderBy(ascending(key))
-    }
-    else {
+    else
       orderBy(descending(key))
-    }
 
 }

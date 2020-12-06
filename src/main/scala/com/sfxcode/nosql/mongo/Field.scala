@@ -45,12 +45,10 @@ trait Field {
 
   def groupFields(fieldnames: Iterable[String]): BsonValue = {
     val list = fieldnames.map { name =>
-      if (name.startsWith("$")) {
+      if (name.startsWith("$"))
         name
-      }
-      else {
+      else
         "$" + name
-      }
     }.toList
     BsonConverter.toBson(Map(ObjectIdKey -> list))
   }

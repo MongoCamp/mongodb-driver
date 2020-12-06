@@ -10,12 +10,10 @@ import org.mongodb.scala.model.Filters.equal
 abstract class Search extends Base {
 
   def find(filter: Bson = Document(), sort: Bson = Document(), limit: Int = 0): GridFSFindObservable =
-    if (limit > 0) {
+    if (limit > 0)
       gridfsBucket.find(filter).sort(sort).limit(0)
-    }
-    else {
+    else
       gridfsBucket.find(filter).sort(sort)
-    }
 
   def findById(oid: ObjectId): GridFSFindObservable = find(equal(DatabaseProvider.ObjectIdKey, oid))
 
