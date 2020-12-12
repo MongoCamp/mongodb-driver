@@ -18,9 +18,8 @@ abstract class Base extends LazyLogging {
 
   def createMetadataKey(key: String): String = {
     var metadataKey = key
-    if (!metadataKey.startsWith("metadata")) {
+    if (!metadataKey.startsWith("metadata"))
       metadataKey = "%s.%s".format("metadata", key)
-    }
     metadataKey
   }
 
