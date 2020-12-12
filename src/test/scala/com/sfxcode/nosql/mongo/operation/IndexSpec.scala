@@ -13,22 +13,6 @@ class IndexSpec extends PersonSpecification {
 
   "Base Index Operations" should {
 
-    "return an index list" in {
-
-      val list = PersonDAO.indexList
-      list must haveSize(1)
-
-      val mongoIndex: MongoIndex = list.head
-      mongoIndex.name mustEqual "_id_"
-      mongoIndex.fields must contain(DatabaseProvider.ObjectIdKey)
-      mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
-      mongoIndex.version mustEqual 2
-      mongoIndex.keys must haveSize(1)
-      mongoIndex.keys.head._1 mustEqual DatabaseProvider.ObjectIdKey
-      mongoIndex.keys.head._2 mustEqual 1
-
-    }
-
     "create / drop indexes for key" in {
 
       var createIndexResult: String = PersonDAO.createIndexForField("name").result()
@@ -124,6 +108,22 @@ class IndexSpec extends PersonSpecification {
       PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
+    }
+
+    "return an index list" in {
+
+      val list = PersonDAO.indexList
+      list must haveSize(1)
+
+      val mongoIndex: MongoIndex = list.head
+      mongoIndex.name mustEqual "_id_"
+      mongoIndex.fields must contain(DatabaseProvider.ObjectIdKey)
+      mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
+      mongoIndex.version mustEqual 2
+      mongoIndex.keys must haveSize(1)
+      mongoIndex.keys.head._1 mustEqual DatabaseProvider.ObjectIdKey
+      mongoIndex.keys.head._2 mustEqual 1
+
     }
 
   }
