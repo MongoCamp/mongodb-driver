@@ -16,9 +16,8 @@ case class OneToOneRelationship[A](dao: MongoDAO[A], daoKey: String, useCache: B
 
   def relatedRecord(value: Any): Option[A] = {
     val key = "%s_%s".format(id, value)
-    if (!useCache || !hasCachedValue(key)) {
+    if (!useCache || !hasCachedValue(key))
       addCachedValue(key, dao.find(daoKey, value).resultOption())
-    }
     getCachedValue[Option[A]](key)
   }
 
@@ -28,9 +27,8 @@ case class OneToManyRelationship[A](dao: MongoDAO[A], daoKey: String, useCache: 
 
   def relatedRecords(value: Any): List[A] = {
     val key = "%s_%s".format(id, value)
-    if (!useCache || !hasCachedValue(key)) {
+    if (!useCache || !hasCachedValue(key))
       addCachedValue(key, dao.find(daoKey, value).resultList())
-    }
     getCachedValue[List[A]](key)
   }
 

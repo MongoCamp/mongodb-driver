@@ -37,18 +37,13 @@ object BsonConverter {
             None
         }
       }
-      else {
+      else
         None
-      }
     }
-    else {
-      if (document.contains(key)) {
-        Some(fromBson(document(key)))
-      }
-      else {
-        None
-      }
-    }
+    else if (document.contains(key))
+      Some(fromBson(document(key)))
+    else
+      None
 
   def updateDocumentValue(document: Document, key: String, value: Any): Document = {
     val doc    = org.mongodb.scala.bson.collection.mutable.Document(document.toJson())
@@ -86,12 +81,10 @@ object BsonConverter {
     }
     else {
       document.put(key, toBson(value))
-      if (root.isEmpty) {
+      if (root.isEmpty)
         document
-      }
-      else {
+      else
         root.get
-      }
     }
 
   var converterPlugin: AbstractConverterPlugin = new BaseConverterPlugin()
@@ -100,12 +93,10 @@ object BsonConverter {
     value match {
       case bsonValue: BsonValue => bsonValue
       case option: Option[Any] =>
-        if (option.isDefined) {
+        if (option.isDefined)
           toBson(option.get)
-        }
-        else {
+        else
           BsonNull()
-        }
       case v: Any if converterPlugin.hasCustomClass(v) =>
         converterPlugin.toBson(v)
       case b: Boolean         => BsonBoolean(b)

@@ -48,21 +48,18 @@ case class MongoSyncOperation(
         val diff = targetInfos.diff(sourceInfos)
         List(syncInternal(target, source, sourceInfos.size, diff))
       }
-      else if (SyncDirection.TwoWay == syncDirection) {
+      else if (SyncDirection.TwoWay == syncDirection)
         List(
           syncInternal(source, target, targetInfos.size, sourceInfos.diff(targetInfos)),
           syncInternal(target, source, sourceInfos.size, targetInfos.diff(sourceInfos))
         )
-      }
-      else {
+      else
         List(MongoSyncResult(collectionName))
-      }
     }
     catch {
-      case e: Exception => {
+      case e: Exception =>
         logger.error(e.getMessage, e)
         List(MongoSyncResult(collectionName, exception = Some(e)))
-      }
     }
 
   private def syncInternal(

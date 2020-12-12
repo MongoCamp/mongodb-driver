@@ -21,12 +21,10 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
       projection: Bson = Document(),
       limit: Int = 0
   ): FindObservable[A] =
-    if (limit > 0) {
+    if (limit > 0)
       coll.find(filter).sort(sort).projection(projection).limit(limit)
-    }
-    else {
+    else
       coll.find(filter).sort(sort).projection(projection)
-    }
 
   def findById(oid: ObjectId): FindObservable[A] = find(equal(DatabaseProvider.ObjectIdKey, oid))
 
