@@ -25,7 +25,7 @@ object TestDatabase extends LazyLogging {
   // provider.addChangeObserver(ChangeObserver(consumeDatabaseChanges))
 
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit =
-    if (changeStreamDocument.getOperationType != OperationType.INSERT) {
+    if (changeStreamDocument.getOperationType != OperationType.INSERT)
       logger.info(
         "changed %s:%s with ID: %s".format(
           changeStreamDocument.getNamespace,
@@ -33,7 +33,6 @@ object TestDatabase extends LazyLogging {
           changeStreamDocument.getDocumentKey
         )
       )
-    }
 
   object PersonDAO extends MongoDAO[Person](provider, "people")
 
