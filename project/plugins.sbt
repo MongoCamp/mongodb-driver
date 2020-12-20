@@ -17,7 +17,7 @@ addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
 
 // paradox
-addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.9.0")
+addSbtPlugin("com.lightbend.paradox" % "sbt-paradox" % "0.9.1")
 
 addSbtPlugin("io.github.jonas" % "sbt-paradox-material-theme" % "0.6.0")
 
