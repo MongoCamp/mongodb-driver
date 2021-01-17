@@ -61,7 +61,7 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.2" % Provide
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.8-1" % Provided
 
-val MongoJavaServerVersion = "1.36.0"
+val MongoJavaServerVersion = "1.37.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
