@@ -57,7 +57,7 @@ libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.1"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.2" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.8-1" % Provided
 
