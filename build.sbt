@@ -51,7 +51,7 @@ libraryDependencies += "org.specs2" %% "specs2-core" % "4.10.5" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.9" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.10" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
