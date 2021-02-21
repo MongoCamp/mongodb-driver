@@ -37,7 +37,7 @@ lazy val docs = (project in file("docs"))
       _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
     },
     (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
-          ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
+    ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
   )
   .dependsOn(simple_mongo)
 
@@ -55,7 +55,7 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.10" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.10" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.1.2"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
