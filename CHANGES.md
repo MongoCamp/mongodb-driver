@@ -3,6 +3,9 @@
 
 ## Versions
 
+### 2.1.0
+* mongo-scala-driver [4.2.1](https://mongodb.github.io/mongo-java-driver/4.2/driver-scala/)
+
 ### 2.0.10
 - Size, Storagesize needs Double
 
