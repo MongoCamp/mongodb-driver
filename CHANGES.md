@@ -3,15 +3,15 @@
 
 ## Versions
 
-### 2.1.0
+### 2.2.0
 * mongo-scala-driver [4.2.1](https://mongodb.github.io/mongo-java-driver/4.2/driver-scala/)
-
-### 2.0.10
-- Size, Storagesize needs Double
 
 ### 2.1.0
 * BUGFIX DAO name
 * add github actions
+* 
+### 2.0.10
+- Size, Storagesize needs Double
 
 ### 2.0.9
 - Ensure Int value for collection status
