@@ -8,7 +8,7 @@ addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
 
 // updates, release
 
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.2")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.3")
 
 addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.6.1")
 
