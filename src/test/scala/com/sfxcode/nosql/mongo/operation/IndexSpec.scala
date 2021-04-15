@@ -112,13 +112,12 @@ class IndexSpec extends PersonSpecification {
 
     "return an index list" in {
 
-      val list = PersonDAO.indexList
+      val list = PersonDAO.indexList()
       list must haveSize(1)
 
       val mongoIndex: MongoIndex = list.head
       mongoIndex.name mustEqual "_id_"
       mongoIndex.fields must contain(DatabaseProvider.ObjectIdKey)
-      mongoIndex.namespace mustEqual "simple-mongo-unit-test.people"
       mongoIndex.version mustEqual 2
       mongoIndex.keys must haveSize(1)
       mongoIndex.keys.head._1 mustEqual DatabaseProvider.ObjectIdKey
