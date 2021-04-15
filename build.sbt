@@ -11,7 +11,7 @@ scalaVersion := crossScalaVersions.value.head
 
 scalacOptions += "-deprecation"
 
-parallelExecution in Test := false
+Test / parallelExecution := false
 
 lazy val simple_mongo = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
@@ -55,11 +55,11 @@ libraryDependencies += "joda-time" % "joda-time" % "2.10.10" % Test
 
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.11" % Test
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.2"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.3"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.9-1" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.9-5" % Provided
 
 val MongoJavaServerVersion = "1.38.0"
 
@@ -73,7 +73,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.2"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.3"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
@@ -85,7 +85,7 @@ licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html
 
 releaseCrossBuild := true
 
-bintrayReleaseOnPublish in ThisBuild := true
+ThisBuild / bintrayReleaseOnPublish := true
 
 publishMavenStyle := true
 
