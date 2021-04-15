@@ -29,10 +29,9 @@ Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
 
 Scala Version is 2.13.x / 2.12.x.
 
-## Travis
+## CI
 
-[![Build Status](https://travis-ci.org/sfxcode/simple-mongo.svg?branch=master)](https://travis-ci.org/sfxcode/simple-mongo)
-
+[![Scala CI](https://github.com/sfxcode/simple-mongo/actions/workflows/scala.yml/badge.svg)](https://github.com/sfxcode/simple-mongo/actions/workflows/scala.yml)
 ## Download
 
 [ ![Download](https://api.bintray.com/packages/sfxcode/maven/simple-mongo/images/download.svg) ](https://bintray.com/sfxcode/maven/simple-mongo/_latestVersion)
