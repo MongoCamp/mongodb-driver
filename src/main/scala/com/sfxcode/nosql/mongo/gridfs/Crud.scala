@@ -13,9 +13,8 @@ abstract class Crud extends Search {
       fileName: String,
       stream: InputStream,
       metadata: AnyRef = Document(),
-      chunkSizeBytes: Int = 1204 * 256,
-      bufferSize: Int = 1024 * 64
+      chunkSizeBytes: Int = 1204 * 256
   ): Observable[ObjectId] =
-    upload(fileName, GridFSStreamObservable(stream, bufferSize), metadata, chunkSizeBytes)
+    upload(fileName, GridFSStreamObservable(stream, chunkSizeBytes), metadata, chunkSizeBytes)
 
 }
