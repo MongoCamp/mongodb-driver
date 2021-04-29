@@ -26,8 +26,8 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       val fileName = "scala-logo.png"
 
       val filePath      = ImageDAOSourcePath + fileName
-      val oid: ObjectId = insertImage(filePath, ImageMetadata("template1", group = "templates"))
       val uploadBytes   = File(filePath).bytes.toList
+      val oid: ObjectId = insertImage(filePath, ImageMetadata("template1", group = "templates"))
 
       val file = findImage(oid)
       file.getFilename must be equalTo fileName

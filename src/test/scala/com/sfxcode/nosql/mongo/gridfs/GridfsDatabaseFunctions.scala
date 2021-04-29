@@ -26,7 +26,7 @@ trait GridfsDatabaseFunctions extends MongoImplicits {
 
   def insertImage(path: String, metadata: AnyRef): ObjectId = {
     val file = File(path)
-    ImageFilesDAO.insertOne(file.name, file.newInputStream, metadata, bufferSize = 1024 * 4)
+    ImageFilesDAO.insertOne(file.name, file.newInputStream, metadata)
   }
 
   def downloadImage(id: ObjectId, path: String): Long = {
