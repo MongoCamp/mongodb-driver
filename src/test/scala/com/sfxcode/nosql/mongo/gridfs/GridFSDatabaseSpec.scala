@@ -8,6 +8,8 @@ import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 
+import scala.io.Source
+
 class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with BeforeAll {
 
   "GridFSDatabase" should {
@@ -20,12 +22,12 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
     }
 
-
-
     "insert file and in" in {
       val fileName = "scala-logo.png"
 
-      val oid: ObjectId = insertImage(ImageDAOSourcePath + fileName, ImageMetadata("template1", group = "templates"))
+      val filePath      = ImageDAOSourcePath + fileName
+      val oid: ObjectId = insertImage(filePath, ImageMetadata("template1", group = "templates"))
+      val uploadBytes   = File(filePath).bytes.toList
 
       val file = findImage(oid)
       file.getFilename must be equalTo fileName
@@ -39,7 +41,14 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
 
       result must not be equalTo(-1)
 
-      File(downloadPath).exists must beTrue
+      val downloadedFile = File(downloadPath)
+      downloadedFile.exists must beTrue
+
+      val downloadBytes = File(downloadPath).bytes.toList
+
+      downloadBytes.size must be equalTo uploadBytes.size
+
+      downloadBytes must be equalTo uploadBytes
 
     }
 
