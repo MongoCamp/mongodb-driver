@@ -73,7 +73,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.3"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.4"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
