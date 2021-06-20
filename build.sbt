@@ -71,7 +71,7 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.3"
 
