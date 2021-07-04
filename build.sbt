@@ -53,7 +53,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.10" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.11" % Test
+libraryDependencies += "org.json4s" %% "json4s-native" % "4.0.1" % Test
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.3"
 
