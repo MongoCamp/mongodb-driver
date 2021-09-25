@@ -1,9 +1,4 @@
-import sbt.url
-import ReleaseTransformations._
-
 name := "simple-mongo"
-
-organization := "com.sfxcode.nosql"
 
 crossScalaVersions := Seq("2.13.6", "2.12.12")
 
@@ -85,50 +80,8 @@ buildInfoPackage := "com.sfxcode.nosql.mongo"
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-
-// publish
-
-releaseCrossBuild := true
-
-ThisBuild / bintrayReleaseOnPublish := true
-
-publishMavenStyle := true
-
-homepage := Some(url("https://github.com/sfxcode/simple-mongo"))
-
-scmInfo := Some(
-  ScmInfo(
-    url("https://github.com/sfxcode/simple-mongo"),
-    "scm:https://github.com/sfxcode/simple-mongo.git"
-  )
-)
-
-developers := List(
-  Developer(
-    id = "sfxcode",
-    name = "Tom Lamers",
-    email = "tom@sfxcode.com",
-    url = url("https://github.com/sfxcode")
-  )
-)
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies, // : ReleaseStep
-  inquireVersions,           // : ReleaseStep
-  runClean,                  // : ReleaseStep
-  runTest,                   // : ReleaseStep
-  setReleaseVersion,         // : ReleaseStep
-  commitReleaseVersion,      // : ReleaseStep, performs the initial git checks
-  tagRelease,                // : ReleaseStep
-  publishArtifacts,          // : ReleaseStep, checks whether `publishTo` is properly set up
-  setNextVersion,            // : ReleaseStep
-  commitNextVersion,         // : ReleaseStep
-  pushChanges                // : ReleaseStep, also checks that an upstream branch is properly configured
-)
-
 scalafmtOnCompile := false
 
-coverageMinimum := 70
+coverageMinimumStmtTotal := 70
 
 coverageFailOnMinimum := true
