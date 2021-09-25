@@ -4,8 +4,7 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.dao.PersonSpecification
 import com.sfxcode.nosql.mongo.model.Person
 import com.sfxcode.nosql.mongo.test.TestDatabase.PersonDAO
-import org.json4s.DefaultFormats
-import org.json4s.native.Serialization.read
+
 import org.mongodb.scala.Document
 
 class DocumentExtensionsSpec extends PersonSpecification {
@@ -22,21 +21,6 @@ class DocumentExtensionsSpec extends PersonSpecification {
       tags must haveSize(7)
 
       tags.head mustEqual "occaecat"
-    }
-
-    "be converted to plain json " in {
-      val document: Document = PersonDAO.Raw.find(Map("id" -> 11)).result()
-
-      val s                = document.asPlainJson
-      implicit val formats = DefaultFormats
-      val person: Person   = read[Person](s)
-      person.id mustEqual 11
-
-      val tags = person.tags
-      tags must haveSize(7)
-
-      tags.head mustEqual "occaecat"
-
     }
 
   }

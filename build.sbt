@@ -5,7 +5,7 @@ name := "simple-mongo"
 
 organization := "com.sfxcode.nosql"
 
-crossScalaVersions := Seq("2.13.5", "2.12.12")
+crossScalaVersions := Seq("2.13.6", "2.12.12")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -47,19 +47,25 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.11.0" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.12.12" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.6" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.10" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.11" % Test
 
-libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.11" % Test
+val circeVersion = "0.14.1"
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.2.3"
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion % Test)
+
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.3.2"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.4.9-5" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.0-4" % Provided
 
 val MongoJavaServerVersion = "1.38.0"
 
@@ -71,9 +77,9 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.3"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.3"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 

@@ -9,7 +9,9 @@ import com.sfxcode.nosql.mongo._
 import com.sfxcode.nosql.mongo.database.DatabaseProvider
 import com.sfxcode.nosql.mongo.test.TestDatabase.BookDAO
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates._
+import org.mongodb.scala.model.Aggregates.group
+import org.mongodb.scala.model.Aggregates.filter
+import org.mongodb.scala.model.Aggregates.project
 import org.mongodb.scala.model.Filters.and
 import org.mongodb.scala.model.Projections
 import org.specs2.mutable.Specification
@@ -18,7 +20,7 @@ import org.mongodb.scala.model.Updates._
 
 class BookDAOSpec extends Specification with BeforeAll {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
-  val From       = DateFormat.parse("2000-01-01")
+  val From: Date = DateFormat.parse("2000-01-01")
 
   override def beforeAll(): Unit = {
     BookDAO.drop().result()
