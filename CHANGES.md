@@ -3,6 +3,9 @@
 
 ## Versions
 
+#### 2.2.5
+* mongo-scala-driver [4.3.2](https://mongodb.github.io/mongo-java-driver/4.3/driver-scala/)
+
 ### 2.2.4
 * mongo-scala-driver [4.2.3](https://mongodb.github.io/mongo-java-driver/4.2/driver-scala/)
 * BUGFIX GridFS Upload / Problem with different buffer sizes since 4.2.0
