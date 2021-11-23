@@ -1,6 +1,6 @@
 name := "simple-mongo"
 
-crossScalaVersions := Seq("2.13.6", "2.12.12")
+crossScalaVersions := Seq("2.13.7", "2.12.12")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -21,10 +21,10 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(GhpagesPlugin)
   .settings(
     name := "simple mongo docs",
-    scalaVersion := "2.13.3",
+    scalaVersion := "2.13.7",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
-    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.0.5",
-    libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.7.3",
+    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.2.5",
+    libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
@@ -42,11 +42,11 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.12.12" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.13.0" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.6" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.7" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.11" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.13" % Test
 
 val circeVersion = "0.14.1"
 
@@ -56,13 +56,13 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.3.2"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.4.0"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.0-4" % Provided
 
-val MongoJavaServerVersion = "1.38.0"
+val MongoJavaServerVersion = "1.39.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
@@ -74,7 +74,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.1"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.5.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 

@@ -3,6 +3,9 @@
 
 ## Versions
 
+#### 2.2.6
+* mongo-scala-driver [4.4.0](https://mongodb.github.io/mongo-java-driver/4.4/driver-scala/)
+
 #### 2.2.5
 * mongo-scala-driver [4.3.2](https://mongodb.github.io/mongo-java-driver/4.3/driver-scala/)
 
