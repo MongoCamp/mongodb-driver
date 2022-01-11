@@ -6,3 +6,4 @@ lib
 out
 .DS_Store
 .gitconfig
+.bsp
