@@ -1,6 +1,6 @@
 name := "simple-mongo"
 
-crossScalaVersions := Seq("2.13.7", "2.12.12")
+crossScalaVersions := Seq("2.13.8", "2.12.15")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -23,7 +23,7 @@ lazy val docs = (project in file("docs"))
     name := "simple mongo docs",
     scalaVersion := "2.13.7",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
-    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.2.5",
+    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.2.6",
     libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
@@ -42,7 +42,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.13.0" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.13.1" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.7" % Test
 
@@ -56,11 +56,11 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.4.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.4.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.0-4" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.1-1" % Provided
 
 val MongoJavaServerVersion = "1.39.0"
 
