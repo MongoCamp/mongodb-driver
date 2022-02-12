@@ -1,6 +1,6 @@
 # simple-mongo
 
-A library for easy usage of the mongo-scala-driver (4.x). Full MongoDB Functionality in Scala with a few lines of code.
+A library for easy usage of the mongo-scala-driver (4.5.x). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
 
