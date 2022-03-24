@@ -23,7 +23,7 @@ lazy val docs = (project in file("docs"))
     name := "simple mongo docs",
     scalaVersion := "2.13.7",
     resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
-    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.2.6",
+    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.3.0",
     libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
@@ -42,11 +42,11 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.13.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.14.1" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.10" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.10.13" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.10.14" % Test
 
 val circeVersion = "0.14.1"
 
@@ -56,11 +56,11 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.5.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.5.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.2-1" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.2-2" % Provided
 
 val MongoJavaServerVersion = "1.39.0"
 
@@ -74,7 +74,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0"
 
 buildInfoPackage := "com.sfxcode.nosql.mongo"
 
