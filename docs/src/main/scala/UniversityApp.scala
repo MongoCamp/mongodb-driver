@@ -1,6 +1,6 @@
-import com.sfxcode.nosql.mongo.test.UniversityDatabase._
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.server.LocalServer
+import dev.mongocamp.driver.mongodb.test.UniversityDatabase._
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.server.LocalServer
 
 object UniversityApp extends App {
 

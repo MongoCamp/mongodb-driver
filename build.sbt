@@ -1,4 +1,4 @@
-name := "simple-mongo"
+name := "mongocamp-driver-mongodb"
 
 crossScalaVersions := Seq("2.13.8", "2.12.15")
 
@@ -8,11 +8,11 @@ scalacOptions += "-deprecation"
 
 Test / parallelExecution := false
 
-lazy val simple_mongo = (project in file("."))
+lazy val mongodb = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     buildInfoKeys ++= Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "com.sfxcode.nosql.mongo"
+    buildInfoPackage := "dev.mongocamp.driver.mongodb"
   )
 
 lazy val docs = (project in file("docs"))
@@ -20,21 +20,20 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(ParadoxMaterialThemePlugin)
   .enablePlugins(GhpagesPlugin)
   .settings(
-    name := "simple mongo docs",
+    name := "simple mongodb docs",
     scalaVersion := "2.13.7",
-    resolvers += "SFXCode" at "https://dl.bintray.com/sfxcode/maven/",
     libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.3.0",
     libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
-    git.remoteRepo := "git@github.com:sfxcode/simple-mongo.git",
+    git.remoteRepo := "git@github.com:mongocamp/mongocampdb.git",
     Compile / paradoxMaterialTheme ~= {
-      _.withRepository(uri("https://github.com/sfxcode/simple-mongo"))
+      _.withRepository(uri("https://github.com/sfxcode/mongocamp"))
     },
     (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
     ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
   )
-  .dependsOn(simple_mongo)
+  .dependsOn(mongodb)
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
@@ -76,7 +75,7 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0"
 
-buildInfoPackage := "com.sfxcode.nosql.mongo"
+buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
 buildInfoOptions += BuildInfoOption.BuildTime
 

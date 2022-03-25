@@ -1,9 +1,9 @@
 import java.util.concurrent.TimeUnit
 
-import com.sfxcode.nosql.MongoImplicits
-import com.sfxcode.nosql.mongo._
-import com.sfxcode.nosql.mongo.model.Person
-import com.sfxcode.nosql.mongo.test.TestDatabase.{ImageFilesDAO, PersonDAO}
+import dev.mongocamp.driver.MongoImplicits
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.model.Person
+import dev.mongocamp.driver.mongodb.test.TestDatabase.{ImageFilesDAO, PersonDAO}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration

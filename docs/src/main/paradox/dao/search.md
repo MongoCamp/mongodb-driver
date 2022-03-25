@@ -10,11 +10,11 @@
 
 ```scala
 // Filter helper functions
-import com.sfxcode.nosql.mongo.Filter._
+import dev.mongocamp.driver.mongodb.Filter._
 // sort helper functions
-import com.sfxcode.nosql.mongo.Sort._
+import dev.mongocamp.driver.mongodb.Sort._
 // implicits like Document from Map ...
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 ```
 
 ### Execute Search

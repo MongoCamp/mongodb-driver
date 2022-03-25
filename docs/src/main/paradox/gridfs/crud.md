@@ -36,7 +36,7 @@ With implicit conversion you can use for OID Parameter:
 
 ```scala
   // for implicit conversion usage
-  import com.sfxcode.nosql.mongo._
+  import dev.mongocamp.driver.mongodb._
   
   ImageFilesDAO.deleteOne(oid)
 ```
