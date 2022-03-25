@@ -21,8 +21,9 @@ are implemented.
 All functions support synchronous result handling.
 
 Use pacckage import
+
 ```scala
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 ```
 
 and append

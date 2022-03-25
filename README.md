@@ -1,10 +1,10 @@
-# simple-mongo
+# Mongocamp MongoDB Driver
 
 A library for easy usage of the mongo-scala-driver (4.5.x). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
 
-Support MongoDB 2.6 to 4.2.
+Support MongoDB 2.6 to 5.0.x.
 
 ## Features
 
@@ -23,7 +23,7 @@ Support MongoDB 2.6 to 4.2.
 
 ## Documentation
 
-Documentation can be found [here](https://sfxcode.github.io/simple-mongo/).
+Documentation can be found [here](https://sfxcode.github.io/mongocamp/).
 
 ## Version
 
@@ -31,14 +31,12 @@ Scala Version is 2.13.x / 2.12.x.
 
 ## CI
 
-[![Scala CI](https://github.com/sfxcode/simple-mongo/actions/workflows/scala.yml/badge.svg)](https://github.com/sfxcode/simple-mongo/actions/workflows/scala.yml)
-## Download
 
-[ ![Download](https://api.bintray.com/packages/sfxcode/maven/simple-mongo/images/download.svg) ](https://bintray.com/sfxcode/maven/simple-mongo/_latestVersion)
+## Download
 
 ## Licence
 
-[Apache 2 License](https://github.com/sfxcode/simple-mongo/blob/master/LICENSE).
+[Apache 2 License](https://github.com/sfxcode/mongocamp/blob/master/LICENSE).
 
 
 ## Usage
@@ -47,19 +45,18 @@ Add following lines to your build.sbt (replace x.x with the actual Version)
 
 ```
 
-libraryDependencies += "com.sfxcode.nosql" %% "simple-mongo" % "2.x.x"
+libraryDependencies += "dev.mongocamp.driver" %% "mongocamp" % "2.x.x"
 
 ```
 
 Define MongoDB Connection and [DAO](https://en.wikipedia.org/wiki/Data_access_object) objects for automatic case class conversion.
 
-
 ```scala
 
 import java.util.Date
 
-import com.sfxcode.nosql.mongo.MongoDAO
-import com.sfxcode.nosql.mongo.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.codecs.Macros._
@@ -91,8 +88,8 @@ Import the database object and execute some find and CRUD functions on the DAO o
 
 ```scala
 
-import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb.demo.restaurant.RestaurantDemoDatabase._
+import dev.mongocamp.driver.mongodb._
 
 trait RestaurantDemoDatabaseFunctions {
 
@@ -140,7 +137,7 @@ Write some spec tests ...
 
 ```scala
 
-import com.sfxcode.nosql.mongo.demo.restaurant.RestaurantDemoDatabase._
+import dev.mongocamp.driver.mongodb.demo.restaurant.RestaurantDemoDatabase._
 import org.specs2.mutable.Specification
 
 class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFunctions {

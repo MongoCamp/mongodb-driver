@@ -1,6 +1,6 @@
 # LocalServer
 
-simple-mongo supports LocalServer by [mongo-java-server](https://github.com/bwaldvogel/mongo-java-server) (since 2.0.1).
+mongocamp supports LocalServer by [mongo-java-server](https://github.com/bwaldvogel/mongo-java-server) (since 2.0.1).
 
 Useful for tests and small offline Apps. Dependency to mongo-java-server is marked as provided, you have to import the dependency by yourself.
 

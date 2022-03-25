@@ -1,7 +1,7 @@
 # Reactive Streams
 
 * The MongoDB Scala driver is built upon [Reactive Streams](https://www.reactive-streams.org/)
-* simple-mongo wraps around the scala driver => Full support of Reactive Streams
+* mongocamp wraps around the scala driver => Full support of Reactive Streams
 * For Blocking Results (implicit) conversion to Result Objects is provided
 * Conversion of Observable to Future is available
 
@@ -35,10 +35,10 @@ All functions have an optional maxWait parameter (Default maxWait = 10 seconds).
 
 ### Implicit Result Conversion (Blocking)
 
-To use implicit result conversion, you have to import the simple mongo base package object.
+To use implicit result conversion, you have to import the mongocamp mongodb base package object.
 
 ```scala
-import com.sfxcode.nosql.mongo._
+import dev.mongocamp.driver.mongodb._
 ```
 
 After that, implicit conversion and other useful implicits (e.g. Map -> Bson) are available.
