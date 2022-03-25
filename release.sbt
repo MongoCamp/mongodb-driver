@@ -5,20 +5,20 @@ organizationHomepage := Some(url("https://github.com/sfxcode"))
 
 publishMavenStyle := true
 
-homepage := Some(url("https://github.com/sfxcode/simple-mongo"))
+homepage := Some(url("https://github.com/sfxcode/mongocamp"))
 
 scmInfo := Some(
   ScmInfo(
-    url("https://github.com/sfxcode/simple-mongo"),
-    "scm:https://github.com/sfxcode/simple-mongo.git"
+    url("https://github.com/sfxcode/mongocamp"),
+    "scm:https://github.com/sfxcode/mongocamp.git"
   )
 )
 
 developers := List(
   Developer(
-    id = "sfxcode",
+    id = "mongocamp",
     name = "Tom Lamers",
-    email = "tom@sfxcode.com",
+    email = "tom@mongocamp.com",
     url = url("https://github.com/sfxcode")
   )
 )
@@ -33,7 +33,7 @@ publishTo := sonatypePublishToBundle.value
 packageOptions += {
   Package.ManifestAttributes(
     "Created-By"               -> "Simple Build Tool",
-    "Built-By"                 -> "sfxcode",
+    "Built-By"                 -> "mongocamp",
     "Build-Jdk"                -> System.getProperty("java.version"),
     "Specification-Title"      -> name.value,
     "Specification-Version"    -> version.value,

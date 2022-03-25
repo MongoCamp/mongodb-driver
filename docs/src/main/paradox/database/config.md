@@ -41,7 +41,7 @@ It is used for DatabaseProvider creation.
 | database             | default database to use   |                    |
 | host                 |                           | 127.0.0.1          |
 | port                 |                           | 27017              |
-| applicationName      |                           | simple-mongo-app   |
+| applicationName      |                           | mongocamp-app   |
 | userName             | used for Authentification |                    |
 | password             | used for Authentification |                    |
 | poolOptions          |                           | MongoPoolOptions() |

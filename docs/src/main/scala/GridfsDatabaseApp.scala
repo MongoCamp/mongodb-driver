@@ -1,5 +1,5 @@
-//import com.sfxcode.nosql.mongo.gridfs.GridfsDatabaseFunctions
-//import com.sfxcode.nosql.mongo.model.ImageMetadata
+//import dev.mongocamp.driver.mongodb.gridfs.GridfsDatabaseFunctions
+//import dev.mongocamp.driver.mongodb.model.ImageMetadata
 //import org.bson.types.ObjectId
 //
 //object GridfsDatabaseApp extends App with GridfsDatabaseFunctions {

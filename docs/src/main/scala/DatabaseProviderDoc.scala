@@ -1,4 +1,4 @@
-import com.sfxcode.nosql.mongo.database.{CollectionInfo, DatabaseProvider, MongoConfig}
+import dev.mongocamp.driver.mongodb.database.{CollectionInfo, DatabaseProvider, MongoConfig}
 import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.ObjectId
@@ -20,7 +20,7 @@ object DatabaseProviderDoc {
   // #sample_config_from_path
 
   // #sample_config_from_custom_path
-  val customConfig: MongoConfig = MongoConfig.fromPath("mongo.db.prod")
+  val customConfig: MongoConfig = MongoConfig.fromPath("mongodb.db.prod")
   // #sample_config_from_custom_path
 
   // #provider

@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.sfxcode.sapphire.core" level="debug"/>
+    <logger name="dev.mongocamp.sapphire.core" level="debug"/>
     <logger name="org.mongodb" level="info"/>
 
     <root level="info">
