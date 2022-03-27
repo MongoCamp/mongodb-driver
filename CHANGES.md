@@ -3,6 +3,9 @@
 
 ## Versions
 
+### 2.4.0
+* Github namespace changed to mongocamp organization, name changes to mongocamp-driver-mongodb
+
 #### 2.3.0
 * mongo-scala-driver [4.5.0](https://mongodb.github.io/mongo-java-driver/4.4/driver-scala/)
 
