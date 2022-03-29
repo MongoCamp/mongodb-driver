@@ -21,8 +21,8 @@ Features:
 Support Scala 2.12 and Scala 2.13.
 
 @@dependency[sbt,Maven,Gradle] {
-  group="dev.mongocamp.driver"
-  artifact="mongocamp_2.13"
+  group="dev.mongocamp"
+  artifact="mongodb-driver_2.13"
   version="$project.version$"
 }
 
@@ -34,11 +34,11 @@ Support Scala 2.12 and Scala 2.13.
 
 Create custom model classes.
 
-@@snip [model.scala](../../../../src/test/scala/com/mongocamp/driver/mongodb/model/model.scala) { #model_student }
+@@snip [model.scala](../../../../src/test/scala/dev/mongocamp/driver/mongodb/model/model.scala) { #model_student }
 
 ## Example: Database
 
-@@snip [UniversityDatabase.scala](../../../../src/test/scala/com/mongocamp/driver/mongodb/test/UniversityDatabase.scala)
+@@snip [UniversityDatabase.scala](../../../../src/test/scala/dev/mongocamp/driver/mongodb/test/UniversityDatabase.scala)
 
 @@@ index
 
