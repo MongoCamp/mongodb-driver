@@ -23,7 +23,7 @@ Support MongoDB 2.6 to 5.0.x.
 
 ## Documentation
 
-Documentation can be found [here](https://sfxcode.github.io/mongocamp/).
+Documentation can be found [here](https://driver-mongodb.mongocamp.dev/).
 
 ## Version
 
@@ -36,7 +36,7 @@ Scala Version is 2.13.x / 2.12.x.
 
 ## Licence
 
-[Apache 2 License](https://github.com/sfxcode/mongocamp/blob/master/LICENSE).
+[Apache 2 License](https://github.com/mongocamp/mongocamp-driver-mongodb/blob/master/LICENSE).
 
 
 ## Usage
