@@ -1,7 +1,7 @@
 import sbt.url
 
-organization := "com.sfxcode.nosql"
-organizationHomepage := Some(url("https://github.com/sfxcode"))
+organization := "dev.mongocamp"
+organizationHomepage := Some(url("https://github.com/mongocamp"))
 
 publishMavenStyle := true
 
@@ -18,7 +18,7 @@ developers := List(
   Developer(
     id = "mongocamp",
     name = "Tom Lamers",
-    email = "tom@mongocamp.com",
+    email = "tom@sfxcode.com",
     url = url("https://github.com/sfxcode")
   )
 )
