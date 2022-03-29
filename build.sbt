@@ -26,7 +26,7 @@ lazy val docs = (project in file("docs"))
     libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
-    git.remoteRepo := "git@github.com:mongocamp/mongocampdb.git",
+    git.remoteRepo := "git@github.com:MongoCamp/mongodb-driver.git",
     Compile / paradoxMaterialTheme ~= {
       _.withRepository(uri("https://github.com/MongoCamp/mongodb-driver"))
     },
