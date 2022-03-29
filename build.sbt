@@ -1,4 +1,4 @@
-name := "mongocamp-driver-mongodb"
+name := "mongodb-driver"
 
 crossScalaVersions := Seq("2.13.8", "2.12.15")
 
@@ -12,7 +12,7 @@ lazy val mongodb = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
   .settings(
     buildInfoKeys ++= Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "dev.mongocamp.driver.mongodb"
+    buildInfoPackage := "dev.mongocamp"
   )
 
 lazy val docs = (project in file("docs"))
@@ -22,13 +22,13 @@ lazy val docs = (project in file("docs"))
   .settings(
     name := "simple mongodb docs",
     scalaVersion := "2.13.7",
-    libraryDependencies += "com.sfxcode.nosql" % "simple-mongo_2.13" % "2.3.0",
-    libraryDependencies += "org.xerial.snappy" % "snappy-java"       % "1.1.8.4",
+    libraryDependencies += "dev.mongocamp"     % "mongodb-driver_2.13" % "2.4.0",
+    libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
     publish / skip := true,
     ghpagesNoJekyll := true,
     git.remoteRepo := "git@github.com:mongocamp/mongocampdb.git",
     Compile / paradoxMaterialTheme ~= {
-      _.withRepository(uri("https://github.com/sfxcode/mongocamp"))
+      _.withRepository(uri("https://github.com/MongoCamp/mongodb-driver"))
     },
     (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
     ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")

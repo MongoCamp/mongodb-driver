@@ -97,17 +97,17 @@ case class MongoSyncOperation(
 
 object MongoSyncOperation extends ConfigHelper {
   val MaxWaitDefault = 600
-  val MaxWait: Int   = intConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "maxWait", default = MaxWaitDefault)
+  val MaxWait: Int   = intConfig(configPath = "dev.mongocamp.mongodb.sync", key = "maxWait", default = MaxWaitDefault)
 
   val SyncColumnLastSync: String =
-    stringConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "syncColumnLastSync", default = "_lastSync").get
+    stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastSync", default = "_lastSync").get
   val SyncColumnLastUpdate: String =
-    stringConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
+    stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
 
-  val WriteSyncLogOnMaster = booleanConfig(configPath = "com.sfxcode.nosql.mongo.sync", key = "writeSyncLogOnMaster")
+  val WriteSyncLogOnMaster = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
   val SyncLogTableName: String =
     stringConfig(
-      configPath = "com.sfxcode.nosql.mongo.sync",
+      configPath = "dev.mongocamp.mongodb.sync",
       key = "syncLogTableName",
       default = "mongodb-sync-log"
     ).get
