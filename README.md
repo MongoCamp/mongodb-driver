@@ -45,7 +45,7 @@ Add following lines to your build.sbt (replace x.x with the actual Version)
 
 ```
 
-libraryDependencies += "dev.mongocamp.driver" %% "mongocamp" % "2.x.x"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.x.x"
 
 ```
 
