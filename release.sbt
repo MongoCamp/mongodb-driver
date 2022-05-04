@@ -1,25 +1,25 @@
 import sbt.url
 
 organization := "dev.mongocamp"
-organizationHomepage := Some(url("https://github.com/mongocamp"))
+organizationHomepage := Some(url("https://github.com/MongoCamp"))
 
 publishMavenStyle := true
 
-homepage := Some(url("https://github.com/sfxcode/mongocamp"))
+homepage := Some(url("https://mongocamp.github.io/mongodb-driver/"))
 
 scmInfo := Some(
   ScmInfo(
-    url("https://github.com/sfxcode/mongocamp"),
-    "scm:https://github.com/sfxcode/mongocamp.git"
+    url("https://github.com/MongoCamp/mongodb-driver"),
+    "scm:https://github.com/MongoCamp/mongodb-driver.git"
   )
 )
 
 developers := List(
   Developer(
     id = "mongocamp",
-    name = "Tom Lamers",
-    email = "tom@sfxcode.com",
-    url = url("https://github.com/sfxcode")
+    name = "Tom",
+    email = "tom@mongocamp.dev",
+    url = url("https://github.com/MongoCamp")
   )
 )
 
