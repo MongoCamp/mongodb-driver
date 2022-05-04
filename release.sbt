@@ -13,8 +13,7 @@ scmInfo := Some(
     "scm:https://github.com/MongoCamp/mongodb-driver.git"
   )
 )
-
-sonatypeProfileName := "sfxcode"
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
 developers := List(
   Developer(
