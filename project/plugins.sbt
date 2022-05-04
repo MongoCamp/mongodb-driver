@@ -4,16 +4,16 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.6")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.3")
 
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 
 // updates
 
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.1")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.2")
 
 addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
 
 // Release
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.10")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.12")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 
