@@ -14,6 +14,8 @@ scmInfo := Some(
   )
 )
 
+sonatypeProfileName := "sfxcode"
+
 developers := List(
   Developer(
     id = "mongocamp",
