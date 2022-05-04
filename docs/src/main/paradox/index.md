@@ -28,7 +28,7 @@ Support Scala 2.12 and Scala 2.13.
 
 ## Licence
 
-[Apache 2](https://github.com/sfxcode/mongocamp/blob/master/LICENSE)
+[Apache 2](https://github.com/MongoCamp/mongodb-driver/blob/master/LICENSE)
 
 ## Example: Model
 
