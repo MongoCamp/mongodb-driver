@@ -23,7 +23,7 @@ Support MongoDB 2.6 to 5.0.x.
 
 ## Documentation
 
-Documentation can be found [here](https://mongodb-diver.mongocamp.dev/).
+Documentation can be found [here](https://mongodb-driver.mongocamp.dev/).
 
 ## Version
 
