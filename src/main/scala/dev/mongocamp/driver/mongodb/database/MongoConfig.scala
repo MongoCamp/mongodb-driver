@@ -1,13 +1,13 @@
 package dev.mongocamp.driver.mongodb.database
 
 import java.util.concurrent.TimeUnit
-
 import com.mongodb.MongoCompressor
 import com.mongodb.MongoCredential.createCredential
+import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
 import dev.mongocamp.driver.mongodb.database.MongoConfig._
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{ Config, ConfigFactory }
 import org.mongodb.scala.connection._
-import org.mongodb.scala.{MongoClientSettings, MongoCredential, ServerAddress}
+import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
@@ -22,50 +22,58 @@ case class MongoConfig(
     authDatabase: String = DefaultAuthenticationDatabaseName,
     poolOptions: MongoPoolOptions = MongoPoolOptions(),
     compressors: List[String] = List(),
+    connectionPoolListener: List[ConnectionPoolListener] = List(),
+    commandListener: List[CommandListener] = List(),
     customClientSettings: Option[MongoClientSettings] = None
 ) {
 
   val clientSettings: MongoClientSettings = {
-    if (customClientSettings.isDefined)
+    if (customClientSettings.isDefined) {
       customClientSettings.get
+    }
     else {
-      val clusterSettings: ClusterSettings =
-        ClusterSettings.builder().hosts(List(new ServerAddress(host, port)).asJava).build()
+      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(List(new ServerAddress(host, port)).asJava).build()
 
-      val connectionPoolSettings = ConnectionPoolSettings
+      val connectionPoolSettingsBuilder = ConnectionPoolSettings
         .builder()
         .maxConnectionIdleTime(poolOptions.maxConnectionIdleTime, TimeUnit.SECONDS)
         .maxSize(poolOptions.maxSize)
         .minSize(poolOptions.minSize)
         .maintenanceInitialDelay(poolOptions.maintenanceInitialDelay, TimeUnit.SECONDS)
-        .build()
+
+      connectionPoolListener.foreach(listener => connectionPoolSettingsBuilder.addConnectionPoolListener(listener))
+
+      val connectionPoolSettings = connectionPoolSettingsBuilder.build()
 
       val compressorList = new ArrayBuffer[MongoCompressor]()
-      compressors.foreach { compression =>
-        if (ComressionSnappy.equalsIgnoreCase(compression))
+      compressors.foreach(compression => {
+        if (ComressionSnappy.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createSnappyCompressor())
-        else if (ComressionZlib.equalsIgnoreCase(compression))
+        }
+        else if (ComressionZlib.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createZlibCompressor())
-        else if (ComressionZstd.equalsIgnoreCase(compression))
+        }
+        else if (ComressionZstd.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createZstdCompressor())
-      }
+        }
+      })
 
       val builder = MongoClientSettings
         .builder()
         .applicationName(applicationName)
-        .applyToConnectionPoolSettings((b: com.mongodb.connection.ConnectionPoolSettings.Builder) =>
-          b.applySettings(connectionPoolSettings)
-        )
+        .applyToConnectionPoolSettings((b: com.mongodb.connection.ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings))
         .applyToClusterSettings((b: com.mongodb.connection.ClusterSettings.Builder) => b.applySettings(clusterSettings))
         .compressorList(compressorList.asJava)
 
+      commandListener.foreach(listener => builder.addCommandListener(listener))
+
       if (userName.isDefined && password.isDefined) {
         val credential: MongoCredential = createCredential(userName.get, authDatabase, password.get.toCharArray)
-
         builder.credential(credential).build()
       }
-      else
+      else {
         builder.build()
+      }
     }
   }
 }
