@@ -18,6 +18,7 @@ jobs:
     - name: Set up JDK ${{ matrix.Java }}
       uses: actions/setup-java@v3.3.0
       with:
+        distribution: 'corretto'
         java-version: ${{ matrix.java }}
     - name: Start MongoDB ${{ matrix.mongodb-version }}
       uses: supercharge/mongodb-github-action@1.7.0
