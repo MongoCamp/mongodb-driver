@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.sync
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
 import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.mongodb.scala.bson.codecs.Macros._
 

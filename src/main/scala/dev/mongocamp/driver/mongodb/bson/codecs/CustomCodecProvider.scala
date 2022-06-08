@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.bson.codecs
 
 import org.bson.codecs.Codec
-import org.bson.codecs.configuration.{CodecProvider, CodecRegistry}
+import org.bson.codecs.configuration.{ CodecProvider, CodecRegistry }
 
 case class CustomCodecProvider() extends CodecProvider {
 

@@ -3,7 +3,7 @@ package dev.mongocamp.driver.mongodb.sync
 import java.util.Date
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{ConfigHelper, DatabaseProvider}
+import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
 import com.typesafe.scalalogging.LazyLogging

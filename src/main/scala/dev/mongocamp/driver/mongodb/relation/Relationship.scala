@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.relation
 
 import dev.mongocamp.driver.mongodb.relation.RelationCache._
-import dev.mongocamp.driver.mongodb.{MongoDAO, _}
+import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
 
 abstract class Relationship {
   val id: String = hashCode().toString

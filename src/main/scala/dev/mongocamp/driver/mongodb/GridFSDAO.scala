@@ -1,12 +1,12 @@
 package dev.mongocamp.driver.mongodb
 
-import dev.mongocamp.driver.mongodb.database.{ChangeObserver, CollectionStatus, DatabaseProvider}
+import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, DatabaseProvider }
 import dev.mongocamp.driver.mongodb.gridfs.Metadata
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.gridfs.{GridFSBucket, GridFSFile}
+import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSFile }
 import org.mongodb.scala.model.CountOptions
-import org.mongodb.scala.{Document, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern}
+import org.mongodb.scala.{ Document, Observable, ReadConcern, ReadPreference, SingleObservable, WriteConcern }
 
 abstract class GridFSDAO(provider: DatabaseProvider, bucketName: String) extends Metadata(provider, bucketName) {
 
