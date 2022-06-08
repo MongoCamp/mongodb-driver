@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
 import java.io.OutputStream
-import java.nio.{Buffer, ByteBuffer}
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
+import java.nio.{ Buffer, ByteBuffer }
+import java.util.concurrent.atomic.{ AtomicBoolean, AtomicLong }
 
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Observer

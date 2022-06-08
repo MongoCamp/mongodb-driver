@@ -9,7 +9,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
-import org.mongodb.scala.{Document, Observable}
+import org.mongodb.scala.{ Document, Observable }
 
 abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 

@@ -35,9 +35,7 @@ object MongoIndex extends ObservableIncludes with LazyLogging {
       fieldName: String,
       maxWait: Int = DefaultMaxWait
   ): Boolean =
-    convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index =>
-      index.fields.contains(fieldName)
-    )
+    convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(index => index.fields.contains(fieldName))
 
   def convertIndexDocumentsToMongoIndexList(
       listIndexesObservable: ListIndexesObservable[Map[String, Any]],

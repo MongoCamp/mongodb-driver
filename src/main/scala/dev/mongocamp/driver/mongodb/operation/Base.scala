@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.operation
 
-import dev.mongocamp.driver.mongodb.database.{ConfigHelper, MongoIndex}
+import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, MongoIndex }
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.model.{CountOptions, DropIndexOptions, IndexOptions, Indexes}
-import org.mongodb.scala.{Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
+import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
