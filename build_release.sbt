@@ -99,6 +99,8 @@ credentials += Credentials("New Sonatype Nexus Repository Manager", "s01.oss.son
 
 Global / useGpgPinentry := true
 
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+
 packageOptions += {
   Package.ManifestAttributes(
     "Created-By"               -> "Simple Build Tool",
