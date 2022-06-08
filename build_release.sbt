@@ -20,7 +20,12 @@ val generateChangeLog = ReleaseStep(action = st => {
 
 val addGithubRelease = ReleaseStep(action = st => {
   st.log.warn("start github release process")
-  val response = "DEBUG=conventional-github-releaser  conventional-github-releaser -p conventionalcommits -r 3 -n ./changelog/config.js  || true".!!
+  var response = ""
+  try response = "conventional-github-releaser -p conventionalcommits -r 3 -n ./changelog/config.js".!!
+  catch {
+    case e: Exception =>
+      st.log.warn("Catched Exception on generate release notes: " + e.getMessage)
+  }
   st.log.warn("Output of conventional-github-releaser: " + response)
   st
 })
