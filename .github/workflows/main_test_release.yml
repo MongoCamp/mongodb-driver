@@ -49,11 +49,17 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
+      - name: Start MongoDB 5.0
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-version: 5.0
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
           GITHUB_USER: ${{ secrets.GH_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
+          SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         run: |
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"

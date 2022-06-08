@@ -71,6 +71,7 @@ releaseProcess := {
   Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
+    runClean,
     setToMyReleaseVersion,
     generateChangeLog,
     releaseStepCommand("scalafmt"),
