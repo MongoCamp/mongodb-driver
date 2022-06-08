@@ -11,7 +11,7 @@ object DatabaseInfo {
 
   def apply(document: Document): DatabaseInfo = {
     val name       = document.getString("name")
-    val sizeOnDisk = document.getDouble("sizeOnDisk")
+    val sizeOnDisk = document.getValue("sizeOnDisk").asInstanceOf[Number].doubleValue()
     val empty      = document.getBoolean("empty")
     DatabaseInfo(name, sizeOnDisk, empty, new Date(), document.asPlainMap)
 

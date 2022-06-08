@@ -1,0 +1,30 @@
+name: Test Process
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongodb-version: [ '4.4', '5.0' ]
+        java: [ '11', '17' ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK ${{ matrix.Java }}
+      uses: actions/setup-java@v3.3.0
+      with:
+        distribution: 'corretto'
+        java-version: ${{ matrix.java }}
+    - name: Start MongoDB ${{ matrix.mongodb-version }}
+      uses: supercharge/mongodb-github-action@1.7.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+        mongodb-replica-set: test-rs
+    - name: Run tests
+      run: sbt test
