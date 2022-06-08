@@ -20,8 +20,8 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(ParadoxMaterialThemePlugin)
   .enablePlugins(GhpagesPlugin)
   .settings(
-    name := "simple mongodb docs",
-    scalaVersion := "2.13.7",
+    name := "mongodb-driver-docs",
+    scalaVersion := "2.13.8",
     libraryDependencies += "dev.mongocamp"     % "mongodb-driver_2.13" % "2.4.0",
     libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
     publish / skip := true,
@@ -37,7 +37,7 @@ lazy val docs = (project in file("docs"))
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
-resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
 // Test
 
@@ -47,7 +47,7 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.10.14" % Test
 
-val circeVersion = "0.14.1"
+val circeVersion = "0.14.2"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
@@ -59,9 +59,9 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.6.0"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.8.4" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.2-2" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.2-3" % Provided
 
-val MongoJavaServerVersion = "1.39.0"
+val MongoJavaServerVersion = "1.40.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
@@ -71,7 +71,7 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.1"
 
 libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0"
 
