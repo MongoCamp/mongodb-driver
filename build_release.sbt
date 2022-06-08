@@ -82,6 +82,8 @@ releaseProcess := {
     commitNextVersion,
     pushChanges,
     publishArtifacts,
+    releaseStepCommandAndRemaining("+publishSigned"),
+    releaseStepCommand("sonatypeBundleRelease"),
     addGithubRelease
   )
 }
@@ -90,3 +92,6 @@ releaseProcess := {
 // snapshot versions publish to sonatype snapshot repository
 // other versions publish to sonatype staging repository
 publishTo := sonatypePublishToBundle.value
+
+credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
+credentials += Credentials("New Sonatype Nexus Repository Manager", "s01.oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
