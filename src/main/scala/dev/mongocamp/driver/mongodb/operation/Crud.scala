@@ -3,12 +3,12 @@ package dev.mongocamp.driver.mongodb.operation
 import java.util.Date
 
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb.{Converter, _}
+import dev.mongocamp.driver.mongodb.{ Converter, _ }
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.{BulkWriteOptions, _}
-import org.mongodb.scala.result.{DeleteResult, InsertManyResult, InsertOneResult, UpdateResult}
-import org.mongodb.scala.{BulkWriteResult, Observable, SingleObservable}
+import org.mongodb.scala.model.{ BulkWriteOptions, _ }
+import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
+import org.mongodb.scala.{ BulkWriteResult, Observable, SingleObservable }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag

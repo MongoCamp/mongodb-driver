@@ -3,13 +3,13 @@ package dev.mongocamp.driver.mongodb
 import java.nio.charset.Charset
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.bson.{BsonConverter, DocumentHelper}
-import dev.mongocamp.driver.mongodb.database.{ChangeObserver, CollectionStatus, DatabaseProvider}
+import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
+import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, DatabaseProvider }
 import dev.mongocamp.driver.mongodb.operation.Crud
 import org.bson.json.JsonParseException
 import org.mongodb.scala.model.Aggregates.project
 import org.mongodb.scala.model.Projections
-import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
@@ -19,8 +19,7 @@ import org.mongodb.scala.model.Accumulators._
 
 /** Created by tom on 20.01.17.
   */
-abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A])
-    extends Crud[A] {
+abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A]) extends Crud[A] {
 
   val databaseName: String = provider.guessDatabaseName(collectionName)
 
@@ -36,8 +35,10 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
   def collectionStatus: Observable[CollectionStatus] =
     provider.runCommand(Map("collStats" -> collectionName)).map(document => CollectionStatus(document))
 
-  /** @param sampleSize use sample size greater 0 for better performance on big collections
-    * @return List of column names
+  /** @param sampleSize
+    *   use sample size greater 0 for better performance on big collections
+    * @return
+    *   List of column names
     */
   def columnNames(sampleSize: Int = 0): List[String] = {
     val projectStage = project(Projections.computed("tempArray", equal("$objectToArray", "$$ROOT")))

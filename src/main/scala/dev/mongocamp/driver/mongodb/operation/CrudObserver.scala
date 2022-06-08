@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Observer
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.result.{DeleteResult, InsertManyResult, InsertOneResult, UpdateResult}
+import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
 
 trait CrudObserver[A] extends Crud[A] {
 
