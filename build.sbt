@@ -1,4 +1,31 @@
+import sbt.url
 name := "mongodb-driver"
+
+organization := "dev.mongocamp"
+
+val MongoCampHomepage = "https://github.com/MongoCamp"
+
+organizationHomepage := Some(url(MongoCampHomepage))
+
+homepage := Some(url("https://mongodb-driver.mongocamp.dev"))
+
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/MongoCamp/mongodb-driver"),
+    "scm:https://github.com/MongoCamp/mongodb-driver.git"
+  )
+)
+
+developers := List(
+  Developer(
+    id = "mongocamp",
+    name = "Tom",
+    email = "tom@mongocamp.dev",
+    url = url(MongoCampHomepage)
+  )
+)
+
+licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 crossScalaVersions := Seq("2.13.8", "2.12.15")
 
