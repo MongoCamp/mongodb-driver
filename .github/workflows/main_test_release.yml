@@ -1,0 +1,58 @@
+name: Build and Release Process
+
+on:
+  push:
+    branches: [ main ]
+  repository_dispatch:
+    types: [build]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongodb-version: [ '4.4', '5.0' ]
+        java: [ '11', '17' ]
+    steps:
+      - uses: actions/checkout@v3.0.0
+      - name: Set up JDK ${{ matrix.Java }}
+        uses: actions/setup-java@v3.3.0
+        with:
+          distribution: 'corretto'
+          java-version: ${{ matrix.java }}
+      - name: Start MongoDB ${{ matrix.mongodb-version }}
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+      - name: Run tests
+        run: sbt test
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3.0.0
+        with:
+          fetch-depth: 0
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.1
+        with:
+          version: 6.0.2
+      - name: install conventional-changelog-cli
+        run: pnpm install -g conventional-changelog-cli
+      - name: install conventional-github-release
+        run: pnpm install -g conventional-github-releaser
+      - name: Set up JDK ${{ matrix.Java }}
+        uses: actions/setup-java@v3.3.0
+        with:
+          distribution: 'corretto'
+          java-version: ${{ matrix.java }}
+      - name: Release
+        env:
+          CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
+          GITHUB_USER: ${{ secrets.GH_USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
+        run: |
+          git config --global user.email "ci@mongocamp.dev"
+          git config --global user.name "MongoCamp CI"
+          sbt ci-release
