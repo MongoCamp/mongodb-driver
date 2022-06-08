@@ -49,15 +49,12 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
-      - name: Start MongoDB 5.0
-        uses: supercharge/mongodb-github-action@1.7.0
-        with:
-          mongodb-version: 5.0
       - id: install-secret-key
         name: Install gpg secret key
         run: |
           cat <(echo -e "${{ secrets.PGP_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
+          export GPG_TTY=$(tty)
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
