@@ -1,3 +1,5 @@
+### [2.4.5](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.4...v2.4.5) (2022-06-08)
+
 ### [2.4.4](https://github.com/MongoCamp/mongodb-driver/compare/v2.3.1...v2.4.4) (2022-06-08)
 
 
