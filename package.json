@@ -1,6 +1,6 @@
 {
   "name": "mongocamp-server",
-  "version": "2.4.6.snapshot",
+  "version": "2.4.6",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MongoCamp/mongodb-driver.git"
