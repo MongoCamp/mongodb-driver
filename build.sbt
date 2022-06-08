@@ -20,8 +20,8 @@ lazy val docs = (project in file("docs"))
   .enablePlugins(ParadoxMaterialThemePlugin)
   .enablePlugins(GhpagesPlugin)
   .settings(
-    name := "simple mongodb docs",
-    scalaVersion := "2.13.7",
+    name := "mongodb-driver-docs",
+    scalaVersion := "2.13.8",
     libraryDependencies += "dev.mongocamp"     % "mongodb-driver_2.13" % "2.4.0",
     libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
     publish / skip := true,
