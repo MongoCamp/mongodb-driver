@@ -96,6 +96,7 @@ publishTo := sonatypePublishToBundle.value
 
 credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
 credentials += Credentials("New Sonatype Nexus Repository Manager", "s01.oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASSWORD"))
+credentials += Credentials("GnuPG Key ID", "gpg", System.getenv("PGP_KEY"), "ignored")
 
 packageOptions += {
   Package.ManifestAttributes(
