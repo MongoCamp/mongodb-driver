@@ -44,11 +44,11 @@ jobs:
         run: pnpm install -g conventional-changelog-cli
       - name: install conventional-github-release
         run: pnpm install -g conventional-github-releaser
-      - name: Set up JDK ${{ matrix.Java }}
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.3.0
         with:
           distribution: 'corretto'
-          java-version: ${{ matrix.java }}
+          java-version: '17'
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
