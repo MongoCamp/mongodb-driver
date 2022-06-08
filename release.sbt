@@ -13,6 +13,7 @@ scmInfo := Some(
     "scm:https://github.com/MongoCamp/mongodb-driver.git"
   )
 )
+
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 
 developers := List(
@@ -25,11 +26,6 @@ developers := List(
 )
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-
-// add sonatype repository settings
-// snapshot versions publish to sonatype snapshot repository
-// other versions publish to sonatype staging repository
-publishTo := sonatypePublishToBundle.value
 
 packageOptions += {
   Package.ManifestAttributes(
