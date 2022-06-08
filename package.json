@@ -1,0 +1,14 @@
+{
+  "name": "mongocamp-server",
+  "version": "2.4.3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MongoCamp/mongodb-driver.git"
+  },
+  "author": "info@mongocamp.dev",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MongoCamp/mongocamp-driver/issues"
+  },
+  "homepage": "https://mongodb-driver.mongocamp.dev/"
+}
