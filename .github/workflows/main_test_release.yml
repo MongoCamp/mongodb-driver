@@ -54,7 +54,7 @@ jobs:
         run: |
           cat <(echo -e "${{ secrets.PGP_KEY }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
-          export GPG_TTY=$(tty)
+          apt-get install -y coreutils
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
