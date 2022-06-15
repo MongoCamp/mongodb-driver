@@ -3,7 +3,7 @@ name := "mongodb-driver"
 
 organization := "dev.mongocamp"
 
-val MongoCampHomepage = "https://github.com/MongoCamp"
+val MongoCampHomepage = "https://www.mongocamp.dev"
 
 organizationHomepage := Some(url(MongoCampHomepage))
 
@@ -19,8 +19,20 @@ scmInfo := Some(
 developers := List(
   Developer(
     id = "mongocamp",
+    name = "MongoCamp-Team",
+    email = "info@mongocamp.dev",
+    url = url(MongoCampHomepage)
+  ),
+  Developer(
+    id = "sfxcode",
     name = "Tom",
     email = "tom@mongocamp.dev",
+    url = url(MongoCampHomepage)
+  ),
+  Developer(
+    id = "quadstingray",
+    name = "QuadStingray",
+    email = "simon@mongocamp.dev",
     url = url(MongoCampHomepage)
   )
 )

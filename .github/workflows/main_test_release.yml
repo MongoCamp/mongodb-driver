@@ -51,10 +51,7 @@ jobs:
           java-version: '17'
       - id: install-secret-key
         name: Install gpg secret key
-        run: |
-          cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
-          gpg --list-secret-keys --keyid-format LONG
-          sudo apt-get install -y coreutils
+        run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
       - name: Release
         env:
           CONVENTIONAL_GITHUB_RELEASER_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
