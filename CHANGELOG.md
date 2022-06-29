@@ -1,4 +1,6 @@
-### 2.4.7 (2022-06-27)
+### [2.4.8](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.7...v2.4.8) (2022-06-29)
+
+### [2.4.7](https://github.com/MongoCamp/mongodb-driver/compare/3f749c05300b23eaf48588966aec7a926f3c4f1c...v2.4.7) (2022-06-27)
 
 
 ### Bug Fixes
