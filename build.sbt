@@ -80,7 +80,7 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.16.0" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.16.1" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.11" % Test
 
@@ -112,7 +112,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.8.0"
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
