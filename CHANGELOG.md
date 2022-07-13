@@ -1,3 +1,16 @@
+### [2.4.9](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.8...v2.4.9) (2022-07-13)
+
+
+### Bug Fixes
+
+* recursive BsonConverter.asMap for List of Documents ([3c7d0c8](https://github.com/MongoCamp/mongodb-driver/commit/3c7d0c87096f0342936d38dd0e2fbd0c0bf64785))
+* recursive BsonConverter.asMap for List of Documents ([901fb0d](https://github.com/MongoCamp/mongodb-driver/commit/901fb0d6670feb31697cd25b7b5eb326b2ac5695))
+
+
+### Maintenance
+
+* 2 dependency updates ([00d3202](https://github.com/MongoCamp/mongodb-driver/commit/00d3202c8d5449d54ce4d1d3b0f4a3b8ad28f045))
+
 ### [2.4.8](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.7...v2.4.8) (2022-06-29)
 
 ### [2.4.7](https://github.com/MongoCamp/mongodb-driver/compare/3f749c05300b23eaf48588966aec7a926f3c4f1c...v2.4.7) (2022-06-27)
