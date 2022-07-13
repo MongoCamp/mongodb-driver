@@ -1,15 +1,14 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import java.math.BigInteger
-import java.time.{ LocalDate, LocalDateTime, ZoneId }
-import java.util.Date
-
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.bson.{ ObjectId, _ }
 
-import scala.jdk.CollectionConverters._
+import java.math.BigInteger
+import java.time.{ LocalDate, LocalDateTime, ZoneId }
+import java.util.Date
 import scala.collection.mutable
+import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
 
 object BsonConverter {
@@ -73,18 +72,22 @@ object BsonConverter {
       }
       val mutableDoc = org.mongodb.scala.bson.collection.mutable.Document.apply(relatedDocument.toJson())
       document.put(relation, mutableDoc)
-      if (root.isEmpty)
+      if (root.isEmpty) {
         updateDocumentValueInternal(mutableDoc, newKey, value, Some(document))
-      else
+      }
+      else {
         updateDocumentValueInternal(mutableDoc, newKey, value, root)
+      }
 
     }
     else {
       document.put(key, toBson(value))
-      if (root.isEmpty)
+      if (root.isEmpty) {
         document
-      else
+      }
+      else {
         root.get
+      }
     }
 
   var converterPlugin: AbstractConverterPlugin = new BaseConverterPlugin()
@@ -93,10 +96,12 @@ object BsonConverter {
     value match {
       case bsonValue: BsonValue => bsonValue
       case option: Option[Any] =>
-        if (option.isDefined)
+        if (option.isDefined) {
           toBson(option.get)
-        else
+        }
+        else {
           BsonNull()
+        }
       case v: Any if converterPlugin.hasCustomClass(v) =>
         converterPlugin.toBson(v)
       case b: Boolean         => BsonBoolean(b)
@@ -174,7 +179,10 @@ object BsonConverter {
       value match {
         case d: Document =>
           result.+=(key -> asMap(d))
-        case _ => result.+=(key -> value)
+        case ld: List[Document] =>
+          result.+=(key -> ld.map(d => asMap(d)))
+        case _ =>
+          result.+=(key -> value)
       }
     }
     result.toMap
