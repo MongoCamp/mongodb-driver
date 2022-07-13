@@ -179,8 +179,15 @@ object BsonConverter {
       value match {
         case d: Document =>
           result.+=(key -> asMap(d))
-        case ld: List[Document] =>
-          result.+=(key -> ld.map(d => asMap(d)))
+        case ld: List[Any] =>
+          result.+=(key -> ld.map(d => {
+            if (d.isInstanceOf[Document]) {
+              asMap(d.asInstanceOf[Document])
+            }
+            else {
+              d
+            }
+          }))
         case _ =>
           result.+=(key -> value)
       }
