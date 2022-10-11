@@ -3,9 +3,12 @@
 
 ## Versions
 
+### 2.5.1
+* mongo-scala-driver [4.7.2](https://mongodb.github.io/mongo-java-driver/4.7/driver-scala/)
+
 ### 2.5.0
 * Github namespace changed to mongocamp organization, name changes to mongocamp-driver-mongodb
-* * mongo-scala-driver [4.7.0](https://mongodb.github.io/mongo-java-driver/4.7/driver-scala/)
+* mongo-scala-driver [4.7.0](https://mongodb.github.io/mongo-java-driver/4.7/driver-scala/)
 
 ### 2.4.0
 * Github namespace changed to mongocamp organization, name changes to mongocamp-driver-mongodb
