@@ -1,6 +1,6 @@
 {
   "name": "mongodb-driver",
-  "version": "2.5.1",
+  "version": "2.5.2.snapshot",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MongoCamp/mongodb-driver.git"
