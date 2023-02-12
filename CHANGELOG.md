@@ -1,3 +1,10 @@
+### [2.5.4](https://github.com/MongoCamp/mongodb-driver/compare/v2.5.3...v2.5.4) (2023-02-12)
+
+
+### Maintenance
+
+* **Dependencies:** mongo scala driver 4.9.0 ([356c7c4](https://github.com/MongoCamp/mongodb-driver/commit/356c7c42291ca7d3f7a7ad69a60dfac3493dbc9f))
+
 ### [2.5.3](https://github.com/MongoCamp/mongodb-driver/compare/v2.5.1...v2.5.3) (2022-12-04)
 
 
