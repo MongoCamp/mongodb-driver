@@ -154,8 +154,14 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
   }
 
 }
-
 ```
+
+## Run Tests
+```shell
+docker run --publish 27017:27017  mongocamp/mongodb:latest;
+sbt test;
+```
+
 ## Supporters
 
 JetBrains is supporting this open source project with:

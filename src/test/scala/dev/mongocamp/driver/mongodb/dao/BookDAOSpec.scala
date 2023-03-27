@@ -1,22 +1,20 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import java.text.SimpleDateFormat
-import java.util.Date
-
 import better.files.{File, Resource}
 import dev.mongocamp.driver.mongodb.Filter._
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.test.TestDatabase.BookDAO
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.group
-import org.mongodb.scala.model.Aggregates.filter
-import org.mongodb.scala.model.Aggregates.project
+import org.mongodb.scala.model.Aggregates.{filter, group, project}
 import org.mongodb.scala.model.Filters.and
 import org.mongodb.scala.model.Projections
+import org.mongodb.scala.model.Updates._
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
-import org.mongodb.scala.model.Updates._
+
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class BookDAOSpec extends Specification with BeforeAll {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")

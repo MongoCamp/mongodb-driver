@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
+import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala._
@@ -41,6 +41,16 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
   def databaseNames: List[String] = databaseInfos.map(info => info.name)
 
   def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Void] = database(databaseName).drop()
+
+  def compact(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): CompactResult = {
+    CompactResult(
+      collectionNames(databaseName)
+        .map(
+        collectionName => dao(collectionName).compact.result(maxWaitPerCollection).getOrElse(CompactResult(0)))
+        .map(_.bytesFreed)
+        .sum
+    )
+  }
 
   def database(databaseName: String = DefaultDatabaseName): MongoDatabase = {
     if (!cachedDatabaseMap.contains(databaseName)) {
