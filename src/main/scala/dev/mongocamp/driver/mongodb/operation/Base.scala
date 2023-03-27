@@ -14,8 +14,9 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   protected def coll: MongoCollection[A]
 
-  def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] =
+  def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] = {
     coll.countDocuments(filter, options)
+  }
 
   def drop(): Observable[Void] = coll.drop()
 
