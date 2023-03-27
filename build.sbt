@@ -80,13 +80,13 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.19.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.0" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.5" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.2" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.12.4" % Test
 
-val circeVersion = "0.14.4"
+val circeVersion = "0.14.5"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
@@ -98,7 +98,7 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.9.0"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.9.1" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.4-1" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.4-2" % Provided
 
 val MongoJavaServerVersion = "1.43.0"
 
