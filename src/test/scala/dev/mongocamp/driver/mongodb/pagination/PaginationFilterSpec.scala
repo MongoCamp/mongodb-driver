@@ -1,5 +1,4 @@
 package dev.mongocamp.driver.mongodb.pagination
-
 import dev.mongocamp.driver.MongoImplicits
 import dev.mongocamp.driver.mongodb.Sort._
 import dev.mongocamp.driver.mongodb._
