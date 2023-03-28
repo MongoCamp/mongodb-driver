@@ -12,6 +12,7 @@ import org.mongodb.scala.model.Projections
 import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
 
 import java.nio.charset.Charset
+import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
@@ -35,7 +36,10 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
   }
 
   def compact: Observable[Option[CompactResult]] = {
-    provider.runCommand(Map("compact" -> collectionName)).map(document => CompactResult(document))
+    val startDate = new Date()
+    provider
+      .runCommand(Map("compact" -> collectionName))
+      .map(document => CompactResult(s"$databaseName${DatabaseProvider.CollectionSeparator}$collectionName", document, startDate))
   }
 
   /** @param sampleSize

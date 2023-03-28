@@ -2,14 +2,18 @@ package dev.mongocamp.driver.mongodb.database
 import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala.bson.Document
 
-case class CompactResult(bytesFreed: Long)
+import java.util.Date
+
+case class CompactResult(collectionName: String, bytesFreed: Long, duration: Long)
 
 object CompactResult {
-  def apply(document: Document): Option[CompactResult] = {
+  def apply(collectionName: String, document: Document, startDate: Date): Option[CompactResult] = {
     if (document.getLongValue("ok") == 1) {
       Some(
         CompactResult(
-          document.getLongValue("bytesFreed")
+          collectionName,
+          document.getLongValue("bytesFreed"),
+          new Date().getTime - startDate.getTime
         )
       )
     }

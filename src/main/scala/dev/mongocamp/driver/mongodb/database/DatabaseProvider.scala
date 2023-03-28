@@ -42,13 +42,16 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Void] = database(databaseName).drop()
 
-  def compact(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): CompactResult = {
-    CompactResult(
-      collectionNames(databaseName)
-        .map(
-        collectionName => dao(collectionName).compact.result(maxWaitPerCollection).getOrElse(CompactResult(0)))
-        .map(_.bytesFreed)
-        .sum
+  def compactDatabase(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
+    collectionNames(databaseName).flatMap(collectionName => dao(collectionName).compact.result(maxWaitPerCollection))
+  }
+
+  def compact(maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
+    databaseNames.flatMap(database =>
+      try collectionNames(database).flatMap(collectionName => dao(collectionName).compact.result(maxWaitPerCollection))
+      catch {
+        case e: MongoCommandException => List()
+      }
     )
   }
 

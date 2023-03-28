@@ -28,8 +28,14 @@ class CompactSpec extends Specification with BeforeAll {
       count.get.bytesFreed must beGreaterThanOrEqualTo(0L)
     }
     "compact complete database" in {
-      val count: CompactResult = TestDatabase.provider.compact()
-      count.bytesFreed must beGreaterThanOrEqualTo(0L)
+      val count: List[CompactResult] = TestDatabase.provider.compactDatabase()
+      count.size must beGreaterThanOrEqualTo(1)
+      count.head.bytesFreed must beGreaterThanOrEqualTo(0L)
+    }
+    "compact all databases in scope" in {
+      val count: List[CompactResult] = TestDatabase.provider.compact()
+      count.size must beGreaterThanOrEqualTo(1)
+      count.head.bytesFreed must beGreaterThanOrEqualTo(0L)
     }
   }
 
