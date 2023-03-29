@@ -15,7 +15,7 @@ trait MongoImplicits extends ObservableIncludes with ObservableImplicits {
 
   implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.resultOption()
 
-  // gridfs
+  // gridfs-dao
 
   implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] = observable.resultList()
 

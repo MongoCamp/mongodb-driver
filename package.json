@@ -1,14 +1,47 @@
 {
   "name": "mongodb-driver",
+  "organization": "dev.mongocamp",
   "version": "2.5.5.snapshot",
+  "author": "info@mongocamp.dev",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MongoCamp/mongodb-driver.git"
   },
-  "author": "info@mongocamp.dev",
-  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/MongoCamp/mongocamp-driver/issues"
   },
-  "homepage": "https://mongodb-driver.mongocamp.dev/"
+  "homepage": "https://mongodb-driver.mongocamp.dev/",
+  "scripts": {
+    "docs:serve": "vitepress serve docs --port 5555",
+    "docs:build": "pnpm docs:external; vitepress build docs",
+    "docs:external": "sh docs/external/fileloader.sh",
+    "docs:dev": "pnpm docs:external; vitepress dev docs"
+  },
+  "devDependencies": {
+    "@unocss/preset-icons" : "^0.46.5",
+    "unocss" : "^0.46.5",
+    "vitepress" : "1.0.0-alpha.49",
+    "date-fns" : "^2.29.3",
+    "@iconify-json/fluent-emoji" : "^1.1.12",
+    "gray-matter" : "^4.0.3",
+    "fs-extra" : "^10.1.0",
+    "conventional-changelog-cli" : "^2.2.2",
+    "@iconify-json/heroicons-outline" : "^1.1.6",
+    "flexsearch" : "^0.7.31",
+    "eslint" : "^8.35.0",
+    "vue" : "^3.2.47",
+    "typescript" : "^4.9.5",
+    "anu-vue" : "^0.10.0",
+    "@openapitools/openapi-generator-cli" : "^2.5.2",
+    "@iconify-json/logos" : "^1.1.23",
+    "@antfu/eslint-config" : "^0.29.4",
+    "@iconify-json/bx" : "^1.1.6",
+    "vitepress-plugin-search" : "1.0.4-alpha.15",
+    "@types/node" : "^18.14.2",
+    "@vueuse/core" : "^9.13.0",
+    "@iconify-json/mdi" : "^1.1.47",
+    "@unocss/preset-uno" : "0.46.4",
+    "markdown-it" : "^13.0.1"
+  }
 }

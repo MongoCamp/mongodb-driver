@@ -1,7 +1,8 @@
 import sbt.url
-name := "mongodb-driver"
 
-organization := "dev.mongocamp"
+name := jsonHandler.value.stringValue("package.json", "name")
+
+organization := jsonHandler.value.stringValue("package.json", "organization")
 
 val MongoCampHomepage = "https://www.mongocamp.dev"
 
@@ -54,26 +55,6 @@ lazy val mongodb = (project in file("."))
     buildInfoPackage := "dev.mongocamp"
   )
 
-lazy val docs = (project in file("docs"))
-  .enablePlugins(ParadoxSitePlugin)
-  .enablePlugins(ParadoxMaterialThemePlugin)
-  .enablePlugins(GhpagesPlugin)
-  .settings(
-    name := "mongodb-driver-docs",
-    scalaVersion := "2.13.8",
-    libraryDependencies += "dev.mongocamp"     % "mongodb-driver_2.13" % "2.4.0",
-    libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
-    publish / skip := true,
-    ghpagesNoJekyll := true,
-    git.remoteRepo := "git@github.com:MongoCamp/mongodb-driver.git",
-    Compile / paradoxMaterialTheme ~= {
-      _.withRepository(uri("https://github.com/MongoCamp/mongodb-driver"))
-    },
-    (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
-    ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
-  )
-  .dependsOn(mongodb)
-
 buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
@@ -125,3 +106,5 @@ scalafmtOnCompile := false
 coverageMinimumStmtTotal := 70
 
 coverageFailOnMinimum := true
+
+jsonFiles += (baseDirectory.value / "package.json")
