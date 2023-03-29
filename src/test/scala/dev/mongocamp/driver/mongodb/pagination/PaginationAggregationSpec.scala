@@ -31,6 +31,8 @@ class PaginationAggregationSpec extends PersonSpecification {
 
       val page = pagination.paginate(1, 10)
 
+      (pagination.countResult must be).equalTo(98)
+
       (page.paginationInfo.allCount must be).equalTo(98)
 
       (page.paginationInfo.pagesCount must be).equalTo(10)
@@ -46,7 +48,8 @@ class PaginationAggregationSpec extends PersonSpecification {
 
       val page = pagination.paginate(1, 10)
 
-      // #agg_execute
+      (pagination.countResult must be).equalTo(21)
+
       (page.paginationInfo.allCount must be).equalTo(21)
 
       (page.paginationInfo.pagesCount must be).equalTo(3)

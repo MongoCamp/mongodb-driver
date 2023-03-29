@@ -16,7 +16,7 @@ import scala.jdk.CollectionConverters._
 
 object LuceneQueryConverter extends LazyLogging {
 
-  def getMongoDbSearch(query: Query): Bson = {
+  def toDocument(query: Query): Bson = {
     getMongoDbSearchMap(query, false)
   }
 

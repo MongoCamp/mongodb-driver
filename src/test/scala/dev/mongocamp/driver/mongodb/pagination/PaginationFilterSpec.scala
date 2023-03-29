@@ -15,7 +15,9 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
 
       val page = pagination.paginate(1, 10)
 
-      (page.paginationInfo.allCount must be).equalTo(PersonDAO.count().result().toInt)
+      val personCollectionCount = PersonDAO.count().result().toInt
+      page.paginationInfo.allCount mustEqual personCollectionCount
+      pagination.countResult mustEqual personCollectionCount
 
       page.databaseObjects.size must beEqualTo(10)
 
@@ -30,6 +32,7 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
 
       val pageFemale = paginationFemale.paginate(1, 10)
 
+      paginationFemale.countResult mustEqual 11
       pageFemale.paginationInfo.pagesCount mustEqual 10
       pageFemale.paginationInfo.allCount mustEqual 98
       pageFemale.paginationInfo.page mustEqual 1
@@ -41,6 +44,7 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
       val paginationMales = MongoPaginatedFilter(PersonDAO, Map("gender" -> "male"))
       val pageMale        = paginationMales.paginate(1, 10)
 
+      paginationMales.countResult mustEqual 11
       pageMale.paginationInfo.pagesCount mustEqual 11
       pageMale.paginationInfo.allCount mustEqual 102
       pageMale.paginationInfo.page mustEqual 1

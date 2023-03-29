@@ -13,8 +13,7 @@ package object mongodb extends ObservableIncludes with DocumentIncludes {
 
   implicit class DocumentExtensions[A <: Document](val document: A) extends AnyVal {
 
-    def asPlainMap: Map[String, Any] =
-      BsonConverter.asMap(document)
+    def asPlainMap: Map[String, Any] = BsonConverter.asMap(document)
 
     def asPlainJson: String = {
       val builder = JsonWriterSettings.builder
@@ -27,11 +26,12 @@ package object mongodb extends ObservableIncludes with DocumentIncludes {
 
     def getValue(key: String): Any = getValueOption(key).orNull
 
-    def getStringValue(key: String): String =
+    def getStringValue(key: String): String = {
       getValue(key) match {
         case n: Any => n.toString
         case _      => ""
       }
+    }
 
     def getLongValue(key: String): Long = {
       val value = getValue(key)
@@ -44,12 +44,13 @@ package object mongodb extends ObservableIncludes with DocumentIncludes {
 
     def getIntValue(key: String): Int = getLongValue(key).intValue()
 
-    def getDoubleValue(key: String): Double =
+    def getDoubleValue(key: String): Double = {
       getValue(key) match {
         case n: Number => n.doubleValue()
         case s: String => s.toDouble
         case _         => 0
       }
+    }
 
     def getDateValue(key: String): Date = {
       val value = getValue(key)

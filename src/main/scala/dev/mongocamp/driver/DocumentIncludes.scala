@@ -3,6 +3,8 @@ package dev.mongocamp.driver
 import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
+import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
@@ -11,6 +13,8 @@ import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
 trait DocumentIncludes {
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
+
+  implicit def luceneQueryBson(query: Query): Bson = LuceneQueryConverter.toDocument(query)
 
   implicit def documentFromJavaMap(map: java.util.Map[String, Any]): Document =
     documentFromScalaMap(map.asScala.toMap)

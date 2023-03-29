@@ -11,18 +11,15 @@ trait MongoImplicits extends ObservableIncludes with ObservableImplicits {
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.result()
 
-  implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] =
-    obs.resultList()
+  implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] = obs.resultList()
 
   implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.resultOption()
 
   // gridfs
 
-  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] =
-    observable.resultList()
+  implicit def gridFSFindObservableToFiles(observable: GridFSFindObservable): List[GridFSFile] = observable.resultList()
 
-  implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId =
-    file.getObjectId
+  implicit def gridFSFileToObjectId(file: GridFSFile): ObjectId = file.getObjectId
 
   implicit def gridFSFileToBSonIdValue(file: GridFSFile): BsonValue = file.getId
 
