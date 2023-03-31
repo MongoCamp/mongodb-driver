@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.model
 
-import java.util.Date
-
 import org.mongodb.scala.bson.ObjectId
+
+import java.util.Date
 
 case class Book(
     _id: Double,
@@ -52,15 +52,13 @@ case class Product(
     available: Boolean
 )
 
-// #model_student
-
+// #region model_student
 case class Student(_id: Long, name: String, scores: List[Score], image: Option[ObjectId])
 
 case class Score(score: Double, `type`: String)
 
 case class Grade(_id: ObjectId, student_id: Long, class_id: Long, scores: List[Score])
-
-// #model_student
+// #endregion model_student
 
 case class CodecTest(
     id: Long = 1,

@@ -1,21 +1,20 @@
 package dev.mongocamp.driver.mongodb
 
-import java.nio.charset.Charset
-
 import better.files.File
-import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
-import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.bson.{BsonConverter, DocumentHelper}
+import dev.mongocamp.driver.mongodb.database.{ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider}
 import dev.mongocamp.driver.mongodb.operation.Crud
 import org.bson.json.JsonParseException
-import org.mongodb.scala.model.Aggregates.project
+import org.mongodb.scala.model.Accumulators._
+import org.mongodb.scala.model.Aggregates._
+import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
-import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
+import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
 
+import java.nio.charset.Charset
+import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
-import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.Aggregates._
-import org.mongodb.scala.model.Accumulators._
 
 /** Created by tom on 20.01.17.
   */
@@ -32,8 +31,16 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     observer
   }
 
-  def collectionStatus: Observable[CollectionStatus] =
+  def collectionStatus: Observable[CollectionStatus] = {
     provider.runCommand(Map("collStats" -> collectionName)).map(document => CollectionStatus(document))
+  }
+
+  def compact: Observable[Option[CompactResult]] = {
+    val startDate = new Date()
+    provider
+      .runCommand(Map("compact" -> collectionName))
+      .map(document => CompactResult(s"$databaseName${DatabaseProvider.CollectionSeparator}$collectionName", document, startDate))
+  }
 
   /** @param sampleSize
     *   use sample size greater 0 for better performance on big collections
@@ -45,10 +52,12 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     val unwindStage  = unwind("$tempArray")
     val groupStage   = group("_id", addToSet("keySet", "$tempArray.k"))
     val pipeline = {
-      if (sampleSize > 0)
+      if (sampleSize > 0) {
         List(sample(sampleSize), projectStage, unwindStage, groupStage)
-      else
+      }
+      else {
         List(projectStage, unwindStage, groupStage)
+      }
     }
 
     val aggregationResult: Document = Raw.findAggregated(pipeline).result()
@@ -62,9 +71,11 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   def importJsonFile(file: File): SingleObservable[BulkWriteResult] = {
     val docs = new ArrayBuffer[Document]()
-    try if (file.exists) {
-      val iterator = file.lineIterator(Charset.forName("UTF-8"))
-      iterator.foreach(line => docs.+=(DocumentHelper.documentFromJsonString(line).get))
+    try {
+      if (file.exists) {
+        val iterator = file.lineIterator(Charset.forName("UTF-8"))
+        iterator.foreach(line => docs.+=(DocumentHelper.documentFromJsonString(line).get))
+      }
     }
     catch {
       case e: JsonParseException =>

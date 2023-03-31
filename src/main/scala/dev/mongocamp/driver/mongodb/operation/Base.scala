@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.operation
 
-import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, MongoIndex }
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.database.MongoIndex
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
-import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
+import org.mongodb.scala.model.{CountOptions, DropIndexOptions, IndexOptions, Indexes}
+import org.mongodb.scala.{Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable}
 
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
@@ -14,8 +14,9 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
 
   protected def coll: MongoCollection[A]
 
-  def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] =
+  def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] = {
     coll.countDocuments(filter, options)
+  }
 
   def drop(): Observable[Void] = coll.drop()
 
@@ -23,11 +24,14 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
       fieldName: String,
       sortAscending: Boolean = true,
       options: IndexOptions = IndexOptions()
-  ): SingleObservable[String] =
-    if (sortAscending)
+  ): SingleObservable[String] = {
+    if (sortAscending) {
       createIndex(ascending(fieldName), options)
-    else
+    }
+    else {
       createIndex(descending(fieldName), options)
+    }
+  }
 
   def createIndexForFieldWithName(
       fieldName: String,

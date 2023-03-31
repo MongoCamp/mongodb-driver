@@ -25,7 +25,7 @@ object RelationDemoDatabase {
       relatedRecordForOneToMany(NodeDAO.childrenRelation, id)
   }
 
-  // #user_class
+  // #region user_class
   case class User(id: Long, name: String, loginId: String) extends Relations {
 
     def login: Option[Login] = relatedRecordForOneToOne(UserDAO.loginRelation, loginId)
@@ -33,25 +33,26 @@ object RelationDemoDatabase {
     def friends: List[SimplePerson] = relatedRecordForOneToMany(UserDAO.friendsRelation, id)
 
   }
-  // #user_class
+  // #endregion user_class
 
   case class Login(id: String, email: String, password: String)
 
   case class SimplePerson(id: Long, name: String, userId: Long)
 
-  // #user_dao
+  // #region user_dao
   object UserDAO extends MongoDAO[User](provider, "user") {
     lazy val loginRelation   = OneToOneRelationship(LoginDAO, "id")
     lazy val friendsRelation = OneToManyRelationship(SimplePersonDAO, "userId")
   }
-  // #user_dao
+  // #endregion user_dao
 
   object LoginDAO extends MongoDAO[Login](provider, "login")
 
   object SimplePersonDAO extends MongoDAO[SimplePerson](provider, "friend")
 
-  // #registry
+  // #region registry
   private val registry = fromProviders(classOf[Node], classOf[User], classOf[Login], classOf[SimplePerson])
+  // #endregion registry
 
   val provider = DatabaseProvider.fromPath("unit.test.mongo", registry)
 

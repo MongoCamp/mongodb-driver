@@ -20,13 +20,13 @@ class DatabaseProviderSpec extends PersonSpecification {
       names must contain("people")
     }
 
-    "must evaluate dao by name" in {
+    "must evaluate mongo-dao by name" in {
       val dao         = provider.dao("people")
       val count: Long = dao.count().result()
       count mustEqual 200
     }
 
-    "must evaluate dao by name in different database" in {
+    "must evaluate mongo-dao by name in different database" in {
       val dao          = provider.dao("mongocamp-unit-test-2:people")
       val databaseName = dao.databaseName
       databaseName mustEqual "mongocamp-unit-test-2"
