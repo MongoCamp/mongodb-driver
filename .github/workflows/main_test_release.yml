@@ -17,6 +17,12 @@ jobs:
         java: [ '11', '17' ]
     steps:
       - uses: actions/checkout@v3.0.0
+      - name: Setup TimeZone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "GMT+2"
+          timezoneMacos: "GMT+2"
+          timezoneWindows: "GMT+2"
       - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v3.3.0
         with:

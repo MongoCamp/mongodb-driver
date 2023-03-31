@@ -22,6 +22,12 @@ jobs:
       with:
         distribution: 'corretto'
         java-version: ${{ matrix.java }}
+    - name: Setup TimeZone
+      uses: szenius/set-timezone@v1.2
+      with:
+        timezoneLinux: "GMT+2"
+        timezoneMacos: "GMT+2"
+        timezoneWindows: "GMT+2"
     - name: Start MongoDB ${{ matrix.mongodb-version }}
       uses: MongoCamp/mongodb-github-action@1.2.0
       with:
