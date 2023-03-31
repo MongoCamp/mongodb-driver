@@ -4,7 +4,7 @@ import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
 import dev.mongocamp.driver.mongodb.{MongoDAO, _}
 import org.mongodb.scala.bson.conversions.Bson
 
-case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map()) {
+case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map()) extends MongoPagination[A] {
 
   def paginate(page: Long, rows: Long): PaginationResult[A] = {
     val count = countResult

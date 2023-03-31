@@ -57,8 +57,7 @@ function nav() {
                 {text: 'MongoDAO', link: '/documentation/mongo-dao/'},
                 {text: 'GridFsDAO', link: '/documentation/gridfs-dao/'},
                 {text: 'Collection', link: '/documentation/collection/'},
-                {text: 'LocalServer', link: '/documentation/local-server'},
-                // { text: 'Configuration', link: '/guide/configuration' },
+                {text: 'LocalServer', link: '/documentation/local-server'}
             ]
         },
         {
@@ -86,12 +85,13 @@ function sidebarDocumentation() {
             collapsible: true,
             collapsed: true,
             items: [
-                { text: 'Introduction', link: '/documentation/database/' },
-                { text: 'Mongo Config', link: 'documentation/database/config' },
-                { text: 'DatabaseProvider', link: 'documentation/database/provider' },
-                { text: 'Reactive Streams', link: 'documentation/database/reactive-streams' },
-                { text: 'Bson', link: 'documentation/database/bson' },
-                { text: 'Relationships', link: 'documentation/database/relationships' },
+                {text: 'Introduction', link: '/documentation/database/'},
+                {text: 'Mongo Config', link: 'documentation/database/config'},
+                {text: 'DatabaseProvider', link: 'documentation/database/provider'},
+                {text: 'Reactive Streams', link: 'documentation/database/reactive-streams'},
+                {text: 'Bson', link: 'documentation/database/bson'},
+                {text: 'Relationships', link: 'documentation/database/relationships'},
+                {text: 'Lucene Query', link: '/documentation/database/lucene'}
             ]
         },
         {
@@ -100,10 +100,10 @@ function sidebarDocumentation() {
             collapsible: true,
             collapsed: true,
             items: [
-                { text: 'Introduction', link: '/documentation/mongo-dao/' },
-                { text: 'MongoDAO Base', link: '/documentation/mongo-dao/base' },
-                { text: 'CRUD Functions', link: '/documentation/mongo-dao/crud' },
-                { text: 'Search Functions', link: '/documentation/mongo-dao/search' }
+                {text: 'Introduction', link: '/documentation/mongo-dao/'},
+                {text: 'MongoDAO Base', link: '/documentation/mongo-dao/base'},
+                {text: 'CRUD Functions', link: '/documentation/mongo-dao/crud'},
+                {text: 'Search Functions', link: '/documentation/mongo-dao/search'}
             ]
         },
         {
@@ -112,9 +112,9 @@ function sidebarDocumentation() {
             collapsible: true,
             collapsed: true,
             items: [
-                { text: 'Introduction', link: '/documentation/gridfs-dao/' },
-                { text: 'CRUD Functions', link: '/documentation/gridfs-dao/crud' },
-                { text: 'Metadata', link: '/documentation/gridfs-dao/metadata' }
+                {text: 'Introduction', link: '/documentation/gridfs-dao/'},
+                {text: 'CRUD Functions', link: '/documentation/gridfs-dao/crud'},
+                {text: 'Metadata', link: '/documentation/gridfs-dao/metadata'}
             ]
         },
         {
@@ -123,8 +123,9 @@ function sidebarDocumentation() {
             collapsible: true,
             collapsed: true,
             items: [
-                { text: 'Introduction', link: '/documentation/collection/' },
-                { text: 'Aggregation', link: '/documentation/collection/aggregation' }
+                {text: 'Introduction', link: '/documentation/collection/'},
+                {text: 'Aggregation', link: '/documentation/collection/aggregation'},
+                {text: 'Pagination', link: '/documentation/collection/pagination'}
             ]
         },
         {

@@ -28,9 +28,11 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
     }
 
     "support with Filter" in {
+      // #region filter-pagination
       val paginationFemale = MongoPaginatedFilter(PersonDAO, Map("gender" -> "female"), sortByKey("name"))
 
       val pageFemale = paginationFemale.paginate(1, 10)
+      // #endregion filter-pagination
 
       paginationFemale.countResult mustEqual 11
       pageFemale.paginationInfo.pagesCount mustEqual 10

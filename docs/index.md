@@ -21,7 +21,15 @@ features:
     details: Easy Database Config with provider and MongoConfig
   - title: DAO Pattern
     details: Implement the DAO Pattern for simple MongoDB usage [MongoDAO.
-  - title: GridFS Support
+  - title: Pagination
+    details: Use Pagination in your MongoDB for a lower RAM needing over large responses.
   - title: Enhanced BSON
+    details: Implicit Conversion from Scala Map to BSON 
+  - title: GridFS Support
+    details: It provides easy upload, download and metadata handling.
   - title: Reactive Streams
+    details: The MongoDB Scala driver is built upon Reactive Streams.
   - title: Relationships
+    details: Sometimes there is a need for relationsips beetween collections, now you can have it.
+  - title: Lucene Query
+    details: Use Apache Lucene Query Language in MongoDb

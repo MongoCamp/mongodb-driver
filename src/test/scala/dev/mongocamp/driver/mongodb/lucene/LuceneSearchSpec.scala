@@ -10,16 +10,20 @@ class LuceneSearchSpec extends PersonSpecification {
   "LuceneSearch" should {
 
     "search with extended query" in {
+      // #region lucene-parser-with-explicit
       val luceneQuery = LuceneQueryConverter.parse("(favoriteFruit:\"apple\" AND age:\"25\") OR name:*Cecile* AND -active:false AND 123", "id")
       val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+      // #endregion lucene-parser-with-explicit
       search must haveSize(1)
       search.head.age mustEqual 25
       search.head.name mustEqual "Terra Salinas"
     }
 
     "search with extended query use implicit" in {
+      // #region lucene-parser-with-implicit
       val luceneQuery = LuceneQueryConverter.parse("(favoriteFruit:\"apple\" AND age:\"25\") OR name:*Cecile* AND -active:false AND 123", "id")
       val search      = PersonDAO.find(luceneQuery, sortByBalance).resultList()
+      // #endregion lucene-parser-with-implicit
       search must haveSize(1)
       search.head.age mustEqual 25
       search.head.name mustEqual "Terra Salinas"

@@ -1,6 +1,5 @@
 package dev.mongocamp.driver.mongodb.pagination
 
-// #agg_imports
 import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.dao.PersonSpecification
@@ -13,23 +12,23 @@ import org.mongodb.scala.model.Filters.{and, equal}
 
 class PaginationAggregationSpec extends PersonSpecification {
 
-  // #agg_stages
   val filterStage: Bson = filter(and(equal("gender", "female"), notNullFilter("balance")))
 
   val groupStage: Bson = group(Map("age" -> "$age"), sumField("balance"), firstField("age"))
 
   val sortStage: Bson = sort(sortByKey("age"))
-  // #agg_stages
 
   "Search" should {
 
     "support aggregation filter" in {
 
+      // #region aggregation-pagination
       val pipeline = List(filterStage, sortStage)
 
       val pagination = MongoPaginatedAggregation(PersonDAO.Raw, pipeline, allowDiskUse = true)
 
       val page = pagination.paginate(1, 10)
+      // #endregion aggregation-pagination
 
       (pagination.countResult must be).equalTo(98)
 
@@ -44,7 +43,7 @@ class PaginationAggregationSpec extends PersonSpecification {
       // #agg_execute
       val pipeline = List(filterStage, groupStage, sortStage)
 
-      val pagination = MongoPaginatedAggregation(PersonDAO.Raw, pipeline, allowDiskUse = true)
+      val pagination = MongoPaginatedAggregation(PersonDAO, pipeline, allowDiskUse = true)
 
       val page = pagination.paginate(1, 10)
 
