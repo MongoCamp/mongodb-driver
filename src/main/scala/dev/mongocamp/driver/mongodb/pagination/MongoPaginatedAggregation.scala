@@ -12,7 +12,8 @@ import scala.jdk.CollectionConverters._
 case class MongoPaginatedAggregation[A <: Any](
     dao: MongoDAO[A],
     aggregationPipeline: List[Bson] = List(),
-    allowDiskUse: Boolean = false
+    allowDiskUse: Boolean = false,
+    maxWait: Int = DefaultMaxWait
 ) extends MongoPagination[Document] {
 
   private val AggregationKeyMetaData      = "metadata"
@@ -37,7 +38,7 @@ case class MongoPaginatedAggregation[A <: Any](
         Aggregates.facet(new Facet(AggregationKeyMetaData, listOfMetaData.asJava), new Facet(AggregationKeyData, listOfPaging.asJava))
       )
 
-    val dbResponse = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
+    val dbResponse = dao.Raw.findAggregated(pipeline, allowDiskUse).result(maxWait)
 
     val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
     val allPages    = Math.ceil(count.toDouble / rows).toInt
@@ -52,7 +53,7 @@ case class MongoPaginatedAggregation[A <: Any](
     val pipeline = aggregationPipeline ++ List(
       Aggregates.facet(new Facet(AggregationKeyMetaData, listOfMetaData.asJava), new Facet(AggregationKeyData, listOfPaging.asJava))
     )
-    val dbResponse  = dao.findAggregated(pipeline, allowDiskUse).result().asInstanceOf[Document]
+    val dbResponse  = dao.Raw.findAggregated(pipeline, allowDiskUse).result(maxWait)
     val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
     count
   }
