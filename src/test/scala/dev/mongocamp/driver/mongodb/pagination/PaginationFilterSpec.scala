@@ -34,7 +34,7 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
       val pageFemale = paginationFemale.paginate(1, 10)
       // #endregion filter-pagination
 
-      paginationFemale.countResult mustEqual 11
+      paginationFemale.countResult mustEqual 98
       pageFemale.paginationInfo.pagesCount mustEqual 10
       pageFemale.paginationInfo.allCount mustEqual 98
       pageFemale.paginationInfo.page mustEqual 1
@@ -46,7 +46,7 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
       val paginationMales = MongoPaginatedFilter(PersonDAO, Map("gender" -> "male"))
       val pageMale        = paginationMales.paginate(1, 10)
 
-      paginationMales.countResult mustEqual 11
+      paginationMales.countResult mustEqual 102
       pageMale.paginationInfo.pagesCount mustEqual 11
       pageMale.paginationInfo.allCount mustEqual 102
       pageMale.paginationInfo.page mustEqual 1
