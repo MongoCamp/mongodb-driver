@@ -1,10 +1,10 @@
 package dev.mongocamp.driver.mongodb.operation
 
-// #agg_imports
+// #region agg_imports
 import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.PersonSpecification
-// #agg_imports
+// #endregion agg_imports
 
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.mongodb.scala.bson.conversions.Bson
@@ -13,13 +13,13 @@ import org.mongodb.scala.model.Filters.{and, equal}
 
 class AggregationSpec extends PersonSpecification {
 
-  // #agg_stages
+  // #region agg_stages
   val filterStage: Bson = filter(and(equal("gender", "female"), notNullFilter("balance")))
 
   val groupStage: Bson = group(Map("age" -> "$age"), sumField("balance"), firstField("age"))
 
   val sortStage: Bson = sort(sortByKey("age"))
-  // #agg_stages
+  // #endregion agg_stages
 
   "Search" should {
 
@@ -29,27 +29,26 @@ class AggregationSpec extends PersonSpecification {
 
       val aggregated = PersonDAO.findAggregated(pipeline).resultList()
 
-      aggregated.size must be equalTo 98
+      (aggregated.size must be).equalTo(98)
 
     }
 
     "support aggregation filter and group" in {
-      // #agg_execute
+      // #region agg_execute
       val pipeline = List(filterStage, groupStage, sortStage)
 
       val aggregated = PersonDAO.Raw.findAggregated(pipeline).resultList()
+      // #endregion agg_execute
 
-      // #agg_execute
+      (aggregated.size must be).equalTo(21)
 
-      aggregated.size must be equalTo 21
-
-      // #agg_convert
+      // #region agg_convert
       val list: List[Map[String, Any]] = aggregated
-      // #agg_convert
+      // #endregion agg_convert
       list.foreach(m => println(m("age").toString + " -> " + m("balance")))
 
-      list.head("age") must be equalTo 20
-      list.head("balance") must be equalTo 8333.0
+      (list.head("age") must be).equalTo(20)
+      (list.head("balance") must be).equalTo(8333.0)
 
     }
 

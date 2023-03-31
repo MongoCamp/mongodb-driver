@@ -17,6 +17,12 @@ jobs:
         java: [ '11', '17' ]
     steps:
       - uses: actions/checkout@v3.0.0
+      - name: Setup TimeZone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "Europe/Berlin"
+          timezoneMacos: "Europe/Berlin"
+          timezoneWindows: "W. Europe Standard Time"
       - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v3.3.0
         with:
@@ -27,7 +33,9 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
       - name: Run tests
-        run: sbt test
+        run: |
+          timedatectl
+          sbt test
   release:
     needs: test
     runs-on: ubuntu-latest

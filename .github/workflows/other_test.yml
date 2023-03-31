@@ -22,9 +22,17 @@ jobs:
       with:
         distribution: 'corretto'
         java-version: ${{ matrix.java }}
+    - name: Setup TimeZone
+      uses: szenius/set-timezone@v1.2
+      with:
+        timezoneLinux: "Europe/Berlin"
+        timezoneMacos: "Europe/Berlin"
+        timezoneWindows: "W. Europe Standard Time"
     - name: Start MongoDB ${{ matrix.mongodb-version }}
       uses: MongoCamp/mongodb-github-action@1.2.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
     - name: Run tests
-      run: sbt test
+      run: |
+        timedatectl
+        sbt test

@@ -19,4 +19,10 @@ sbt-cache
 sbt-cache/*
 .gitconfig
 
-
+pnpm-lock.yaml
+node_modules
+/.pnpm-debug.log
+/node_modules/
+/docs/.vitepress/dist/
+/docs/external/files
+/docs/.vitepress/cache

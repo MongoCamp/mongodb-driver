@@ -1,11 +1,10 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import java.util.concurrent.TimeUnit
-
 import dev.mongocamp.driver.MongoImplicits
-import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
 import dev.mongocamp.driver.mongodb.model.Person
+import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}

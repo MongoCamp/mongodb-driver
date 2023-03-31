@@ -1,7 +1,8 @@
 import sbt.url
-name := "mongodb-driver"
 
-organization := "dev.mongocamp"
+name := jsonHandler.value.stringValue("package.json", "name")
+
+organization := jsonHandler.value.stringValue("package.json", "organization")
 
 val MongoCampHomepage = "https://www.mongocamp.dev"
 
@@ -54,39 +55,19 @@ lazy val mongodb = (project in file("."))
     buildInfoPackage := "dev.mongocamp"
   )
 
-lazy val docs = (project in file("docs"))
-  .enablePlugins(ParadoxSitePlugin)
-  .enablePlugins(ParadoxMaterialThemePlugin)
-  .enablePlugins(GhpagesPlugin)
-  .settings(
-    name := "mongodb-driver-docs",
-    scalaVersion := "2.13.8",
-    libraryDependencies += "dev.mongocamp"     % "mongodb-driver_2.13" % "2.4.0",
-    libraryDependencies += "org.xerial.snappy" % "snappy-java"         % "1.1.8.4",
-    publish / skip := true,
-    ghpagesNoJekyll := true,
-    git.remoteRepo := "git@github.com:MongoCamp/mongodb-driver.git",
-    Compile / paradoxMaterialTheme ~= {
-      _.withRepository(uri("https://github.com/MongoCamp/mongodb-driver"))
-    },
-    (Compile / paradoxMarkdownToHtml / excludeFilter) := (Compile / paradoxMarkdownToHtml / excludeFilter).value ||
-    ParadoxPlugin.InDirectoryFilter((Compile / paradox / sourceDirectory).value / "includes")
-  )
-  .dependsOn(mongodb)
-
 buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.19.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.0" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.5" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.2" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.12.4" % Test
 
-val circeVersion = "0.14.4"
+val circeVersion = "0.14.5"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
@@ -98,7 +79,11 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.9.0"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.9.1" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.4-1" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.4-2" % Provided
+
+// #region lucene-dependency
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.5.0" % Provided
+// #endregion lucene-dependency
 
 val MongoJavaServerVersion = "1.43.0"
 
@@ -123,3 +108,5 @@ scalafmtOnCompile := false
 coverageMinimumStmtTotal := 70
 
 coverageFailOnMinimum := true
+
+jsonFiles += (baseDirectory.value / "package.json")

@@ -1,5 +1,10 @@
+#!/usr/bin/env node
+'use strict'
+
 const writerOpts = {
     transform: (commit, context) => {
+        context.commit = 'commit';
+
         const issues = [];
 
         commit.notes.forEach(note => {
@@ -60,19 +65,31 @@ const writerOpts = {
     commitGroupsSort: `title`,
     commitsSort: [`scope`, `subject`],
     noteGroupsSort: `title`
+
 };
 
 
-function issueUrl() {
-    if (pkgJson.repository && pkgJson.repository.url && ~pkgJson.repository.url.indexOf('github.com')) {
-        var gitUrl = gufg(pkgJson.repository.url);
+var fs = require('fs'), path = require('path'), filePath = path.join(__dirname, 'commit.hbs');
 
-        if (gitUrl) {
-            return gitUrl + '/issues/';
-        }
+fs.readFile(filePath, {encoding: 'utf-8'}, function (err, data) {
+    if (!err) {
+        writerOpts.commitPartial = data;
+    } else {
+        console.log(err);
     }
-}
-module.exports = {
-    writerOpts: writerOpts
-};
+});
 
+var fs2 = require('fs'), path = require('path'), filePath2 = path.join(__dirname, 'header.hbs');
+
+fs2.readFile(filePath2, {encoding: 'utf-8'}, function (err, data) {
+    if (!err) {
+        writerOpts.headerPartial = data;
+    } else {
+        console.log(err);
+    }
+});
+
+module.exports = {
+    writerOpts: writerOpts,
+    commit: "commit"
+};

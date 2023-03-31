@@ -2,10 +2,10 @@ package dev.mongocamp.driver.mongodb.test
 
 import better.files.File
 import com.mongodb.client.model.changestream.OperationType
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.{GridFSDAO, MongoDAO}
-import com.typesafe.scalalogging.LazyLogging
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.codecs.Macros._
@@ -19,13 +19,10 @@ object TestDatabase extends LazyLogging {
 
   private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest], classOf[Book])
 
-  val provider =
-    DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
+  val provider = DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
 
-  // provider.addChangeObserver(ChangeObserver(consumeDatabaseChanges))
-
-  def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit =
-    if (changeStreamDocument.getOperationType != OperationType.INSERT)
+  def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit = {
+    if (changeStreamDocument.getOperationType != OperationType.INSERT) {
       logger.info(
         "changed %s:%s with ID: %s".format(
           changeStreamDocument.getNamespace,
@@ -33,6 +30,8 @@ object TestDatabase extends LazyLogging {
           changeStreamDocument.getDocumentKey
         )
       )
+    }
+  }
 
   object PersonDAO extends MongoDAO[Person](provider, "people")
 

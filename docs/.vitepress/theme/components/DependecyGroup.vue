@@ -1,0 +1,23 @@
+<script setup lang="ts">
+import pkg from '../../../../package.json'</script>
+
+
+<template>
+  <div class="vp-code-group"><div class="tabs"><input type="radio" name="group-H6P4H" id="tab-9JQa_-0" checked="checked"><label for="tab-9JQa_-0">sbt</label><input type="radio" name="group-H6P4H" id="tab-bE0IxwM"><label for="tab-bE0IxwM">mill</label><input type="radio" name="group-H6P4H" id="tab-pTG_pHs"><label for="tab-pTG_pHs">maven</label><input type="radio" name="group-H6P4H" id="tab-NHuI0oU"><label for="tab-NHuI0oU">gradle</label></div><div class="blocks"><div class="language-scala active"><button title="Copy Code" class="copy"></button><span class="lang">scala</span><pre class="shiki material-theme-palenight" tabindex="0"><code><span class="line"><span style="color:#A6ACCD;">libraryDependencies </span><span style="color:#89DDFF;">+=</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">"</span><span style="color:#C3E88D;">dev.mongocamp</span><span style="color:#89DDFF;">"</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">%%</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">"</span><span style="color:#C3E88D;">mongodb-driver</span><span style="color:#89DDFF;">"</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">%</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">"</span><span style="color:#C3E88D;">{{ pkg.version }}</span><span style="color:#89DDFF;">"</span></span>
+<span class="line"></span></code></pre></div><div class="language-scala"><button title="Copy Code" class="copy"></button><span class="lang">scala</span><pre class="shiki material-theme-palenight" tabindex="0"><code><span class="line"><span style="color:#89DDFF;">def</span><span style="color:#A6ACCD;"> </span><span style="color:#82AAFF;">ivyDeps</span><span style="color:#A6ACCD;"> </span><span style="color:#89DDFF;">=</span><span style="color:#A6ACCD;"> </span><span style="color:#FFCB6B;">Agg</span><span style="color:#A6ACCD;">(</span></span>
+<span class="line"><span style="color:#A6ACCD;">  </span><span style="color:#89DDFF;">ivy</span><span style="color:#89DDFF;">"</span><span style="color:#C3E88D;">dev.mongocamp:::mongodb-driver:{{ pkg.version }}</span><span style="color:#89DDFF;">"</span></span>
+<span class="line"><span style="color:#A6ACCD;">)</span></span>
+<span class="line"></span></code></pre></div><div class="language-xml"><button title="Copy Code" class="copy"></button><span class="lang">xml</span><pre class="shiki material-theme-palenight" tabindex="0"><code><span class="line"><span style="color:#89DDFF;">&lt;</span><span style="color:#F07178;">dependency</span><span style="color:#89DDFF;">&gt;</span></span>
+<span class="line"><span style="color:#A6ACCD;">    </span><span style="color:#89DDFF;">&lt;</span><span style="color:#F07178;">groupId</span><span style="color:#89DDFF;">&gt;</span><span style="color:#A6ACCD;">dev.mongocamp</span><span style="color:#89DDFF;">&lt;/</span><span style="color:#F07178;">groupId</span><span style="color:#89DDFF;">&gt;</span></span>
+<span class="line"><span style="color:#A6ACCD;">    </span><span style="color:#89DDFF;">&lt;</span><span style="color:#F07178;">artifactId</span><span style="color:#89DDFF;">&gt;</span><span style="color:#A6ACCD;">mongodb-driver_2.13</span><span style="color:#89DDFF;">&lt;/</span><span style="color:#F07178;">artifactId</span><span style="color:#89DDFF;">&gt;</span></span>
+<span class="line"><span style="color:#A6ACCD;">    </span><span style="color:#89DDFF;">&lt;</span><span style="color:#F07178;">version</span><span style="color:#89DDFF;">&gt;</span><span style="color:#A6ACCD;">{{ pkg.version }}</span><span style="color:#89DDFF;">&lt;/</span><span style="color:#F07178;">version</span><span style="color:#89DDFF;">&gt;</span></span>
+<span class="line"><span style="color:#89DDFF;">&lt;/</span><span style="color:#F07178;">dependency</span><span style="color:#89DDFF;">&gt;</span></span>
+<span class="line"></span></code></pre></div><div class="language-groovy"><button title="Copy Code" class="copy"></button><span class="lang">groovy</span><pre class="shiki material-theme-palenight" tabindex="0"><code><span class="line"><span style="color:#A6ACCD;">dependencies {</span></span>
+<span class="line"><span style="color:#A6ACCD;">    implementation </span><span style="color:#89DDFF;">"</span><span style="color:#C3E88D;">dev.mongocamp:mongodb-driver_2.13:{{ pkg.version }}</span><span style="color:#89DDFF;">"</span></span>
+<span class="line"><span style="color:#A6ACCD;">}</span></span>
+<span class="line"></span></code></pre></div></div></div>
+</template>
+
+<style scoped>
+
+</style>
