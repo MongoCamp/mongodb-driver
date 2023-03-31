@@ -9,12 +9,11 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Aggregates.{filter, sort}
 import org.mongodb.scala.model.Filters.{and, equal}
-class PaginationIterationSpec extends PersonSpecification with MongoImplicits with LazyLogging{
+class PaginationIterationSpec extends PersonSpecification with MongoImplicits with LazyLogging {
 
   "Pagination Iteration" should {
 
     "support with Filter" in {
-      // #region filter-foreach
       val paginationFemale = MongoPaginatedFilter(PersonDAO, Map("gender" -> "female"), sortByKey("name"))
 
       val pageFemale = paginationFemale.paginate(1, 10)
@@ -23,19 +22,19 @@ class PaginationIterationSpec extends PersonSpecification with MongoImplicits wi
 
       var i = 0
 
-      MongoPagination.foreach(paginationFemale, 5) { person =>
+      // #region foreach-with-rows
+      paginationFemale.foreach(5) { person =>
         {
           logger.trace(person.toString)
           i = i + 1
         }
       }
       i mustEqual 98
-      // #endregion filter-foreach
+      // #endregion foreach-with-rows
 
     }
 
     "support with aggregation" in {
-      // #region aggregation-foreach
       val filterStage: Bson = filter(and(equal("gender", "female"), notNullFilter("balance")))
 
       val sortStage: Bson = sort(sortByKey("age"))
@@ -47,15 +46,17 @@ class PaginationIterationSpec extends PersonSpecification with MongoImplicits wi
       val page = pagination.paginate(1, 10)
 
       page.paginationInfo.allCount mustEqual 98
+
+      // #region foreach-default-rows
       var i = 0
-      MongoPagination.foreach(pagination, 5) { element =>
+      pagination.foreach { element =>
         {
           logger.trace(element.toJson())
           i = i + 1
         }
       }
       i mustEqual 98
-      // #endregion aggregation-foreach
+      // #endregion foreach-default-rows
 
     }
 

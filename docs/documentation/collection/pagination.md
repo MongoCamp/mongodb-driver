@@ -16,4 +16,8 @@ The Pagination over an aggregation pipeline supports only the response of `Docum
 
 ## Foreach over Pagination result
 
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/pagination/PaginationIterationSpec.scala#aggregation-foreach
+### With default row count
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/pagination/PaginationIterationSpec.scala#foreach-default-rows
+
+### With specific row count
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/pagination/PaginationIterationSpec.scala#foreach-with-rows
