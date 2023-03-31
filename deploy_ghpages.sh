@@ -20,7 +20,7 @@ git add -A
 git commit -m 'docs: deploy documentation'
 
 
-# if you are deploying to https://<USERNAME>.github.io/<REPO>
-git push -f https://$GITHUB_USER:$GITHUB_TOKEN@github.com/mongocamp/mongocamp-server.git  master:gh-pages
+GIT_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/mongocamp/mongocamp-server.git"
+git push -f "$GIT_URL"  master:gh-pages
 
 cd -
