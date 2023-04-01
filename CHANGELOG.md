@@ -3,6 +3,7 @@
 
 ### Bug Fixes
 
+* compatibility for scala 2.12 in LuceneQueryConverter ([fdb1d35](https://github.com/MongoCamp/mongodb-driver/commit/fdb1d35e71c217b7b7cdaf25871e75e71a656b6c))
 * pagination aggregation should always use the RAW-DAO ([0bf5dc9](https://github.com/MongoCamp/mongodb-driver/commit/0bf5dc9e52b3e281d6b3f2617d679db786c5a82c))
 
 
