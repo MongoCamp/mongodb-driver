@@ -17,5 +17,10 @@ Like the Map to Bson conversion there is also an implicit method to convert `Que
 
 <<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneSearchSpec.scala#lucene-parser-with-implicit
 
+### Parse String to Query
+We have an individual parser to parse an string to Lucene Query, because the default Lucene Analyser is case-insensitive and convert all search data into lower case. So the best way to seach in MongoDb with Lucene Query is to use this code. 
+
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneSearchSpec.scala#lucene-parser
+
 ## Read More
 [Lucene Cheatsheet](https://www.lucenetutorial.com/lucene-query-syntax.html)
