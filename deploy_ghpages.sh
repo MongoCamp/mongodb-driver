@@ -19,8 +19,7 @@ git init
 git add -A
 git commit -m 'docs: deploy documentation'
 
-
-GIT_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/mongocamp/mongocamp-server.git"
+GIT_URL="https://$GITHUB_USER:$GITHUB_TOKEN@github.com/MongoCamp/mongodb-driver.git"
 git push -f "$GIT_URL"  master:gh-pages
 
 cd -
