@@ -1,3 +1,10 @@
+## [2.6.1]() (2023-04-01)
+
+
+### Bug Fixes
+
+* provided removed and docs fixed ([c18592d](https://github.com/MongoCamp/mongodb-driver/commit/c18592da3a53a5bf6098df03e6198c44334262c4))
+
 ## [2.6.0]() (2023-04-01)
 
 
