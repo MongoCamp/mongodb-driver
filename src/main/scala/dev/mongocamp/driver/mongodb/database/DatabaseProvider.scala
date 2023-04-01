@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala._
