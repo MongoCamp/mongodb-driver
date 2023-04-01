@@ -1,6 +1,6 @@
 import scala.sys.process._
 
-commands += Command.command("ci-deploy-docu")((state: State) => {
+commands += Command.command("ci-deploy-docs")((state: State) => {
   val lowerCaseVersion = version.value.toLowerCase
   if (
     (lowerCaseVersion.contains("snapshot") ||
