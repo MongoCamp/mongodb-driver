@@ -35,4 +35,4 @@ jobs:
     - name: Run tests
       run: |
         timedatectl
-        sbt test
+        sbt +test

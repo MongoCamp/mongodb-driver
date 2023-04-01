@@ -36,15 +36,14 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       ImageFilesDAO.renameFile(oid, "test.png").result()
       findImage(oid).getFilename must be equalTo "test.png"
 
-      val downloadPath = "/tmp/download_" + fileName
-      val result: Long = downloadImage(oid, downloadPath)
+      val downloadedFile = File.newTemporaryFile(suffix = fileName)
+      val result: Long = downloadImage(oid, downloadedFile.toString())
 
       result must not be equalTo(-1)
 
-      val downloadedFile = File(downloadPath)
       downloadedFile.exists must beTrue
 
-      val downloadBytes = File(downloadPath).bytes.toList
+      val downloadBytes = downloadedFile.bytes.toList
 
       downloadBytes.size must be equalTo uploadBytes.size
 

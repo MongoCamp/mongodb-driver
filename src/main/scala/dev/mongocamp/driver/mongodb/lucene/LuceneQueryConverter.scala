@@ -143,18 +143,27 @@ object LuceneQueryConverter extends LazyLogging {
   private def generateRegexQuery(pattern: String, options: String): Map[String, String] = {
     Map("$regex" -> pattern, "$options" -> options)
   }
-  private def checkAndConvertValue(s: String): Serializable = {
+  private def checkAndConvertValue(s: String): Any = {
+
+    def checkOrReturn[A <: Any](f: () => A): Option[A] = {
+      try {
+        val value = f()
+        if (value.toString.equals(s)) {
+          Option(value)
+        }
+        else {
+          None
+        }
+      }
+      catch {
+        case e: Exception => None
+      }
+    }
+
     try {
-      if (s.toDoubleOption.getOrElse("").toString.equals(s)) {
-        s.toDouble
-      }
-      else if (s.toLongOption.getOrElse("").toString.equals(s)) {
-        s.toLong
-      }
-      else if (s.toBooleanOption.getOrElse("").toString.equals(s)) {
-        s.toBoolean
-      }
-      else {
+      val convertedValue: Option[Any] =
+        (List() ++ checkOrReturn(() => s.toDouble) ++ checkOrReturn(() => s.toLong) ++ checkOrReturn(() => s.toBoolean)).headOption
+      convertedValue.getOrElse({
         val parsedOptions: Option[Date] = datePatters
           .map(pattern => {
             try {
@@ -169,7 +178,7 @@ object LuceneQueryConverter extends LazyLogging {
           .find(_.nonEmpty)
           .flatten
         parsedOptions.getOrElse(s)
-      }
+      })
     }
     catch {
       case _: Exception =>
