@@ -1,32 +1,68 @@
-### [2.5.4](https://github.com/MongoCamp/mongodb-driver/compare/v2.5.3...v2.5.4) (2023-02-12)
+## [2.6.0]() (2023-04-01)
+
+
+### Bug Fixes
+
+* pagination aggregation should always use the RAW-DAO ([0bf5dc9](https://github.com/MongoCamp/mongodb-driver/commit/0bf5dc9e52b3e281d6b3f2617d679db786c5a82c))
+
+
+### Code Refactoring
+
+* cleanup plugins ([5f3134d](https://github.com/MongoCamp/mongodb-driver/commit/5f3134da4d62ecd56335bbcc664e89c0f0137812))
+* DocumentIncludes and MongoImplicits to own files ([753a633](https://github.com/MongoCamp/mongodb-driver/commit/753a63381dea71a92fa696aaa28f849580069af6))
+* foreach moved to pagination trait ([ecbb62f](https://github.com/MongoCamp/mongodb-driver/commit/ecbb62f4a4a1f8b6fd1f4c1ee82dd56099567d79))
+* foreach moved to pagination trait ([54dd250](https://github.com/MongoCamp/mongodb-driver/commit/54dd25072f7fb4091400a600129299e68908589c))
+
+
+### Features
+
+* Compact Method for complete user scope ([e567be7](https://github.com/MongoCamp/mongodb-driver/commit/e567be7fe2666d85ef8b96f98868a6f4844a6fe0))
+* Compact Methods for Database or DAO ([0926b1d](https://github.com/MongoCamp/mongodb-driver/commit/0926b1da0ba3d80f0be1bb996fc18ff18a9db535))
+* Foreach in Pagination Result ([1fe1d8b](https://github.com/MongoCamp/mongodb-driver/commit/1fe1d8ba31f34e13df2afc3d1c3c9ae1f6b034ea))
+* Implicit for LuceneQuery to BsonDocument ([32f1029](https://github.com/MongoCamp/mongodb-driver/commit/32f10294baa8ef73bff2e26247f07e4639340ff3))
+* Lucene Query can converted to Bson ([e56e5d4](https://github.com/MongoCamp/mongodb-driver/commit/e56e5d416535b21a4d2c92932db82b488a4321af))
+* Pagination for MongoDb Search and Aggregation ([52abbe3](https://github.com/MongoCamp/mongodb-driver/commit/52abbe3f8b34a434e88b889b9f19a595037936ff))
+
+
+### Maintenance
+
+* **dependencies:** Found 7 dependency updates ([89a0e27](https://github.com/MongoCamp/mongodb-driver/commit/89a0e272072b8f9dfeefb920627a048091e08ca1))
+* **plugins:** Found 5 dependency updates ([cc13a06](https://github.com/MongoCamp/mongodb-driver/commit/cc13a06bdb495cfa2518b44d21058928b32fac6a))
+
+
+### Reverts
+
+* sonatype removed by accident ([e320ed1](https://github.com/MongoCamp/mongodb-driver/commit/e320ed1eef7bb9ffad5234743f882f65ee1bf3dc))
+
+## [2.5.4]() (2023-02-12)
 
 
 ### Maintenance
 
 * **Dependencies:** mongo scala driver 4.9.0 ([356c7c4](https://github.com/MongoCamp/mongodb-driver/commit/356c7c42291ca7d3f7a7ad69a60dfac3493dbc9f))
 
-### [2.5.3](https://github.com/MongoCamp/mongodb-driver/compare/v2.5.1...v2.5.3) (2022-12-04)
+## [2.5.3]() (2022-12-04)
 
 
 ### Maintenance
 
 * **Dependencies:** mongo scala driver 4.8.0 ([2a3af87](https://github.com/MongoCamp/mongodb-driver/commit/2a3af879df3229fe44aca7dd92c6faefccdfa118))
 
-### [2.5.1](https://github.com/MongoCamp/mongodb-driver/compare/v2.5.0...v2.5.1) (2022-10-11)
+## [2.5.1]() (2022-10-11)
 
 
 ### Maintenance
 
 * **Dependencies:** mongo scala driver 4.7.2 ([f050d78](https://github.com/MongoCamp/mongodb-driver/commit/f050d78ac16e6cfbbf52c067a3eacd8091965bbb))
 
-## [2.5.0](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.9...v2.5.0) (2022-07-27)
+## [2.5.0]() (2022-07-27)
 
 
 ### Maintenance
 
 * **Dependencies:** mongo scala driver 4.7.0 ([9e37be8](https://github.com/MongoCamp/mongodb-driver/commit/9e37be88878bfb27d1ba092a45fbb19c63e431e6))
 
-### [2.4.9](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.8...v2.4.9) (2022-07-13)
+## [2.4.9]() (2022-07-13)
 
 
 ### Bug Fixes
@@ -39,9 +75,9 @@
 
 * 2 dependency updates ([00d3202](https://github.com/MongoCamp/mongodb-driver/commit/00d3202c8d5449d54ce4d1d3b0f4a3b8ad28f045))
 
-### [2.4.8](https://github.com/MongoCamp/mongodb-driver/compare/v2.4.7...v2.4.8) (2022-06-29)
+## [2.4.8]() (2022-06-29)
 
-### [2.4.7](https://github.com/MongoCamp/mongodb-driver/compare/3f749c05300b23eaf48588966aec7a926f3c4f1c...v2.4.7) (2022-06-27)
+## [2.4.7]() (2022-06-27)
 
 
 ### Bug Fixes

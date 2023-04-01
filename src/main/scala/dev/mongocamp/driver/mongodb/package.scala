@@ -3,7 +3,7 @@ package dev.mongocamp.driver
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.bson.convert.JsonDateTimeConverter
 import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
-import org.bson.json.{JsonMode, JsonWriterSettings}
+import org.bson.json.{ JsonMode, JsonWriterSettings }
 import org.mongodb.scala.Document
 
 import java.util.Date

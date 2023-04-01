@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.pagination
 
 import com.mongodb.client.model.Facet
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
-import dev.mongocamp.driver.mongodb.{MongoDAO, _}
+import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Aggregates
@@ -42,7 +42,7 @@ case class MongoPaginatedAggregation[A <: Any](
 
     val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
     val allPages    = Math.ceil(count.toDouble / rows).toInt
-    val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(bdoc => Document(bdoc) )
+    val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(bdoc => Document(bdoc))
     PaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
   }
 
