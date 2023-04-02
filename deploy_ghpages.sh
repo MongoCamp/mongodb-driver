@@ -13,7 +13,7 @@ pnpm docs:build
 cd docs/.vitepress/dist
 
 # if you are deploying to a custom domain
-echo 'server.mongocamp.dev' > CNAME
+echo 'mongodb-driver.mongocamp.dev' > CNAME
 
 git init
 git add -A
