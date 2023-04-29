@@ -1,3 +1,15 @@
+## [2.6.2]() (2023-04-29)
+
+
+### Bug Fixes
+
+* deploy_ghpages.sh wrong cname ([42bdf99](https://github.com/MongoCamp/mongodb-driver/commit/42bdf994c25940e717662d2b3671acd53fa6c797))
+
+
+### Maintenance
+
+* **Dependencies:** mongo scala driver 4.9.1 ([c1795d8](https://github.com/MongoCamp/mongodb-driver/commit/c1795d8374941ebc7ae4b91d12dd092e1651e4ef))
+
 ## [2.6.1]() (2023-04-01)
 
 
