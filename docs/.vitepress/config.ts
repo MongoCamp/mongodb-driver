@@ -14,6 +14,9 @@ export default defineConfig({
         logo: '/logo_without_text.png',
 
         nav: nav(),
+        search: {
+            provider: 'local'
+        },
 
         sidebar: {
             '/documentation/': sidebarDocumentation()
@@ -41,7 +44,6 @@ export default defineConfig({
             Unocss({
                 configFile: '../../unocss.config.ts',
             }),
-            SearchPlugin(),
         ],
     },
 
