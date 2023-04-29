@@ -63,9 +63,9 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.0" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.6" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.7" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.4" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.12.5" % Test
 
 val circeVersion = "0.14.5"
 
@@ -75,11 +75,11 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.9.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.9.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.9.1" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.4-2" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-2" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.5.0"
 
@@ -95,7 +95,7 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.2"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.9.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.10.0"
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
