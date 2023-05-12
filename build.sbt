@@ -81,7 +81,7 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.9.1" % Provide
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-2" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.5.0"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.6.0"
 
 val MongoJavaServerVersion = "1.43.0"
 
