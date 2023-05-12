@@ -1,3 +1,15 @@
+## [2.6.3]() (2023-05-12)
+
+
+### Bug Fixes
+
+* paginated aggregation with empty response ([0acf10c](https://github.com/MongoCamp/mongodb-driver/commit/0acf10cc1089da7f7f9411dfc44972609c3cab8e))
+
+
+### Maintenance
+
+* dependency update `lucene-queryparser` 9.5.0 -> 9.6.0 ([a71a599](https://github.com/MongoCamp/mongodb-driver/commit/a71a599071ae889a5df5f3b5ab5c254c7b29e0bf))
+
 ## [2.6.2]() (2023-04-29)
 
 
