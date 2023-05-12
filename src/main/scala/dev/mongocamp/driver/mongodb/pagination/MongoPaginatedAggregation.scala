@@ -40,9 +40,17 @@ case class MongoPaginatedAggregation[A <: Any](
 
     val dbResponse = dao.Raw.findAggregated(pipeline, allowDiskUse).result(maxWait)
 
-    val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
-    val allPages    = Math.ceil(count.toDouble / rows).toInt
-    val list        = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(bdoc => Document(bdoc))
+    val count: Long = dbResponse
+      .get(AggregationKeyMetaData)
+      .get
+      .asArray()
+      .asScala
+      .headOption
+      .map(v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue())
+      .getOrElse(0)
+
+    val allPages = Math.ceil(count.toDouble / rows).toInt
+    val list     = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(bdoc => Document(bdoc))
     PaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
   }
 
@@ -53,8 +61,16 @@ case class MongoPaginatedAggregation[A <: Any](
     val pipeline = aggregationPipeline ++ List(
       Aggregates.facet(new Facet(AggregationKeyMetaData, listOfMetaData.asJava), new Facet(AggregationKeyData, listOfPaging.asJava))
     )
-    val dbResponse  = dao.Raw.findAggregated(pipeline, allowDiskUse).result(maxWait)
-    val count: Long = dbResponse.get(AggregationKeyMetaData).get.asArray().get(0).asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
+    val dbResponse = dao.Raw.findAggregated(pipeline, allowDiskUse).result(maxWait)
+    val count: Long = dbResponse
+      .get(AggregationKeyMetaData)
+      .get
+      .asArray()
+      .asScala
+      .headOption
+      .map(v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue())
+      .getOrElse(0)
+
     count
   }
 

@@ -7,8 +7,8 @@ import dev.mongocamp.driver.mongodb.dao.PersonSpecification
 
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{filter, group, sort}
-import org.mongodb.scala.model.Filters.{and, equal}
+import org.mongodb.scala.model.Aggregates.{ filter, group, sort }
+import org.mongodb.scala.model.Filters.{ and, equal }
 
 class PaginationAggregationSpec extends PersonSpecification {
 
@@ -62,6 +62,24 @@ class PaginationAggregationSpec extends PersonSpecification {
 
       (list.head("age") must be).equalTo(20)
       (list.head("balance") must be).equalTo(8333.0)
+
+    }
+
+    "aggregation with empty response" in {
+      val pipeline = List(filter(and(equal("unknown", "filter"))), groupStage, sortStage)
+
+      val pagination = MongoPaginatedAggregation(PersonDAO, pipeline, allowDiskUse = true)
+
+      val page = pagination.paginate(1, 10)
+
+      (pagination.countResult must be).equalTo(0)
+
+      (page.paginationInfo.allCount must be).equalTo(0)
+
+      (page.paginationInfo.pagesCount must be).equalTo(0)
+
+      (page.databaseObjects.size must be).equalTo(0)
+
 
     }
 
