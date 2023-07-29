@@ -1,3 +1,10 @@
+## [2.6.4]() (2023-07-29)
+
+
+### Maintenance
+
+* **Dependencies:** mongo scala driver 4.10.2 ([faa22b0](https://github.com/MongoCamp/mongodb-driver/commit/faa22b041f84b290b72eae509ed6993ed571926e))
+
 ## [2.6.3]() (2023-05-12)
 
 
