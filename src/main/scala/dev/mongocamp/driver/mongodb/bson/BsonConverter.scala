@@ -121,8 +121,8 @@ object BsonConverter {
       case bi: BigInteger           => BsonInt64(bi.longValue())
       case d: Double                => BsonDouble(d)
       case f: Float                 => BsonDouble(f)
-      case bd: BigDecimal           => BsonDecimal128.apply(bd)
-      case bd: java.math.BigDecimal => BsonDecimal128.apply(bd)
+      case bd: BigDecimal           => BsonDecimal128(bd)
+      case bd: java.math.BigDecimal => BsonDecimal128(bd)
       case doc: Document            => BsonDocument(doc)
       case map: scala.collection.Map[_, _] =>
         var doc = Document()
