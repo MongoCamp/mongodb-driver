@@ -26,3 +26,4 @@ addDependencyTreePlugin
 // todo remove as soon as possible
 dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
 
+libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")
