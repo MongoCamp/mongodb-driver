@@ -1,0 +1,18 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": ".*/*.xml$"},
+      {"pattern": ".*/*.properties$"},
+      {"pattern": ".*/*.conf$"},
+      {"pattern": ".*/*.dylib$"},
+      {"pattern": ".*/*.so$"},
+      {"pattern": ".*/*.jnilib$"},
+      {"pattern": ".*/*.dll$"},
+      {"pattern": ".*/*.a"}
+    ],
+    "excludes": [
+    ]
+  },
+  "bundles" : [
+  ]
+}
