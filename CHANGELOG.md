@@ -1,3 +1,11 @@
+## [v2.6.5] - 2023-10-22
+### :recycle: Refactors
+- [`96203b8`](https://github.com/MongoCamp/mongodb-driver/commit/96203b88658b167bd30a3e006ca8a2aab89d0432) - GraalVm native configuration *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`331b556`](https://github.com/MongoCamp/mongodb-driver/commit/331b5567d50a01b3c6093ebbd76334c4b5f929d8) - Found 11 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [2.6.4]() (2023-07-29)
 
 
@@ -155,3 +163,5 @@
 * **version:** prepare next release version ([5aa71df](https://github.com/MongoCamp/mongodb-driver/commit/5aa71df7fc3e875d48f950787c93024020a6d3e0))
 * **version:** prepare next release version ([637f262](https://github.com/MongoCamp/mongodb-driver/commit/637f2629256785e754047e605f47cb5abc148f8d))
 
+
+[v2.6.5]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.4...v2.6.5
