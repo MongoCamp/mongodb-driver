@@ -9,7 +9,7 @@
     "url" : "git+https://github.com/MongoCamp/mongodb-driver.git"
   },
   "bugs" : {
-    "url" : "https://github.com/MongoCamp/mongocamp-driver/issues"
+    "url" : "https://github.com/MongoCamp/mongodb-driver/issues"
   },
   "homepage" : "https://mongodb-driver.mongocamp.dev/",
   "scripts" : {
