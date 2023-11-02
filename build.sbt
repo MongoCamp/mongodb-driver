@@ -79,7 +79,7 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.0"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-6" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-10" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.8.0"
 
