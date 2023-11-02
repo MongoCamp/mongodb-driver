@@ -2,10 +2,10 @@ package dev.mongocamp.driver.mongodb.bson
 
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.BsonArray.fromIterable
-import org.mongodb.scala.bson.{ObjectId, _}
+import org.mongodb.scala.bson.{ ObjectId, _ }
 
 import java.math.BigInteger
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 import scala.collection.mutable
 import scala.concurrent.duration.Duration
