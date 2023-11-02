@@ -8,6 +8,7 @@ import java.math.BigInteger
 import java.time.{ LocalDate, LocalDateTime, ZoneId }
 import java.util.Date
 import scala.collection.mutable
+import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
 
@@ -22,7 +23,7 @@ object BsonConverter {
 
   def lastKeyFromRelation(key: String): String = key.substring(key.lastIndexOf(DocumentKeyDivider) + 1)
 
-  def documentValueOption(document: Document, key: String): Option[Any] =
+  def documentValueOption(document: Document, key: String): Option[Any] = {
     if (hasRelation(key)) {
       val newKey   = newKeyFromRelation(key)
       val relation = relationKey(key)
@@ -36,13 +37,17 @@ object BsonConverter {
             None
         }
       }
-      else
+      else {
         None
+      }
     }
-    else if (document.contains(key))
+    else if (document.contains(key)) {
       Some(fromBson(document(key)))
-    else
+    }
+    else {
       None
+    }
+  }
 
   def updateDocumentValue(document: Document, key: String, value: Any): Document = {
     val doc    = org.mongodb.scala.bson.collection.mutable.Document(document.toJson())
@@ -110,6 +115,7 @@ object BsonConverter {
       case bytes: Array[Byte] => BsonBinary(bytes)
       case r: Regex           => BsonRegularExpression(r)
       case d: Date            => BsonDateTime(d)
+      case d: Duration        => BsonString(d.toString)
       case ld: LocalDate =>
         BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
       case ldt: LocalDateTime =>

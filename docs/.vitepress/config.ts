@@ -1,7 +1,6 @@
 import Unocss from 'unocss/vite'
 import {defineConfig} from 'vitepress'
-import {version} from '../../package.json'
-import {SearchPlugin} from 'vitepress-plugin-search'
+import fs from 'fs'
 
 export default defineConfig({
     lang: 'en-US',
@@ -50,6 +49,8 @@ export default defineConfig({
 })
 
 function nav() {
+    var versionInfos = JSON.parse(fs.readFileSync('docs/versions.json', 'utf-8'))
+
     return [
         {
             text: 'Documentation',
@@ -63,7 +64,7 @@ function nav() {
             ]
         },
         {
-            text: version,
+            text: versionInfos.mongocamp,
             items: [
                 {
                     text: 'Changelog',

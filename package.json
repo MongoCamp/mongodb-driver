@@ -1,7 +1,7 @@
 {
   "name" : "mongodb-driver",
   "organization" : "dev.mongocamp",
-  "version" : "2.6.6.snapshot",
+  "version" : "2.6.7.snapshot",
   "author" : "info@mongocamp.dev",
   "license" : "Apache-2.0",
   "repository" : {
@@ -9,7 +9,7 @@
     "url" : "git+https://github.com/MongoCamp/mongodb-driver.git"
   },
   "bugs" : {
-    "url" : "https://github.com/MongoCamp/mongocamp-driver/issues"
+    "url" : "https://github.com/MongoCamp/mongodb-driver/issues"
   },
   "homepage" : "https://mongodb-driver.mongocamp.dev/",
   "scripts" : {
