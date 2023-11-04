@@ -1,3 +1,12 @@
+## [v2.6.7] - 2023-11-04
+### :white_check_mark: Tests
+- [`bdd695b`](https://github.com/MongoCamp/mongodb-driver/commit/bdd695b956e30450be7a478539e4b5c3bf5b6852) - Added Java 21 to test *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`a679168`](https://github.com/MongoCamp/mongodb-driver/commit/a6791682e8d7cf780a46a8d42ef7170122be4bd3) - fix build pipeline *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`89484d4`](https://github.com/MongoCamp/mongodb-driver/commit/89484d41c613cbc65dd61320460d1da8125bb4ef) - update sbt to 1.9.7 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v2.6.5] - 2023-10-22
 ### :recycle: Refactors
 - [`96203b8`](https://github.com/MongoCamp/mongodb-driver/commit/96203b88658b167bd30a3e006ca8a2aab89d0432) - GraalVm native configuration *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -165,3 +174,4 @@
 
 
 [v2.6.5]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.4...v2.6.5
+[v2.6.7]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.6...v2.6.7
