@@ -43,7 +43,7 @@ jobs:
       - name: Set up JDK
         uses: coursier/setup-action@main
         with:
-          jvm: graalvm-java17:22.3.3
+          jvm: corretto:17
           apps: sbt scala scalac
 
       - name: Install pnpm
