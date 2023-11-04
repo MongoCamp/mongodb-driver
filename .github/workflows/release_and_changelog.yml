@@ -34,7 +34,7 @@ jobs:
           git add ./docs/versions.json
 
       - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@main
+        uses: stefanzweifel/git-auto-commit-action@master
         with:
           branch: main
           commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'
@@ -47,7 +47,7 @@ jobs:
           apps: sbt scala scalac
 
       - name: Install pnpm
-        uses: pnpm/action-setup@main
+        uses: pnpm/action-setup@master
         with:
           version: 6.0.2
 
