@@ -24,10 +24,10 @@ jobs:
           timezoneMacos: "Europe/Berlin"
           timezoneWindows: "W. Europe Standard Time"
       - name: Set up JDK ${{ matrix.Java }}
-        uses: actions/setup-java@main
+        uses: coursier/setup-action@main
         with:
-          distribution: 'corretto'
-          java-version: ${{ matrix.java }}
+          jvm: corretto:${{ matrix.Java }}
+          apps: sbt scala scalac
       - name: Start MongoDB ${{ matrix.mongodb-version }}
         uses: MongoCamp/mongodb-github-action@main
         with:
@@ -48,10 +48,12 @@ jobs:
       - id: install-secret-key
         name: Install gpg secret key
         run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
+      - name: Install pnpm
+        uses: pnpm/action-setup@master
       - name: Set up JDK
         uses: coursier/setup-action@main
         with:
-          jvm: graalvm-java17:22.3.3
+          jvm: corretto:17
           apps: sbt scala scalac
       - name: Release
         env:
