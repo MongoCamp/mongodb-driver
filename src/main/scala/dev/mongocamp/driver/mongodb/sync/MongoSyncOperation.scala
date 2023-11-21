@@ -1,16 +1,16 @@
 package dev.mongocamp.driver.mongodb.sync
 
-import java.util.Date
-
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.database.{ConfigHelper, DatabaseProvider}
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
-import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Updates._
+
+import java.util.Date
 
 object SyncStrategy extends Enumeration {
   type SyncStrategy = Value
@@ -66,23 +66,24 @@ case class MongoSyncOperation(
       left: DatabaseProvider,
       right: DatabaseProvider,
       countBefore: Int,
-      documentsToSync: Seq[Document]
+      documentsToSync: Seq[Document],
+      maxWait: Int = DefaultMaxWait
   ): MongoSyncResult = {
     val start                   = System.currentTimeMillis()
     val syncDate                = new Date()
     var filteredDocumentsToSync = Seq[Document]()
     if (documentsToSync.nonEmpty) {
       val idSet: Set[ObjectId] = documentsToSync.map(doc => doc.getObjectId(idColumnName)).toSet
-      filteredDocumentsToSync = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results()
-      right.dao(collectionName).bulkWriteMany(filteredDocumentsToSync).result()
+      filteredDocumentsToSync = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results(maxWait)
+      right.dao(collectionName).bulkWriteMany(filteredDocumentsToSync).result(maxWait)
       val update = combine(
         set(MongoSyncOperation.SyncColumnLastSync, syncDate),
         set(MongoSyncOperation.SyncColumnLastUpdate, syncDate)
       )
-      left.dao(collectionName).updateMany(Map(), update).result()
-      right.dao(collectionName).updateMany(Map(), update).result()
+      left.dao(collectionName).updateMany(Map(), update).result(maxWait)
+      right.dao(collectionName).updateMany(Map(), update).result(maxWait)
     }
-    val countAfter: Int = right.dao(collectionName).count().result().toInt
+    val countAfter: Int = right.dao(collectionName).count().result(maxWait).toInt
     MongoSyncResult(
       collectionName,
       syncDate,
