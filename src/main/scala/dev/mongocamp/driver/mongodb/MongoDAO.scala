@@ -1,15 +1,15 @@
 package dev.mongocamp.driver.mongodb
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.bson.{BsonConverter, DocumentHelper}
-import dev.mongocamp.driver.mongodb.database.{ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider}
+import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
+import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider }
 import dev.mongocamp.driver.mongodb.operation.Crud
 import org.bson.json.JsonParseException
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
-import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
 
 import java.nio.charset.Charset
 import java.util.Date
