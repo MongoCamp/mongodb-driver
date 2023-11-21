@@ -48,8 +48,6 @@ jobs:
       - id: install-secret-key
         name: Install gpg secret key
         run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
-      - name: Install pnpm
-        uses: pnpm/action-setup@master
       - name: Set up JDK
         uses: coursier/setup-action@main
         with:
