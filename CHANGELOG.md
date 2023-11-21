@@ -1,3 +1,11 @@
+## [v2.6.8] - 2023-11-21
+### :recycle: Refactors
+- [`292355c`](https://github.com/MongoCamp/mongodb-driver/commit/292355c1ca47fb8e79f98aadd01018eecf0e4451) - Use MaxWait also Pagination and other calls *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`63c3b46`](https://github.com/MongoCamp/mongodb-driver/commit/63c3b466c1fafdf52eef0475027f883bd4387d9e) - dependency updates *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v2.6.7] - 2023-11-04
 ### :white_check_mark: Tests
 - [`bdd695b`](https://github.com/MongoCamp/mongodb-driver/commit/bdd695b956e30450be7a478539e4b5c3bf5b6852) - Added Java 21 to test *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -175,3 +183,4 @@
 
 [v2.6.5]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.4...v2.6.5
 [v2.6.7]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.6...v2.6.7
+[v2.6.8]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.7...v2.6.8
