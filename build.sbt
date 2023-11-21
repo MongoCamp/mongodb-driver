@@ -61,7 +61,7 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.2" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.3" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.11" % Test
 
@@ -75,7 +75,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
 
