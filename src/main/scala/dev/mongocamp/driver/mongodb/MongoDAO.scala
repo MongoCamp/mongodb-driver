@@ -1,15 +1,15 @@
 package dev.mongocamp.driver.mongodb
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
-import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.bson.{BsonConverter, DocumentHelper}
+import dev.mongocamp.driver.mongodb.database.{ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider}
 import dev.mongocamp.driver.mongodb.operation.Crud
 import org.bson.json.JsonParseException
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
-import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
+import org.mongodb.scala.{BulkWriteResult, Document, MongoCollection, Observable, SingleObservable}
 
 import java.nio.charset.Charset
 import java.util.Date
@@ -47,7 +47,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     * @return
     *   List of column names
     */
-  def columnNames(sampleSize: Int = 0): List[String] = {
+  def columnNames(sampleSize: Int = 0, maxWait: Int = DefaultMaxWait): List[String] = {
     val projectStage = project(Projections.computed("tempArray", equal("$objectToArray", "$$ROOT")))
     val unwindStage  = unwind("$tempArray")
     val groupStage   = group("_id", addToSet("keySet", "$tempArray.k"))
@@ -60,7 +60,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
       }
     }
 
-    val aggregationResult: Document = Raw.findAggregated(pipeline).result()
+    val aggregationResult: Document = Raw.findAggregated(pipeline).result(maxWait)
     BsonConverter.fromBson(aggregationResult.get("keySet").head).asInstanceOf[List[String]]
   }
 
