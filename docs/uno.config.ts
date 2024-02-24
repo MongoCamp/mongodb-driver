@@ -20,5 +20,9 @@ export default defineConfig({
     transformerVariantGroup(),
     transformerDirectives()
   ],
-  include: [/.*\/anu-vue\.js(.*)?$/, './**/*.vue', './**/*.md']
+  content: {
+    pipeline: {
+      include: ['./**/*.vue', './**/*.md'],
+    },
+  },
 })
