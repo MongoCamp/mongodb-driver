@@ -40,7 +40,7 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.13.12", "2.12.17")
+crossScalaVersions := Seq("2.13.13", "2.12.17")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -61,11 +61,11 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.3" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.5" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.4.11" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.0" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.5" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.12.7" % Test
 
 val circeVersion = "0.14.6"
 
@@ -79,9 +79,9 @@ libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-10" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.8.0"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.10.0"
 
 val MongoJavaServerVersion = "1.44.0"
 
