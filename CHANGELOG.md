@@ -1,3 +1,8 @@
+## [v2.6.9] - 2024-02-24
+### :wrench: Chores
+- [`f7b3fbc`](https://github.com/MongoCamp/mongodb-driver/commit/f7b3fbc319ad1918a1f214a1769c96b4277473de) - **Dependencies**: use last scala versions *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v2.6.8] - 2023-11-21
 ### :recycle: Refactors
 - [`292355c`](https://github.com/MongoCamp/mongodb-driver/commit/292355c1ca47fb8e79f98aadd01018eecf0e4451) - Use MaxWait also Pagination and other calls *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -184,3 +189,4 @@
 [v2.6.5]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.4...v2.6.5
 [v2.6.7]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.6...v2.6.7
 [v2.6.8]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.7...v2.6.8
+[v2.6.9]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.8...v2.6.9
