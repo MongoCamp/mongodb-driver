@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: Setup TimeZone
-        uses: szenius/set-timezone@master
+        uses: MathRobin/timezone-action@v1.1
         with:
           timezoneLinux: "Europe/Berlin"
           timezoneMacos: "Europe/Berlin"
