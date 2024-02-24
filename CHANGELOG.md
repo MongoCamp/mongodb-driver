@@ -1,3 +1,8 @@
+## [v2.7.0] - 2024-02-24
+### :wrench: Chores
+- [`0970eec`](https://github.com/MongoCamp/mongodb-driver/commit/0970eec2d2e99439cd0d9c864a20b193e0e58df2) - Prepare next 2.7.x versions *(commit by [@sfxcode](https://github.com/sfxcode))*
+
+
 ## [v2.6.9] - 2024-02-24
 ### :wrench: Chores
 - [`f7b3fbc`](https://github.com/MongoCamp/mongodb-driver/commit/f7b3fbc319ad1918a1f214a1769c96b4277473de) - **Dependencies**: use last scala versions *(commit by [@sfxcode](https://github.com/sfxcode))*
@@ -190,3 +195,4 @@
 [v2.6.7]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.6...v2.6.7
 [v2.6.8]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.7...v2.6.8
 [v2.6.9]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.8...v2.6.9
+[v2.7.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.10...v2.7.0
