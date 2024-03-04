@@ -9,6 +9,16 @@ class LuceneSearchSpec extends PersonSpecification {
 
   "LuceneSearch" should {
 
+    "search with with number in string" in {
+      val luceneQuery = LuceneQueryConverter.parse("stringNumber: 123", "id")
+      val search2 = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+      search2 must haveSize(0)
+      val search = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery, searchWithValueAndString = true), sortByBalance).resultList()
+      search must haveSize(1)
+      search.head.age mustEqual 25
+      search.head.name mustEqual "Cheryl Hoffman"
+    }
+
     "search with extended query" in {
       val luceneQuery = LuceneQueryConverter.parse("(favoriteFruit:\"apple\" AND age:\"25\") OR name:*Cecile* AND -active:false AND 123", "id")
       // #region lucene-parser-with-explicit

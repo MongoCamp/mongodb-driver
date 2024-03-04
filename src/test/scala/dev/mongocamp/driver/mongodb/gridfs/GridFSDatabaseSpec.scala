@@ -2,13 +2,11 @@ package dev.mongocamp.driver.mongodb.gridfs
 
 import better.files.File
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import dev.mongocamp.driver.mongodb.model.ImageMetadata
+import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
-
-import scala.io.Source
 
 class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with BeforeAll {
 
@@ -58,7 +56,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
       files.head.getMetadata.get("name").toString must be equalTo "logo2"
 
       // update complete metadata for one file
-      updateMetadata(files.head, ImageMetadata("logo22", group = "logos"))
+      updateMetadata(files.head, ImageMetadata("logo22"))
       // update metadata entry for all files
       updateMetadataElements(Map(), Map("group" -> "logos3", "newKey" -> "newEntryValue"))
 
@@ -80,7 +78,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
   }
 
   override def beforeAll(): Unit = {
-    dropImages
+    dropImages()
     insertImage(ImageDAOSourcePath + "scala-logo.jpg", ImageMetadata("logo2", indexSet = Set(5, 6, 7)))
     imagesCount must be equalTo 1
 

@@ -19,8 +19,8 @@ class PersonDAOSpec extends PersonSpecification with MongoImplicits {
     }
 
     "support columnNames" in {
-      val columnNames = PersonDAO.columnNames(100)
-      columnNames.size mustEqual 18
+      val columnNames = PersonDAO.columnNames(200)
+      columnNames.size mustEqual 19
     }
 
     "support results" in {
