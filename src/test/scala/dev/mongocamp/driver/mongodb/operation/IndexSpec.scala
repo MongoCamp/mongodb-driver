@@ -15,17 +15,17 @@ class IndexSpec extends PersonSpecification {
 
     "create / drop indexes for key" in {
 
-      var createIndexResult: String = PersonDAO.createIndexForField("name").result()
+      val createIndexResult: String = PersonDAO.createIndexForField("name").result()
 
       createIndexResult mustEqual "name_1"
 
-      PersonDAO.indexList must haveSize(2)
+      PersonDAO.indexList() must haveSize(2)
       val index: MongoIndex = PersonDAO.indexForName("name_1").get
       index.expire must beFalse
 
-      val dropIndexResult: Unit = PersonDAO.dropIndexForName(createIndexResult).result()
+      PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "evaluate has index" in {
@@ -37,77 +37,74 @@ class IndexSpec extends PersonSpecification {
 
     "create descending index for key" in {
 
-      var createIndexResult: String =
-        PersonDAO.createIndexForFieldWithName("name", sortAscending = false, "myIndex").result()
+      val createIndexResult: String = PersonDAO.createIndexForFieldWithName("name", sortAscending = false, "myIndex").result()
 
       createIndexResult mustEqual "myIndex"
 
-      PersonDAO.indexList must haveSize(2)
-      val index: MongoIndex = PersonDAO.indexForName("myIndex").get
+      PersonDAO.indexList() must haveSize(2)
+      PersonDAO.indexForName("myIndex").get
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "create unique index for key" in {
 
-      var createIndexResult: String =
-        PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex")).result()
+      val createIndexResult: String = PersonDAO.createUniqueIndexForField("id", sortAscending = false, Some("myUniqueIndex")).result()
 
       createIndexResult mustEqual "myUniqueIndex"
 
-      PersonDAO.indexList must haveSize(2)
-      val index: MongoIndex = PersonDAO.indexForName("myUniqueIndex").get
+      PersonDAO.indexList() must haveSize(2)
+      PersonDAO.indexForName("myUniqueIndex").get
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "create text index for key" in {
 
-      var createIndexResult: String = PersonDAO.createTextIndexForField("email").result()
+      val createIndexResult: String = PersonDAO.createTextIndexForField("email").result()
 
       createIndexResult mustEqual "email_text"
 
-      PersonDAO.indexList must haveSize(2)
-      val index: MongoIndex = PersonDAO.indexForName("email_text").get
+      PersonDAO.indexList() must haveSize(2)
+      PersonDAO.indexForName("email_text").get
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "create hashed index for key" in {
 
-      var createIndexResult: String = PersonDAO.createHashedIndexForField("email").result()
+      val createIndexResult: String = PersonDAO.createHashedIndexForField("email").result()
 
       createIndexResult mustEqual "email_hashed"
 
-      PersonDAO.indexList must haveSize(2)
-      val index: MongoIndex = PersonDAO.indexForName("email_hashed").get
+      PersonDAO.indexList() must haveSize(2)
+      PersonDAO.indexForName("email_hashed").get
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "create expiring index for key" in {
 
-      var createIndexResult: String =
-        PersonDAO.createExpiringIndexForField("email", Duration(1, TimeUnit.SECONDS)).result()
+      val createIndexResult: String = PersonDAO.createExpiringIndexForField("email", Duration(1, TimeUnit.SECONDS)).result()
 
       createIndexResult mustEqual "email_1"
 
-      PersonDAO.indexList must haveSize(2)
+      PersonDAO.indexList() must haveSize(2)
 
       val index: MongoIndex = PersonDAO.indexForName("email_1").get
       index.expire must beTrue
 
       PersonDAO.dropIndexForName(createIndexResult).result()
 
-      PersonDAO.indexList must haveSize(1)
+      PersonDAO.indexList() must haveSize(1)
     }
 
     "return an index list" in {
