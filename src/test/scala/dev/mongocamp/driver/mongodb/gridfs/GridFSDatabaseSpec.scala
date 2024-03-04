@@ -25,8 +25,8 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     "insert file and in" in {
       val fileName = "scala-logo.png"
 
-      val filePath      = ImageDAOSourcePath + fileName
-      val uploadBytes   = File(filePath).bytes.toList
+      val filePath = ImageDAOSourcePath + fileName
+      val uploadBytes = File(filePath).bytes.toList
       val oid: ObjectId = insertImage(filePath, ImageMetadata("template1", group = "templates"))
 
       val file = findImage(oid)
@@ -69,7 +69,7 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     }
 
     "find stats in file in" in {
-      val fileStats  = ImageFilesDAO.fileCollectionStatus.result()
+      val fileStats = ImageFilesDAO.fileCollectionStatus.result()
       val chunkStats = ImageFilesDAO.chunkCollectionStats.result()
 
       fileStats.count must be greaterThan 0
@@ -85,7 +85,8 @@ class GridFSDatabaseSpec extends Specification with GridfsDatabaseFunctions with
     imagesCount must be equalTo 1
 
     val file = File(ImageDAOTargetPath)
-    if (!file.exists)
+    if (!file.exists) {
       file.createDirectory()
+    }
   }
 }

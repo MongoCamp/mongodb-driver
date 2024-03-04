@@ -4,8 +4,8 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.MongoIndex
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.model.{CountOptions, DropIndexOptions, IndexOptions, Indexes}
-import org.mongodb.scala.{Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable}
+import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
+import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.concurrent.duration.Duration
 
@@ -44,7 +44,12 @@ abstract class Base[A] extends LazyLogging {
     createIndex(Indexes.text(fieldName), options)
   }
 
-  def createExpiringIndexForField(fieldName: String, duration: Duration, sortAscending: Boolean = true, name: Option[String] = None): SingleObservable[String] = {
+  def createExpiringIndexForField(
+      fieldName: String,
+      duration: Duration,
+      sortAscending: Boolean = true,
+      name: Option[String] = None
+  ): SingleObservable[String] = {
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2))
   }
 

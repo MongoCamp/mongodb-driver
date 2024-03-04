@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala._
@@ -12,8 +12,8 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) extends Serializable {
-  private val cachedDatabaseMap = new mutable.HashMap[String, MongoDatabase]()
-  private val cachedMongoDAOMap = new mutable.HashMap[String, MongoDAO[Document]]()
+  private val cachedDatabaseMap                 = new mutable.HashMap[String, MongoDatabase]()
+  private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
   private var cachedClient: Option[MongoClient] = None
 
   val DefaultDatabaseName: String = config.database
@@ -89,7 +89,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def collection[A](collectionName: String)(implicit ct: ClassTag[A]): MongoCollection[A] =
     if (collectionName.contains(DatabaseProvider.CollectionSeparator)) {
-      val newDatabaseName: String = guessDatabaseName(collectionName)
+      val newDatabaseName: String   = guessDatabaseName(collectionName)
       val newCollectionName: String = guessName(collectionName)
       database(newDatabaseName).getCollection[A](newCollectionName)
     }
@@ -118,7 +118,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
   def bucket(bucketName: String): GridFSBucket = {
     if (bucketName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName = guessDatabaseName(bucketName)
-      val newBucketName = guessName(bucketName)
+      val newBucketName   = guessName(bucketName)
       GridFSBucket(database(newDatabaseName), newBucketName)
     }
     else {
@@ -142,7 +142,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 }
 
 object DatabaseProvider {
-  val ObjectIdKey = "_id"
+  val ObjectIdKey         = "_id"
   val CollectionSeparator = ":"
 
   private val CustomRegistry = fromProviders(CustomCodecProvider())

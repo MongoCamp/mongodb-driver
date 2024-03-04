@@ -16,7 +16,7 @@ trait GridfsDatabaseFunctions extends MongoImplicits {
 
   def deleteImage(id: ObjectId): Unit = ImageFilesDAO.deleteOne(id)
 
-  def dropImages: Unit = ImageFilesDAO.drop()
+  def dropImages(): Unit = ImageFilesDAO.drop()
 
   def imagesCount: Long = ImageFilesDAO.count()
 
