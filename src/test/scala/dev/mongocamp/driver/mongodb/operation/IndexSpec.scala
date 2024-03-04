@@ -23,7 +23,7 @@ class IndexSpec extends PersonSpecification {
       val index: MongoIndex = PersonDAO.indexForName("name_1").get
       index.expire must beFalse
 
-      val dropIndexResult: Void = PersonDAO.dropIndexForName(createIndexResult).result()
+      val dropIndexResult: Unit = PersonDAO.dropIndexForName(createIndexResult).result()
 
       PersonDAO.indexList must haveSize(1)
     }
