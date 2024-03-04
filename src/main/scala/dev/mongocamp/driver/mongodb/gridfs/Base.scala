@@ -9,8 +9,8 @@ import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
-import org.mongodb.scala.gridfs.{GridFSBucket, GridFSDownloadObservable}
-import org.mongodb.scala.{Document, Observable, ReadConcern, ReadPreference, WriteConcern}
+import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSDownloadObservable }
+import org.mongodb.scala.{ Document, Observable, ReadConcern, ReadPreference, WriteConcern }
 
 abstract class Base extends LazyLogging {
 
@@ -40,7 +40,7 @@ abstract class Base extends LazyLogging {
     val metadataDocument = {
       metadata match {
         case document: Document => document
-        case _ => Converter.toDocument(metadata)
+        case _                  => Converter.toDocument(metadata)
       }
     }
     val options: GridFSUploadOptions = new GridFSUploadOptions().chunkSizeBytes(chunkSizeBytes).metadata(metadataDocument)
@@ -59,7 +59,7 @@ abstract class Base extends LazyLogging {
 
   def download(oid: ObjectId, outputStream: OutputStream): GridFSStreamObserver = {
     val observable: GridFSDownloadObservable = gridfsBucket.downloadToObservable(oid)
-    val observer = GridFSStreamObserver(outputStream)
+    val observer                             = GridFSStreamObserver(outputStream)
     observable.subscribe(observer)
     observer
   }
