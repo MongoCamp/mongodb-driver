@@ -2,7 +2,7 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.9")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.11")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 
@@ -13,13 +13,13 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
 addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
 
 // Release
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.21")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.10.0")
 
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
 
-addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
 
-addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.6.5")
+addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.7.1")
 
 addDependencyTreePlugin
 
