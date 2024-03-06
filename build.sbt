@@ -97,6 +97,8 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0"
 
+libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")
+
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
 buildInfoOptions += BuildInfoOption.BuildTime
