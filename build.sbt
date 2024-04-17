@@ -63,7 +63,7 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.5" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.3" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.5" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.12.7"
 
@@ -75,15 +75,15 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion % Test)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.0.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.0.1"
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-2" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.10.0"
 
-val MongoJavaServerVersion = "1.44.0"
+val MongoJavaServerVersion = "1.45.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
@@ -95,19 +95,11 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.3"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
-// Mongo SQL Converter
-val MongoDbVersion = "4.3.1"
-libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.3"
-//libraryDependencies += "com.google.code.gson" % "gson" % "2.8.9"
-//libraryDependencies += "com.google.guava" % "guava" % "32.0.0-jre"
-//libraryDependencies += "commons-io" % "commons-io" % "2.11.0"
-//libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0"
-//libraryDependencies += "org.mongodb" % "bson" % MongoDbVersion
-//libraryDependencies += "org.mongodb" % "mongodb-driver-sync" % MongoDbVersion
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.9"
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
