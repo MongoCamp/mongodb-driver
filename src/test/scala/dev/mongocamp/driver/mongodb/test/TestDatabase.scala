@@ -17,9 +17,9 @@ object TestDatabase extends LazyLogging {
 
   File(ImageDAOTargetPath).createIfNotExists()
 
-  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest], classOf[Book])
+  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest], classOf[Book], classOf[Grade], classOf[Score])
 
-  val provider = DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
+  val provider: DatabaseProvider = DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
 
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit = {
     if (changeStreamDocument.getOperationType != OperationType.INSERT) {
