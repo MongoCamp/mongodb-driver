@@ -65,7 +65,7 @@ libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.5" % Test
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.3" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.7" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.12.7"
 
 val circeVersion = "0.14.6"
 
@@ -97,7 +97,17 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0"
 
-libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")
+libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
+
+// Mongo SQL Converter
+val MongoDbVersion = "4.3.1"
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.3"
+//libraryDependencies += "com.google.code.gson" % "gson" % "2.8.9"
+//libraryDependencies += "com.google.guava" % "guava" % "32.0.0-jre"
+//libraryDependencies += "commons-io" % "commons-io" % "2.11.0"
+//libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0"
+//libraryDependencies += "org.mongodb" % "bson" % MongoDbVersion
+//libraryDependencies += "org.mongodb" % "mongodb-driver-sync" % MongoDbVersion
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 

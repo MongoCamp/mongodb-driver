@@ -57,7 +57,7 @@ case class Student(_id: Long, name: String, scores: List[Score], image: Option[O
 
 case class Score(score: Double, `type`: String)
 
-case class Grade(_id: ObjectId, student_id: Long, class_id: Long, scores: List[Score])
+case class Grade(_id: ObjectId, studentId: Long, classId: Long, scores: List[Score])
 // #endregion model_student
 
 case class CodecTest(
