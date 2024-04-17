@@ -5,22 +5,22 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import SQLCommandType.SQLCommandType
 import com.mongodb.client.model.DropIndexOptions
 import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
+import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{Expression, Parenthesis}
-import net.sf.jsqlparser.parser.{CCJSqlParser, StreamProvider}
-import net.sf.jsqlparser.schema.{Column, Table}
+import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
+import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
+import net.sf.jsqlparser.schema.{ Column, Table }
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{AllColumns, FromItem, PlainSelect, Select, SelectExpressionItem, SelectItem, SubSelect}
+import net.sf.jsqlparser.statement.select.{ AllColumns, FromItem, PlainSelect, Select, SelectItem }
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
 import org.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{Document, Observable}
+import org.mongodb.scala.{ Document, Observable }
 
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
@@ -29,7 +29,7 @@ import scala.jdk.CollectionConverters._
 
 class MongoSqlQueryHolder {
   private val aggregatePipeline: ArrayBuffer[Document]       = ArrayBuffer()
-  private var sqlTable: Table                              = _
+  private var sqlTable: Table                                = _
   private var alias: Option[String]                          = None
   private var sqlCommandType: SQLCommandType                 = _
   private var updateOrDeleteFilter: Option[Map[String, Any]] = None
@@ -61,7 +61,7 @@ class MongoSqlQueryHolder {
       convertCreateIndexStatement(createIndex)
     }
     else if (classOf[Drop].isAssignableFrom(statement.getClass)) {
-      val drop              = statement.asInstanceOf[Drop]
+      val drop = statement.asInstanceOf[Drop]
       drop.getType.toUpperCase match {
         case "TABLE" =>
           sqlCommandType = SQLCommandType.DropTable
@@ -131,8 +131,11 @@ class MongoSqlQueryHolder {
 
       case SQLCommandType.DropIndex =>
         val collectionName = sqlTable.getSchemaName
-        val indexName = sqlTable.getName
-        provider.dao(collectionName).dropIndexForName(indexName, new DropIndexOptions().maxTime(1, TimeUnit.MINUTES)).map(_ => org.mongodb.scala.Document("indexName" -> indexName))
+        val indexName      = sqlTable.getName
+        provider
+          .dao(collectionName)
+          .dropIndexForName(indexName, new DropIndexOptions().maxTime(1, TimeUnit.MINUTES))
+          .map(_ => org.mongodb.scala.Document("indexName" -> indexName))
 
       case SQLCommandType.DropTable =>
         provider.dao(getCollection).drop().map(_ => org.mongodb.scala.Document("wasAcknowledged" -> true))
@@ -209,9 +212,9 @@ class MongoSqlQueryHolder {
       case e: Parenthesis =>
         parseWhere(e.getExpression, queryMap)
       case e: InExpression =>
-        val value = e.getRightItemsList match {
-          case l: ExpressionList => l.getExpressions.asScala.map(convertValue)
-          case i: ItemsList      => throw new IllegalArgumentException(s"${i.getClass.getSimpleName} not supported")
+        val value = e.getRightExpression match {
+          case l: ParenthesedExpressionList[Expression] => l.asScala.map(convertValue)
+          case i: Any                                   => throw new IllegalArgumentException(s"${i.getClass.getSimpleName} not supported")
         }
         val functionName = if (e.isNot) "$nin" else "$in"
         queryMap.put(e.getLeftExpression.toString, Map(functionName -> value))
@@ -238,20 +241,17 @@ class MongoSqlQueryHolder {
           val groupId = mutable.Map[String, Any]()
           val group   = mutable.Map[String, Any]()
           groupBy.foreach(g => groupId += g -> ("$" + g))
-          selectItems.foreach {
-            case e: SelectExpressionItem =>
-              val expressionName = e.getExpression.toString
-              if (expressionName.contains("count")) {
-                group += expressionName -> Map("$sum" -> 1)
+          selectItems.foreach { case e: SelectItem[Expression] =>
+            val expressionName = e.getExpression.toString
+            if (expressionName.contains("count")) {
+              group += expressionName -> Map("$sum" -> 1)
+            }
+            else {
+              if (!groupBy.contains(expressionName)) {
+                val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
+                group += expressionName -> Map(espr.head -> espr.last)
               }
-              else {
-                if (!groupBy.contains(expressionName)) {
-                  val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-                  group += expressionName -> Map(espr.head -> espr.last)
-                }
-              }
-            case e: SelectItem =>
-              e.toString
+            }
           }
           val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys.map(s => s -> Map("$first" -> ("$" + s))).toMap
           aggregatePipeline += Map("$group" -> groupMap)
@@ -329,10 +329,10 @@ class MongoSqlQueryHolder {
             "$match" -> filterQuery
           )
         }
-        val hasAllColumns = selectItems.exists(_.isInstanceOf[AllColumns])
+        val hasAllColumns = selectItems.exists(i => i.toString.equalsIgnoreCase("*"))
         if (selectItems.nonEmpty && !hasAllColumns) {
           val addFields = selectItems.filter {
-            case e: SelectExpressionItem =>
+            case e: SelectItem[Expression] =>
               e.getAlias match {
                 case null => false
                 case _ =>
@@ -341,9 +341,10 @@ class MongoSqlQueryHolder {
             case _ => false
           }
           val fields: Map[String, Any] = addFields
-            .map(_.asInstanceOf[SelectExpressionItem])
+            .map(_.asInstanceOf[SelectItem[Expression]])
             .map(e => e.getAlias.getName -> ("$" + e.getExpression.toString))
             .toMap
+
           if (fields.nonEmpty) {
             aggregatePipeline += Map("$addFields" -> fields)
           }
@@ -351,7 +352,7 @@ class MongoSqlQueryHolder {
             "$project" -> selectItems
               .filterNot(s => s.toString.equalsIgnoreCase("*"))
               .map {
-                case e: SelectExpressionItem =>
+                case e: SelectItem[Expression] =>
                   e.getAlias match {
                     case null =>
                       e.getExpression.toString -> 1
@@ -362,6 +363,7 @@ class MongoSqlQueryHolder {
               }
               .toMap
           )
+
         }
         if (aliasList.nonEmpty) {
           aliasList += "$$ROOT"
@@ -371,23 +373,20 @@ class MongoSqlQueryHolder {
         }
         Option(plainSelect.getDistinct).foreach { distinct =>
           val groupMap: mutable.Map[String, Any] = mutable.Map()
-          selectItems.foreach {
-            case e: SelectExpressionItem =>
-              val expressionName = e.getExpression.toString
-              if (expressionName.contains("count")) {
-                groupMap += expressionName -> Map("$sum" -> 1)
+          selectItems.foreach { case e: SelectItem[Expression] =>
+            val expressionName = e.getExpression.toString
+            if (expressionName.contains("count")) {
+              groupMap += expressionName -> Map("$sum" -> 1)
+            }
+            else {
+              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
+              if (espr.head.equalsIgnoreCase(espr.last)) {
+                groupMap += expressionName -> Map("$first" -> espr.last)
               }
               else {
-                val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-                if (espr.head.equalsIgnoreCase(espr.last)) {
-                  groupMap += expressionName -> Map("$first" -> espr.last)
-                }
-                else {
-                  groupMap += expressionName -> Map(espr.head -> espr.last)
-                }
+                groupMap += expressionName -> Map(espr.head -> espr.last)
               }
-            case e: SelectItem =>
-              e.toString
+            }
           }
           groupMap.put("_id", groupMap.keys.map(s => s -> ("$" + s)).toMap)
           aggregatePipeline += Map("$group" -> groupMap.toMap)
@@ -408,37 +407,32 @@ class MongoSqlQueryHolder {
   }
 
   private def convertInsertStatement(insert: Insert): Unit = {
-    insert.getItemsList match {
-      case i: ExpressionList =>
-        val expressionList = i.getExpressions.asScala.toList
-        val document       = mutable.Map[String, Any]()
-        var index          = 0
-        if (insert.getColumns == null) {
-          throw new IllegalArgumentException("column names must be specified")
-        }
-        insert.getColumns.asScala
-          .map(_.getColumnName)
-          .foreach(colName => {
-            document += colName -> convertValue(expressionList(index))
-            index += 1
-          })
-        documentsToInsert += document.toMap
-      case i: MultiExpressionList =>
-        i.getExpressionLists.asScala.foreach { el =>
-          val expressionList = el.getExpressions.asScala.toList
-          val document       = mutable.Map[String, Any]()
-          var index          = 0
-          insert.getColumns.asScala
-            .map(_.getColumnName)
-            .foreach(colName => {
-              document += colName -> convertValue(expressionList(index))
-              index += 1
-            })
-          documentsToInsert += document.toMap
-        }
-      case i: ItemsList =>
-        throw new IllegalArgumentException(s"not supported items list of type ${i.getClass.getSimpleName}")
+    val columns: List[String] = Option(insert.getColumns).map(_.asScala).getOrElse(List.empty).map(_.getColumnName).toList
+    if (columns.isEmpty) {
+      throw new IllegalArgumentException("column names must be specified")
     }
+    var singleDocumentCreated                 = false
+    val baseExpressionList: ExpressionList[_] = insert.getSelect.getValues.getExpressions
+    baseExpressionList.asScala.foreach {
+      case e: ParenthesedExpressionList[Expression] =>
+        val document = mutable.Map[String, Any]()
+        columns.foreach(colName => document += colName -> convertValue(e.get(columns.indexOf(colName))))
+        documentsToInsert += document.toMap
+      case _ =>
+        try {
+          if (!singleDocumentCreated) {
+            val document = mutable.Map[String, Any]()
+            columns.foreach(colName => document += colName -> convertValue(baseExpressionList.get(columns.indexOf(colName)).asInstanceOf[Expression]))
+            documentsToInsert += document.toMap
+          }
+          singleDocumentCreated = true
+        }
+        catch {
+          case _: Throwable =>
+            throw new IllegalArgumentException("not supported expression list")
+        }
+    }
+
     sqlCommandType = SQLCommandType.Insert
     sqlTable = insert.getTable
   }
@@ -458,18 +452,12 @@ class MongoSqlQueryHolder {
       .map(_.asScala)
       .getOrElse(List.empty)
       .foreach(set => {
-        val expressionList = set.getExpressions.asScala.toList
-        var index          = 0
-        if (set.getColumns == null) {
+        val columns: List[String] = Option(set.getColumns).map(_.asScala).getOrElse(List.empty).map(_.getColumnName).toList
+        if (columns.isEmpty) {
           throw new IllegalArgumentException("column names must be specified")
         }
-        set.getColumns.asScala
-          .map(_.getColumnName)
-          .foreach(colName => {
-            updateSetElement += colName -> convertValue(expressionList(index))
-            index += 1
-          })
-
+        columns
+          .foreach(colName => updateSetElement += colName -> convertValue(set.getValue(columns.indexOf(colName))))
       })
     if (updateSetElement.nonEmpty) {
       this.setElement = Some(updateSetElement.toMap)
