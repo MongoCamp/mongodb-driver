@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit
 import com.mongodb.MongoCompressor
 import com.mongodb.MongoCredential.createCredential
 import com.mongodb.event.{CommandListener, ConnectionPoolListener}
-import dev.mongocamp.driver.mongodb.database.MongoConfig._
 import com.typesafe.config.{Config, ConfigFactory}
+import dev.mongocamp.driver.mongodb.database.MongoConfig.{CompressionSnappy, CompressionZlib, CompressionZstd, DefaultApplicationName, DefaultAuthenticationDatabaseName, DefaultHost, DefaultPort}
 import org.mongodb.scala.connection._
 import org.mongodb.scala.{MongoClientSettings, MongoCredential, ServerAddress}
 
@@ -21,10 +21,11 @@ case class MongoConfig(
                         password: Option[String] = None,
                         authDatabase: String = DefaultAuthenticationDatabaseName,
                         poolOptions: MongoPoolOptions = MongoPoolOptions(),
-                        compressors: List[String] = List(),
-                        connectionPoolListener: List[ConnectionPoolListener] = List(),
-                        commandListener: List[CommandListener] = List(),
-                        customClientSettings: Option[MongoClientSettings] = None
+                        compressors: List[String] = List.empty,
+                        connectionPoolListener: List[ConnectionPoolListener] = List.empty,
+                        commandListener: List[CommandListener] = List.empty,
+                        customClientSettings: Option[MongoClientSettings] = None,
+                        serverAddressList: List[ServerAddress] = List.empty
                       ) {
 
   val clientSettings: MongoClientSettings = {
@@ -32,7 +33,8 @@ case class MongoConfig(
       customClientSettings.get
     }
     else {
-      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(List(new ServerAddress(host, port)).asJava).build()
+      val internalServerAddressList = if (serverAddressList.nonEmpty) serverAddressList else List(new ServerAddress(host, port))
+      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(internalServerAddressList.asJava).build()
 
       val connectionPoolSettingsBuilder = ConnectionPoolSettings
         .builder()
@@ -47,13 +49,13 @@ case class MongoConfig(
 
       val compressorList = new ArrayBuffer[MongoCompressor]()
       compressors.foreach(compression => {
-        if (ComressionSnappy.equalsIgnoreCase(compression)) {
+        if (CompressionSnappy.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createSnappyCompressor())
         }
-        else if (ComressionZlib.equalsIgnoreCase(compression)) {
+        else if (CompressionZlib.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createZlibCompressor())
         }
-        else if (ComressionZstd.equalsIgnoreCase(compression)) {
+        else if (CompressionZstd.equalsIgnoreCase(compression)) {
           compressorList.+=(MongoCompressor.createZstdCompressor())
         }
       })
@@ -78,61 +80,21 @@ case class MongoConfig(
   }
 }
 
-trait ConfigHelper {
-  val conf: Config = ConfigFactory.load()
-
-  def stringConfig(configPath: String, key: String, default: String = ""): Option[String] = {
-    if (conf.hasPath("%s.%s".format(configPath, key))) {
-      val str = conf.getString("%s.%s".format(configPath, key))
-      if (str.nonEmpty) {
-        Some(str)
-      }
-      else {
-        None
-      }
-    }
-    else if (default.nonEmpty) {
-      Some(default)
-    }
-    else {
-      None
-    }
-  }
-
-  def intConfig(configPath: String, key: String, default: Int = 0): Int = {
-    if (conf.hasPath("%s.%s".format(configPath, key))) {
-      conf.getInt("%s.%s".format(configPath, key))
-    }
-    else {
-      default
-    }
-  }
-
-  def booleanConfig(configPath: String, key: String, default: Boolean = false): Boolean = {
-    if (conf.hasPath("%s.%s".format(configPath, key))) {
-      conf.getBoolean("%s.%s".format(configPath, key))
-    }
-    else {
-      default
-    }
-  }
-}
-
 object MongoConfig extends ConfigHelper {
-  val DefaultHost = "127.0.0.1"
-  val DefaultPort = 27017
+  val DefaultHost                       = "127.0.0.1"
+  val DefaultPort                       = 27017
   val DefaultAuthenticationDatabaseName = "admin"
-  val DefaultApplicationName = "mongocampdb-app"
+  val DefaultApplicationName            = "mongocampdb-app"
 
-  val DefaultPoolMaxConnectionIdleTime = 60
-  val DefaultPoolMaxSize = 50
-  val DefaultPoolMinSize = 0
-  val DefaultPoolMaxWaitQueueSize = 500
+  val DefaultPoolMaxConnectionIdleTime   = 60
+  val DefaultPoolMaxSize                 = 50
+  val DefaultPoolMinSize                 = 0
+  val DefaultPoolMaxWaitQueueSize        = 500
   val DefaultPoolMaintenanceInitialDelay = 0
 
-  val ComressionSnappy = "snappy"
-  val ComressionZlib = "zlib"
-  val ComressionZstd = "zstd"
+  val CompressionSnappy = "snappy"
+  val CompressionZlib   = "zlib"
+  val CompressionZstd   = "zstd"
 
   val DefaultConfigPathPrefix = "mongodb"
 
@@ -158,11 +120,11 @@ object MongoConfig extends ConfigHelper {
       }
     }
 
-    val host = stringConfig(configPath, "host", DefaultHost).get
-    val database = stringConfig(configPath, "database").get
-    val userName = stringConfig(configPath, "userName")
-    val password = stringConfig(configPath, "password")
-    val authDatabase = stringConfig(configPath, "authDatabase", DefaultAuthenticationDatabaseName).get
+    val host            = stringConfig(configPath, "host", DefaultHost).get
+    val database        = stringConfig(configPath, "database").get
+    val userName        = stringConfig(configPath, "userName")
+    val password        = stringConfig(configPath, "password")
+    val authDatabase    = stringConfig(configPath, "authDatabase", DefaultAuthenticationDatabaseName).get
     val applicationName = stringConfig(configPath, "applicationName", DefaultApplicationName).get
 
     val poolOptions = MongoPoolOptions(
@@ -174,5 +136,6 @@ object MongoConfig extends ConfigHelper {
 
     MongoConfig(database, host, port, applicationName, userName, password, authDatabase, poolOptions, compressors)
   }
+
 
 }
