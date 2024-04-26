@@ -1,4 +1,5 @@
 package dev.mongocamp.driver.mongodb.pagination
+
 import dev.mongocamp.driver.mongodb.database.ConfigHelper
 
 trait MongoPagination[A <: Any] extends ConfigHelper {
