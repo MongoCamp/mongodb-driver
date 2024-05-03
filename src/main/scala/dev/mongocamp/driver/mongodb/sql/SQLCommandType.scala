@@ -6,6 +6,6 @@ object SQLCommandType extends Enumeration {
 
   type SQLCommandType = Value
 
-  val Delete, Select, Update, Insert, CreateIndex, DropTable, DropIndex, DropDatabase = Value
+  val Delete, Select, Update, Insert, CreateIndex, DropTable, DropIndex, DropDatabase, ShowDatabases, ShowTables = Value
 
 }
