@@ -95,6 +95,36 @@ class OtherSqlSpec extends PersonSpecification with BeforeEach{
       indices.find(_.getString("name") == "student_idx") must beNone
     }
 
+    "show tables" in {
+      val queryConverter = MongoSqlQueryHolder("show tables;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size must be greaterThanOrEqualTo(1)
+      selectResponse.head.getStringValue("name") mustEqual "mongo-sync-log"
+    }
+
+    "show databases" in {
+      val queryConverter = MongoSqlQueryHolder("SHOW DATABASES;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size must be greaterThanOrEqualTo(1)
+    }
+
+    "show schemas" in {
+      val queryConverter = MongoSqlQueryHolder("SHOW SCHEMAS;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size must be greaterThanOrEqualTo(1)
+    }
+
+    "show databases" in {
+      val queryConverter = MongoSqlQueryHolder("SHOW  databases;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size must be greaterThanOrEqualTo(1)
+    }
+
+    "show schemas" in {
+      val queryConverter = MongoSqlQueryHolder("show SCHEMAS;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size must be greaterThanOrEqualTo(1)
+    }
   }
 
 }

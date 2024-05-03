@@ -4,23 +4,24 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import SQLCommandType.SQLCommandType
 import com.mongodb.client.model.DropIndexOptions
-import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
+import net.sf.jsqlparser.statement.{ShowStatement, Statement, UnsupportedStatement}
+import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
-import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
-import net.sf.jsqlparser.schema.{ Column, Table }
+import net.sf.jsqlparser.expression.{Expression, Parenthesis}
+import net.sf.jsqlparser.parser.{CCJSqlParser, StreamProvider}
+import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{ AllColumns, FromItem, PlainSelect, Select, SelectItem }
+import net.sf.jsqlparser.statement.select.{AllColumns, FromItem, PlainSelect, Select, SelectItem}
+import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
 import org.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{ Document, Observable }
+import org.mongodb.scala.{Document, Observable}
 
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
@@ -84,6 +85,19 @@ class MongoSqlQueryHolder {
       sqlCommandType = SQLCommandType.Delete
       sqlTable = truncate.getTable
     }
+    else if (classOf[ShowTablesStatement].isAssignableFrom(statement.getClass)) {
+      sqlCommandType = SQLCommandType.ShowTables
+    }
+    else if (classOf[UnsupportedStatement].isAssignableFrom(statement.getClass)) {
+      val unsupportedStatement = statement.asInstanceOf[UnsupportedStatement]
+      val isShowDatabases = unsupportedStatement.toString.toLowerCase.contains("show databases")
+      val isShowSchemas = unsupportedStatement.toString.toLowerCase.contains("show schemas")
+      if (isShowDatabases | isShowSchemas) {
+        sqlCommandType = SQLCommandType.ShowDatabases
+      } else {
+        throw new IllegalArgumentException("not supported sql command type")
+      }
+    }
     else {
       throw new IllegalArgumentException("not supported sql command type")
     }
@@ -137,6 +151,10 @@ class MongoSqlQueryHolder {
           .dropIndexForName(indexName, new DropIndexOptions().maxTime(1, TimeUnit.MINUTES))
           .map(_ => org.mongodb.scala.Document("indexName" -> indexName))
 
+      case SQLCommandType.ShowTables =>
+        provider.collections()
+      case SQLCommandType.ShowDatabases =>
+        provider.databases
       case SQLCommandType.DropTable =>
         provider.dao(getCollection).drop().map(_ => org.mongodb.scala.Document("wasAcknowledged" -> true))
 
