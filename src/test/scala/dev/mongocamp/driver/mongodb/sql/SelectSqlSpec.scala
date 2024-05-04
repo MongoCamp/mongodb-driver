@@ -15,6 +15,14 @@ class SelectSqlSpec extends PersonSpecification {
       selectResponse.head.getString("guid") mustEqual "a17be99a-8913-4bb6-8f14-16d4fa1b3559"
     }
 
+    "simple sql with schema" in {
+      val queryConverter = MongoSqlQueryHolder("select * from `mongocamp-unit-test`.`friend`")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size mustEqual 1327
+      selectResponse.head.getString("name") mustEqual "Castaneda Mccullough"
+      selectResponse.head.getLong("id") mustEqual 33
+    }
+
     "sql with in query" in {
       val queryConverter = MongoSqlQueryHolder("select id, guid, name, age, balance from people where age in (30, 18, 25, 22) order by id asc")
       val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
