@@ -1,21 +1,21 @@
 package dev.mongocamp.driver.mongodb.sql
 
+import com.mongodb.client.model.DropIndexOptions
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import SQLCommandType.SQLCommandType
-import com.mongodb.client.model.DropIndexOptions
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
-import net.sf.jsqlparser.statement.{ ShowStatement, Statement, UnsupportedStatement }
+import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
 import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
 import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
-import net.sf.jsqlparser.schema.{ Column, Table }
+import net.sf.jsqlparser.schema.Table
+import net.sf.jsqlparser.statement.UnsupportedStatement
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{ AllColumns, FromItem, PlainSelect, Select, SelectItem }
+import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
@@ -24,6 +24,7 @@ import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
 import org.mongodb.scala.{ Document, Observable }
 
+import java.sql.SQLException
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -521,13 +522,19 @@ class MongoSqlQueryHolder {
 object MongoSqlQueryHolder {
 
   def stringToStatement(sql: String, charset: String = "UTF-8") = {
-    val stream: java.io.InputStream = new java.io.ByteArrayInputStream(sql.getBytes(charset))
-    val jSqlParser                  = new CCJSqlParser(new StreamProvider(stream, charset))
-    val statements                  = jSqlParser.Statements().getStatements.asScala
-    if (statements.size != 1) {
-      throw new IllegalArgumentException("only one statement is supported")
+    try {
+      val stream: java.io.InputStream = new java.io.ByteArrayInputStream(sql.getBytes(charset))
+      val jSqlParser                  = new CCJSqlParser(new StreamProvider(stream, charset))
+      val statements                  = jSqlParser.Statements().getStatements.asScala
+      if (statements.size != 1) {
+        throw new IllegalArgumentException("only one statement is supported")
+      }
+      statements.head
     }
-    statements.head
+    catch {
+      case e: net.sf.jsqlparser.parser.ParseException =>
+        throw new SQLException("The given SQL is not parsable.", e)
+    }
   }
 
   def apply(statement: net.sf.jsqlparser.statement.Statement): MongoSqlQueryHolder = new MongoSqlQueryHolder(statement)
