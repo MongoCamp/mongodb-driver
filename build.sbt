@@ -73,7 +73,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
-).map(_ % circeVersion % Test)
+).map(_ % circeVersion)
 
 libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.0.1"
 
@@ -100,6 +100,8 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
 libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.9"
+
+libraryDependencies += "org.postgresql" % "postgresql" % "42.7.3"
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
