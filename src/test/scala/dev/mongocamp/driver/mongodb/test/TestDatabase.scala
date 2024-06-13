@@ -33,6 +33,8 @@ object TestDatabase extends LazyLogging {
     }
   }
 
+  object PersonDocumentDAO extends MongoDAO[Document](provider, "people")
+
   object PersonDAO extends MongoDAO[Person](provider, "people")
 
   object BookDAO extends MongoDAO[Book](provider, "books")
