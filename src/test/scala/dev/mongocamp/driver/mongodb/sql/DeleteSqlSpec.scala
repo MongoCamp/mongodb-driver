@@ -1,14 +1,11 @@
 package dev.mongocamp.driver.mongodb.sql
 
-import better.files.{File, Resource}
-import dev.mongocamp.driver.mongodb.{GenericObservable, MongoDAO}
-import dev.mongocamp.driver.mongodb.dao.PersonSpecification
 import dev.mongocamp.driver.mongodb.model.{Grade, Score}
 import dev.mongocamp.driver.mongodb.test.TestDatabase
-import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
+import dev.mongocamp.driver.mongodb.{GenericObservable, MongoDAO}
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
-import org.specs2.specification.{BeforeAll, BeforeEach}
+import org.specs2.specification.BeforeEach
 
 class DeleteSqlSpec extends Specification with BeforeEach {
   sequential

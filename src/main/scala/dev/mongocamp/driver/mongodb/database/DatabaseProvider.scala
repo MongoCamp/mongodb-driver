@@ -16,7 +16,17 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
   private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
   private var cachedClient: Option[MongoClient] = None
 
-  val DefaultDatabaseName: String = config.database
+  private var defaultDatabaseName: String = config.database
+
+  def DefaultDatabaseName: String = defaultDatabaseName
+
+  def connectionString = {
+    s"mongodb://${config.host}:${config.port}/${config.database}"
+  }
+
+  def setDefaultDatabaseName(databaseName: String): Unit = {
+    defaultDatabaseName = databaseName
+  }
 
   def client: MongoClient = {
     if (isClosed) {

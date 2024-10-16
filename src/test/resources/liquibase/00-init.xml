@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+
+    <property name="autoincrement_addressbook_entries" value="SEQ_ADDRESSBOOK_ENTRIES.nextval" dbms="oracle, h2"/>
+    <property name="autoincrement_addressbook_entries" value="nextval('SEQ_ADDRESSBOOK_ENTRIES')" dbms="postgresql"/>
+    <property name="autoincrement_addressbook_entries" value="(SELECT AUTO_INCREMENT FROM information_schema.`TABLES` T where TABLE_NAME = 'ADDRESSBOOK_ENTRIES')" dbms="mysql, mariadb"/>
+
+    <changeSet id="create-addressbook_entries-sequence" dbms="postgresql, oracle, h2" author="UNIT_TEST">
+        <createSequence sequenceName="SEQ_ADDRESSBOOK_ENTRIES" minValue="500"/>
+    </changeSet>
+
+    <changeSet id="demo-init-schema" author="UNIT_TEST" dbms="postgresql, oracle, h2" >
+        <comment>Create table addressbook_entries for demonstrating refactorings</comment>
+
+        <createTable tableName="ADDRESSBOOK_ENTRIES">
+            <column name="ID" type="${id_type}" defaultValue="${autoincrement_addressbook_entries}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_ADDRESSBOOK_ID"/>
+            </column>
+            <column name="FIRSTNAME" type="VARCHAR(64)"/>
+            <column name="LASTNAME" type="VARCHAR(64)"/>
+            <column name="STREET_NAME" type="VARCHAR(64)"/>
+            <column name="STREET_NUMBER" type="VARCHAR(64)"/>
+            <column name="POSTCODE" type="NUMERIC(5)"/>
+            <column name="CITY" type="VARCHAR(64)"/>
+            <column name="PHONE" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="demo-init-schema mysql" author="UNIT_TEST" dbms="mysql, mariadb" >
+        <comment>Create table addressbook_entries for demonstrating refactorings</comment>
+
+        <createTable tableName="ADDRESSBOOK_ENTRIES">
+            <column name="ID" type="${id_type}" >
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="FIRSTNAME" type="VARCHAR(64)"/>
+            <column name="LASTNAME" type="VARCHAR(64)"/>
+            <column name="STREET_NAME" type="VARCHAR(64)"/>
+            <column name="STREET_NUMBER" type="VARCHAR(64)"/>
+            <column name="POSTCODE" type="NUMERIC(5)"/>
+            <column name="CITY" type="VARCHAR(64)"/>
+            <column name="PHONE" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="demo-init-data" author="UNIT_TEST">
+
+        <comment>Load some Test Data</comment>
+
+        <loadData tableName="ADDRESSBOOK_ENTRIES" file="addressbook.csv" relativeToChangelogFile="true">
+            <column name="ID" type="NUMERIC"/>
+            <column name="FIRSTNAME" type="STRING"/>
+            <column name="LASTNAME" type="STRING"/>
+            <column name="STREET_NAME" type="STRING"/>
+            <column name="STREET_NUMBER" type="STRING"/>
+            <column name="POSTCODE" type="NUMERIC"/>
+            <column name="CITY" type="STRING"/>
+            <column name="PHONE" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

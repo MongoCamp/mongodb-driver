@@ -1,358 +1,629 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
+import com.vdurmont.semver4j.Semver
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.driver.mongodb.{ BuildInfo, Converter, GenericObservable }
+import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
+import dev.mongocamp.driver.mongodb.schema.SchemaExplorer
+import org.mongodb.scala.bson.{ BsonNull, BsonString }
+import org.mongodb.scala.bson.collection.immutable.Document
 
-class MongoDatabaseMetaData extends DatabaseMetaData{
+import java.sql.{ Connection, DatabaseMetaData, ResultSet, RowIdLifetime, Types }
+import scala.collection.mutable.ArrayBuffer
 
-  override def allProceduresAreCallable(): Boolean = ???
+class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMetaData {
+  private lazy val semVer          = new Semver(BuildInfo.version)
+  private lazy val jdbcSemVer      = new Semver("4.2")
+  private lazy val DatabaseNameKey = "mongodb"
 
-  override def allTablesAreSelectable(): Boolean = ???
+  override def allProceduresAreCallable() = false
 
-  override def getURL: String = ???
+  override def allTablesAreSelectable(): Boolean = false
 
-  override def getUserName: String = ???
+  override def getURL: String = {
+    connection.getDatabaseProvider.connectionString
+  }
 
-  override def isReadOnly: Boolean = ???
+  override def getUserName: String = connection.getDatabaseProvider.config.userName.getOrElse("not set")
 
-  override def nullsAreSortedHigh(): Boolean = ???
+  override def isReadOnly: Boolean = false
 
-  override def nullsAreSortedLow(): Boolean = ???
+  override def nullsAreSortedHigh(): Boolean = false
 
-  override def nullsAreSortedAtStart(): Boolean = ???
+  override def nullsAreSortedLow(): Boolean = false
 
-  override def nullsAreSortedAtEnd(): Boolean = ???
+  override def nullsAreSortedAtStart(): Boolean = false
 
-  override def getDatabaseProductName: String = ???
+  override def nullsAreSortedAtEnd(): Boolean = false
 
-  override def getDatabaseProductVersion: String = ???
+  override def getDatabaseProductName: String = DatabaseNameKey
 
-  override def getDriverName: String = ???
+  override def getDatabaseProductVersion: String = {
+    connection.getDatabaseProvider.runCommand(Document("buildInfo" -> 1)).map(doc => doc.getString("version")).result(10)
+  }
 
-  override def getDriverVersion: String = ???
+  override def getDriverName: String = BuildInfo.name
 
-  override def getDriverMajorVersion: Int = ???
+  override def getDriverVersion: String = semVer.getValue
 
-  override def getDriverMinorVersion: Int = ???
+  override def getDriverMajorVersion: Int = semVer.getMajor
 
-  override def usesLocalFiles(): Boolean = ???
+  override def getDriverMinorVersion: Int = semVer.getMinor
 
-  override def usesLocalFilePerTable(): Boolean = ???
+  override def usesLocalFiles(): Boolean = false
 
-  override def supportsMixedCaseIdentifiers(): Boolean = ???
+  override def usesLocalFilePerTable(): Boolean = false
 
-  override def storesUpperCaseIdentifiers(): Boolean = ???
+  override def supportsMixedCaseIdentifiers(): Boolean = false
 
-  override def storesLowerCaseIdentifiers(): Boolean = ???
+  override def storesUpperCaseIdentifiers(): Boolean = false
 
-  override def storesMixedCaseIdentifiers(): Boolean = ???
+  override def storesLowerCaseIdentifiers(): Boolean = false
 
-  override def supportsMixedCaseQuotedIdentifiers(): Boolean = ???
+  override def storesMixedCaseIdentifiers(): Boolean = false
 
-  override def storesUpperCaseQuotedIdentifiers(): Boolean = ???
+  override def supportsMixedCaseQuotedIdentifiers(): Boolean = false
 
-  override def storesLowerCaseQuotedIdentifiers(): Boolean = ???
+  override def storesUpperCaseQuotedIdentifiers(): Boolean = false
 
-  override def storesMixedCaseQuotedIdentifiers(): Boolean = ???
+  override def storesLowerCaseQuotedIdentifiers(): Boolean = false
 
-  override def getIdentifierQuoteString: String = ???
+  override def storesMixedCaseQuotedIdentifiers(): Boolean = false
 
-  override def getSQLKeywords: String = ???
+  override def getIdentifierQuoteString: String = null
 
-  override def getNumericFunctions: String = ???
+  override def getSQLKeywords: String = ""
 
-  override def getStringFunctions: String = ???
+  override def getNumericFunctions: String = null
 
-  override def getSystemFunctions: String = ???
+  override def getStringFunctions: String = null
 
-  override def getTimeDateFunctions: String = ???
+  override def getSystemFunctions: String = null
 
-  override def getSearchStringEscape: String = ???
+  override def getTimeDateFunctions: String = "date"
 
-  override def getExtraNameCharacters: String = ???
+  override def getSearchStringEscape: String = "\\"
 
-  override def supportsAlterTableWithAddColumn(): Boolean = ???
+  override def getExtraNameCharacters: String = null
 
-  override def supportsAlterTableWithDropColumn(): Boolean = ???
+  override def supportsAlterTableWithAddColumn(): Boolean = false
 
-  override def supportsColumnAliasing(): Boolean = ???
+  override def supportsAlterTableWithDropColumn(): Boolean = false
 
-  override def nullPlusNonNullIsNull(): Boolean = ???
+  override def supportsColumnAliasing(): Boolean = true
 
-  override def supportsConvert(): Boolean = ???
+  override def nullPlusNonNullIsNull(): Boolean = false
 
-  override def supportsConvert(fromType: Int, toType: Int): Boolean = ???
+  override def supportsConvert(): Boolean = false
 
-  override def supportsTableCorrelationNames(): Boolean = ???
+  override def supportsConvert(fromType: Int, toType: Int): Boolean = false
 
-  override def supportsDifferentTableCorrelationNames(): Boolean = ???
+  override def supportsTableCorrelationNames(): Boolean = false
 
-  override def supportsExpressionsInOrderBy(): Boolean = ???
+  override def supportsDifferentTableCorrelationNames(): Boolean = false
 
-  override def supportsOrderByUnrelated(): Boolean = ???
+  override def supportsExpressionsInOrderBy(): Boolean = false
 
-  override def supportsGroupBy(): Boolean = ???
+  override def supportsOrderByUnrelated(): Boolean = true
 
-  override def supportsGroupByUnrelated(): Boolean = ???
+  override def supportsGroupBy(): Boolean = true
 
-  override def supportsGroupByBeyondSelect(): Boolean = ???
+  override def supportsGroupByUnrelated(): Boolean = true
 
-  override def supportsLikeEscapeClause(): Boolean = ???
+  override def supportsGroupByBeyondSelect(): Boolean = true
 
-  override def supportsMultipleResultSets(): Boolean = ???
+  override def supportsLikeEscapeClause(): Boolean = true
 
-  override def supportsMultipleTransactions(): Boolean = ???
+  override def supportsMultipleResultSets(): Boolean = true
 
-  override def supportsNonNullableColumns(): Boolean = ???
+  override def supportsMultipleTransactions(): Boolean = false
 
-  override def supportsMinimumSQLGrammar(): Boolean = ???
+  override def supportsNonNullableColumns(): Boolean = true
 
-  override def supportsCoreSQLGrammar(): Boolean = ???
+  override def supportsMinimumSQLGrammar(): Boolean = false
 
-  override def supportsExtendedSQLGrammar(): Boolean = ???
+  override def supportsCoreSQLGrammar(): Boolean = false
 
-  override def supportsANSI92EntryLevelSQL(): Boolean = ???
+  override def supportsExtendedSQLGrammar(): Boolean = false
 
-  override def supportsANSI92IntermediateSQL(): Boolean = ???
+  override def supportsANSI92EntryLevelSQL(): Boolean = false
 
-  override def supportsANSI92FullSQL(): Boolean = ???
+  override def supportsANSI92IntermediateSQL(): Boolean = false
 
-  override def supportsIntegrityEnhancementFacility(): Boolean = ???
+  override def supportsANSI92FullSQL(): Boolean = false
 
-  override def supportsOuterJoins(): Boolean = ???
+  override def supportsIntegrityEnhancementFacility(): Boolean = false
 
-  override def supportsFullOuterJoins(): Boolean = ???
+  override def supportsOuterJoins(): Boolean = false
 
-  override def supportsLimitedOuterJoins(): Boolean = ???
+  override def supportsFullOuterJoins(): Boolean = false
 
-  override def getSchemaTerm: String = ???
+  override def supportsLimitedOuterJoins(): Boolean = false
 
-  override def getProcedureTerm: String = ???
+  override def getSchemaTerm: String = "database"
 
-  override def getCatalogTerm: String = ???
+  override def getProcedureTerm: String = null
 
-  override def isCatalogAtStart: Boolean = ???
+  override def getCatalogTerm: String = "database"
 
-  override def getCatalogSeparator: String = ???
+  override def isCatalogAtStart: Boolean = true
 
-  override def supportsSchemasInDataManipulation(): Boolean = ???
+  override def getCatalogSeparator: String = "."
 
-  override def supportsSchemasInProcedureCalls(): Boolean = ???
+  override def supportsSchemasInDataManipulation(): Boolean = false
 
-  override def supportsSchemasInTableDefinitions(): Boolean = ???
+  override def supportsSchemasInProcedureCalls(): Boolean = false
 
-  override def supportsSchemasInIndexDefinitions(): Boolean = ???
+  override def supportsSchemasInTableDefinitions(): Boolean = false
 
-  override def supportsSchemasInPrivilegeDefinitions(): Boolean = ???
+  override def supportsSchemasInIndexDefinitions(): Boolean = false
 
-  override def supportsCatalogsInDataManipulation(): Boolean = ???
+  override def supportsSchemasInPrivilegeDefinitions(): Boolean = false
 
-  override def supportsCatalogsInProcedureCalls(): Boolean = ???
+  override def supportsCatalogsInDataManipulation(): Boolean = true
 
-  override def supportsCatalogsInTableDefinitions(): Boolean = ???
+  override def supportsCatalogsInProcedureCalls(): Boolean = false
 
-  override def supportsCatalogsInIndexDefinitions(): Boolean = ???
+  override def supportsCatalogsInTableDefinitions(): Boolean = false
 
-  override def supportsCatalogsInPrivilegeDefinitions(): Boolean = ???
+  override def supportsCatalogsInIndexDefinitions(): Boolean = false
 
-  override def supportsPositionedDelete(): Boolean = ???
+  override def supportsCatalogsInPrivilegeDefinitions(): Boolean = false
 
-  override def supportsPositionedUpdate(): Boolean = ???
+  override def supportsPositionedDelete(): Boolean = false
 
-  override def supportsSelectForUpdate(): Boolean = ???
+  override def supportsPositionedUpdate(): Boolean = false
 
-  override def supportsStoredProcedures(): Boolean = ???
+  override def supportsSelectForUpdate(): Boolean = false
 
-  override def supportsSubqueriesInComparisons(): Boolean = ???
+  override def supportsStoredProcedures(): Boolean = false
 
-  override def supportsSubqueriesInExists(): Boolean = ???
+  override def supportsSubqueriesInComparisons(): Boolean = false
 
-  override def supportsSubqueriesInIns(): Boolean = ???
+  override def supportsSubqueriesInExists(): Boolean = false
 
-  override def supportsSubqueriesInQuantifieds(): Boolean = ???
+  override def supportsSubqueriesInIns(): Boolean = false
 
-  override def supportsCorrelatedSubqueries(): Boolean = ???
+  override def supportsSubqueriesInQuantifieds(): Boolean = false
 
-  override def supportsUnion(): Boolean = ???
+  override def supportsCorrelatedSubqueries(): Boolean = false
 
-  override def supportsUnionAll(): Boolean = ???
+  override def supportsUnion(): Boolean = true
 
-  override def supportsOpenCursorsAcrossCommit(): Boolean = ???
+  override def supportsUnionAll(): Boolean = true
 
-  override def supportsOpenCursorsAcrossRollback(): Boolean = ???
+  override def supportsOpenCursorsAcrossCommit(): Boolean = false
 
-  override def supportsOpenStatementsAcrossCommit(): Boolean = ???
+  override def supportsOpenCursorsAcrossRollback(): Boolean = false
 
-  override def supportsOpenStatementsAcrossRollback(): Boolean = ???
+  override def supportsOpenStatementsAcrossCommit(): Boolean = false
 
-  override def getMaxBinaryLiteralLength: Int = ???
+  override def supportsOpenStatementsAcrossRollback(): Boolean = false
 
-  override def getMaxCharLiteralLength: Int = ???
+  override def getMaxBinaryLiteralLength: Int = 0
 
-  override def getMaxColumnNameLength: Int = ???
+  override def getMaxCharLiteralLength: Int = 0
 
-  override def getMaxColumnsInGroupBy: Int = ???
+  override def getMaxColumnNameLength: Int = 0
 
-  override def getMaxColumnsInIndex: Int = ???
+  override def getMaxColumnsInGroupBy: Int = 0
 
-  override def getMaxColumnsInOrderBy: Int = ???
+  override def getMaxColumnsInIndex: Int = 0
 
-  override def getMaxColumnsInSelect: Int = ???
+  override def getMaxColumnsInOrderBy: Int = 0
 
-  override def getMaxColumnsInTable: Int = ???
+  override def getMaxColumnsInSelect: Int = 0
 
-  override def getMaxConnections: Int = ???
+  override def getMaxColumnsInTable: Int = 0
 
-  override def getMaxCursorNameLength: Int = ???
+  override def getMaxConnections: Int = 0
 
-  override def getMaxIndexLength: Int = ???
+  override def getMaxCursorNameLength: Int = 0
 
-  override def getMaxSchemaNameLength: Int = ???
+  override def getMaxIndexLength: Int = 0
 
-  override def getMaxProcedureNameLength: Int = ???
+  override def getMaxSchemaNameLength: Int = 0
 
-  override def getMaxCatalogNameLength: Int = ???
+  override def getMaxProcedureNameLength: Int = 0
 
-  override def getMaxRowSize: Int = ???
+  override def getMaxCatalogNameLength: Int = 0
 
-  override def doesMaxRowSizeIncludeBlobs(): Boolean = ???
+  override def getMaxRowSize: Int = 0
 
-  override def getMaxStatementLength: Int = ???
+  override def doesMaxRowSizeIncludeBlobs(): Boolean = false
 
-  override def getMaxStatements: Int = ???
+  override def getMaxStatementLength: Int = 0
 
-  override def getMaxTableNameLength: Int = ???
+  override def getMaxStatements: Int = 0
 
-  override def getMaxTablesInSelect: Int = ???
+  override def getMaxTableNameLength: Int = 90
 
-  override def getMaxUserNameLength: Int = ???
+  override def getMaxTablesInSelect: Int = 0
 
-  override def getDefaultTransactionIsolation: Int = ???
+  override def getMaxUserNameLength: Int = 0
 
-  override def supportsTransactions(): Boolean = ???
+  override def getDefaultTransactionIsolation: Int = Connection.TRANSACTION_NONE
 
-  override def supportsTransactionIsolationLevel(level: Int): Boolean = ???
+  override def supportsTransactions(): Boolean = false
 
-  override def supportsDataDefinitionAndDataManipulationTransactions(): Boolean = ???
+  override def supportsTransactionIsolationLevel(level: Int): Boolean = false
 
-  override def supportsDataManipulationTransactionsOnly(): Boolean = ???
+  override def supportsDataDefinitionAndDataManipulationTransactions(): Boolean = false
 
-  override def dataDefinitionCausesTransactionCommit(): Boolean = ???
+  override def supportsDataManipulationTransactionsOnly(): Boolean = false
 
-  override def dataDefinitionIgnoredInTransactions(): Boolean = ???
+  override def dataDefinitionCausesTransactionCommit(): Boolean = false
 
-  override def getProcedures(catalog: String, schemaPattern: String, procedureNamePattern: String): ResultSet = ???
+  override def dataDefinitionIgnoredInTransactions(): Boolean = false
 
-  override def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet = ???
+  override def getProcedures(catalog: String, schemaPattern: String, procedureNamePattern: String): ResultSet = { new MongoDbResultSet(null, List.empty, 10) }
 
-  override def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = ???
+  override def getProcedureColumns(catalog: String, schemaPattern: String, procedureNamePattern: String, columnNamePattern: String): ResultSet = {
+    new MongoDbResultSet(null, List.empty, 10)
+  }
 
-  override def getSchemas: ResultSet = ???
+  override def getTables(catalog: String, schemaPattern: String, tableNamePattern: String, types: Array[String]): ResultSet = {
+    val internalSchemaPattern    = Option(schemaPattern).getOrElse("(.*?)")
+    val internalTableNamePattern = Option(tableNamePattern).getOrElse("(.*?)")
+    val documents: List[Document] = connection.getDatabaseProvider.databaseNames
+      .filter(s => internalSchemaPattern.r.findFirstMatchIn(s).nonEmpty)
+      .flatMap(dbName => {
+        val collDocuments: List[Document] = connection.getDatabaseProvider
+          .collectionNames(dbName)
+          .filter(s => internalTableNamePattern.r.findFirstMatchIn(s).nonEmpty)
+          .map(collName => {
+            Document(
+              "TABLE_CAT"                 -> BsonString(DatabaseNameKey),
+              "TABLE_SCHEM"               -> BsonString(dbName),
+              "TABLE_NAME"                -> BsonString(collName),
+              "TABLE_TYPE"                -> BsonString("TABLE"),
+              "REMARKS"                   -> BsonString("COLLECTION"),
+              "TYPE_CAT"                  -> BsonString(DatabaseNameKey),
+              "TYPE_SCHEM"                -> BsonString(dbName),
+              "TYPE_NAME"                 -> BsonString("COLLECTION"),
+              "SELF_REFERENCING_COL_NAME" -> BsonNull(),
+              "REF_GENERATION"            -> BsonNull()
+            )
+          })
+        collDocuments
+      })
+    new MongoDbResultSet(null, documents, 10)
+  }
 
-  override def getCatalogs: ResultSet = ???
+  override def getSchemas: ResultSet = getSchemas("", "(.*?)")
 
-  override def getTableTypes: ResultSet = ???
+  override def getCatalogs: ResultSet = {
+    val documents = List(
+      Document(
+        "TABLE_CAT" -> DatabaseNameKey
+      )
+    )
+    new MongoDbResultSet(null, documents, 10)
+  }
 
-  override def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = ???
+  override def getTableTypes: ResultSet = {
+    val documents = List(
+      Document(
+        "TABLE_TYPE" -> "COLLECTION"
+      )
+    )
+    new MongoDbResultSet(null, documents, 10)
+  }
 
-  override def getColumnPrivileges(catalog: String, schema: String, table: String, columnNamePattern: String): ResultSet = ???
+  override def getColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = {
+    val schemaRegex     = schemaPattern.replace("%", "(.*?)").r
+    val tableNameRegex  = tableNamePattern.replace("%", "(.*?)").r
+    val columnNameRegex = columnNamePattern.replace("%", "(.*?)").r
+    val databaseNames   = connection.getDatabaseProvider.databaseNames.filter(s => schemaRegex.findFirstMatchIn(s).nonEmpty)
+    val documents       = ArrayBuffer[Document]()
+    val schemaExplorer  = new SchemaExplorer()
+    var i               = 0
+    databaseNames.map(dbName => {
+      val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
+      val filtered       = allCollections.filter(tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty)
+      filtered.map(table => {
+        val dao             = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
+        val schemaAnalysis  = schemaExplorer.analyzeSchema(dao)
+        val relevantColumns = schemaAnalysis.fields.filter(field => columnNameRegex.findFirstMatchIn(field.name).nonEmpty)
+        relevantColumns.foreach(schemaAnalysis => {
+          val fieldTypeName              = schemaAnalysis.fieldTypes.head.fieldType
+          var decimalDigits: Option[Int] = None
+          val fieldType = fieldTypeName match {
+            case "string"   => Types.LONGVARCHAR
+            case "null"     => Types.VARCHAR
+            case "objectId" => Types.VARCHAR
+            case "date"     => Types.DATE
+            case "int" =>
+              decimalDigits = Some(0)
+              Types.INTEGER
+            case "long" =>
+              decimalDigits = Some(0)
+              Types.BIGINT
+            case "number" =>
+              decimalDigits = Some(Int.MaxValue)
+              Types.DOUBLE
+            case "double" =>
+              decimalDigits = Some(Int.MaxValue)
+              Types.DOUBLE
+            case "array" => Types.ARRAY
+            case "bool"  => Types.BOOLEAN
+            case "object"  => Types.JAVA_OBJECT
+            case _ =>
+              Types.VARCHAR
+          }
+          documents += Converter.toDocument(
+            Map(
+              "TABLE_CAT"         -> DatabaseNameKey,
+              "TABLE_SCHEM"       -> dbName,
+              "TABLE_NAME"        -> table,
+              "COLUMN_NAME"       -> schemaAnalysis.name,
+              "DATA_TYPE"         -> fieldType,
+              "TYPE_NAME"         -> fieldTypeName,
+              "COLUMN_SIZE"       -> null,
+              "BUFFER_LENGTH"     -> null,
+              "DECIMAL_DIGITS"    -> decimalDigits.getOrElse(null),
+              "NUM_PREC_RADIX"    -> null,
+              "NULLABLE"          -> DatabaseMetaData.columnNullable, // how to check
+              "REMARKS"           -> null,
+              "COLUMN_DEF"        -> null,
+              "SQL_DATA_TYPE"     -> null,
+              "SQL_DATETIME_SUB"  -> null,
+              "CHAR_OCTET_LENGTH" -> null,
+              "ORDINAL_POSITION"  -> i,
+              "IS_NULLABLE"       -> "YES",
+              "SCOPE_CATLOG"      -> null,
+              "SCOPE_SCHEMA"      -> null,
+              "SCOPE_TABLE"       -> null,
+              "SOURCE_DATA_TYPE"  -> null,
+              "IS_AUTOINCREMENT"  -> "NO"
+            )
+          )
+          i = i + 1
+        })
+      })
+    })
+    new MongoDbResultSet(null, documents.toList, 10)
+  }
+
+  override def getColumnPrivileges(catalog: String, schema: String, table: String, columnNamePattern: String): ResultSet = {
+    null
+  }
+
+  override def getTablePrivileges(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = {
+    null
+  }
+
+  override def getBestRowIdentifier(catalog: String, schema: String, table: String, scope: Int, nullable: Boolean): ResultSet = {
+    null
+  }
+
+  override def getVersionColumns(catalog: String, schema: String, table: String): ResultSet = {
+    null
+  }
+
+  override def getPrimaryKeys(catalog: String, schema: String, table: String): ResultSet = {
+    val dao           = connection.getDatabaseProvider.dao(s"$schema$CollectionSeparator$table")
+    val uniqueIndices = dao.indexList().filter(_.unique)
+    val pkDocuments = uniqueIndices.map(i =>
+      Map(
+        "TABLE_CAT"   -> DatabaseNameKey,
+        "TABLE_SCHEM" -> schema,
+        "TABLE_NAME"  -> table,
+        "COLUMN_NAME" -> i.fields.head,
+        "KEY_SEQ"     -> 0,
+        "PK_NAME"     -> i.name
+      )
+    )
+    new MongoDbResultSet(null, pkDocuments.map(i => Converter.toDocument(i)), 10)
+
+  }
+
+  override def getImportedKeys(catalog: String, schema: String, table: String): ResultSet = {
+    null
+  }
+
+  override def getExportedKeys(catalog: String, schema: String, table: String): ResultSet = {
+    null
+  }
+
+  override def getCrossReference(
+      parentCatalog: String,
+      parentSchema: String,
+      parentTable: String,
+      foreignCatalog: String,
+      foreignSchema: String,
+      foreignTable: String
+  ): ResultSet = {
+    null
+  }
+
+  override def getTypeInfo: ResultSet = {
+    val objectIdValue = "OBJECT_ID"
+    val documentValue = "DOCUMENT"
+    val types = List(
+      Map(
+        "TYPE_NAME"          -> objectIdValue,
+        "DATA_TYPE"          -> Types.VARCHAR,
+        "PRECISION"          -> "800",
+        "LITERAL_PREFIX"     -> "'",
+        "LITERAL_SUFFIX"     -> "'",
+        "CREATE_PARAMS"      -> null,
+        "NULLABLE"           -> DatabaseMetaData.typeNullable,
+        "CASE_SENSITIVE"     -> true,
+        "SEARCHABLE"         -> DatabaseMetaData.typeSearchable,
+        "UNSIGNED_ATTRIBUTE" -> false,
+        "FIXED_PREC_SCALE"   -> false,
+        "AUTO_INCREMENT"     -> false,
+        "LOCAL_TYPE_NAME"    -> objectIdValue,
+        "MINIMUM_SCALE"      -> 0,
+        "MAXIMUM_SCALE"      -> 0,
+        "SQL_DATA_TYPE"      -> null,
+        "SQL_DATETIME_SUB"   -> null,
+        "NUM_PREC_RADIX"     -> 10
+      ),
+      Map(
+        "TYPE_NAME"          -> documentValue,
+        "DATA_TYPE"          -> Types.CLOB,
+        "PRECISION"          -> "16777216",
+        "LITERAL_PREFIX"     -> "'",
+        "LITERAL_SUFFIX"     -> "'",
+        "CREATE_PARAMS"      -> null,
+        "NULLABLE"           -> DatabaseMetaData.typeNullable,
+        "CASE_SENSITIVE"     -> true,
+        "SEARCHABLE"         -> DatabaseMetaData.typeSearchable,
+        "UNSIGNED_ATTRIBUTE" -> false,
+        "FIXED_PREC_SCALE"   -> false,
+        "AUTO_INCREMENT"     -> false,
+        "LOCAL_TYPE_NAME"    -> documentValue,
+        "MINIMUM_SCALE"      -> 0,
+        "MAXIMUM_SCALE"      -> 0,
+        "SQL_DATA_TYPE"      -> null,
+        "SQL_DATETIME_SUB"   -> null,
+        "NUM_PREC_RADIX"     -> 10
+      )
+    )
+    new MongoDbResultSet(null, types.map(i => Converter.toDocument(i)), 10)
+  }
 
-  override def getTablePrivileges(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = ???
+  override def getIndexInfo(catalog: String, schema: String, table: String, unique: Boolean, approximate: Boolean): ResultSet = {
+    val schemaRegex    = schema.r
+    val tableNameRegex = table.r
+    val databaseNames  = connection.getDatabaseProvider.databaseNames.filter(s => schemaRegex.findFirstMatchIn(s).nonEmpty)
+    val documents      = ArrayBuffer[Document]()
+    databaseNames.map(dbName => {
+      val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
+      allCollections
+        .filter(tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty)
+        .map(table => {
+          val dao = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
+          dao
+            .indexList()
+            .map(index => {
+              val fields = index.fields
+              fields.zipWithIndex.foreach { case (field, i) =>
+                documents += Converter.toDocument(
+                  Map(
+                    "TABLE_CAT"        -> DatabaseNameKey,
+                    "TABLE_SCHEM"      -> dbName,
+                    "TABLE_NAME"       -> table,
+                    "NON_UNIQUE"       -> (if (!index.unique) "YES" else "NO"),
+                    "INDEX_QUALIFIER"  -> dbName,
+                    "INDEX_NAME"       -> index.name,
+                    "TYPE"             -> 0,
+                    "ORDINAL_POSITION" -> i,
+                    "COLUMN_NAME"      -> field,
+                    "ASC_OR_DESC"      -> "A",
+                    "CARDINALITY"      -> "0",
+                    "PAGES"            -> "0",
+                    "FILTER_CONDITION" -> ""
+                  )
+                )
+              }
+            })
+        })
+    })
+    new MongoDbResultSet(null, documents.toList, 10)
+  }
 
-  override def getBestRowIdentifier(catalog: String, schema: String, table: String, scope: Int, nullable: Boolean): ResultSet = ???
+  override def supportsResultSetType(`type`: Int): Boolean = {
+    `type` == ResultSet.TYPE_FORWARD_ONLY
+  }
 
-  override def getVersionColumns(catalog: String, schema: String, table: String): ResultSet = ???
+  override def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean = false
 
-  override def getPrimaryKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  override def ownUpdatesAreVisible(`type`: Int): Boolean = false
 
-  override def getImportedKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  override def ownDeletesAreVisible(`type`: Int): Boolean = false
 
-  override def getExportedKeys(catalog: String, schema: String, table: String): ResultSet = ???
+  override def ownInsertsAreVisible(`type`: Int): Boolean = false
 
-  override def getCrossReference(parentCatalog: String, parentSchema: String, parentTable: String, foreignCatalog: String, foreignSchema: String, foreignTable: String): ResultSet = ???
+  override def othersUpdatesAreVisible(`type`: Int): Boolean = false
 
-  override def getTypeInfo: ResultSet = ???
+  override def othersDeletesAreVisible(`type`: Int): Boolean = false
 
-  override def getIndexInfo(catalog: String, schema: String, table: String, unique: Boolean, approximate: Boolean): ResultSet = ???
+  override def othersInsertsAreVisible(`type`: Int): Boolean = false
 
-  override def supportsResultSetType(`type`: Int): Boolean = ???
+  override def updatesAreDetected(`type`: Int): Boolean = false
 
-  override def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean = ???
+  override def deletesAreDetected(`type`: Int): Boolean = false
 
-  override def ownUpdatesAreVisible(`type`: Int): Boolean = ???
+  override def insertsAreDetected(`type`: Int): Boolean = false
 
-  override def ownDeletesAreVisible(`type`: Int): Boolean = ???
+  override def supportsBatchUpdates(): Boolean = false
 
-  override def ownInsertsAreVisible(`type`: Int): Boolean = ???
+  override def getUDTs(catalog: String, schemaPattern: String, typeNamePattern: String, types: Array[Int]): ResultSet = {
+    new MongoDbResultSet(null, List.empty, 10)
+  }
 
-  override def othersUpdatesAreVisible(`type`: Int): Boolean = ???
+  override def getConnection: Connection = connection
 
-  override def othersDeletesAreVisible(`type`: Int): Boolean = ???
+  override def supportsSavepoints(): Boolean = false
 
-  override def othersInsertsAreVisible(`type`: Int): Boolean = ???
+  override def supportsNamedParameters(): Boolean = false
 
-  override def updatesAreDetected(`type`: Int): Boolean = ???
+  override def supportsMultipleOpenResults(): Boolean = false
 
-  override def deletesAreDetected(`type`: Int): Boolean = ???
+  override def supportsGetGeneratedKeys(): Boolean = false
 
-  override def insertsAreDetected(`type`: Int): Boolean = ???
+  override def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet = { new MongoDbResultSet(null, List.empty, 10) }
 
-  override def supportsBatchUpdates(): Boolean = ???
+  override def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = { new MongoDbResultSet(null, List.empty, 10) }
 
-  override def getUDTs(catalog: String, schemaPattern: String, typeNamePattern: String, types: Array[Int]): ResultSet = ???
+  override def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet = {
+    new MongoDbResultSet(null, List.empty, 10)
+  }
 
-  override def getConnection: Connection = ???
+  override def supportsResultSetHoldability(holdability: Int): Boolean = false
 
-  override def supportsSavepoints(): Boolean = ???
+  override def getResultSetHoldability: Int = ResultSet.HOLD_CURSORS_OVER_COMMIT
 
-  override def supportsNamedParameters(): Boolean = ???
+  override def getDatabaseMajorVersion: Int = semVer.getMajor
 
-  override def supportsMultipleOpenResults(): Boolean = ???
+  override def getDatabaseMinorVersion: Int = semVer.getMinor
 
-  override def supportsGetGeneratedKeys(): Boolean = ???
+  override def getJDBCMajorVersion: Int = jdbcSemVer.getMajor
 
-  override def getSuperTypes(catalog: String, schemaPattern: String, typeNamePattern: String): ResultSet = ???
+  override def getJDBCMinorVersion: Int = jdbcSemVer.getMinor
 
-  override def getSuperTables(catalog: String, schemaPattern: String, tableNamePattern: String): ResultSet = ???
+  override def getSQLStateType: Int = DatabaseMetaData.sqlStateXOpen
 
-  override def getAttributes(catalog: String, schemaPattern: String, typeNamePattern: String, attributeNamePattern: String): ResultSet = ???
+  override def locatorsUpdateCopy(): Boolean = false
 
-  override def supportsResultSetHoldability(holdability: Int): Boolean = ???
+  override def supportsStatementPooling(): Boolean = false
 
-  override def getResultSetHoldability: Int = ???
+  override def getRowIdLifetime: RowIdLifetime = null
 
-  override def getDatabaseMajorVersion: Int = ???
+  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = {
+    val documents = connection.getDatabaseProvider.databaseNames
+      .filter(s => schemaPattern.r.findFirstMatchIn(s).nonEmpty)
+      .map(dbName => {
+        Document(
+          "TABLE_SCHEM"   -> dbName,
+          "TABLE_CATALOG" -> DatabaseNameKey
+        )
+      })
+    new MongoDbResultSet(null, documents, 10)
+  }
 
-  override def getDatabaseMinorVersion: Int = ???
+  override def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 
-  override def getJDBCMajorVersion: Int = ???
+  override def autoCommitFailureClosesAllResultSets(): Boolean = false
 
-  override def getJDBCMinorVersion: Int = ???
+  override def getClientInfoProperties: ResultSet = { new MongoDbResultSet(null, List.empty, 10) }
 
-  override def getSQLStateType: Int = ???
+  override def getFunctions(catalog: String, schemaPattern: String, functionNamePattern: String): ResultSet = { new MongoDbResultSet(null, List.empty, 10) }
 
-  override def locatorsUpdateCopy(): Boolean = ???
+  override def getFunctionColumns(catalog: String, schemaPattern: String, functionNamePattern: String, columnNamePattern: String): ResultSet = {
+    new MongoDbResultSet(null, List.empty, 10)
+  }
 
-  override def supportsStatementPooling(): Boolean = ???
+  override def getPseudoColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = {
+    new MongoDbResultSet(null, List.empty, 10)
+  }
 
-  override def getRowIdLifetime: RowIdLifetime = ???
+  override def generatedKeyAlwaysReturned(): Boolean = false
 
-  override def getSchemas(catalog: String, schemaPattern: String): ResultSet = ???
+  override def unwrap[T](iface: Class[T]): T = null.asInstanceOf[T]
 
-  override def supportsStoredFunctionsUsingCallSyntax(): Boolean = ???
-
-  override def autoCommitFailureClosesAllResultSets(): Boolean = ???
-
-  override def getClientInfoProperties: ResultSet = ???
-
-  override def getFunctions(catalog: String, schemaPattern: String, functionNamePattern: String): ResultSet = ???
-
-  override def getFunctionColumns(catalog: String, schemaPattern: String, functionNamePattern: String, columnNamePattern: String): ResultSet = ???
-
-  override def getPseudoColumns(catalog: String, schemaPattern: String, tableNamePattern: String, columnNamePattern: String): ResultSet = ???
-
-  override def generatedKeyAlwaysReturned(): Boolean = ???
-
-  override def unwrap[T](iface: Class[T]): T = ???
-
-  override def isWrapperFor(iface: Class[_]): Boolean = ???
+  override def isWrapperFor(iface: Class[_]): Boolean = false
 }

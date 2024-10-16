@@ -1,17 +1,22 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import org.mongodb.scala.MongoClient
+import dev.mongocamp.driver.mongodb.Converter
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 
 import java.{sql, util}
-import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, SQLWarning, SQLXML, Savepoint, Statement, Struct}
+import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
 import java.util.Properties
 import java.util.concurrent.Executor
+import scala.jdk.CollectionConverters._
 
-class MongoJdbcConnection(client: MongoClient) extends Connection {
-  private var _isClosed = false
+class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection with MongoJdbcCloseable {
   private var _isReadOnly = false
 
-  override def createStatement(): Statement = new MongoPreparedStatement(this, null)
+  def getDatabaseProvider: DatabaseProvider = databaseProvider
+
+  override def createStatement(): Statement = MongoPreparedStatement(this)
 
   override def prepareStatement(sql: String): PreparedStatement = {
     new MongoPreparedStatement(this, sql)
@@ -19,10 +24,14 @@ class MongoJdbcConnection(client: MongoClient) extends Connection {
 
   override def prepareCall(sql: String): CallableStatement = {
     checkClosed()
-    null
+    createMongoStatement(Some(sql))
   }
 
-  override def nativeSQL(sql: String): String = ???
+  override def nativeSQL(sql: String): String = {
+    checkClosed()
+    // todo: return debug string
+    sql
+  }
 
   override def setAutoCommit(autoCommit: Boolean): Unit = {
     checkClosed()
@@ -33,25 +42,20 @@ class MongoJdbcConnection(client: MongoClient) extends Connection {
     true
   }
 
-
   override def commit(): Unit = {
     checkClosed()
   }
-
 
   override def rollback(): Unit = {
     checkClosed()
   }
 
-
   override def close(): Unit = {
-    _isClosed = true
-    client.close()
+    super.close()
+    databaseProvider.client.close()
   }
 
-  override def isClosed: Boolean = _isClosed
-
-  override def getMetaData: DatabaseMetaData = ???
+  override def getMetaData: DatabaseMetaData = new MongoDatabaseMetaData(this)
 
   override def setReadOnly(readOnly: Boolean): Unit = {
     checkClosed()
@@ -67,12 +71,8 @@ class MongoJdbcConnection(client: MongoClient) extends Connection {
   override def getCatalog: String = null
 
   override def setTransactionIsolation(level: Int): Unit = {
-    checkClosed()
-    // Since the only valid value for MongoDB is Connection.TRANSACTION_NONE, and the javadoc for this method
-    // indicates that this is not a valid value for level here, throw unsupported operation exception.
-    throw new UnsupportedOperationException("MongoDB provides no support for transactions.")
+    sqlFeatureNotSupported()
   }
-
 
   override def getTransactionIsolation: Int = {
     checkClosed()
@@ -84,91 +84,190 @@ class MongoJdbcConnection(client: MongoClient) extends Connection {
     null
   }
 
-  override def clearWarnings(): Unit =  checkClosed()
+  override def clearWarnings(): Unit = {
+    checkClosed()
+  }
 
-  override def createStatement(resultSetType: Int, resultSetConcurrency: Int): Statement = ???
+  def createMongoStatement(sqlOption: Option[String] = None): MongoPreparedStatement = {
+    checkClosed()
+    val stmt = statement.MongoPreparedStatement(this)
+    sqlOption.foreach(stmt.setSql)
+    stmt
+  }
 
-  override def prepareStatement(sql: String, resultSetType: Int, resultSetConcurrency: Int): PreparedStatement = ???
+  override def createStatement(resultSetType: Int, resultSetConcurrency: Int): Statement = {
+    checkClosed()
+    createMongoStatement()
+  }
 
-  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int): CallableStatement = ???
+  override def prepareStatement(sql: String, resultSetType: Int, resultSetConcurrency: Int): PreparedStatement = {
+    checkClosed()
+    createMongoStatement(Some(sql))
+  }
 
-  override def getTypeMap: util.Map[String, Class[_]] = ???
+  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int): CallableStatement = {
+    checkClosed()
+    createMongoStatement(Some(sql))
+  }
 
-  override def setTypeMap(map: util.Map[String, Class[_]]): Unit = ???
+  override def getTypeMap: util.Map[String, Class[_]] =  {
+    checkClosed()
+    null
+  }
 
-  override def setHoldability(holdability: Int): Unit = ???
+  override def setTypeMap(map: util.Map[String, Class[_]]): Unit =  {
+    checkClosed()
+  }
 
-  override def getHoldability: Int = ???
+  override def setHoldability(holdability: Int): Unit =  {
+    checkClosed()
+  }
 
-  override def setSavepoint(): Savepoint = ???
+  override def getHoldability: Int =  {
+    checkClosed()
+    0
+  }
 
-  override def setSavepoint(name: String): Savepoint = ???
+  override def setSavepoint(): Savepoint =  {
+    checkClosed()
+    null
+  }
 
-  override def rollback(savepoint: Savepoint): Unit = ???
+  override def setSavepoint(name: String): Savepoint =  {
+    checkClosed()
+    null
+  }
 
-  override def releaseSavepoint(savepoint: Savepoint): Unit = ???
+  override def rollback(savepoint: Savepoint): Unit =  {
+    checkClosed()
+  }
 
-  override def createStatement(resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): Statement = ???
+  override def releaseSavepoint(savepoint: Savepoint): Unit =  {
+    checkClosed()
+  }
 
-  override def prepareStatement(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): PreparedStatement = ???
+  override def createStatement(resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): Statement =  {
+    createMongoStatement()
+  }
 
-  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): CallableStatement = ???
+  override def prepareStatement(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): PreparedStatement = {
+    createMongoStatement(Option(sql))
+  }
 
-  override def prepareStatement(sql: String, autoGeneratedKeys: Int): PreparedStatement = ???
+  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): CallableStatement =  {
+    checkClosed()
+    createMongoStatement(Some(sql))
+  }
 
-  override def prepareStatement(sql: String, columnIndexes: Array[Int]): PreparedStatement = ???
+  override def prepareStatement(sql: String, autoGeneratedKeys: Int): PreparedStatement = {
+    createMongoStatement(Option(sql))
+  }
 
-  override def prepareStatement(sql: String, columnNames: Array[String]): PreparedStatement = ???
+  override def prepareStatement(sql: String, columnIndexes: Array[Int]): PreparedStatement = {
+    createMongoStatement(Option(sql))
+  }
 
-  override def createClob(): Clob = ???
+  override def prepareStatement(sql: String, columnNames: Array[String]): PreparedStatement = {
+    createMongoStatement(Option(sql))
+  }
 
-  override def createBlob(): Blob = ???
+  override def createClob(): Clob =  {
+    checkClosed()
+    null
+  }
 
-  override def createNClob(): NClob = ???
+  override def createBlob(): Blob =  {
+    checkClosed()
+    null
+  }
 
-  override def createSQLXML(): SQLXML = ???
+  override def createNClob(): NClob =  {
+    checkClosed()
+    null
+  }
 
-  override def isValid(timeout: Int): Boolean = ???
+  override def createSQLXML(): SQLXML =  {
+    checkClosed()
+    null
+  }
 
-  override def setClientInfo(name: String, value: String): Unit = ???
+  override def isValid(timeout: Int): Boolean =  {
+    checkClosed()
+    true
+  }
 
-  override def setClientInfo(properties: Properties): Unit = ???
+  override def setClientInfo(name: String, value: String): Unit = {
+    checkClosed()
+    if ("ApplicationName".equalsIgnoreCase(name) || "appName".equalsIgnoreCase(name) || "name".equalsIgnoreCase(name)) {
+      if (value != null) {
+        databaseProvider.closeClient()
+        databaseProvider.config.applicationName = value
+      }
+    }
+  }
 
-  override def getClientInfo(name: String): String = ???
+  override def setClientInfo(properties: Properties): Unit = {
+    properties.asScala.foreach(entry => setClientInfo(entry._1, entry._2))
+  }
 
-  override def getClientInfo: Properties = ???
+  override def getClientInfo(name: String): String = {
+    checkClosed()
+    if ("ApplicationName".equalsIgnoreCase(name) || "appName".equalsIgnoreCase(name) || "name".equalsIgnoreCase(name)) {
+      databaseProvider.config.applicationName
+    } else {
+        null
+    }
+  }
 
-  override def createArrayOf(typeName: String, elements: Array[AnyRef]): sql.Array = ???
+  override def getClientInfo: Properties = {
+    val properties = new Properties()
+    properties.setProperty("ApplicationName", databaseProvider.config.applicationName)
+    val document = Converter.toDocument(databaseProvider.config)
+    BsonConverter.asMap(document).foreach(entry => properties.setProperty(entry._1, entry._2.toString))
+    properties
+  }
 
-  override def createStruct(typeName: String, attributes: Array[AnyRef]): Struct = ???
+  override def createArrayOf(typeName: String, elements: Array[AnyRef]): sql.Array = {
+    checkClosed()
+    null
+  }
 
-  override def setSchema(schema: String): Unit = ???
+  override def createStruct(typeName: String, attributes: Array[AnyRef]): Struct = {
+    checkClosed()
+    null
+  }
 
-  override def getSchema: String = ???
+  override def setSchema(schema: String): Unit = {
+    checkClosed()
+    databaseProvider.setDefaultDatabaseName(schema)
+  }
 
-  override def abort(executor: Executor): Unit = ???
+  override def getSchema: String = {
+    checkClosed()
+    databaseProvider.DefaultDatabaseName
+  }
 
-  override def setNetworkTimeout(executor: Executor, milliseconds: Int): Unit = ???
+  override def abort(executor: Executor): Unit = {
+    checkClosed()
+  }
 
-  override def getNetworkTimeout: Int = ???
+  override def setNetworkTimeout(executor: Executor, milliseconds: Int): Unit = {
+    checkClosed()
+  }
 
-  @throws[SQLAlreadyClosedException]
+  override def getNetworkTimeout: Int = {
+    checkClosed()
+    0
+  }
+
   override def unwrap[T](iface: Class[T]): T = {
     checkClosed()
     null.asInstanceOf[T]
   }
 
-  @throws[SQLAlreadyClosedException]
   override def isWrapperFor(iface: Class[_]): Boolean = {
     checkClosed()
     false
   }
 
-
-  @throws[SQLAlreadyClosedException]
-  private def checkClosed(): Unit = {
-    if (isClosed) {
-      throw new SQLAlreadyClosedException(this.getClass.getSimpleName)
-    }
-  }
 }

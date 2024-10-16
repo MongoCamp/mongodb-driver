@@ -16,11 +16,12 @@ class SelectSqlSpec extends PersonSpecification {
     }
 
     "simple sql with schema" in {
-      val queryConverter = MongoSqlQueryHolder("select * from `mongocamp-unit-test`.`friend`")
+      val queryConverter = MongoSqlQueryHolder("select * from `mongocamp-unit-test`.`people`")
       val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
-      selectResponse.size mustEqual 1327
-      selectResponse.head.getString("name") mustEqual "Castaneda Mccullough"
-      selectResponse.head.getLong("id") mustEqual 33
+      queryConverter.getCollection mustEqual "mongocamp-unit-test:people"
+      selectResponse.size mustEqual 200
+      selectResponse.head.getString("name") mustEqual "Cheryl Hoffman"
+      selectResponse.head.getLong("id") mustEqual 0
     }
 
     "sql with in query" in {
@@ -98,6 +99,15 @@ class SelectSqlSpec extends PersonSpecification {
       val document = selectResponse.head
       document.getString("guid") mustEqual "a17be99a-8913-4bb6-8f14-16d4fa1b3559"
       document.getInteger("age") mustEqual 25
+    }
+
+    "only count" in {
+      val queryConverter = MongoSqlQueryHolder("select count(*) as tmp, sum(age) from people;")
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size mustEqual 1
+      val document = selectResponse.head
+      document.getInteger("tmp") mustEqual 200
+      document.getInteger("sum(age)") mustEqual 5961
     }
 
     "group by with count" in {

@@ -16,7 +16,7 @@ case class MongoConfig(
                         database: String,
                         host: String = DefaultHost,
                         port: Int = DefaultPort,
-                        applicationName: String = DefaultApplicationName,
+                        var applicationName: String = DefaultApplicationName,
                         userName: Option[String] = None,
                         password: Option[String] = None,
                         authDatabase: String = DefaultAuthenticationDatabaseName,
