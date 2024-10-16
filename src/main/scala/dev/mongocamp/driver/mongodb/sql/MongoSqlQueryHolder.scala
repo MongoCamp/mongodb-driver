@@ -4,6 +4,7 @@ import com.mongodb.client.model.DropIndexOptions
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
+import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
 import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
@@ -11,20 +12,25 @@ import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
 import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
 import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.UnsupportedStatement
+import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
+import net.sf.jsqlparser.statement.create.table.CreateTable
 import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
+import net.sf.jsqlparser.statement.execute.Execute
 import net.sf.jsqlparser.statement.insert.Insert
 import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
 import org.bson.conversions.Bson
+import org.h2.command.ddl.AlterTable
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{ Document, Observable }
+import org.mongodb.scala.{ Document, Observable, SingleObservable }
 
 import java.sql.SQLException
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -39,6 +45,9 @@ class MongoSqlQueryHolder {
   private var setElement: Option[Bson]                       = None
   private val documentsToInsert: ArrayBuffer[Document]       = ArrayBuffer.empty
   private var indexOptions: Option[IndexOptions]             = None
+  private var callFunction: Option[String]                   = None
+  private var keepOneDocument: Boolean                       = false
+  private val keysForEmptyDocument: mutable.Set[String]      = mutable.Set.empty
 
   def this(statement: net.sf.jsqlparser.statement.Statement) = {
     this()
@@ -72,14 +81,14 @@ class MongoSqlQueryHolder {
         case "INDEX" =>
           sqlCommandType = SQLCommandType.DropIndex
           sqlTable = drop.getName
-          if (!getCollection.contains(".")) {
-            throw new IllegalArgumentException("not supported drop index without collection specified in the name")
+          if (!getCollection.contains(CollectionSeparator)) {
+            throw new SqlCommandNotSupportedException("not supported drop index without collection specified in the name")
           }
         case "DATABASE" =>
           sqlCommandType = SQLCommandType.DropDatabase
           sqlTable = drop.getName
         case _ =>
-          throw new IllegalArgumentException("not supported drop command type")
+          throw new SqlCommandNotSupportedException("not supported drop command type")
       }
     }
     else if (classOf[Truncate].isAssignableFrom(statement.getClass)) {
@@ -90,6 +99,18 @@ class MongoSqlQueryHolder {
     else if (classOf[ShowTablesStatement].isAssignableFrom(statement.getClass)) {
       sqlCommandType = SQLCommandType.ShowTables
     }
+    else if (classOf[Execute].isAssignableFrom(statement.getClass)) {
+      sqlCommandType = SQLCommandType.Execute
+      callFunction = Some(statement.asInstanceOf[Execute].getName)
+    }
+    else if (classOf[CreateTable].isAssignableFrom(statement.getClass)) {
+      val createTable = statement.asInstanceOf[CreateTable]
+      sqlCommandType = SQLCommandType.CreateTable
+      sqlTable = createTable.getTable
+    }
+    else if (classOf[Alter].isAssignableFrom(statement.getClass)) {
+      sqlCommandType = SQLCommandType.AlterTable
+    }
     else if (classOf[UnsupportedStatement].isAssignableFrom(statement.getClass)) {
       val unsupportedStatement = statement.asInstanceOf[UnsupportedStatement]
       val isShowDatabases      = unsupportedStatement.toString.toLowerCase.contains("show databases")
@@ -98,17 +119,17 @@ class MongoSqlQueryHolder {
         sqlCommandType = SQLCommandType.ShowDatabases
       }
       else {
-        throw new IllegalArgumentException("not supported sql command type")
+        throw new SqlCommandNotSupportedException(s"not supported sql command type <${statement.getClass.getSimpleName}>")
       }
     }
     else {
-      throw new IllegalArgumentException("not supported sql command type")
+      throw new SqlCommandNotSupportedException(s"not supported sql command type <${statement.getClass.getSimpleName}>")
     }
     ""
   }
 
   def getCollection: String = {
-    sqlTable.getFullyQualifiedName.replace(".", CollectionSeparator).replace("'", "").replace("`", "")
+    Option(sqlTable).map(_.getFullyQualifiedName.replace(".", CollectionSeparator).replace("'", "").replace("\"", "").replace("`", "")).orNull
   }
 
   def run(provider: DatabaseProvider, allowDiskUsage: Boolean = true): Observable[Document] = {
@@ -124,7 +145,8 @@ class MongoSqlQueryHolder {
           })
 
       case SQLCommandType.Select =>
-        provider.dao(getCollection).findAggregated(aggregatePipeline.toList, allowDiskUsage)
+        val originalObservable = provider.dao(getCollection).findAggregated(aggregatePipeline.toList, allowDiskUsage)
+        originalObservable
 
       case SQLCommandType.Update =>
         val updateSet = setElement.getOrElse(throw new IllegalArgumentException("update set element must be defined"))
@@ -158,15 +180,40 @@ class MongoSqlQueryHolder {
 
       case SQLCommandType.ShowTables =>
         provider.collections()
+
       case SQLCommandType.ShowDatabases =>
         provider.databases
+
       case SQLCommandType.DropTable =>
         provider.dao(getCollection).drop().map(_ => org.mongodb.scala.Document("wasAcknowledged" -> true))
 
+      case SQLCommandType.CreateTable =>
+        provider.dao(getCollection).createIndex(Map("_id" -> 1)).map(_ => org.mongodb.scala.Document("created" -> true))
+
+      case SQLCommandType.AlterTable =>
+        SingleObservable(org.mongodb.scala.Document("changed" -> "true"))
+
+      case SQLCommandType.Execute =>
+        SingleObservable(
+          callFunction
+            .map(function => {
+              if (function.equalsIgnoreCase("current_schema")) {
+                org.mongodb.scala.Document("currentSchema" -> provider.DefaultDatabaseName)
+              }
+              else {
+                throw new SqlCommandNotSupportedException("not supported function")
+              }
+            })
+            .getOrElse(Document())
+        )
       case _ =>
-        throw new IllegalArgumentException("not supported sql command type")
+        throw new SqlCommandNotSupportedException("not supported sql command type")
     }
   }
+
+  def getKeysForEmptyDocument: Set[String] = keysForEmptyDocument.toSet
+
+  def selectFunctionCall: Boolean = keepOneDocument
 
   private def getUpdateOrDeleteFilter: Bson = {
     updateOrDeleteFilter.getOrElse(Map.empty).toMap
@@ -180,7 +227,16 @@ class MongoSqlQueryHolder {
       case e: net.sf.jsqlparser.expression.DateValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimeValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimestampValue => e.getValue
-      case e: net.sf.jsqlparser.expression.NullValue      => null
+      case _: net.sf.jsqlparser.expression.NullValue      => null
+      case t: net.sf.jsqlparser.expression.TimeKeyExpression =>
+        t.getStringValue.toUpperCase match {
+          case "CURRENT_TIMESTAMP" => new Date()
+          case "NOW"               => new Date()
+          case _                   => t.getStringValue
+        }
+      case e: net.sf.jsqlparser.schema.Column =>
+        val name = e.getColumnName
+        name.toIntOption.getOrElse(name.toBooleanOption.getOrElse(name))
       case _ =>
         throw new IllegalArgumentException("not supported value type")
     }
@@ -241,6 +297,14 @@ class MongoSqlQueryHolder {
         }
         val functionName = if (e.isNot) "$nin" else "$in"
         queryMap.put(e.getLeftExpression.toString, Map(functionName -> value))
+      case e: LikeExpression =>
+        val value = Map("$regex" -> e.getRightExpression.toString.replace("%", "(.*?)"), "$options" -> "i")
+        if (e.isNot) {
+          queryMap.put(e.getLeftExpression.toString, Map("$not" -> value))
+        }
+        else {
+          queryMap.put(e.getLeftExpression.toString, value)
+        }
       case e: IsNullExpression =>
         if (e.isNot) {
           queryMap.put(e.getLeftExpression.toString, Map("$ne" -> null))
@@ -257,28 +321,65 @@ class MongoSqlQueryHolder {
     select.getSelectBody match {
       case plainSelect: PlainSelect =>
         val selectItems = Option(plainSelect.getSelectItems).map(_.asScala).getOrElse(List.empty)
-        val aliasList   = ArrayBuffer[String]()
+        val maybeDistinct = Option(plainSelect.getDistinct)
+
+        selectItems.foreach(sI => {
+          if (classOf[net.sf.jsqlparser.expression.Function].isAssignableFrom(sI.getExpression.getClass)) {
+            keepOneDocument = maybeDistinct.isEmpty
+          }
+        })
+        val aliasList = ArrayBuffer[String]()
         sqlCommandType = SQLCommandType.Select
-        Option(plainSelect.getGroupBy).foreach(gbEl => {
+        val maybeGroupByElement = Option(plainSelect.getGroupBy)
+        maybeGroupByElement.foreach(gbEl => {
           val groupBy = gbEl.getGroupByExpressionList.getExpressions.asScala.map(_.toString).toList
           val groupId = mutable.Map[String, Any]()
           val group   = mutable.Map[String, Any]()
           groupBy.foreach(g => groupId += g -> ("$" + g))
           selectItems.foreach { case e: SelectItem[Expression] =>
             val expressionName = e.getExpression.toString
-            if (expressionName.contains("count")) {
+            if (expressionName.toLowerCase().contains("count")) {
               group += expressionName -> Map("$sum" -> 1)
             }
             else {
               if (!groupBy.contains(expressionName)) {
                 val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-                group += expressionName -> Map(espr.head -> espr.last)
+                if (espr.head.equalsIgnoreCase("max")) {
+                  group += expressionName -> Map(espr.head -> espr.last)
+                }
+                else {
+                  group += expressionName -> Map(espr.head -> espr.last)
+                }
               }
             }
           }
           val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys.map(s => s -> Map("$first" -> ("$" + s))).toMap
           aggregatePipeline += Map("$group" -> groupMap)
         })
+        if (maybeGroupByElement.isEmpty && keepOneDocument) {
+          val group = mutable.Map[String, Any]()
+          val idGroupMap = mutable.Map()
+          selectItems.foreach { case se: SelectItem[Expression] =>
+            val expressionName = se.getExpression.toString
+            if (expressionName.toLowerCase().contains("count")) {
+              group += expressionName -> Map("$sum" -> 1)
+            }
+            else {
+              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
+              val functionName: String = espr.head.toLowerCase match {
+                case "$max" => "$last"
+                case "$min" => "$first"
+                case _      => espr.head
+              }
+              val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
+              group += expressionName -> expression
+            }
+            keysForEmptyDocument += Option(se.getAlias).map(_.getName).getOrElse(expressionName)
+          }
+
+          val groupMap = Map("_id" -> idGroupMap) ++ group.toMap
+          aggregatePipeline += Map("$group" -> groupMap)
+        }
         def convertFromItemToTable(fromItem: FromItem): Table = {
           val tableName = Option(fromItem.getAlias).map(a => fromItem.toString.replace(a.toString, "")).getOrElse(fromItem).toString
           new Table(tableName)
@@ -394,7 +495,7 @@ class MongoSqlQueryHolder {
             "$replaceWith" -> Map("$mergeObjects" -> aliasList.map(string => if (string.startsWith("$")) string else "$" + string).toList)
           )
         }
-        Option(plainSelect.getDistinct).foreach { distinct =>
+        maybeDistinct.foreach { distinct =>
           val groupMap: mutable.Map[String, Any] = mutable.Map()
           selectItems.foreach { case e: SelectItem[Expression] =>
             val expressionName = e.getExpression.toString
@@ -451,7 +552,7 @@ class MongoSqlQueryHolder {
           singleDocumentCreated = true
         }
         catch {
-          case _: Throwable =>
+          case t: Throwable =>
             throw new IllegalArgumentException("not supported expression list")
         }
     }

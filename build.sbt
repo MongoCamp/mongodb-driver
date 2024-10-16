@@ -101,7 +101,7 @@ libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
 libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.9"
 
-libraryDependencies += "org.postgresql" % "postgresql" % "42.7.3"
+libraryDependencies += "org.liquibase" % "liquibase-core" % "4.28.0" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 

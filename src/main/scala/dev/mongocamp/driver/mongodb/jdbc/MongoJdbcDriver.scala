@@ -11,10 +11,12 @@ import java.util.logging.Logger
 import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 class MongoJdbcDriver extends java.sql.Driver {
+  private val propertyInfoHelper = new MongodbJdbcDriverPropertyInfoHelper()
 
   private lazy val semVer = new Semver(BuildInfo.version)
 
-  /** Connect to the database using a URL like : jdbc:mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]] The
+  /**
+   *  Connect to the database using a URL like : jdbc:mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]] The
     * URL excepting the jdbc: prefix is passed as it is to the MongoDb native Java driver.
     */
   override def connect(url: String, info: Properties): Connection = {
@@ -23,19 +25,21 @@ class MongoJdbcDriver extends java.sql.Driver {
     }
 
     val connectionUrl = url.replaceFirst("^jdbc:", "")
-    val username      = Option(info.getProperty("user")).filter(_.trim.nonEmpty)
-    val password      = Option(info.getProperty("password")).filter(_.trim.nonEmpty)
+    val username      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthUser)).filter(_.trim.nonEmpty)
+    val password      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthPassword)).filter(_.trim.nonEmpty)
 
     val string = new ConnectionString(connectionUrl)
+    val database = Option(string.getDatabase).getOrElse(Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.Database)).getOrElse("admin"))
+    val authDb = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse(Option(string.getDatabase).getOrElse("admin"))
     val provider = DatabaseProvider(
       MongoConfig(
-        string.getDatabase,
+        database,
         MongoConfig.DefaultHost,
         MongoConfig.DefaultPort,
-        string.getApplicationName,
+        Option(string.getApplicationName).filter(_.trim.nonEmpty).getOrElse(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.ApplicationName)),
         username,
         password,
-        string.getDatabase,
+        authDb,
         serverAddressList = string.getHosts.asScala.toList.map(h => new ServerAddress(h))
       )
     )
@@ -47,7 +51,7 @@ class MongoJdbcDriver extends java.sql.Driver {
     internalUrl.startsWith("mongodb://") || internalUrl.startsWith("mongodb+srv://")
   }
 
-  override def getPropertyInfo(url: String, info: Properties): Array[DriverPropertyInfo] = ???
+  override def getPropertyInfo(url: String, info: Properties): Array[DriverPropertyInfo] = propertyInfoHelper.getPropertyInfo
 
   override def getMajorVersion: Int = semVer.getMajor
 

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <property name="autoincrement_address_data" value="SEQ_ADDRESS_DATA.nextval" dbms="oracle, h2"/>
+    <property name="autoincrement_address_data" value="nextval('SEQ_ADDRESS_DATA')" dbms="postgresql"/>
+    <property name="autoincrement_address_data" value="max(ID)+1" dbms="mysql, mariadb, unsupported"/>
+
+    <property name="autoincrement_phone_data" value="SEQ_PHONE_DATA.nextval" dbms="oracle, h2"/>
+    <property name="autoincrement_phone_data" value="nextval('SEQ_PHONE_DATA')" dbms="postgresql"/>
+    <property name="autoincrement_phone_data" value="max(ID)+1" dbms="mysql, mariadb, unsupported"/>
+
+
+    <changeSet id="create-address-data" author="UNIT_TEST">
+        <preConditions>
+            <tableExists tableName="ADDRESSBOOK_ENTRIES"/>
+        </preConditions>
+
+
+        <createTable tableName="ADDRESS_DATA">
+            <column name="ID" type="${id_type}">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ENTRY_ID" type="${id_type}">
+                <!--constraints references="addressbook_entries.ID"/-->
+            </column>
+            <column name="STREET_NAME" type="VARCHAR(64)"/>
+            <column name="STREET_NUMBER" type="VARCHAR(64)"/>
+            <column name="POSTCODE" type="NUMERIC(5)"/>
+            <column name="CITY" type="VARCHAR(64)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-address-data-sequence" dbms="postgresql, oracle, h2" author="UNIT_TEST">
+        <createSequence sequenceName="SEQ_ADDRESS_DATA"/>
+    </changeSet>
+
+
+    <changeSet id="remove-address-data" author="UNIT_TEST">
+        <preConditions>
+            <tableExists tableName="ADDRESS_DATA"/>
+        </preConditions>
+
+        <dropColumn tableName="ADDRESSBOOK_ENTRIES" columnName="street_name"/>
+        <dropColumn tableName="ADDRESSBOOK_ENTRIES" columnName="street_number"/>
+        <dropColumn tableName="ADDRESSBOOK_ENTRIES" columnName="postcode"/>
+        <dropColumn tableName="ADDRESSBOOK_ENTRIES" columnName="city"/>
+
+        <rollback>
+            <addColumn tableName="ADDRESSBOOK_ENTRIES">
+                <column name="STREET_NAME" type="VARCHAR(64)"/>
+                <column name="STREET_NUMBER" type="VARCHAR(64)"/>
+                <column name="POSTCODE" type="NUMERIC(5)"/>
+                <column name="CITY" type="VARCHAR(64)"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create-phone-data" author="UNIT_TEST">
+        <preConditions>
+            <tableExists tableName="ADDRESSBOOK_ENTRIES"/>
+        </preConditions>
+
+        <createTable tableName="PHONE_DATA">
+            <column name="ID" type="${id_type}">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ENTRY_ID" type="${id_type}"/>
+            <column name="PHONE" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-phone-data-sequence" dbms="postgresql, oracle, h2" author="UNIT_TEST">
+        <createSequence sequenceName="SEQ_PHONE_DATA"/>
+    </changeSet>
+
+    <changeSet id="remove-phone-data" author="UNIT_TEST">
+        <preConditions>
+            <tableExists tableName="PHONE_DATA"/>
+        </preConditions>
+
+        <dropColumn tableName="ADDRESSBOOK_ENTRIES" columnName="phone"/>
+
+        <rollback>
+            <addColumn tableName="ADDRESSBOOK_ENTRIES">
+                <column name="PHONE" type="BIGINT"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

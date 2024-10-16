@@ -10,6 +10,7 @@ import org.mongodb.scala.model.Sorts.ascending
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeEach
 
+import java.sql.SQLException
 import scala.concurrent.duration.DurationInt
 
 class OtherSqlSpec extends PersonSpecification with BeforeEach{
@@ -46,6 +47,17 @@ class OtherSqlSpec extends PersonSpecification with BeforeEach{
       grade mustEqual 0
       val collections = TestDatabase.provider.collectionNames()
       collections must not contain "universityGrades"
+    }
+
+    "catch sql error on converting sql" in {
+      var errorCaught = false
+      try {
+        MongoSqlQueryHolder("blub from universityGrades;")
+      } catch {
+        case _: SQLException =>
+          errorCaught = true
+      }
+      errorCaught mustEqual true
     }
 
     "truncate collection" in {
@@ -99,7 +111,8 @@ class OtherSqlSpec extends PersonSpecification with BeforeEach{
       val queryConverter = MongoSqlQueryHolder("show tables;")
       val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
       selectResponse.size must be greaterThanOrEqualTo(1)
-      selectResponse.head.getStringValue("name") mustEqual "mongo-sync-log"
+      val filteredDocuments = selectResponse.filter(d => d.getStringValue("name").equalsIgnoreCase("people"))
+      filteredDocuments.head.getStringValue("name") mustEqual "people"
     }
 
     "show databases" in {
