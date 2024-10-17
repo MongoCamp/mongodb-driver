@@ -8,7 +8,7 @@ import org.mongodb.scala.Document
 
 import java.util.Date
 
-trait CirceSchema {
+trait CirceSchema extends CirceProductSchema {
 
   implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
     override def apply(a: Date): Json = Encoder.encodeString.apply(a.toInstant.toString)
@@ -136,11 +136,11 @@ trait CirceSchema {
             .toList: _*
         )
       case product: Product =>
-        val productElementNames = product.productElementNames.toList
-        val fieldMap = productElementNames
+        val productElementKeys =  productElementNames(product).toList
+        val fieldMap = productElementKeys
           .map(
             key => {
-              val index = productElementNames.indexOf(key)
+              val index = productElementKeys.indexOf(key)
               (key, product.productElement(index))
             }
           )
@@ -158,5 +158,8 @@ trait CirceSchema {
         Json.Null
     }
   }
+
+
+
 
 }

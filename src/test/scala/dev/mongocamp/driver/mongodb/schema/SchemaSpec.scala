@@ -19,7 +19,9 @@ class SchemaSpec extends Specification with Before {
       schemaJson.contains("\"title\":\"Friends\"") must beTrue
       schemaJson.contains("\"People\":") must beTrue
       schemaJson.contains("\"title\":\"People\"") must beTrue
-      schemaJson.contains("\"_id\":{\"pattern\":\"^([a-fA-F0-9]{2})+$\",\"type\":\"string\"}") must beTrue
+      val idPattern1 = schemaJson.contains("\"_id\":{\"pattern\":\"^([a-fA-F0-9]{2})+$\",\"type\":\"string\"}")
+      val idPattern2 = schemaJson.contains("\"_id\":{\"type\":\"string\",\"pattern\":\"^([a-fA-F0-9]{2})+$\"}")
+      (idPattern1 || idPattern2) must beTrue
       schemaJson.contains("\"isActive\":{\"type\":\"boolean\"}") must beTrue
     }
 

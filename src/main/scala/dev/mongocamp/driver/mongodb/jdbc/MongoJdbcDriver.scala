@@ -2,13 +2,13 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import com.vdurmont.semver4j.Semver
 import dev.mongocamp.driver.mongodb.BuildInfo
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
-import org.mongodb.scala.{ ConnectionString, ServerAddress }
+import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
+import org.mongodb.scala.{ConnectionString, ServerAddress}
 
-import java.sql.{ Connection, DriverPropertyInfo }
+import java.sql.{Connection, DriverPropertyInfo}
 import java.util.Properties
 import java.util.logging.Logger
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.jdk.CollectionConverters._
 
 class MongoJdbcDriver extends java.sql.Driver {
   private val propertyInfoHelper = new MongodbJdbcDriverPropertyInfoHelper()

@@ -2,18 +2,19 @@ package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
 import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
-import org.mongodb.scala.bson.{BsonArray, BsonBoolean, BsonDateTime, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString}
+import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
 import org.mongodb.scala.bson.collection.immutable.Document
 
-import java.io.{InputStream, Reader}
-import java.net.{URI, URL}
-import java.{sql, util}
-import java.sql.{Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp}
+import java.io.{ InputStream, Reader }
+import java.net.{ URI, URL }
+import java.{ sql, util }
+import java.sql.{ Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp }
 import java.util.Calendar
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 
 import java.nio.charset.StandardCharsets
+import scala.util.Try
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
   private var currentRow: Document = _
@@ -75,9 +76,9 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
     checkClosed()
     val value = currentRow.getValue(metaData.getColumnName(columnIndex))
     value match {
-      case b : BsonInt32 => b.longValue()
-      case b : BsonInt64 => b.longValue()
-      case _ => Option(value).flatMap(_.toString.toLongOption).getOrElse(0)
+      case b: BsonInt32 => b.longValue()
+      case b: BsonInt64 => b.longValue()
+      case _            => Option(value).flatMap(v => Try(v.toString.toLong).toOption).getOrElse(0)
     }
   }
 
@@ -632,7 +633,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getRef(columnLabel: String): Ref = sqlFeatureNotSupported()
 
-  override def updateRef(columnIndex: Int, x: Ref): Unit    = sqlFeatureNotSupported()
+  override def updateRef(columnIndex: Int, x: Ref): Unit = sqlFeatureNotSupported()
 
   override def updateRef(columnLabel: String, x: Ref): Unit = sqlFeatureNotSupported()
 
