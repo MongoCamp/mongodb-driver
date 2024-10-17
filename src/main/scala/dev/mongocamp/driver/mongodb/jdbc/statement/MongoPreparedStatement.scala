@@ -70,7 +70,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       val collectionName = Option(queryHolder.getCollection).map(c => connection.getDatabaseProvider.dao(c))
       if (!sql.toLowerCase().contains("_id")){
         response = response.map(doc => {
-          val newDoc = Document(doc - "_id")
+          val newDoc = doc - "_id"
           newDoc
         })
       }
@@ -507,7 +507,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     checkClosed()
     false
   }
-
+// todo
   override def unwrap[T](iface: Class[T]): T = null.asInstanceOf[T]
 
   override def isWrapperFor(iface: Class[_]): Boolean = false

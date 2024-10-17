@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 class MongoSqlQueryHolder {
   private val aggregatePipeline: ArrayBuffer[Document]       = ArrayBuffer()
@@ -236,7 +237,7 @@ class MongoSqlQueryHolder {
         }
       case e: net.sf.jsqlparser.schema.Column =>
         val name = e.getColumnName
-        name.toIntOption.getOrElse(name.toBooleanOption.getOrElse(name))
+        Try(name.toInt).toOption.getOrElse(Try(name.toBoolean).toOption.getOrElse(name))
       case _ =>
         throw new IllegalArgumentException("not supported value type")
     }
@@ -320,7 +321,7 @@ class MongoSqlQueryHolder {
   private def convertSelectStatement(select: Select): Unit = {
     select.getSelectBody match {
       case plainSelect: PlainSelect =>
-        val selectItems = Option(plainSelect.getSelectItems).map(_.asScala).getOrElse(List.empty)
+        val selectItems   = Option(plainSelect.getSelectItems).map(_.asScala).getOrElse(List.empty)
         val maybeDistinct = Option(plainSelect.getDistinct)
 
         selectItems.foreach(sI => {
@@ -357,7 +358,7 @@ class MongoSqlQueryHolder {
           aggregatePipeline += Map("$group" -> groupMap)
         })
         if (maybeGroupByElement.isEmpty && keepOneDocument) {
-          val group = mutable.Map[String, Any]()
+          val group      = mutable.Map[String, Any]()
           val idGroupMap = mutable.Map()
           selectItems.foreach { case se: SelectItem[Expression] =>
             val expressionName = se.getExpression.toString

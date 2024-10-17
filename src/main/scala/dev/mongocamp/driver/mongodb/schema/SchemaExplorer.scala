@@ -23,18 +23,16 @@ class SchemaExplorer {
 
   private def schemaAggregation(deepth: Int, sampleSize: Option[Int]): List[PipelineStage] = {
     val buffer = ArrayBuffer[PipelineStage]()
-    buffer.addAll(
-      sampleSize.map(size => PipelineStage("sample", Map("size" -> size)))
-    )
+    buffer ++= sampleSize.map(size => PipelineStage("sample", Map("size" -> size)))
 
-    buffer.addOne(PipelineStage("project", Map("_" -> processObject(deepth, 0, "$$ROOT", List()), "_id" -> 0)))
+    buffer += PipelineStage("project", Map("_" -> processObject(deepth, 0, "$$ROOT", List()), "_id" -> 0))
 
     (0 to deepth).foreach(_ => {
-      buffer.addOne(PipelineStage("unwind", Map("path" -> "$_", "preserveNullAndEmptyArrays" -> true)))
-      buffer.addOne(PipelineStage("replaceRoot", Map("newRoot" -> Map("$cond" -> List(Map("$eq" -> List("$_", null)), "$$ROOT", "$_")))))
+      buffer += PipelineStage("unwind", Map("path" -> "$_", "preserveNullAndEmptyArrays" -> true))
+      buffer += PipelineStage("replaceRoot", Map("newRoot" -> Map("$cond" -> List(Map("$eq" -> List("$_", null)), "$$ROOT", "$_"))))
     })
 
-    buffer.addAll(
+    buffer ++=
       List(
         PipelineStage("project", Map("_" -> 0)),
         PipelineStage("project", Map("l" -> "$$REMOVE", "n" -> 1, "t" -> 1, "v" -> "$$REMOVE")),
@@ -49,7 +47,6 @@ class SchemaExplorer {
         PipelineStage("group", Map("T" -> Map("$push" -> "$$ROOT"), "_id" -> Map("n" -> "$n"), "c" -> Map("$sum" -> "$c"))),
         PipelineStage("project", Map("T" -> 1, "_id" -> 0, "c" -> 1, "n" -> "$_id.n")),
         PipelineStage("sort", Map("n" -> 1))
-      )
     )
     buffer.toList
   }
@@ -79,7 +76,7 @@ class SchemaExplorer {
       .foreach(string => {
         var fieldName = string
         if (fieldName.startsWith(NameSeparator)) {
-          responseArray.addOne(NameSeparator)
+          responseArray += NameSeparator
           fieldName = fieldName.substring(1)
         }
         val hasEndingSeperator: Boolean = if (fieldName.endsWith(NameSeparator)) {
@@ -89,9 +86,9 @@ class SchemaExplorer {
         else {
           false
         }
-        responseArray.addOne(fieldName)
+        responseArray += fieldName
         if (hasEndingSeperator) {
-          responseArray.addOne(NameSeparator)
+          responseArray += NameSeparator
         }
       })
 
@@ -204,7 +201,7 @@ class SchemaExplorer {
         fieldsToJsonSchemaDefinition(map, fieldObjectName, field.subFields.toList)
       }
       if (field.percentageOfParent == 1.0) {
-        requiredFields.addOne(field.name)
+        requiredFields += field.name
       }
       if (field.fieldTypes.size == 1) {
         val t                  = field.fieldTypes.head
@@ -346,7 +343,8 @@ class SchemaExplorer {
   private def convertToBsonPipeline(pipeline: List[PipelineStage]): Seq[Bson] = {
     val response: Seq[Bson] = pipeline.map(element => {
       val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
-      Map(stage -> element.value)
+      val bson: Bson = Map(stage -> element.value)
+      bson
     })
     response
   }
@@ -402,7 +400,7 @@ class SchemaExplorer {
 
       val newField = SchemaAnalysisField(name.replace(ArrayItemMark, ArrayElementText), fullName, types, fieldCount, percentage, ArrayBuffer())
 
-      parent.subFields.addOne(newField)
+      parent.subFields.+=(newField)
       fieldsMap.put(s"$parentName$NameSeparator$name".replace("ROOT.", ""), newField)
     })
 

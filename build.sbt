@@ -40,9 +40,9 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.13.13", "2.12.17")
+crossScalaVersions := Seq("2.13.15", "2.12.20")
 
-scalaVersion := crossScalaVersions.value.head
+scalaVersion := crossScalaVersions.value.last
 
 scalacOptions += "-deprecation"
 
