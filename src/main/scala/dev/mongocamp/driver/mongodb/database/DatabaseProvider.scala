@@ -16,7 +16,17 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
   private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
   private var cachedClient: Option[MongoClient] = None
 
-  val DefaultDatabaseName: String = config.database
+  private var defaultDatabaseName: String = config.database
+
+  def DefaultDatabaseName: String = defaultDatabaseName
+
+  def connectionString = {
+    s"mongodb://${config.host}:${config.port}/${config.database}"
+  }
+
+  def setDefaultDatabaseName(databaseName: String): Unit = {
+    defaultDatabaseName = databaseName
+  }
 
   def client: MongoClient = {
     if (isClosed) {
@@ -40,7 +50,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def databaseNames: List[String] = databaseInfos.map(info => info.name)
 
-  def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Void] = database(databaseName).drop()
+  def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Unit] = database(databaseName).drop()
 
   def compactDatabase(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
     collectionNames(databaseName).flatMap(collectionName => dao(collectionName).compact.result(maxWaitPerCollection))
@@ -83,11 +93,9 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
     database(databaseName).runCommand(document)
   }
 
-  def collectionStatus(
-      collectionName: String,
-      databaseName: String = DefaultDatabaseName
-  ): Observable[CollectionStatus] =
+  def collectionStatus(collectionName: String, databaseName: String = DefaultDatabaseName): Observable[CollectionStatus] = {
     runCommand(Map("collStats" -> collectionName), databaseName).map(document => CollectionStatus(document))
+  }
 
   def collection[A](collectionName: String)(implicit ct: ClassTag[A]): MongoCollection[A] =
     if (collectionName.contains(DatabaseProvider.CollectionSeparator)) {

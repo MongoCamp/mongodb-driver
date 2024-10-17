@@ -158,8 +158,9 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
 
 ## Run Tests
 ```shell
-  docker run --publish 27017:27017  mongocamp/mongodb:latest;
-  sbt test;
+docker run -d --publish 27017:27017 --name mongodb  mongocamp/mongodb:latest; 
+sbt test; 
+docker rm -f mongodb;
 ```
 
 ## Supporters

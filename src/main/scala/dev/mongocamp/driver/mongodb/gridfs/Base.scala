@@ -18,12 +18,13 @@ abstract class Base extends LazyLogging {
 
   def createMetadataKey(key: String): String = {
     var metadataKey = key
-    if (!metadataKey.startsWith("metadata"))
+    if (!metadataKey.startsWith("metadata")) {
       metadataKey = "%s.%s".format("metadata", key)
+    }
     metadataKey
   }
 
-  def drop(): Observable[Void] = gridfsBucket.drop()
+  def drop(): Observable[Unit] = gridfsBucket.drop()
 
   def bucketName: String = gridfsBucket.bucketName
 
@@ -35,37 +36,24 @@ abstract class Base extends LazyLogging {
 
   def readConcern: ReadConcern = gridfsBucket.readConcern
 
-  def upload(
-      fileName: String,
-      source: Observable[ByteBuffer],
-      metadata: AnyRef = Document(),
-      chunkSizeBytes: Int = 1024 * 256
-  ): Observable[ObjectId] = {
+  def upload(fileName: String, source: Observable[ByteBuffer], metadata: AnyRef = Document(), chunkSizeBytes: Int = 1024 * 256): Observable[ObjectId] = {
     val metadataDocument = {
       metadata match {
         case document: Document => document
         case _                  => Converter.toDocument(metadata)
       }
     }
-    val options: GridFSUploadOptions = new GridFSUploadOptions()
-      .chunkSizeBytes(chunkSizeBytes)
-      .metadata(metadataDocument)
+    val options: GridFSUploadOptions = new GridFSUploadOptions().chunkSizeBytes(chunkSizeBytes).metadata(metadataDocument)
     gridfsBucket.uploadFromObservable(fileName, source, options)
   }
 
-  def uploadFile(
-      fileName: String,
-      file: File,
-      metadata: AnyRef = Document(),
-      chunkSizeBytes: Int = 1204 * 256
-  ): Observable[ObjectId] =
+  def uploadFile(fileName: String, file: File, metadata: AnyRef = Document(), chunkSizeBytes: Int = 1204 * 256): Observable[ObjectId] = {
     upload(fileName, GridFSStreamObservable(file.newInputStream, chunkSizeBytes), metadata, chunkSizeBytes)
+  }
 
-  def download(oid: ObjectId): GridFSDownloadObservable =
-    gridfsBucket.downloadToObservable(oid)
+  def download(oid: ObjectId): GridFSDownloadObservable = gridfsBucket.downloadToObservable(oid)
 
-  def download(id: ObjectId, file: File): GridFSStreamObserver =
-    download(id, file.newOutputStream)
+  def download(id: ObjectId, file: File): GridFSStreamObserver = download(id, file.newOutputStream)
 
   def downloadFileResult(id: ObjectId, file: File): Long = streamObserverResult(download(id, file))
 
@@ -76,8 +64,7 @@ abstract class Base extends LazyLogging {
     observer
   }
 
-  def downloadStreamResult(id: ObjectId, outputStream: OutputStream): Long =
-    streamObserverResult(download(id, outputStream))
+  def downloadStreamResult(id: ObjectId, outputStream: OutputStream): Long = streamObserverResult(download(id, outputStream))
 
   protected def streamObserverResult(observer: GridFSStreamObserver): Long = {
     while (!observer.completed.get) {}

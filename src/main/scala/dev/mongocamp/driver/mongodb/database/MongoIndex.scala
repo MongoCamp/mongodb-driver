@@ -51,7 +51,7 @@ object MongoIndex extends ObservableIncludes with LazyLogging {
             indexOptions.getOrElse("weights", Map()).asInstanceOf[Map[String, _]].keys.toList
           else
             indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]].keys.toList,
-          indexOptions.getOrElse("unique", false).asInstanceOf[Boolean],
+          indexOptions.getOrElse("unique", indexOptions("name").toString.equalsIgnoreCase("_id_")).asInstanceOf[Boolean],
           indexOptions.getOrElse("v", -1).asInstanceOf[Int],
           indexOptions.getOrElse("ns", "").toString,
           indexOptions.getOrElse("key", Map).asInstanceOf[Map[String, _]],

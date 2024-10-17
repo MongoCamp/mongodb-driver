@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.sync
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.database.{ConfigHelper, DatabaseProvider}
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
 import org.mongodb.scala.Document
@@ -11,18 +11,6 @@ import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Updates._
 
 import java.util.Date
-
-object SyncStrategy extends Enumeration {
-  type SyncStrategy = Value
-  val SyncAll = Value
-}
-
-object SyncDirection extends Enumeration {
-  type SyncDirection = Value
-  val SourceToTarget, TargetToSource, TwoWay = Value
-}
-
-case class MongoSyncException(message: String) extends Exception(message)
 
 case class MongoSyncOperation(
     collectionName: String,
@@ -35,10 +23,8 @@ case class MongoSyncOperation(
 
   def excecute(source: DatabaseProvider, target: DatabaseProvider): List[MongoSyncResult] =
     try {
-      val sourceInfos: Seq[Document] =
-        source.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
-      val targetInfos: Seq[Document] =
-        target.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
+      val sourceInfos: Seq[Document] = source.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
+      val targetInfos: Seq[Document] = target.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
 
       if (SyncDirection.SourceToTarget == syncDirection) {
         val diff = sourceInfos.diff(targetInfos)
@@ -48,13 +34,15 @@ case class MongoSyncOperation(
         val diff = targetInfos.diff(sourceInfos)
         List(syncInternal(target, source, sourceInfos.size, diff))
       }
-      else if (SyncDirection.TwoWay == syncDirection)
+      else if (SyncDirection.TwoWay == syncDirection) {
         List(
           syncInternal(source, target, targetInfos.size, sourceInfos.diff(targetInfos)),
           syncInternal(target, source, sourceInfos.size, targetInfos.diff(sourceInfos))
         )
-      else
+      }
+      else {
         List(MongoSyncResult(collectionName))
+      }
     }
     catch {
       case e: Exception =>
@@ -87,7 +75,7 @@ case class MongoSyncOperation(
     MongoSyncResult(
       collectionName,
       syncDate,
-      true,
+      acknowleged = true,
       filteredDocumentsToSync.size,
       countBefore,
       countAfter,
@@ -100,29 +88,9 @@ object MongoSyncOperation extends ConfigHelper {
   val MaxWaitDefault = 600
   val MaxWait: Int   = intConfig(configPath = "dev.mongocamp.mongodb.sync", key = "maxWait", default = MaxWaitDefault)
 
-  val SyncColumnLastSync: String =
-    stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastSync", default = "_lastSync").get
-  val SyncColumnLastUpdate: String =
-    stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
+  val SyncColumnLastSync: String   = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastSync", default = "_lastSync").get
+  val SyncColumnLastUpdate: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
 
-  val WriteSyncLogOnMaster = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
-  val SyncLogTableName: String =
-    stringConfig(
-      configPath = "dev.mongocamp.mongodb.sync",
-      key = "syncLogTableName",
-      default = "mongodb-sync-log"
-    ).get
+  val WriteSyncLogOnMaster     = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
+  val SyncLogTableName: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncLogTableName", default = "mongodb-sync-log").get
 }
-
-//case class MongoSyncInfo(id: Any = new ObjectId(), syncDate: Date = new Date(), updateDate: Date = new Date())
-
-case class MongoSyncResult(
-    collectionName: String,
-    syncDate: Date = new Date(),
-    acknowleged: Boolean = false,
-    synced: Int = -1,
-    countBefore: Int = -1,
-    countAfter: Int = -1,
-    syncTime: Long = -1,
-    exception: Option[Exception] = None
-)

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <property name="now" value="now_test()" dbms="unsupported"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <property name="now" value="now()" dbms="mysql, mariadb, mongodb"/>
+    <property name="now" value="CURRENT_DATE()" dbms="h2"/>
+    <property name="now" value="now()::timestamp(0)" dbms="postgresql"/>
+
+    <property name="dateType" value="DATE_test" dbms="unsupported"  />
+    <property name="dateType" value="TIMESTAMP(3)" dbms="h2"/>
+    <property name="dateType" value="DATE" dbms="oracle"/>
+    <property name="dateType" value="timestamp" dbms="postgresql"/>
+    <property name="dateType" value="TIMESTAMP" dbms="mysql, mariadb"/>
+
+    <property name="id_type" value="INT(5)" dbms="unsupported" />
+    <property name="id_type" value="INT(10)" dbms="mysql, mariadb"/>
+    <property name="id_type" value="NUMBER(10,0)" dbms="postgresql, oracle, h2"/>
+
+    <include file="00-init.xml" relativeToChangelogFile="true"/>
+
+    <include file="02-add-not-null-constraint.xml" relativeToChangelogFile="true"/>
+    <include file="03-tag-database.xml" relativeToChangelogFile="true"/>
+    <include file="04-split-table.xml" relativeToChangelogFile="true"/>
+    <include file="05-add-foreign-keys.xml" relativeToChangelogFile="true"/>
+    <include file="06-change-column-type.xml" relativeToChangelogFile="true"/>
+    <include file="07-merge-columns.xml" relativeToChangelogFile="true"/>
+    <include file="08-create-view.xml" relativeToChangelogFile="true"/>
+    <include file="09-add-default-columns.xml" relativeToChangelogFile="true"/>
+    <include file="10-add-person.xml" relativeToChangelogFile="true"/>
+    <include file="11-add-note.xml" relativeToChangelogFile="true"/>
+    <include file="12-add-task-relation.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="add columns to ADDRESSBOOK_ENTRIES" author="UNIT_TEST">
+        <preConditions>
+            <tableExists tableName="ADDRESSBOOK_ENTRIES"/>
+        </preConditions>
+
+        <addColumn tableName="ADDRESSBOOK_ENTRIES">
+
+            <column name="BENUTZER_ANLAGE" type="VARCHAR2(50)" defaultValue="UNIT_TEST">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BENUTZER" type="VARCHAR2(50)" defaultValue="UNIT_TEST">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="DATUM_ANLAGE" type="${dateType}" defaultValueComputed="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATUM_LETZTE_AENDERUNG" type="${dateType}" defaultValueComputed="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATUM_GUELTIG_VON" type="${dateType}" defaultValueComputed="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATUM_GUELTIG_BIS" type="${dateType}"/>
+        </addColumn>
+
+
+
+    </changeSet>
+
+</databaseChangeLog>
