@@ -345,9 +345,9 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
             case "double" =>
               decimalDigits = Some(Int.MaxValue)
               Types.DOUBLE
-            case "array" => Types.ARRAY
-            case "bool"  => Types.BOOLEAN
-            case "object"  => Types.JAVA_OBJECT
+            case "array"  => Types.ARRAY
+            case "bool"   => Types.BOOLEAN
+            case "object" => Types.JAVA_OBJECT
             case _ =>
               Types.VARCHAR
           }

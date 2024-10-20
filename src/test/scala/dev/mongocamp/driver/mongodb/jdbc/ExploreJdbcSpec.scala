@@ -1,30 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.MongoDAO
-import dev.mongocamp.driver.mongodb.dao.PersonSpecification
-import dev.mongocamp.driver.mongodb.model.{Grade, Score}
-import dev.mongocamp.driver.mongodb.test.TestDatabase
-import org.bson.types.ObjectId
-
-import java.sql.{DriverManager, ResultSet, Types}
-import java.util.Properties
-import scala.collection.mutable.ArrayBuffer
-import better.files.{File, Resource}
-import dev.mongocamp.driver.mongodb.{GenericObservable, MongoDAO}
-import dev.mongocamp.driver.mongodb.dao.PersonSpecification
-import dev.mongocamp.driver.mongodb.model.{Grade, Score}
-import dev.mongocamp.driver.mongodb.test.TestDatabase
-import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
-import org.bson.types.ObjectId
-import org.specs2.mutable.Specification
-import org.specs2.specification.{BeforeAll, BeforeEach}
+import java.sql.Types
 
 class ExploreJdbcSpec extends BaseJdbcSpec {
+
+  val schemaPattern: String = "mongocamp-unit-test$"
 
   "Jdbc Connection" should {
 
     "get table names" in {
-      val tableNames = connection.getMetaData.getTables("%", "mongocamp-unit-test", "", Array.empty)
+      val tableNames       = connection.getMetaData.getTables("%", schemaPattern, "", Array.empty)
       var tables           = 0
       var tablePersonFound = false
       while (tableNames.next()) {
@@ -40,8 +25,8 @@ class ExploreJdbcSpec extends BaseJdbcSpec {
         tables += 1
       }
       tables must beGreaterThanOrEqualTo(1)
-      val columnNames = connection.getMetaData.getColumns("%", "mongocamp-unit-test", "people", "")
-      var columns           = 0
+      val columnNames = connection.getMetaData.getColumns("%", schemaPattern, "people", "")
+      var columns     = 0
       while (columnNames.next()) {
         columnNames.getString("TABLE_CAT") must beEqualTo("mongodb")
         columnNames.getString("TABLE_NAME") must beEqualTo("people")
