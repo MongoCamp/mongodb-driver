@@ -58,21 +58,21 @@ object LuceneQueryConverter extends LazyLogging {
     val listOfOr    = ArrayBuffer[Map[String, Any]]()
     var nextTypeAnd = true
     subQueries.foreach(c => {
-      val queryMap    = getMongoDbSearchMap(c.getQuery, c.isProhibited, searchWithValueAndString)
+      val queryMap    = getMongoDbSearchMap(c.query(), c.isProhibited, searchWithValueAndString)
       var thisTypeAnd = true
 
-      if (c.getOccur == Occur.MUST) {
+      if (c.occur == Occur.MUST) {
         thisTypeAnd = true
       }
-      else if (c.getOccur == Occur.SHOULD) {
+      else if (c.occur == Occur.SHOULD) {
         thisTypeAnd = false
       }
-      else if (c.getOccur == Occur.MUST_NOT) {
+      else if (c.occur == Occur.MUST_NOT) {
         //                searchMapResponse ++= queryMap
       }
       else {
-        logger.error(s"Unexpected Occur <${c.getOccur.name()}>")
-        throw new NotSupportedException(s"${c.getOccur.name()} currently not supported")
+        logger.error(s"Unexpected Occur <${c.occur.name()}>")
+        throw new NotSupportedException(s"${c.occur.name()} currently not supported")
       }
 
       if (nextTypeAnd && thisTypeAnd) {

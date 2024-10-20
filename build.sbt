@@ -42,7 +42,7 @@ licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html
 
 crossScalaVersions := Seq("2.13.15", "2.12.20")
 
-scalaVersion := crossScalaVersions.value.last
+scalaVersion := crossScalaVersions.value.head
 
 scalacOptions += "-deprecation"
 
@@ -61,13 +61,13 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.5" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.9" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.5" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.11" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.7"
+libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
-val circeVersion = "0.14.6"
+val circeVersion = "0.14.10"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
@@ -75,13 +75,13 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.0.1"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.2.0"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.7" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-2" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-6" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.10.0"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.0.0"
 
 val MongoJavaServerVersion = "1.45.0"
 
@@ -99,9 +99,9 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
-libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.9"
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.0"
 
-libraryDependencies += "org.liquibase" % "liquibase-core" % "4.28.0" % Test
+libraryDependencies += "org.liquibase" % "liquibase-core" % "4.29.2" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
