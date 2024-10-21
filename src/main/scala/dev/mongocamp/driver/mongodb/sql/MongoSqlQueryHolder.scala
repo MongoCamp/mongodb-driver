@@ -6,12 +6,12 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
-import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
+import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
-import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
+import net.sf.jsqlparser.expression.{Expression, Parenthesis}
+import net.sf.jsqlparser.parser.{CCJSqlParser, StreamProvider}
 import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.UnsupportedStatement
+import net.sf.jsqlparser.statement.{ShowStatement, UnsupportedStatement}
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -19,7 +19,7 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.execute.Execute
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
+import net.sf.jsqlparser.statement.select.{FromItem, PlainSelect, Select, SelectItem}
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
@@ -27,7 +27,7 @@ import org.bson.conversions.Bson
 import org.h2.command.ddl.AlterTable
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{ Document, Observable, SingleObservable }
+import org.mongodb.scala.{Document, Observable, SingleObservable}
 
 import java.sql.SQLException
 import java.util.Date
@@ -112,15 +112,14 @@ class MongoSqlQueryHolder {
     else if (classOf[Alter].isAssignableFrom(statement.getClass)) {
       sqlCommandType = SQLCommandType.AlterTable
     }
-    else if (classOf[UnsupportedStatement].isAssignableFrom(statement.getClass)) {
-      val unsupportedStatement = statement.asInstanceOf[UnsupportedStatement]
-      val isShowDatabases      = unsupportedStatement.toString.toLowerCase.contains("show databases")
-      val isShowSchemas        = unsupportedStatement.toString.toLowerCase.contains("show schemas")
-      if (isShowDatabases | isShowSchemas) {
-        sqlCommandType = SQLCommandType.ShowDatabases
-      }
-      else {
-        throw new SqlCommandNotSupportedException(s"not supported sql command type <${statement.getClass.getSimpleName}>")
+    else if (classOf[ShowStatement].isAssignableFrom(statement.getClass)) {
+      val unsupportedStatement = statement.asInstanceOf[ShowStatement]
+      unsupportedStatement.getName.trim.toUpperCase match {
+        case "DATABASES" =>
+          sqlCommandType = SQLCommandType.ShowDatabases
+        case "SCHEMAS" =>
+          sqlCommandType = SQLCommandType.ShowDatabases
+        case _ =>
       }
     }
     else {
@@ -289,8 +288,8 @@ class MongoSqlQueryHolder {
         parseWhere(e.getLeftExpression, left)
         parseWhere(e.getRightExpression, right)
         queryMap.put("$and", List(left, right))
-      case e: Parenthesis =>
-        parseWhere(e.getExpression, queryMap)
+      case e: ParenthesedExpressionList[Expression] =>
+        e.asScala.foreach(ex => parseWhere(ex, queryMap))
       case e: InExpression =>
         val value = e.getRightExpression match {
           case l: ParenthesedExpressionList[Expression] => l.asScala.map(convertValue)
