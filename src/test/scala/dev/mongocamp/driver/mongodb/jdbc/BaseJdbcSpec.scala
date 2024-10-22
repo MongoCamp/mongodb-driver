@@ -12,6 +12,7 @@ class BaseJdbcSpec extends PersonSpecification {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
+    // #region register-driver
     val connectionProps = new Properties()
     val driver          = new MongoJdbcDriver()
     DriverManager.registerDriver(driver)
@@ -19,5 +20,7 @@ class BaseJdbcSpec extends PersonSpecification {
       "jdbc:mongodb://localhost:27017/mongocamp-unit-test?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000",
       connectionProps
     )
+    // #endregion register-driver
   }
+
 }

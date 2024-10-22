@@ -59,7 +59,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       new MongoDbResultSet(null, List.empty, 0)
     } else {
       var response  = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
-      if (response.isEmpty && queryHolder.selectFunctionCall) {
+      if (response.isEmpty && queryHolder.hasFunctionCallInSelect) {
         val emptyDocument = mutable.Map[String, Any]()
         queryHolder.getKeysForEmptyDocument.foreach(key => {
           emptyDocument.put(key, null)

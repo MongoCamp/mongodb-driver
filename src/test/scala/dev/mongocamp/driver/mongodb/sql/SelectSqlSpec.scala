@@ -2,7 +2,9 @@ package dev.mongocamp.driver.mongodb.sql
 
 import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.driver.mongodb.dao.PersonSpecification
+import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import dev.mongocamp.driver.mongodb.test.TestDatabase
+import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
 
 class SelectSqlSpec extends PersonSpecification {
 
@@ -46,6 +48,25 @@ class SelectSqlSpec extends PersonSpecification {
       selectResponse.size mustEqual 99
       selectResponse.head.getInteger("age") mustEqual 25
       selectResponse.head.getString("guid") mustEqual "a17be99a-8913-4bb6-8f14-16d4fa1b3559"
+    }
+
+    "and with count" in {
+      // #region initialize-query-holder
+      val queryConverter = MongoSqlQueryHolder("select count(*) as anz from people where age < 30 and (age < 30 or age > 30) order by id asc")
+      // #endregion initialize-query-holder
+      // #region query-holder-run
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      // #endregion query-holder-run
+      selectResponse.head.getInteger("anz") mustEqual 99
+      // #region extract-collection
+      queryConverter.getCollection mustEqual "people"
+      // #endregion extract-collection
+      // #region select-keys
+      queryConverter.getKeysForEmptyDocument mustEqual Set("anz")
+      // #endregion select-keys
+      // #region has-function-call
+      queryConverter.hasFunctionCallInSelect mustEqual true
+      // #endregion has-function-call
     }
 
     "simple select all sql" in {

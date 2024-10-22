@@ -213,7 +213,7 @@ class MongoSqlQueryHolder {
 
   def getKeysForEmptyDocument: Set[String] = keysForEmptyDocument.toSet
 
-  def selectFunctionCall: Boolean = keepOneDocument
+  def hasFunctionCallInSelect: Boolean = keepOneDocument
 
   private def getUpdateOrDeleteFilter: Bson = {
     updateOrDeleteFilter.getOrElse(Map.empty).toMap
@@ -330,56 +330,6 @@ class MongoSqlQueryHolder {
         })
         val aliasList = ArrayBuffer[String]()
         sqlCommandType = SQLCommandType.Select
-        val maybeGroupByElement = Option(plainSelect.getGroupBy)
-        maybeGroupByElement.foreach(gbEl => {
-          val groupBy = gbEl.getGroupByExpressionList.getExpressions.asScala.map(_.toString).toList
-          val groupId = mutable.Map[String, Any]()
-          val group   = mutable.Map[String, Any]()
-          groupBy.foreach(g => groupId += g -> ("$" + g))
-          selectItems.foreach { case e: SelectItem[Expression] =>
-            val expressionName = e.getExpression.toString
-            if (expressionName.toLowerCase().contains("count")) {
-              group += expressionName -> Map("$sum" -> 1)
-            }
-            else {
-              if (!groupBy.contains(expressionName)) {
-                val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-                if (espr.head.equalsIgnoreCase("max")) {
-                  group += expressionName -> Map(espr.head -> espr.last)
-                }
-                else {
-                  group += expressionName -> Map(espr.head -> espr.last)
-                }
-              }
-            }
-          }
-          val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys.map(s => s -> Map("$first" -> ("$" + s))).toMap
-          aggregatePipeline += Map("$group" -> groupMap)
-        })
-        if (maybeGroupByElement.isEmpty && keepOneDocument) {
-          val group      = mutable.Map[String, Any]()
-          val idGroupMap = mutable.Map()
-          selectItems.foreach { case se: SelectItem[Expression] =>
-            val expressionName = se.getExpression.toString
-            if (expressionName.toLowerCase().contains("count")) {
-              group += expressionName -> Map("$sum" -> 1)
-            }
-            else {
-              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-              val functionName: String = espr.head.toLowerCase match {
-                case "$max" => "$last"
-                case "$min" => "$first"
-                case _      => espr.head
-              }
-              val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
-              group += expressionName -> expression
-            }
-            keysForEmptyDocument += Option(se.getAlias).map(_.getName).getOrElse(expressionName)
-          }
-
-          val groupMap = Map("_id" -> idGroupMap) ++ group.toMap
-          aggregatePipeline += Map("$group" -> groupMap)
-        }
         def convertFromItemToTable(fromItem: FromItem): Table = {
           val tableName = Option(fromItem.getAlias).map(a => fromItem.toString.replace(a.toString, "")).getOrElse(fromItem).toString
           new Table(tableName)
@@ -440,6 +390,56 @@ class MongoSqlQueryHolder {
           aggregatePipeline += Map(
             "$match" -> filterQuery
           )
+        }
+        val maybeGroupByElement = Option(plainSelect.getGroupBy)
+        maybeGroupByElement.foreach(gbEl => {
+          val groupBy = gbEl.getGroupByExpressionList.getExpressions.asScala.map(_.toString).toList
+          val groupId = mutable.Map[String, Any]()
+          val group   = mutable.Map[String, Any]()
+          groupBy.foreach(g => groupId += g -> ("$" + g))
+          selectItems.foreach { case e: SelectItem[Expression] =>
+            val expressionName = e.getExpression.toString
+            if (expressionName.toLowerCase().contains("count")) {
+              group += expressionName -> Map("$sum" -> 1)
+            }
+            else {
+              if (!groupBy.contains(expressionName)) {
+                val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
+                if (espr.head.equalsIgnoreCase("max")) {
+                  group += expressionName -> Map(espr.head -> espr.last)
+                }
+                else {
+                  group += expressionName -> Map(espr.head -> espr.last)
+                }
+              }
+            }
+          }
+          val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys.map(s => s -> Map("$first" -> ("$" + s))).toMap
+          aggregatePipeline += Map("$group" -> groupMap)
+        })
+        if (maybeGroupByElement.isEmpty && keepOneDocument) {
+          val group      = mutable.Map[String, Any]()
+          val idGroupMap = mutable.Map()
+          selectItems.foreach { case se: SelectItem[Expression] =>
+            val expressionName = se.getExpression.toString
+            if (expressionName.toLowerCase().contains("count")) {
+              group += expressionName -> Map("$sum" -> 1)
+            }
+            else {
+              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
+              val functionName: String = espr.head.toLowerCase match {
+                case "$max" => "$last"
+                case "$min" => "$first"
+                case _      => espr.head
+              }
+              val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
+              group += expressionName -> expression
+            }
+            keysForEmptyDocument += Option(se.getAlias).map(_.getName).getOrElse(expressionName)
+          }
+
+          val groupMap = Map("_id" -> idGroupMap) ++ group.toMap
+          aggregatePipeline += Map("$group" -> groupMap)
         }
         Option(plainSelect.getOrderByElements).foreach { orderBy =>
           aggregatePipeline += Map(
