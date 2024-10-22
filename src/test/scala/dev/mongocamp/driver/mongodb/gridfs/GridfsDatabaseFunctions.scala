@@ -10,18 +10,15 @@ import org.mongodb.scala.result.UpdateResult
 
 trait GridfsDatabaseFunctions extends MongoImplicits {
 
-  def createIndexOnImages(key: String): String =
-    ImageFilesDAO.createMetadataIndex(key)
+  def createIndexOnImages(key: String): String = ImageFilesDAO.createMetadataIndex(key)
 
-  def dropIndexOnImages(key: String): Void =
-    ImageFilesDAO.dropIndexForName(key)
+  def dropIndexOnImages(key: String): Unit = ImageFilesDAO.dropIndexForName(key)
 
-  def deleteImage(id: ObjectId): Void =
-    ImageFilesDAO.deleteOne(id)
+  def deleteImage(id: ObjectId): Unit = ImageFilesDAO.deleteOne(id)
 
-  def dropImages: Void = ImageFilesDAO.drop()
+  def dropImages(): Unit = ImageFilesDAO.drop().result(60)
 
-  def imagesCount: Long = ImageFilesDAO.count()
+  def imagesCount: Long = ImageFilesDAO.count().result(60)
 
   def insertImage(path: String, metadata: AnyRef): ObjectId = {
     val file = File(path)

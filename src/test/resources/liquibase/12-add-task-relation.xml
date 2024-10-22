@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="create-task" author="UNIT_TEST">
+
+    <createTable tableName="TASK">
+      <column name="ID"  type="${id_type}">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="SUBJECT" type="VARCHAR(64)"/>
+      <column name="TEXT" type="VARCHAR(255)"/>
+      <column name="REFERENCE_ID"  type="${id_type}"/>
+      <column name="REFERENCE_TABLE" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="task-reference-id-index" author="UNIT_TEST">
+    <createIndex indexName="REFERENCE_ID_IDX" tableName="TASK" unique="false">
+      <column name="REFERENCE_ID"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="create-relation-table" author="UNIT_TEST">
+    <createTable tableName="RELATION">
+      <column name="ID"  type="${id_type}">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="REFERENCE_TYPE" type="VARCHAR(64)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REFERENCE_TABLE" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SOURCE_ID" type="${id_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="TARGET_ID" type="${id_type}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CONTEXT" type="VARCHAR(255)">
+        <constraints/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="relation-reference-type-index" author="UNIT_TEST">
+    <createIndex indexName="REFERENCE_TYPE_IDX" tableName="RELATION" unique="false">
+      <column name="REFERENCE_TYPE"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="relation-reference-table-index" author="UNIT_TEST">
+    <createIndex indexName="REFERENCE_TABLE_IDX" tableName="RELATION" unique="false">
+      <column name="REFERENCE_TABLE"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="relation-source-index" author="UNIT_TEST">
+    <createIndex indexName="SOURCE_ID_IDX" tableName="RELATION" unique="false">
+      <column name="SOURCE_ID"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="relation-target-index" author="UNIT_TEST">
+    <createIndex indexName="TARGET_ID_IDX" tableName="RELATION" unique="false">
+      <column name="TARGET_ID"/>
+    </createIndex>
+  </changeSet>
+
+  <changeSet id="add-data-to-tasks" author="UNIT_TEST">
+    <insert tableName="TASK">
+      <column name="ID" value="1"/>
+      <column name="SUBJECT" value="Task 1"/>
+      <column name="TEXT" value="Task 1 Detail Information"/>
+      <column name="REFERENCE_ID" value="7"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="2"/>
+      <column name="SUBJECT" value="Task 2"/>
+      <column name="TEXT" value="Task 2 Detail Information"/>
+      <column name="REFERENCE_ID" value="6"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="3"/>
+      <column name="SUBJECT" value="Task 3"/>
+      <column name="TEXT" value="Task 3 Detail Information"/>
+      <column name="REFERENCE_ID" value="6"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="4"/>
+      <column name="SUBJECT" value="Parent Task 1"/>
+      <column name="TEXT" value="Parent Task 1 Detail Information"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="5"/>
+      <column name="SUBJECT" value="Dependent Task 1"/>
+      <column name="TEXT" value="Dependent Task 1 Detail Information"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="6"/>
+      <column name="SUBJECT" value="Replaced BY Task 1"/>
+      <column name="TEXT" value="Replaced BY Task 1 Detail Information"/>
+    </insert>
+    <insert tableName="TASK">
+      <column name="ID" value="7"/>
+      <column name="SUBJECT" value="Followed BY Task 2"/>
+      <column name="TEXT" value="Followed BY Task 2 Detail Information"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="add-data-to-relations" author="UNIT_TEST">
+    <insert tableName="RELATION">
+      <column name="ID" value="1"/>
+      <column name="REFERENCE_TYPE" value="RELATES_TO"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="1"/>
+      <column name="TARGET_ID" value="2"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="2"/>
+      <column name="REFERENCE_TYPE" value="RELATES_TO"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="1"/>
+      <column name="TARGET_ID" value="3"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="3"/>
+      <column name="REFERENCE_TYPE" value="RELATES_TO"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="2"/>
+      <column name="TARGET_ID" value="1"/>
+      <column name="CONTEXT" value="SPECIAL_CONTEXT"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="4"/>
+      <column name="REFERENCE_TYPE" value="CHILD_OF"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="1"/>
+      <column name="TARGET_ID" value="4"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="5"/>
+      <column name="REFERENCE_TYPE" value="CHILD_OF"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="2"/>
+      <column name="TARGET_ID" value="4"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="6"/>
+      <column name="REFERENCE_TYPE" value="REQUIRED_BY"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="6"/>
+      <column name="TARGET_ID" value="3"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="7"/>
+      <column name="REFERENCE_TYPE" value="REPLACED_BY"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="1"/>
+      <column name="TARGET_ID" value="6"/>
+    </insert>
+    <insert tableName="RELATION">
+      <column name="ID" value="8"/>
+      <column name="REFERENCE_TYPE" value="FOLLOWED_BY"/>
+      <column name="REFERENCE_TABLE" value="TASK"/>
+      <column name="SOURCE_ID" value="2"/>
+      <column name="TARGET_ID" value="7"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
