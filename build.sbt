@@ -75,19 +75,20 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.2.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.1.4"
+
+// MongoDB 5.2.0 not supported for de.bwaldvogel -> https://github.com/bwaldvogel/mongo-java-server/issues/233
+val MongoJavaServerVersion = "1.45.0"
+
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
+
+libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.7" % Provided
 
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-6" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.0.0"
-
-val MongoJavaServerVersion = "1.45.0"
-
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
-
-libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2"
 
