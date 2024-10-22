@@ -40,7 +40,7 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.13.13", "2.12.17")
+crossScalaVersions := Seq("2.13.15", "2.12.20")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -61,33 +61,34 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 // Test
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.5" % Test
+libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.9" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.0" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.11" % Test
 
-libraryDependencies += "joda-time" % "joda-time" % "2.12.7" % Test
+libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
-val circeVersion = "0.14.6"
+val circeVersion = "0.14.10"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
-).map(_ % circeVersion % Test)
+).map(_ % circeVersion)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "4.11.1"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.1.4"
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.5" % Provided
-
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11" % Provided
-
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "9.10.0"
-
-val MongoJavaServerVersion = "1.44.0"
+// MongoDB 5.2.0 not supported for de.bwaldvogel -> https://github.com/bwaldvogel/mongo-java-server/issues/233
+val MongoJavaServerVersion = "1.45.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
+
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.7" % Provided
+
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-6" % Provided
+
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.0.0"
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2"
 
@@ -95,7 +96,13 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.3"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
+
+libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
+
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.0"
+
+libraryDependencies += "org.liquibase" % "liquibase-core" % "4.29.2" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 

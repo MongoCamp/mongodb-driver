@@ -14,11 +14,13 @@ hero:
        link: /documentation/getting-started
      - theme: alt
        text: View on GitHub
-       link: https://github.com/vuejs/vitepress
+       link: https://github.com/MongoCamp/mongodb-driver
 
 features:
   - title: Easy Config
     details: Easy Database Config with provider and MongoConfig
+  - title: SQL Support
+    details: Support for SQL Queries on MongoDB and JDBC Driver
   - title: DAO Pattern
     details: Implement the DAO Pattern for simple MongoDB usage [MongoDAO.
   - title: Pagination

@@ -16,8 +16,8 @@ import scala.jdk.CollectionConverters._
 
 object LuceneQueryConverter extends LazyLogging {
 
-  def toDocument(query: Query): Bson = {
-    getMongoDbSearchMap(query, false)
+  def toDocument(query: Query, searchWithValueAndString: Boolean = false): Bson = {
+    getMongoDbSearchMap(query, negated = false, searchWithValueAndString)
   }
 
   def parse(queryString: String, defaultField: String): Query = {
@@ -30,59 +30,59 @@ object LuceneQueryConverter extends LazyLogging {
     query
   }
 
-  private def getMongoDbSearchMap(query: Query, negated: Boolean): Map[String, Any] = {
+  private def getMongoDbSearchMap(query: Query, negated: Boolean, searchWithValueAndString: Boolean): Map[String, Any] = {
     val searchMapResponse = mutable.Map[String, Any]()
     query match {
-      case booleanQuery: BooleanQuery =>
-        appendBooleanQueryToSearchMap(searchMapResponse, booleanQuery)
-      case termRangeQuery: TermRangeQuery =>
-        appendTermRangeQueryToSearchMap(negated, searchMapResponse, termRangeQuery)
-      case termQuery: TermQuery =>
-        appendTermQueryToSearchMap(negated, searchMapResponse, termQuery)
-      case query: PrefixQuery =>
-        appendPrefixQueryToSearchMap(negated, searchMapResponse, query)
-      case query: WildcardQuery =>
-        appendWildCardQueryToSearchMap(negated, searchMapResponse, query)
-      case query: PhraseQuery =>
-        appendPhraseQueryToSearchMap(negated, searchMapResponse, query)
+      case booleanQuery: BooleanQuery     => appendBooleanQueryToSearchMap(searchMapResponse, booleanQuery, searchWithValueAndString)
+      case termRangeQuery: TermRangeQuery => appendTermRangeQueryToSearchMap(negated, searchMapResponse, termRangeQuery, searchWithValueAndString)
+      case termQuery: TermQuery           => appendTermQueryToSearchMap(negated, searchMapResponse, termQuery, searchWithValueAndString)
+      case query: PrefixQuery             => appendPrefixQueryToSearchMap(negated, searchMapResponse, query)
+      case query: WildcardQuery           => appendWildCardQueryToSearchMap(negated, searchMapResponse, query)
+      case query: PhraseQuery             => appendPhraseQueryToSearchMap(negated, searchMapResponse, query)
       case a: Any =>
-        logger.error(s"Unexpected QueryType <${a.getClass.getSimpleName}>")
+        val simpleNameOption = Option(a.getClass.getSimpleName).filterNot(s => s.trim.equalsIgnoreCase(""))
+        if (simpleNameOption.isDefined) {
+          logger.error(s"Unexpected QueryType <${a.getClass.getSimpleName}>")
+        }
     }
     searchMapResponse.toMap
-
   }
-  private def appendBooleanQueryToSearchMap(searchMapResponse: mutable.Map[String, Any], booleanQuery: BooleanQuery): Unit = {
+
+  private def appendBooleanQueryToSearchMap(
+      searchMapResponse: mutable.Map[String, Any],
+      booleanQuery: BooleanQuery,
+      searchWithValueAndString: Boolean
+  ): Unit = {
     val subQueries  = booleanQuery.clauses().asScala
     val listOfAnd   = ArrayBuffer[Map[String, Any]]()
     val listOfOr    = ArrayBuffer[Map[String, Any]]()
     var nextTypeAnd = true
-    subQueries
-      .foreach(c => {
-        val queryMap    = getMongoDbSearchMap(c.getQuery, c.isProhibited)
-        var thisTypeAnd = true
+    subQueries.foreach(c => {
+      val queryMap    = getMongoDbSearchMap(c.query(), c.isProhibited, searchWithValueAndString)
+      var thisTypeAnd = true
 
-        if (c.getOccur == Occur.MUST) {
-          thisTypeAnd = true
-        }
-        else if (c.getOccur == Occur.SHOULD) {
-          thisTypeAnd = false
-        }
-        else if (c.getOccur == Occur.MUST_NOT) {
-          //                searchMapResponse ++= queryMap
-        }
-        else {
-          logger.error(s"Unexpected Occur <${c.getOccur.name()}>")
-          throw new NotSupportedException(s"${c.getOccur.name()} currently not supported")
-        }
+      if (c.occur == Occur.MUST) {
+        thisTypeAnd = true
+      }
+      else if (c.occur == Occur.SHOULD) {
+        thisTypeAnd = false
+      }
+      else if (c.occur == Occur.MUST_NOT) {
+        //                searchMapResponse ++= queryMap
+      }
+      else {
+        logger.error(s"Unexpected Occur <${c.occur.name()}>")
+        throw new NotSupportedException(s"${c.occur.name()} currently not supported")
+      }
 
-        if (nextTypeAnd && thisTypeAnd) {
-          listOfAnd += queryMap
-        }
-        else {
-          listOfOr += queryMap
-        }
-        nextTypeAnd = thisTypeAnd
-      })
+      if (nextTypeAnd && thisTypeAnd) {
+        listOfAnd += queryMap
+      }
+      else {
+        listOfOr += queryMap
+      }
+      nextTypeAnd = thisTypeAnd
+    })
 
     if (listOfAnd.nonEmpty) {
       searchMapResponse.put("$and", listOfAnd.toList)
@@ -91,25 +91,77 @@ object LuceneQueryConverter extends LazyLogging {
       searchMapResponse.put("$or", listOfOr.toList)
     }
   }
-  private def appendTermRangeQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], termRangeQuery: TermRangeQuery): Unit = {
-    val lowerBound    = checkAndConvertValue(new String(termRangeQuery.getLowerTerm.bytes))
-    val upperBound    = checkAndConvertValue(new String(termRangeQuery.getUpperTerm.bytes))
-    val inRangeSearch = Map("$lte" -> upperBound, "$gte" -> lowerBound)
+
+  private def appendTermRangeQueryToSearchMap(
+      negated: Boolean,
+      searchMapResponse: mutable.Map[String, Any],
+      termRangeQuery: TermRangeQuery,
+      searchWithValueAndString: Boolean
+  ): Unit = {
+    val lowerBoundString = new String(termRangeQuery.getLowerTerm.bytes)
+    val lowerBound       = checkAndConvertValue(lowerBoundString)
+    val upperBoundString = new String(termRangeQuery.getUpperTerm.bytes)
+    val upperBound       = checkAndConvertValue(upperBoundString)
+
+    val searchWithStringValue = searchWithValueAndString && (lowerBoundString != lowerBound || upperBoundString != upperBound)
+
+    val inRangeSearch       = Map("$lte" -> upperBound, "$gte" -> lowerBound)
+    val inRangeStringSearch = Map("$lte" -> upperBoundString, "$gte" -> lowerBoundString)
     if (negated) {
-      searchMapResponse.put(termRangeQuery.getField, Map("$not" -> inRangeSearch))
+      if (searchWithStringValue) {
+        searchMapResponse.put(
+          "$and",
+          List(Map(termRangeQuery.getField -> Map("$not" -> inRangeSearch)), Map(termRangeQuery.getField -> Map("$not" -> inRangeStringSearch)))
+        )
+      }
+      else {
+        searchMapResponse.put(termRangeQuery.getField, Map("$not" -> inRangeSearch))
+      }
     }
     else {
-      searchMapResponse.put(termRangeQuery.getField, inRangeSearch)
+      if (searchWithStringValue) {
+        searchMapResponse.put(
+          "$or",
+          List(Map(termRangeQuery.getField -> inRangeSearch), Map(termRangeQuery.getField -> inRangeStringSearch))
+        )
+      }
+      else {
+        searchMapResponse.put(termRangeQuery.getField, inRangeSearch)
+      }
     }
   }
-  private def appendTermQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], termQuery: TermQuery): Unit = {
+
+  private def appendTermQueryToSearchMap(
+      negated: Boolean,
+      searchMapResponse: mutable.Map[String, Any],
+      termQuery: TermQuery,
+      searchWithValueAndString: Boolean
+  ): Unit = {
+    val convertedValue = checkAndConvertValue(termQuery.getTerm.text())
     if (negated) {
-      searchMapResponse.put(termQuery.getTerm.field(), Map("$ne" -> checkAndConvertValue(termQuery.getTerm.text())))
+      if (!searchWithValueAndString || convertedValue == termQuery.getTerm.text()) {
+        searchMapResponse.put(termQuery.getTerm.field(), Map("$ne" -> convertedValue))
+      }
+      else {
+        searchMapResponse.put(
+          "$and",
+          List(Map(termQuery.getTerm.field() -> Map("$ne" -> convertedValue)), Map(termQuery.getTerm.field() -> Map("$ne" -> termQuery.getTerm.text())))
+        )
+      }
     }
     else {
-      searchMapResponse.put(termQuery.getTerm.field(), Map("$eq" -> checkAndConvertValue(termQuery.getTerm.text())))
+      if (!searchWithValueAndString || convertedValue == termQuery.getTerm.text()) {
+        searchMapResponse.put(termQuery.getTerm.field(), Map("$eq" -> convertedValue))
+      }
+      else {
+        searchMapResponse.put(
+          "$or",
+          List(Map(termQuery.getTerm.field() -> Map("$eq" -> convertedValue)), Map(termQuery.getTerm.field() -> Map("$eq" -> termQuery.getTerm.text())))
+        )
+      }
     }
   }
+
   private def appendPrefixQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PrefixQuery): Unit = {
     val searchValue                = s"${checkAndConvertValue(query.getPrefix.text())}(.*?)"
     val listOfSearches: List[Bson] = List(Map(query.getField -> generateRegexQuery(s"$searchValue", "i")))
@@ -120,6 +172,7 @@ object LuceneQueryConverter extends LazyLogging {
       searchMapResponse ++= Map("$and" -> listOfSearches)
     }
   }
+
   private def appendWildCardQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: WildcardQuery): Unit = {
     val searchValue = checkAndConvertValue(query.getTerm.text().replace("*", "(.*?)"))
     if (negated) {
@@ -129,10 +182,9 @@ object LuceneQueryConverter extends LazyLogging {
       searchMapResponse.put(query.getField, generateRegexQuery(s"$searchValue", "i"))
     }
   }
+
   private def appendPhraseQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PhraseQuery): Unit = {
-    val listOfSearches = query.getTerms
-      .map(term => Map(term.field() -> generateRegexQuery(s"(.*?)${checkAndConvertValue(term.text())}(.*?)", "i")))
-      .toList
+    val listOfSearches = query.getTerms.map(term => Map(term.field() -> generateRegexQuery(s"(.*?)${checkAndConvertValue(term.text())}(.*?)", "i"))).toList
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
     }
@@ -140,9 +192,11 @@ object LuceneQueryConverter extends LazyLogging {
       searchMapResponse ++= Map("$and" -> listOfSearches)
     }
   }
+
   private def generateRegexQuery(pattern: String, options: String): Map[String, String] = {
     Map("$regex" -> pattern, "$options" -> options)
   }
+
   private def checkAndConvertValue(s: String): Any = {
 
     def checkOrReturn[A <: Any](f: () => A): Option[A] = {
@@ -156,7 +210,7 @@ object LuceneQueryConverter extends LazyLogging {
         }
       }
       catch {
-        case e: Exception => None
+        case _: Exception => None
       }
     }
 

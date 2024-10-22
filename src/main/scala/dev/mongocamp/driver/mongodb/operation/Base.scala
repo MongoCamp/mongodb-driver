@@ -8,9 +8,8 @@ import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, I
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.concurrent.duration.Duration
-import scala.reflect.ClassTag
 
-abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
+abstract class Base[A] extends LazyLogging {
 
   protected def coll: MongoCollection[A]
 
@@ -18,13 +17,9 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
     coll.countDocuments(filter, options)
   }
 
-  def drop(): Observable[Void] = coll.drop()
+  def drop(): Observable[Unit] = coll.drop()
 
-  def createIndexForField(
-      fieldName: String,
-      sortAscending: Boolean = true,
-      options: IndexOptions = IndexOptions()
-  ): SingleObservable[String] = {
+  def createIndexForField(fieldName: String, sortAscending: Boolean = true, options: IndexOptions = IndexOptions()): SingleObservable[String] = {
     if (sortAscending) {
       createIndex(ascending(fieldName), options)
     }
@@ -33,46 +28,40 @@ abstract class Base[A]()(implicit ct: ClassTag[A]) extends LazyLogging {
     }
   }
 
-  def createIndexForFieldWithName(
-      fieldName: String,
-      sortAscending: Boolean = true,
-      name: String
-  ): SingleObservable[String] =
+  def createIndexForFieldWithName(fieldName: String, sortAscending: Boolean = true, name: String): SingleObservable[String] = {
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(Some(name)))
+  }
 
-  def createUniqueIndexForField(
-      fieldName: String,
-      sortAscending: Boolean = true,
-      name: Option[String] = None
-  ): SingleObservable[String] =
+  def createUniqueIndexForField(fieldName: String, sortAscending: Boolean = true, name: Option[String] = None): SingleObservable[String] = {
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).unique(true))
+  }
 
-  def createHashedIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
+  def createHashedIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] = {
     createIndex(Indexes.hashed(fieldName), options)
+  }
 
-  def createTextIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] =
+  def createTextIndexForField(fieldName: String, options: IndexOptions = IndexOptions()): SingleObservable[String] = {
     createIndex(Indexes.text(fieldName), options)
+  }
 
   def createExpiringIndexForField(
       fieldName: String,
       duration: Duration,
       sortAscending: Boolean = true,
       name: Option[String] = None
-  ): SingleObservable[String] =
-    createIndexForField(
-      fieldName,
-      sortAscending,
-      MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2)
-    )
+  ): SingleObservable[String] = {
+    createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2))
+  }
 
-  def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObservable[String] =
-    coll.createIndex(key, options)
+  def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObservable[String] = coll.createIndex(key, options)
 
-  def dropIndexForName(name: String, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Void] =
+  def dropIndexForName(name: String, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Unit] = {
     coll.dropIndex(name, options)
+  }
 
-  def dropIndex(keys: Bson, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Void] =
+  def dropIndex(keys: Bson, options: DropIndexOptions = new DropIndexOptions()): SingleObservable[Unit] = {
     coll.dropIndex(keys, options)
+  }
 
   def listIndexes: ListIndexesObservable[Map[String, Any]] = coll.listIndexes[Map[String, Any]]()
 

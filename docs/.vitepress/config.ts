@@ -60,7 +60,8 @@ function nav() {
                 {text: 'MongoDAO', link: '/documentation/mongo-dao/'},
                 {text: 'GridFsDAO', link: '/documentation/gridfs-dao/'},
                 {text: 'Collection', link: '/documentation/collection/'},
-                {text: 'LocalServer', link: '/documentation/local-server'}
+                {text: 'LocalServer', link: '/documentation/local-server'},
+                {text: 'SQL', link: '/documentation/sql'}
             ]
         },
         {
@@ -128,8 +129,17 @@ function sidebarDocumentation() {
             items: [
                 {text: 'Introduction', link: '/documentation/collection/'},
                 {text: 'Aggregation', link: '/documentation/collection/aggregation'},
-                {text: 'Pagination', link: '/documentation/collection/pagination'}
+                {text: 'Pagination', link: '/documentation/collection/pagination'},
+                {text: 'Schema analyse', link: '/documentation/collection/analyse-schema'},
             ]
+        },
+        {
+            text: 'SQL', items: [
+                {text: 'Query Holder', link: '/documentation/sql/queryholder'},
+                {text: 'JDBC driver', link: '/documentation/sql/jdbc-driver'},
+            ],
+            collapsible: true,
+            collapsed: true,
         },
         {
             text: 'LocalServer',
