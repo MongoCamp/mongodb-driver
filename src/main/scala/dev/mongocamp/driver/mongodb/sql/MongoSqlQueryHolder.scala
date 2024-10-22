@@ -6,12 +6,12 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
-import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
+import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{Expression, Parenthesis}
-import net.sf.jsqlparser.parser.{CCJSqlParser, StreamProvider}
+import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
+import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
 import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.{ShowStatement, UnsupportedStatement}
+import net.sf.jsqlparser.statement.{ ShowStatement, UnsupportedStatement }
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -19,7 +19,7 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.execute.Execute
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{FromItem, PlainSelect, Select, SelectItem}
+import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
@@ -27,7 +27,7 @@ import org.bson.conversions.Bson
 import org.h2.command.ddl.AlterTable
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{Document, Observable, SingleObservable}
+import org.mongodb.scala.{ Document, Observable, SingleObservable }
 
 import java.sql.SQLException
 import java.util.Date

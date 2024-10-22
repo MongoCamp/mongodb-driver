@@ -29,5 +29,3 @@ trait CrudObserver[A] extends Crud[A] {
     deleteMany(filter).subscribe(observer)
 
 }
-
-

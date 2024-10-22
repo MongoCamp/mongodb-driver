@@ -2,10 +2,10 @@ package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
 import dev.mongocamp.driver.mongodb.MongoDAO
 import org.mongodb.scala.Document
-import org.mongodb.scala.bson.{BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString}
+import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
 import dev.mongocamp.driver.mongodb._
 
-import java.sql.{ResultSetMetaData, SQLException}
+import java.sql.{ ResultSetMetaData, SQLException }
 
 class MongoDbResultSetMetaData extends ResultSetMetaData {
   private var document: Document                = _
@@ -32,9 +32,9 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   }
 
   private def extractDocumentFromDataList(data: List[Document]) = {
-    var row = data.headOption.getOrElse(throw new SQLException("No data in ResultSet")).copy()
+    var row          = data.headOption.getOrElse(throw new SQLException("No data in ResultSet")).copy()
     val distinctKeys = data.flatMap(_.keys).distinct
-    val missingKeys = distinctKeys.diff(row.keys.toSeq)
+    val missingKeys  = distinctKeys.diff(row.keys.toSeq)
     missingKeys.foreach(key => {
       data
         .find(_.get(key).nonEmpty)

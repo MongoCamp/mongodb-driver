@@ -2,10 +2,10 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import com.vdurmont.semver4j.Semver
 import dev.mongocamp.driver.mongodb.BuildInfo
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
-import org.mongodb.scala.{ConnectionString, ServerAddress}
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import org.mongodb.scala.{ ConnectionString, ServerAddress }
 
-import java.sql.{Connection, DriverPropertyInfo}
+import java.sql.{ Connection, DriverPropertyInfo }
 import java.util.Properties
 import java.util.logging.Logger
 import scala.jdk.CollectionConverters._
@@ -15,8 +15,7 @@ class MongoJdbcDriver extends java.sql.Driver {
 
   private lazy val semVer = new Semver(BuildInfo.version)
 
-  /**
-   *  Connect to the database using a URL like : jdbc:mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]] The
+  /** Connect to the database using a URL like : jdbc:mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]] The
     * URL excepting the jdbc: prefix is passed as it is to the MongoDb native Java driver.
     */
   override def connect(url: String, info: Properties): Connection = {
@@ -28,9 +27,9 @@ class MongoJdbcDriver extends java.sql.Driver {
     val username      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthUser)).filter(_.trim.nonEmpty)
     val password      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthPassword)).filter(_.trim.nonEmpty)
 
-    val string = new ConnectionString(connectionUrl)
+    val string   = new ConnectionString(connectionUrl)
     val database = Option(string.getDatabase).getOrElse(Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.Database)).getOrElse("admin"))
-    val authDb = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse(Option(string.getDatabase).getOrElse("admin"))
+    val authDb   = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse(Option(string.getDatabase).getOrElse("admin"))
     val provider = DatabaseProvider(
       MongoConfig(
         database,

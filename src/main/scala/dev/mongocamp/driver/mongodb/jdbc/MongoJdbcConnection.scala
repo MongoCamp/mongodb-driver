@@ -5,8 +5,22 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 
-import java.{sql, util}
-import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
+import java.{ sql, util }
+import java.sql.{
+  Blob,
+  CallableStatement,
+  Clob,
+  Connection,
+  DatabaseMetaData,
+  NClob,
+  PreparedStatement,
+  SQLException,
+  SQLWarning,
+  SQLXML,
+  Savepoint,
+  Statement,
+  Struct
+}
 import java.util.Properties
 import java.util.concurrent.Executor
 import scala.jdk.CollectionConverters._
@@ -110,43 +124,43 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
     createMongoStatement(Some(sql))
   }
 
-  override def getTypeMap: util.Map[String, Class[_]] =  {
+  override def getTypeMap: util.Map[String, Class[_]] = {
     checkClosed()
     null
   }
 
-  override def setTypeMap(map: util.Map[String, Class[_]]): Unit =  {
+  override def setTypeMap(map: util.Map[String, Class[_]]): Unit = {
     checkClosed()
   }
 
-  override def setHoldability(holdability: Int): Unit =  {
+  override def setHoldability(holdability: Int): Unit = {
     checkClosed()
   }
 
-  override def getHoldability: Int =  {
+  override def getHoldability: Int = {
     checkClosed()
     0
   }
 
-  override def setSavepoint(): Savepoint =  {
+  override def setSavepoint(): Savepoint = {
     checkClosed()
     null
   }
 
-  override def setSavepoint(name: String): Savepoint =  {
+  override def setSavepoint(name: String): Savepoint = {
     checkClosed()
     null
   }
 
-  override def rollback(savepoint: Savepoint): Unit =  {
+  override def rollback(savepoint: Savepoint): Unit = {
     checkClosed()
   }
 
-  override def releaseSavepoint(savepoint: Savepoint): Unit =  {
+  override def releaseSavepoint(savepoint: Savepoint): Unit = {
     checkClosed()
   }
 
-  override def createStatement(resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): Statement =  {
+  override def createStatement(resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): Statement = {
     createMongoStatement()
   }
 
@@ -154,7 +168,7 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
     createMongoStatement(Option(sql))
   }
 
-  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): CallableStatement =  {
+  override def prepareCall(sql: String, resultSetType: Int, resultSetConcurrency: Int, resultSetHoldability: Int): CallableStatement = {
     checkClosed()
     createMongoStatement(Some(sql))
   }
@@ -171,27 +185,27 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
     createMongoStatement(Option(sql))
   }
 
-  override def createClob(): Clob =  {
+  override def createClob(): Clob = {
     checkClosed()
     null
   }
 
-  override def createBlob(): Blob =  {
+  override def createBlob(): Blob = {
     checkClosed()
     null
   }
 
-  override def createNClob(): NClob =  {
+  override def createNClob(): NClob = {
     checkClosed()
     null
   }
 
-  override def createSQLXML(): SQLXML =  {
+  override def createSQLXML(): SQLXML = {
     checkClosed()
     null
   }
 
-  override def isValid(timeout: Int): Boolean =  {
+  override def isValid(timeout: Int): Boolean = {
     checkClosed()
     true
   }
@@ -214,8 +228,9 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
     checkClosed()
     if ("ApplicationName".equalsIgnoreCase(name) || "appName".equalsIgnoreCase(name) || "name".equalsIgnoreCase(name)) {
       databaseProvider.config.applicationName
-    } else {
-        null
+    }
+    else {
+      null
     }
   }
 

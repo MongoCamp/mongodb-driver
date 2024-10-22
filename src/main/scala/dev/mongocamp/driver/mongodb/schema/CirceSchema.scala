@@ -14,9 +14,7 @@ trait CirceSchema extends CirceProductSchema {
     override def apply(a: Date): Json = Encoder.encodeString.apply(a.toInstant.toString)
 
     override def apply(c: HCursor): Result[Date] = Decoder.decodeString
-      .map(
-        s => new DateTime(s).toDate
-      )
+      .map(s => new DateTime(s).toDate)
       .apply(c)
   }
 
@@ -24,9 +22,7 @@ trait CirceSchema extends CirceProductSchema {
     override def apply(a: DateTime): Json = Encoder.encodeString.apply(a.toInstant.toString)
 
     override def apply(c: HCursor): Result[DateTime] = Decoder.decodeString
-      .map(
-        s => new DateTime(s)
-      )
+      .map(s => new DateTime(s))
       .apply(c)
   }
 
@@ -34,9 +30,7 @@ trait CirceSchema extends CirceProductSchema {
     override def apply(a: ObjectId): Json = Encoder.encodeString.apply(a.toHexString)
 
     override def apply(c: HCursor): Result[ObjectId] = Decoder.decodeString
-      .map(
-        s => new ObjectId(s)
-      )
+      .map(s => new ObjectId(s))
       .apply(c)
   }
 
@@ -51,9 +45,7 @@ trait CirceSchema extends CirceProductSchema {
 
     override def apply(c: HCursor): Result[Any] = {
       Decoder.decodeJson
-        .map(
-          a => decodeFromJson(a)
-        )
+        .map(a => decodeFromJson(a))
         .apply(c)
     }
   }
@@ -61,9 +53,7 @@ trait CirceSchema extends CirceProductSchema {
   def encodeMapStringAny(a: Map[String, Any]): Json = {
     Json.obj(
       a.keySet
-        .map(
-          key => (key, encodeAnyToJson(a(key)))
-        )
+        .map(key => (key, encodeAnyToJson(a(key))))
         .toList: _*
     )
   }
@@ -95,13 +85,9 @@ trait CirceSchema extends CirceProductSchema {
         }
       case a if a.isBoolean => a.asBoolean.getOrElse(false)
       case a if a.isArray =>
-        a.asArray.get.toList.map(
-          e => decodeFromJson(e)
-        )
+        a.asArray.get.toList.map(e => decodeFromJson(e))
       case a if a.isObject =>
-        a.asObject.get.toMap.map(
-          e => (e._1, decodeFromJson(e._2))
-        )
+        a.asObject.get.toMap.map(e => (e._1, decodeFromJson(e._2)))
       case a if a.isNull => null
       case _             => null
     }
@@ -123,27 +109,21 @@ trait CirceSchema extends CirceProductSchema {
       case m: Map[String, _] => encodeMapStringAny(m)
       case seq: Seq[_] =>
         Json.arr(
-          seq.map(
-            e => encodeAnyToJson(e, deepth)
-          ): _*
+          seq.map(e => encodeAnyToJson(e, deepth)): _*
         )
       case set: Set[_] =>
         Json.arr(
           set
-            .map(
-              e => encodeAnyToJson(e, deepth)
-            )
+            .map(e => encodeAnyToJson(e, deepth))
             .toList: _*
         )
       case product: Product =>
-        val productElementKeys =  productElementNames(product).toList
+        val productElementKeys = productElementNames(product).toList
         val fieldMap = productElementKeys
-          .map(
-            key => {
-              val index = productElementKeys.indexOf(key)
-              (key, product.productElement(index))
-            }
-          )
+          .map(key => {
+            val index = productElementKeys.indexOf(key)
+            (key, product.productElement(index))
+          })
           .toMap
         encodeAnyToJson(fieldMap)
       case r: Document => encodeAnyToJson(r.toMap)
@@ -158,8 +138,5 @@ trait CirceSchema extends CirceProductSchema {
         Json.Null
     }
   }
-
-
-
 
 }

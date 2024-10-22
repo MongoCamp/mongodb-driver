@@ -3,37 +3,45 @@ package dev.mongocamp.driver.mongodb.database
 import java.util.concurrent.TimeUnit
 import com.mongodb.MongoCompressor
 import com.mongodb.MongoCredential.createCredential
-import com.mongodb.event.{CommandListener, ConnectionPoolListener}
-import com.typesafe.config.{Config, ConfigFactory}
-import dev.mongocamp.driver.mongodb.database.MongoConfig.{CompressionSnappy, CompressionZlib, CompressionZstd, DefaultApplicationName, DefaultAuthenticationDatabaseName, DefaultHost, DefaultPort}
+import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
+import com.typesafe.config.{ Config, ConfigFactory }
+import dev.mongocamp.driver.mongodb.database.MongoConfig.{
+  CompressionSnappy,
+  CompressionZlib,
+  CompressionZstd,
+  DefaultApplicationName,
+  DefaultAuthenticationDatabaseName,
+  DefaultHost,
+  DefaultPort
+}
 import org.mongodb.scala.connection._
-import org.mongodb.scala.{MongoClientSettings, MongoCredential, ServerAddress}
+import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable.ArrayBuffer
 
 case class MongoConfig(
-                        database: String,
-                        host: String = DefaultHost,
-                        port: Int = DefaultPort,
-                        var applicationName: String = DefaultApplicationName,
-                        userName: Option[String] = None,
-                        password: Option[String] = None,
-                        authDatabase: String = DefaultAuthenticationDatabaseName,
-                        poolOptions: MongoPoolOptions = MongoPoolOptions(),
-                        compressors: List[String] = List.empty,
-                        connectionPoolListener: List[ConnectionPoolListener] = List.empty,
-                        commandListener: List[CommandListener] = List.empty,
-                        customClientSettings: Option[MongoClientSettings] = None,
-                        serverAddressList: List[ServerAddress] = List.empty
-                      ) {
+    database: String,
+    host: String = DefaultHost,
+    port: Int = DefaultPort,
+    var applicationName: String = DefaultApplicationName,
+    userName: Option[String] = None,
+    password: Option[String] = None,
+    authDatabase: String = DefaultAuthenticationDatabaseName,
+    poolOptions: MongoPoolOptions = MongoPoolOptions(),
+    compressors: List[String] = List.empty,
+    connectionPoolListener: List[ConnectionPoolListener] = List.empty,
+    commandListener: List[CommandListener] = List.empty,
+    customClientSettings: Option[MongoClientSettings] = None,
+    serverAddressList: List[ServerAddress] = List.empty
+) {
 
   val clientSettings: MongoClientSettings = {
     if (customClientSettings.isDefined) {
       customClientSettings.get
     }
     else {
-      val internalServerAddressList = if (serverAddressList.nonEmpty) serverAddressList else List(new ServerAddress(host, port))
+      val internalServerAddressList        = if (serverAddressList.nonEmpty) serverAddressList else List(new ServerAddress(host, port))
       val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(internalServerAddressList.asJava).build()
 
       val connectionPoolSettingsBuilder = ConnectionPoolSettings
@@ -136,6 +144,5 @@ object MongoConfig extends ConfigHelper {
 
     MongoConfig(database, host, port, applicationName, userName, password, authDatabase, poolOptions, compressors)
   }
-
 
 }

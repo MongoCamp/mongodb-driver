@@ -11,7 +11,7 @@ class JsonConverter extends CirceSchema {
   }
 
   def readJsonMap(fileContent: String): Map[String, Any] = {
-    val decoded     = decode[Map[String, Any]](fileContent)
+    val decoded = decode[Map[String, Any]](fileContent)
     decoded.getOrElse(Map())
   }
 
