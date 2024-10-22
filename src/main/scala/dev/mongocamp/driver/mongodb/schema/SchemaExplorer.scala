@@ -47,7 +47,7 @@ class SchemaExplorer {
         PipelineStage("group", Map("T" -> Map("$push" -> "$$ROOT"), "_id" -> Map("n" -> "$n"), "c" -> Map("$sum" -> "$c"))),
         PipelineStage("project", Map("T" -> 1, "_id" -> 0, "c" -> 1, "n" -> "$_id.n")),
         PipelineStage("sort", Map("n" -> 1))
-    )
+      )
     buffer.toList
   }
 
@@ -342,7 +342,7 @@ class SchemaExplorer {
 
   private def convertToBsonPipeline(pipeline: List[PipelineStage]): Seq[Bson] = {
     val response: Seq[Bson] = pipeline.map(element => {
-      val stage = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
+      val stage      = if (element.stage.startsWith("$")) element.stage else "$" + element.stage
       val bson: Bson = Map(stage -> element.value)
       bson
     })

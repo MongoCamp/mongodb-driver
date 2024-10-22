@@ -1,21 +1,38 @@
 package dev.mongocamp.driver.mongodb.jdbc.statement
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.{Converter, GenericObservable}
+import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
-import dev.mongocamp.driver.mongodb.jdbc.{MongoJdbcCloseable, MongoJdbcConnection}
+import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
 import org.mongodb.scala.bson.collection.immutable.Document
 
-import java.io.{InputStream, Reader}
+import java.io.{ InputStream, Reader }
 import java.net.URL
-import java.{sql, util}
-import java.sql.{Blob, CallableStatement, Clob, Connection, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSet, ResultSetMetaData, RowId, SQLWarning, SQLXML, Time, Timestamp}
+import java.{ sql, util }
+import java.sql.{
+  Blob,
+  CallableStatement,
+  Clob,
+  Connection,
+  Date,
+  NClob,
+  ParameterMetaData,
+  PreparedStatement,
+  Ref,
+  ResultSet,
+  ResultSetMetaData,
+  RowId,
+  SQLWarning,
+  SQLXML,
+  Time,
+  Timestamp
+}
 import java.util.Calendar
 import scala.collection.mutable
 
-case class MongoPreparedStatement(connection: MongoJdbcConnection) extends CallableStatement with MongoJdbcCloseable with LazyLogging{
+case class MongoPreparedStatement(connection: MongoJdbcConnection) extends CallableStatement with MongoJdbcCloseable with LazyLogging {
 
   def this(connection: MongoJdbcConnection, sql: String) = {
     this(connection)
@@ -47,28 +64,27 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def executeQuery(sql: String): ResultSet = {
     checkClosed()
-    val queryHolder: MongoSqlQueryHolder = try {
-      MongoSqlQueryHolder(sql)
-    }
-    catch {
-      case e: SqlCommandNotSupportedException =>
-        logger.error(e.getMessage, e)
-        null
-    }
+    val queryHolder: MongoSqlQueryHolder =
+      try MongoSqlQueryHolder(sql)
+      catch {
+        case e: SqlCommandNotSupportedException =>
+          logger.error(e.getMessage, e)
+          null
+      }
     if (queryHolder == null) {
       new MongoDbResultSet(null, List.empty, 0)
-    } else {
-      var response  = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
+    }
+    else {
+      var response = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
       if (response.isEmpty && queryHolder.hasFunctionCallInSelect) {
         val emptyDocument = mutable.Map[String, Any]()
-        queryHolder.getKeysForEmptyDocument.foreach(key => {
-          emptyDocument.put(key, null)
-        })
+        queryHolder.getKeysForEmptyDocument.foreach(
+        key => emptyDocument.put(key, null))
         val doc = Converter.toDocument(emptyDocument.toMap)
         response = Seq(doc)
       }
       val collectionName = Option(queryHolder.getCollection).map(c => connection.getDatabaseProvider.dao(c))
-      if (!sql.toLowerCase().contains("_id")){
+      if (!sql.toLowerCase().contains("_id")) {
         response = response.map(doc => {
           val newDoc = doc - "_id"
           newDoc
@@ -79,7 +95,6 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       resultSet
     }
   }
-
 
   def setSql(sql: String): Unit = {
     _sql = sql
@@ -415,9 +430,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     ResultSet.FETCH_FORWARD
   }
 
-  override def setFetchSize(rows: Int): Unit = {
-
-  }
+  override def setFetchSize(rows: Int): Unit = {}
 
   override def getFetchSize: Int = {
     -1

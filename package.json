@@ -1,28 +1,28 @@
 {
-  "name": "mongodb-driver",
-  "organization": "dev.mongocamp",
-  "version": "2.8.0",
-  "author": "info@mongocamp.dev",
-  "license": "Apache-2.0",
-  "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MongoCamp/mongodb-driver.git"
+  "name" : "mongodb-driver",
+  "organization" : "dev.mongocamp",
+  "version" : "2.8.1.snapshot",
+  "author" : "info@mongocamp.dev",
+  "license" : "Apache-2.0",
+  "type" : "module",
+  "repository" : {
+    "type" : "git",
+    "url" : "git+https://github.com/MongoCamp/mongodb-driver.git"
   },
-  "bugs": {
-    "url": "https://github.com/MongoCamp/mongodb-driver/issues"
+  "bugs" : {
+    "url" : "https://github.com/MongoCamp/mongodb-driver/issues"
   },
-  "homepage": "https://mongodb-driver.mongocamp.dev/",
-  "scripts": {
-    "docs:serve": "vitepress serve docs --port 5555",
-    "docs:build": "pnpm docs:external; vitepress build docs",
-    "docs:external": "sh docs/external/fileloader.sh",
-    "docs:dev": "pnpm docs:external; vitepress dev docs"
+  "homepage" : "https://mongodb-driver.mongocamp.dev/",
+  "scripts" : {
+    "docs:serve" : "vitepress serve docs --port 5555",
+    "docs:build" : "pnpm docs:external; vitepress build docs",
+    "docs:external" : "sh docs/external/fileloader.sh",
+    "docs:dev" : "pnpm docs:external; vitepress dev docs"
   },
-  "devDependencies": {
-    "@iconify-json/fluent-emoji": "^1.2.1",
-    "@unocss/preset-icons": "^0.63.4",
-    "unocss": "^0.63.4",
-    "vitepress": "1.4.1"
+  "devDependencies" : {
+    "@iconify-json/fluent-emoji" : "^1.2.1",
+    "@unocss/preset-icons" : "^0.63.4",
+    "unocss" : "^0.63.4",
+    "vitepress" : "1.4.1"
   }
 }

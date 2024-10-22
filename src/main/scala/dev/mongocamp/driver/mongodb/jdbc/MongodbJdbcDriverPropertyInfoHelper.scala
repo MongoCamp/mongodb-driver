@@ -3,10 +3,10 @@ import MongodbJdbcDriverPropertyInfoHelper._
 
 object MongodbJdbcDriverPropertyInfoHelper {
   val ApplicationName = "appName"
-  val Database         = "database"
+  val Database        = "database"
 
-  val AuthUser      = "user"
-  val AuthPassword  = "password"
+  val AuthUser       = "user"
+  val AuthPassword   = "password"
   val AuthDatabase   = "auth_database"
   val DefaultAuthDB  = "admin"
   val DefaultAppName = "mongodb-driver"

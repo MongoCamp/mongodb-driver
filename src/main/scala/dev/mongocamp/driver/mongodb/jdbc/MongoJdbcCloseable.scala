@@ -1,6 +1,6 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import java.sql.{SQLException, SQLFeatureNotSupportedException}
+import java.sql.{ SQLException, SQLFeatureNotSupportedException }
 
 trait MongoJdbcCloseable extends AutoCloseable {
 
