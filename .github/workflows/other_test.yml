@@ -13,26 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mongodb-version: ['4.4', '5.0', '6.0', '7.0']
-        java: [ '11', '17' ]
+        mongodb-version: [ '4.4', '5.0', '6.0', '7.0' ]
+        java: [ '21', '23' ]
     steps:
-    - uses: actions/checkout@main
-    - name: Set up JDK ${{ matrix.Java }}
-      uses: coursier/setup-action@main
-      with:
-        jvm: corretto:${{ matrix.Java }}
-        apps: sbt scala scalac
-    - name: Setup TimeZone
-      uses: MathRobin/timezone-action@v1.1
-      with:
-        timezoneLinux: "Europe/Berlin"
-        timezoneMacos: "Europe/Berlin"
-        timezoneWindows: "W. Europe Standard Time"
-    - name: Start MongoDB ${{ matrix.mongodb-version }}
-      uses: MongoCamp/mongodb-github-action@main
-      with:
-        mongodb-version: ${{ matrix.mongodb-version }}
-    - name: Run tests
-      run: |
-        timedatectl
-        sbt +test
+      - uses: actions/checkout@main
+      - name: Set up JDK ${{ matrix.Java }}
+        uses: coursier/setup-action@main
+        with:
+          jvm: corretto:${{ matrix.Java }}
+          apps: sbt scala scalac
+      - name: Setup TimeZone
+        uses: MathRobin/timezone-action@v1.1
+        with:
+          timezoneLinux: "Europe/Berlin"
+          timezoneMacos: "Europe/Berlin"
+          timezoneWindows: "W. Europe Standard Time"
+      - name: Start MongoDB ${{ matrix.mongodb-version }}
+        uses: MongoCamp/mongodb-github-action@main
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+      - name: Run tests
+        run: |
+          timedatectl
+          sbt +test
