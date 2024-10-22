@@ -1,10 +1,11 @@
 # Mongocamp MongoDB Driver
 
-A library for easy usage of the mongo-scala-driver (4.5.x). Full MongoDB Functionality in Scala with a few lines of code.
+A library for easy usage of the mongo-scala-driver (5.1.xa). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
 
-Support MongoDB 2.6 to 5.0.x.
+Support MongoDB 3.6 to 7.0.x.
+
 
 ## Features
 
@@ -71,7 +72,7 @@ object RestaurantDatabase {
   case class Grade(date: Date, grade: String, score: Int)
 
   case class Restaurant(restaurant_id: String, name: String, borough: String, cuisine: String,
-    grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
+                        grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
 
   private val registry = fromProviders(classOf[Restaurant], classOf[Address], classOf[Grade])
 
@@ -114,22 +115,22 @@ Use the mongodb functions in your app ...
 
 ```scala
  object RestaurantDemoApp extends App with RestaurantDemoDatabaseFunctions {
- 
-   // find specific restaurant by name as Option Result
-   val restaurant = findRestaurantByName("Dj Reynolds Pub And Restaurant")
- 
-   println(restaurant)
- 
-   // use count function
-   println(restaurantsSize)
- 
-   // find restaurants by filter
-   private val filter = Map("address.zipcode" -> "10075", "cuisine" -> "Italian")
-   val restaurants = findAllRestaurants(filter)
- 
-   restaurants.sortBy(r => r.name).foreach(r => println(r.name))
- 
- }
+
+  // find specific restaurant by name as Option Result
+  val restaurant = findRestaurantByName("Dj Reynolds Pub And Restaurant")
+
+  println(restaurant)
+
+  // use count function
+  println(restaurantsSize)
+
+  // find restaurants by filter
+  private val filter = Map("address.zipcode" -> "10075", "cuisine" -> "Italian")
+  val restaurants = findAllRestaurants(filter)
+
+  restaurants.sortBy(r => r.name).foreach(r => println(r.name))
+
+}
 
 ```
 
