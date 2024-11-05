@@ -373,7 +373,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     checkClosed()
     val updateResponse = executeQuery(sql)
     updateResponse.next()
-    val updateCount = updateResponse.getInt("matchedCount")
+    val updateCount = updateResponse.getInt("matchedCount") + updateResponse.getInt("deletedCount") + updateResponse.getInt("insertedCount")
     _lastUpdateCount = updateCount
     updateCount
   }
