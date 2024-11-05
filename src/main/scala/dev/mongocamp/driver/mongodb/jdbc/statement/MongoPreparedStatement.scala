@@ -6,7 +6,7 @@ import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
-import org.mongodb.scala.bson.collection.immutable.Document
+import org.joda.time.DateTime
 
 import java.io.{ InputStream, Reader }
 import java.net.URL
@@ -41,9 +41,9 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   private var _queryTimeout: Int        = 10
   private var _sql: String              = null
-  private var _org_sql: String          = null
   private var _lastResultSet: ResultSet = null
   private var _lastUpdateCount: Int     = -1
+  private lazy val parameters           = mutable.Map[Int, String]()
 
   override def execute(sql: String): Boolean = {
     checkClosed()
@@ -78,8 +78,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       var response = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
       if (response.isEmpty && queryHolder.hasFunctionCallInSelect) {
         val emptyDocument = mutable.Map[String, Any]()
-        queryHolder.getKeysForEmptyDocument.foreach(
-        key => emptyDocument.put(key, null))
+        queryHolder.getKeysForEmptyDocument.foreach(key => emptyDocument.put(key, null))
         val doc = Converter.toDocument(emptyDocument.toMap)
         response = Seq(doc)
       }
@@ -102,11 +101,11 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def executeQuery(): ResultSet = {
     checkClosed()
-    executeQuery(_sql)
+    executeQuery(replaceParameters(_sql))
   }
 
   override def executeUpdate(): Int = {
-    executeUpdate(_sql)
+    executeUpdate(replaceParameters(_sql))
   }
 
   override def setNull(parameterIndex: Int, sqlType: Int): Unit = {
@@ -165,6 +164,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def setBytes(parameterIndex: Int, x: Array[Byte]): Unit = {
     checkClosed()
+    setObject(parameterIndex, x)
   }
 
   override def setDate(parameterIndex: Int, x: Date): Unit = {
@@ -194,9 +194,28 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     checkClosed()
   }
 
+  private def replaceParameters(sql: String): String = {
+    var newSql     = ""
+    var paramCount = 1
+    sql.foreach(c => {
+      var replace = false
+      if (c == '?') {
+        if (parameters.contains(paramCount)) {
+          newSql += parameters(paramCount)
+          replace = true
+        }
+        paramCount += 1
+      }
+      if (!replace) {
+        newSql += c
+      }
+    })
+    newSql
+  }
+
   override def clearParameters(): Unit = {
     checkClosed()
-    _sql = _org_sql
+    parameters.clear()
   }
 
   override def setObject(parameterIndex: Int, x: Any, targetSqlType: Int): Unit = {
@@ -205,29 +224,24 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def setObject(parameterIndex: Int, x: Any): Unit = {
     checkClosed()
-    var newSql     = ""
-    var paramCount = 0
-    _org_sql = _sql
-    _sql.foreach(c => {
-      var replace = false
-      if (c == '?') {
-        if (paramCount == parameterIndex) {
-          replace = true
-        }
-        paramCount += 1
-      }
-      if (replace) {
-        newSql += x.toString
-      }
-      else {
-        newSql += c
-      }
-    })
-    _sql = newSql
+    x match {
+      case d: Date =>
+        parameters.put(parameterIndex, s"'${d.toInstant.toString}'")
+      case d: DateTime =>
+        parameters.put(parameterIndex, s"'${d.toInstant.toString}'")
+      case t: Time =>
+        parameters.put(parameterIndex, s"'${t.toInstant.toString}'")
+      case a: Array[Byte] =>
+        parameters.put(parameterIndex, a.mkString("[", ",", "]"))
+      case a: Iterable[_] =>
+        parameters.put(parameterIndex, a.mkString("[", ",", "]"))
+      case _ =>
+        parameters.put(parameterIndex, x.toString)
+    }
   }
 
   override def execute(): Boolean = {
-    execute(_sql)
+    execute(replaceParameters(_sql))
   }
 
   override def addBatch(): Unit = {
@@ -378,7 +392,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
   }
 
   override def setMaxRows(max: Int): Unit = {
-    sqlFeatureNotSupported()
+    checkClosed()
   }
 
   override def setEscapeProcessing(enable: Boolean): Unit = {
@@ -531,23 +545,23 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def wasNull(): Boolean = ???
 
-  override def getString(parameterIndex: Int): String = ???
+  override def getString(parameterIndex: Int): String = parameters.get(parameterIndex).orNull
 
-  override def getBoolean(parameterIndex: Int): Boolean = ???
+  override def getBoolean(parameterIndex: Int): Boolean = parameters.get(parameterIndex).flatMap(_.toBooleanOption).getOrElse(false)
 
-  override def getByte(parameterIndex: Int): Byte = ???
+  override def getByte(parameterIndex: Int): Byte = parameters.get(parameterIndex).flatMap(_.toByteOption).getOrElse(0)
 
-  override def getShort(parameterIndex: Int): Short = ???
+  override def getShort(parameterIndex: Int): Short = parameters.get(parameterIndex).flatMap(_.toShortOption).getOrElse(0)
 
-  override def getInt(parameterIndex: Int): Int = ???
+  override def getInt(parameterIndex: Int): Int = parameters.get(parameterIndex).flatMap(_.toIntOption).getOrElse(0)
 
-  override def getLong(parameterIndex: Int): Long = ???
+  override def getLong(parameterIndex: Int): Long = parameters.get(parameterIndex).flatMap(_.toLongOption).getOrElse(0)
 
-  override def getFloat(parameterIndex: Int): Float = ???
+  override def getFloat(parameterIndex: Int): Float = parameters.get(parameterIndex).flatMap(_.toFloatOption).getOrElse(0.0.toFloat)
 
-  override def getDouble(parameterIndex: Int): Double = ???
+  override def getDouble(parameterIndex: Int): Double = parameters.get(parameterIndex).flatMap(_.toDoubleOption).getOrElse(0.0)
 
-  override def getBigDecimal(parameterIndex: Int, scale: Int): java.math.BigDecimal = ???
+  override def getBigDecimal(parameterIndex: Int, scale: Int): java.math.BigDecimal = getBigDecimal(parameterIndex)
 
   override def getBytes(parameterIndex: Int): Array[Byte] = ???
 
@@ -559,7 +573,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getObject(parameterIndex: Int): AnyRef = ???
 
-  override def getBigDecimal(parameterIndex: Int): java.math.BigDecimal = ???
+  override def getBigDecimal(parameterIndex: Int): java.math.BigDecimal = parameters.get(parameterIndex).flatMap(_.toDoubleOption).map(new java.math.BigDecimal(_)).orNull
 
   override def getObject(parameterIndex: Int, map: util.Map[String, Class[_]]): AnyRef = ???
 
