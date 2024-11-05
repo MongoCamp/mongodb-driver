@@ -74,12 +74,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getLong(columnIndex: Int): Long = {
     checkClosed()
-    val value = currentRow.getValue(metaData.getColumnName(columnIndex))
-    value match {
-      case b: BsonInt32 => b.longValue()
-      case b: BsonInt64 => b.longValue()
-      case _            => Option(value).flatMap(v => Try(v.toString.toLong).toOption).getOrElse(0)
-    }
+    getDouble(columnIndex).toLong
   }
 
   override def getFloat(columnIndex: Int): Float = {
@@ -89,7 +84,13 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getDouble(columnIndex: Int): Double = {
     checkClosed()
-    currentRow.getDouble(metaData.getColumnName(columnIndex))
+    val value = currentRow.getValue(metaData.getColumnName(columnIndex))
+    value match {
+      case b: BsonInt32  => b.doubleValue()
+      case b: BsonInt64  => b.doubleValue()
+      case b: BsonDouble => b.doubleValue()
+      case _             => Option(value).flatMap(v => v.toString.toDoubleOption).getOrElse(0)
+    }
   }
 
   override def getBigDecimal(columnIndex: Int, scale: Int): java.math.BigDecimal = {
@@ -99,7 +100,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getBytes(columnIndex: Int): Array[Byte] = {
     checkClosed()
-    null
+    getString(columnIndex).replace("[", "").replace("]", "").split(",").filterNot(s => s.trim.isEmpty).map(_.trim.toByte)
   }
 
   override def getDate(columnIndex: Int): Date = {
@@ -142,7 +143,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
         value match {
           case v: BsonString   => v.getValue
           case v: BsonObjectId => v.asObjectId().getValue.toHexString
-          case _               => BsonConverter.fromBson(value).toString
+          case _               => Option(BsonConverter.fromBson(value)).map(_.toString).orNull
         }
       case None => ""
     }
@@ -165,12 +166,12 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getInt(columnLabel: String): Int = {
     checkClosed()
-    currentRow.getIntValue(columnLabel)
+    getDouble(columnLabel).toInt
   }
 
   override def getLong(columnLabel: String): Long = {
     checkClosed()
-    currentRow.getLong(columnLabel)
+    getDouble(columnLabel).toLong
   }
 
   override def getFloat(columnLabel: String): Float = {
@@ -180,7 +181,13 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getDouble(columnLabel: String): Double = {
     checkClosed()
-    currentRow.getDouble(columnLabel)
+    val value = currentRow.getValue(columnLabel)
+    value match {
+      case b: BsonInt32  => b.doubleValue()
+      case b: BsonInt64  => b.doubleValue()
+      case b: BsonDouble => b.doubleValue()
+      case _             => Option(value).flatMap(v => v.toString.toDoubleOption).getOrElse(0)
+    }
   }
 
   override def getBigDecimal(columnLabel: String, scale: Int): java.math.BigDecimal = {
