@@ -8,10 +8,10 @@ import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
 import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{ Expression, Parenthesis }
+import net.sf.jsqlparser.expression.{ ArrayConstructor, Expression, NotExpression, SignedExpression }
 import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
-import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.{ ShowStatement, UnsupportedStatement }
+import net.sf.jsqlparser.schema.{ Column, Table }
+import net.sf.jsqlparser.statement.ShowStatement
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -24,9 +24,8 @@ import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
 import org.bson.conversions.Bson
-import org.h2.command.ddl.AlterTable
 import org.mongodb.scala.model.IndexOptions
-import org.mongodb.scala.model.Sorts.ascending
+import org.mongodb.scala.model.Sorts.{ ascending, metaTextScore }
 import org.mongodb.scala.{ Document, Observable, SingleObservable }
 
 import java.sql.SQLException
@@ -140,7 +139,7 @@ class MongoSqlQueryHolder {
           .insertMany(documentsToInsert.toList)
           .map(e => {
             val map      = e.getInsertedIds.asScala.map(d => d._1.toString -> d._2).toMap
-            val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map))
+            val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map) , "insertedCount" -> map.size)
             document
           })
 
@@ -221,9 +220,15 @@ class MongoSqlQueryHolder {
 
   private def convertValue(expression: Expression): Any = {
     expression match {
-      case e: net.sf.jsqlparser.expression.LongValue      => e.getValue
-      case e: net.sf.jsqlparser.expression.DoubleValue    => e.getValue
-      case e: net.sf.jsqlparser.expression.StringValue    => e.getValue
+      case e: net.sf.jsqlparser.expression.LongValue   => e.getValue
+      case e: net.sf.jsqlparser.expression.DoubleValue => e.getValue
+      case e: net.sf.jsqlparser.expression.StringValue =>
+        if (e.getValue.equalsIgnoreCase("null")) {
+          null
+        }
+        else {
+          e.getValue
+        }
       case e: net.sf.jsqlparser.expression.DateValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimeValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimestampValue => e.getValue
@@ -237,83 +242,91 @@ class MongoSqlQueryHolder {
       case e: net.sf.jsqlparser.schema.Column =>
         val name = e.getColumnName
         Try(name.toInt).toOption.getOrElse(Try(name.toBoolean).toOption.getOrElse(name))
+      case e: SignedExpression => convertValue(e.getExpression)
+      case e: ArrayConstructor => e.toString
       case _ =>
         throw new IllegalArgumentException("not supported value type")
     }
   }
 
-  private def parseWhere(ex: Expression, queryMap: mutable.Map[String, Any]): Unit = {
-    ex match {
-      case e: EqualsTo =>
-        queryMap.put(e.getLeftExpression.toString, Map("$eq" -> convertValue(e.getRightExpression)))
-      case e: NotEqualsTo =>
-        queryMap.put(e.getLeftExpression.toString, Map("$ne" -> convertValue(e.getRightExpression)))
-      case e: GreaterThan =>
-        queryMap.put(e.getLeftExpression.toString, Map("$gt" -> convertValue(e.getRightExpression)))
-      case e: GreaterThanEquals =>
-        queryMap.put(e.getLeftExpression.toString, Map("$gte" -> convertValue(e.getRightExpression)))
-      case e: MinorThan =>
-        queryMap.put(e.getLeftExpression.toString, Map("$lt" -> convertValue(e.getRightExpression)))
-      case e: Between =>
-        val fieldName = e.getLeftExpression.toString
-        if (e.isNot) {
-          queryMap.put(
-            "$or",
-            List(
-              Map(fieldName -> Map("$lte" -> convertValue(e.getBetweenExpressionStart))),
-              Map(fieldName -> Map("$gte" -> convertValue(e.getBetweenExpressionEnd)))
+  private def parseWhere(ex: Expression, queryMap: mutable.Map[String, Any], statementToIgnore: List[Expression]): Unit = {
+    if (statementToIgnore.isEmpty || statementToIgnore.filter(_ != ex).nonEmpty) {
+      ex match {
+        case e: EqualsTo =>
+          queryMap.put(e.getLeftExpression.toString, Map("$eq" -> convertValue(e.getRightExpression)))
+        case e: NotEqualsTo =>
+          queryMap.put(e.getLeftExpression.toString, Map("$ne" -> convertValue(e.getRightExpression)))
+        case e: GreaterThan =>
+          queryMap.put(e.getLeftExpression.toString, Map("$gt" -> convertValue(e.getRightExpression)))
+        case e: GreaterThanEquals =>
+          queryMap.put(e.getLeftExpression.toString, Map("$gte" -> convertValue(e.getRightExpression)))
+        case e: MinorThan =>
+          queryMap.put(e.getLeftExpression.toString, Map("$lt" -> convertValue(e.getRightExpression)))
+        case e: Between =>
+          val fieldName = e.getLeftExpression.toString
+          if (e.isNot) {
+            queryMap.put(
+              "$or",
+              List(
+                Map(fieldName -> Map("$lte" -> convertValue(e.getBetweenExpressionStart))),
+                Map(fieldName -> Map("$gte" -> convertValue(e.getBetweenExpressionEnd)))
+              )
             )
-          )
-        }
-        else {
-          queryMap.put(
-            "$and",
-            List(
-              Map(fieldName -> Map("$gte" -> convertValue(e.getBetweenExpressionStart))),
-              Map(fieldName -> Map("$lte" -> convertValue(e.getBetweenExpressionEnd)))
+          }
+          else {
+            queryMap.put(
+              "$and",
+              List(
+                Map(fieldName -> Map("$gte" -> convertValue(e.getBetweenExpressionStart))),
+                Map(fieldName -> Map("$lte" -> convertValue(e.getBetweenExpressionEnd)))
+              )
             )
-          )
-        }
-      case e: MinorThanEquals =>
-        queryMap.put(e.getLeftExpression.toString, Map("$lte" -> convertValue(e.getRightExpression)))
-      case e: OrExpression =>
-        val left  = mutable.Map[String, Any]()
-        val right = mutable.Map[String, Any]()
-        parseWhere(e.getLeftExpression, left)
-        parseWhere(e.getRightExpression, right)
-        queryMap.put("$or", List(left, right))
-      case e: AndExpression =>
-        val left  = mutable.Map[String, Any]()
-        val right = mutable.Map[String, Any]()
-        parseWhere(e.getLeftExpression, left)
-        parseWhere(e.getRightExpression, right)
-        queryMap.put("$and", List(left, right))
-      case e: ParenthesedExpressionList[Expression] =>
-        e.asScala.foreach(ex => parseWhere(ex, queryMap))
-      case e: InExpression =>
-        val value = e.getRightExpression match {
-          case l: ParenthesedExpressionList[Expression] => l.asScala.map(convertValue)
-          case i: Any                                   => throw new IllegalArgumentException(s"${i.getClass.getSimpleName} not supported")
-        }
-        val functionName = if (e.isNot) "$nin" else "$in"
-        queryMap.put(e.getLeftExpression.toString, Map(functionName -> value))
-      case e: LikeExpression =>
-        val value = Map("$regex" -> e.getRightExpression.toString.replace("%", "(.*?)"), "$options" -> "i")
-        if (e.isNot) {
-          queryMap.put(e.getLeftExpression.toString, Map("$not" -> value))
-        }
-        else {
-          queryMap.put(e.getLeftExpression.toString, value)
-        }
-      case e: IsNullExpression =>
-        if (e.isNot) {
-          queryMap.put(e.getLeftExpression.toString, Map("$ne" -> null))
-        }
-        else {
-          queryMap.put(e.getLeftExpression.toString, Map("$eq" -> null))
-        }
-      case _ =>
-        throw new IllegalArgumentException("not supported where expression")
+          }
+        case e: MinorThanEquals =>
+          queryMap.put(e.getLeftExpression.toString, Map("$lte" -> convertValue(e.getRightExpression)))
+        case e: OrExpression =>
+          val left  = mutable.Map[String, Any]()
+          val right = mutable.Map[String, Any]()
+          parseWhere(e.getLeftExpression, left, statementToIgnore)
+          parseWhere(e.getRightExpression, right, statementToIgnore)
+          queryMap.put("$or", List(left, right))
+        case e: NotExpression =>
+          val right = mutable.Map[String, Any]()
+          parseWhere(e.getExpression, right, statementToIgnore)
+          right.keys.foreach(k => queryMap.put(k, Map("$not" -> right(k))))
+        case e: AndExpression =>
+          val left  = mutable.Map[String, Any]()
+          val right = mutable.Map[String, Any]()
+          parseWhere(e.getLeftExpression, left, statementToIgnore)
+          parseWhere(e.getRightExpression, right, statementToIgnore)
+          queryMap.put("$and", List(left, right))
+        case e: ParenthesedExpressionList[Expression] =>
+          e.asScala.foreach(ex => parseWhere(ex, queryMap, statementToIgnore))
+        case e: InExpression =>
+          val value = e.getRightExpression match {
+            case l: ParenthesedExpressionList[Expression] => l.asScala.map(convertValue)
+            case i: Any                                   => throw new IllegalArgumentException(s"${i.getClass.getSimpleName} not supported")
+          }
+          val functionName = if (e.isNot) "$nin" else "$in"
+          queryMap.put(e.getLeftExpression.toString, Map(functionName -> value))
+        case e: LikeExpression =>
+          val value = Map("$regex" -> e.getRightExpression.toString.replace("%", "(.*?)"), "$options" -> "i")
+          if (e.isNot) {
+            queryMap.put(e.getLeftExpression.toString, Map("$not" -> value))
+          }
+          else {
+            queryMap.put(e.getLeftExpression.toString, value)
+          }
+        case e: IsNullExpression =>
+          if (e.isNot) {
+            queryMap.put(e.getLeftExpression.toString, Map("$ne" -> null))
+          }
+          else {
+            queryMap.put(e.getLeftExpression.toString, Map("$eq" -> null))
+          }
+        case _ =>
+          throw new IllegalArgumentException("not supported where expression")
+      }
     }
   }
 
@@ -346,47 +359,92 @@ class MongoSqlQueryHolder {
           )
           aliasName
         })
+        var matchedJoinStatement: List[Expression] = List.empty
         Option(plainSelect.getJoins)
           .map(_.asScala)
           .getOrElse(List.empty)
           .foreach(join => {
             var lookupMap = Map[String, Any]()
-            if (join.getOnExpressions != null && !join.getOnExpressions.isEmpty)
-              join.getRightItem.getAlias match {
-                case null =>
-                  lookupMap += "from" -> join.getRightItem.toString
-                  lookupMap += "as"   -> join.getRightItem.toString
-                case _ =>
-                  lookupMap += "from" -> join.getRightItem.toString.replace(join.getRightItem.getAlias.toString, "")
-                  lookupMap += "as"   -> join.getRightItem.getAlias.getName
-              }
-            join.getOnExpressions.asScala.foreach(e => {
-              val equalsTo             = e.asInstanceOf[EqualsTo]
-              val joinCollectionPrefix = s"${lookupMap("as")}."
-              aliasList += lookupMap("as").toString
-              val primaryCollectionPrefix = s"${alias.getOrElse(sqlTable)}."
-              val expressionList = List(equalsTo.getLeftExpression.toString, equalsTo.getRightExpression.toString)
-                .filter(e => e.contains(joinCollectionPrefix) || e.contains(primaryCollectionPrefix))
-              if (expressionList.size == 2) {
-                expressionList.foreach { exp =>
-                  if (exp.contains(primaryCollectionPrefix)) {
-                    lookupMap += "localField" -> exp
-                  }
-                  if (exp.contains(joinCollectionPrefix)) {
-                    lookupMap += "foreignField" -> exp.replace(joinCollectionPrefix, "")
+            join.getRightItem.getAlias match {
+              case null =>
+                lookupMap += "from" -> join.getRightItem.toString
+                lookupMap += "as"   -> join.getRightItem.toString
+              case _ =>
+                lookupMap += "from" -> join.getRightItem.toString.replace(join.getRightItem.getAlias.toString, "")
+                lookupMap += "as"   -> join.getRightItem.getAlias.getName
+            }
+            val joinCollectionPrefix = s"${lookupMap("as")}."
+
+            if (join.getOnExpressions != null && !join.getOnExpressions.isEmpty) {
+              join.getOnExpressions.asScala.foreach(e => {
+                val equalsTo = e.asInstanceOf[EqualsTo]
+                aliasList += lookupMap("as").toString
+                val primaryCollectionPrefix = s"${alias.getOrElse(sqlTable)}."
+                val expressionList = List(equalsTo.getLeftExpression.toString, equalsTo.getRightExpression.toString)
+                  .filter(e => e.contains(joinCollectionPrefix) || e.contains(primaryCollectionPrefix))
+                if (expressionList.size == 2) {
+                  expressionList.foreach { exp =>
+                    if (exp.contains(primaryCollectionPrefix)) {
+                      lookupMap += "localField" -> exp
+                    }
+                    if (exp.contains(joinCollectionPrefix)) {
+                      lookupMap += "foreignField" -> exp.replace(joinCollectionPrefix, "")
+                    }
                   }
                 }
-              }
-              else {
-                throw new IllegalArgumentException("join on expression must contain collection and lookup collection")
-              }
-            })
+                else {
+                  throw new IllegalArgumentException("join on expression must contain collection and lookup collection")
+                }
+              })
+            }
+            else {
+              val joinStatemt = findEqualStatements(plainSelect.getWhere)
+                .filter(stmt => stmt.getLeftExpression.isInstanceOf[Column] && stmt.getRightExpression.isInstanceOf[Column])
+                .filter(stmt => {
+                  val tableName = Option(plainSelect.getFromItem.getAlias)
+                    .map(_.getName)
+                    .getOrElse(join.getFromItem.toString.replace(plainSelect.getFromItem.getAlias.toString, ""))
+                  val joinTableName =
+                    Option(join.getFromItem.getAlias).map(_.getName).getOrElse(join.getFromItem.toString.replace(join.getFromItem.getAlias.toString, ""))
+                  val leftMatch = stmt.getLeftExpression
+                    .asInstanceOf[Column]
+                    .getTable
+                    .getName
+                    .equalsIgnoreCase(joinTableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(tableName)
+                  val rightMatch = stmt.getLeftExpression
+                    .asInstanceOf[Column]
+                    .getTable
+                    .getName
+                    .equalsIgnoreCase(tableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(joinTableName)
+                  leftMatch || rightMatch
+                })
+              val letFields   = mutable.Map[String, Any]()
+              val matchFields = ArrayBuffer[List[String]]()
+              var i           = 0
+              joinStatemt.foreach(stmt => {
+                val variableName = s"localVariable$i"
+                letFields += variableName -> ("$" + stmt.getLeftExpression.toString.replace(joinCollectionPrefix, ""))
+                matchFields += List(variableName, stmt.getRightExpression.toString.replace(joinCollectionPrefix, ""))
+                matchedJoinStatement = List(stmt)
+                i += 1
+              })
+              lookupMap += "let" -> letFields
+              lookupMap += "pipeline" -> List(
+                Map(
+                  "$match" -> Map(
+                    "$expr" ->
+                      Map("$and" -> matchFields.map(f => Map("$eq" -> List(("$$" + f.head), ("$" + f.last)))).toList)
+                  )
+                )
+              )
+            }
+
             aggregatePipeline += Map("$lookup" -> lookupMap)
             aggregatePipeline += Map("$unwind" -> Map("path" -> s"$$${lookupMap("as")}", "preserveNullAndEmptyArrays" -> false))
           })
         Option(plainSelect.getWhere).foreach { where =>
           val filterQuery = mutable.Map[String, Any]()
-          parseWhere(where, filterQuery)
+          parseWhere(where, filterQuery, matchedJoinStatement)
           aggregatePipeline += Map(
             "$match" -> filterQuery
           )
@@ -448,7 +506,7 @@ class MongoSqlQueryHolder {
         }
         Option(plainSelect.getHaving()).foreach { having =>
           val filterQuery = mutable.Map[String, Any]()
-          parseWhere(having, filterQuery)
+          parseWhere(having, filterQuery, matchedJoinStatement)
           aggregatePipeline += Map(
             "$match" -> filterQuery
           )
@@ -479,7 +537,17 @@ class MongoSqlQueryHolder {
                 case e: SelectItem[Expression] =>
                   e.getAlias match {
                     case null =>
-                      e.getExpression.toString -> 1
+                      var expressionName = e.getExpression.toString
+                      var removedPrefix  = false
+                      if (expressionName.startsWith("(")) {
+                        expressionName = expressionName.substring(1)
+                        removedPrefix = true
+                      }
+                      if (removedPrefix && expressionName.endsWith(")")) {
+                        expressionName = expressionName.substring(0, expressionName.length - 1)
+                      }
+                      expressionName = expressionName.trim
+                      expressionName -> 1
                     case _ =>
                       e.getAlias.getName -> 1
                   }
@@ -495,10 +563,19 @@ class MongoSqlQueryHolder {
             "$replaceWith" -> Map("$mergeObjects" -> aliasList.map(string => if (string.startsWith("$")) string else "$" + string).toList)
           )
         }
-        maybeDistinct.foreach { distinct =>
+        maybeDistinct.foreach { _ =>
           val groupMap: mutable.Map[String, Any] = mutable.Map()
           selectItems.foreach { case e: SelectItem[Expression] =>
-            val expressionName = e.getExpression.toString
+            var expressionName = e.getExpression.toString
+            var prefixRemoved  = false
+            if (expressionName.startsWith("(")) {
+              expressionName = expressionName.substring(1)
+              prefixRemoved = true
+            }
+            if (prefixRemoved && expressionName.endsWith(")")) {
+              expressionName = expressionName.substring(0, expressionName.length - 1)
+            }
+            expressionName = expressionName.trim
             if (expressionName.contains("count")) {
               groupMap += expressionName -> Map("$sum" -> 1)
             }
@@ -528,6 +605,26 @@ class MongoSqlQueryHolder {
         }
       case _ => throw new IllegalArgumentException("not supported sql command type")
     }
+  }
+
+  private def findEqualStatements(getWhere: Expression) = {
+    val equalStatements = ArrayBuffer[EqualsTo]()
+    def findEqualStatementsRec(expression: Expression): Unit = {
+      expression match {
+        case e: EqualsTo =>
+          equalStatements += e
+        case e: AndExpression =>
+          findEqualStatementsRec(e.getLeftExpression)
+          findEqualStatementsRec(e.getRightExpression)
+        case e: OrExpression =>
+          findEqualStatementsRec(e.getLeftExpression)
+          findEqualStatementsRec(e.getRightExpression)
+        case _ =>
+          ""
+      }
+    }
+    findEqualStatementsRec(getWhere)
+    equalStatements
   }
 
   private def convertInsertStatement(insert: Insert): Unit = {
@@ -565,7 +662,7 @@ class MongoSqlQueryHolder {
     val filter = Option(update.getWhere)
       .map { where =>
         val filterQuery = mutable.Map[String, Any]()
-        parseWhere(where, filterQuery)
+        parseWhere(where, filterQuery, List.empty)
         filterQuery.toMap
       }
       .getOrElse(Map.empty)
@@ -594,7 +691,7 @@ class MongoSqlQueryHolder {
     val filter = Option(delete.getWhere)
       .map { where =>
         val filterQuery = mutable.Map[String, Any]()
-        parseWhere(where, filterQuery)
+        parseWhere(where, filterQuery, List.empty)
         filterQuery.toMap
       }
       .getOrElse(Map.empty)

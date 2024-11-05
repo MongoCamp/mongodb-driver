@@ -5,6 +5,7 @@ import dev.mongocamp.driver.mongodb.dao.PersonSpecification
 import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
+import org.mongodb.scala.bson.BsonDocument
 
 class SelectSqlSpec extends PersonSpecification {
 
@@ -102,6 +103,17 @@ class SelectSqlSpec extends PersonSpecification {
       val document = selectResponse.head
       document.getString("guid") mustEqual "a17be99a-8913-4bb6-8f14-16d4fa1b3559"
       document.getInteger("age") mustEqual 25
+    }
+
+    "search on join without on expression" in {
+      val queryConverter = MongoSqlQueryHolder(
+        "select p1.id, p1.guid, p1.name, p2.age, p2.balance from people as p1, people as p2 where p1.id = p2.id and p2.age < 30 order by p2.id asc"
+      )
+      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+      selectResponse.size mustEqual 99
+      val document = selectResponse.head
+      document.getString("guid") mustEqual "a17be99a-8913-4bb6-8f14-16d4fa1b3559"
+      document("p2").asInstanceOf[BsonDocument].getInt32("age").getValue mustEqual 25
     }
 
     "is not null" in {

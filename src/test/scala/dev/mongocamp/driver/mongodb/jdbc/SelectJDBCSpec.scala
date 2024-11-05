@@ -22,7 +22,7 @@ class SelectJDBCSpec extends BaseJdbcSpec {
 
     "execute prepared statement" in {
       val preparedStatement = connection.prepareStatement("select * from `mongocamp-unit-test`.people where age < ? order by id asc")
-      preparedStatement.setLong(0, 30)
+      preparedStatement.setLong(1, 30)
       val result = preparedStatement.executeQuery()
       var i           = 0
       val arrayBuffer = ArrayBuffer[ResultSet]()
