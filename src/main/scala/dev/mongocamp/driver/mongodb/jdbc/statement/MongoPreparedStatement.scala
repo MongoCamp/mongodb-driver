@@ -1,36 +1,20 @@
 package dev.mongocamp.driver.mongodb.jdbc.statement
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
+import dev.mongocamp.driver.mongodb.{Converter, GenericObservable}
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
-import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
+import dev.mongocamp.driver.mongodb.jdbc.{MongoJdbcCloseable, MongoJdbcConnection}
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
 import org.joda.time.DateTime
 
-import java.io.{ InputStream, Reader }
+import java.io.{InputStream, Reader}
 import java.net.URL
-import java.{ sql, util }
-import java.sql.{
-  Blob,
-  CallableStatement,
-  Clob,
-  Connection,
-  Date,
-  NClob,
-  ParameterMetaData,
-  PreparedStatement,
-  Ref,
-  ResultSet,
-  ResultSetMetaData,
-  RowId,
-  SQLWarning,
-  SQLXML,
-  Time,
-  Timestamp
-}
+import java.{sql, util}
+import java.sql.{Blob, CallableStatement, Clob, Connection, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSet, ResultSetMetaData, RowId, SQLWarning, SQLXML, Time, Timestamp}
 import java.util.Calendar
 import scala.collection.mutable
+import scala.util.Try
 
 case class MongoPreparedStatement(connection: MongoJdbcConnection) extends CallableStatement with MongoJdbcCloseable with LazyLogging {
 
@@ -547,19 +531,19 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getString(parameterIndex: Int): String = parameters.get(parameterIndex).orNull
 
-  override def getBoolean(parameterIndex: Int): Boolean = parameters.get(parameterIndex).flatMap(_.toBooleanOption).getOrElse(false)
+  override def getBoolean(parameterIndex: Int): Boolean = parameters.get(parameterIndex).flatMap(v => Try{v.toBoolean}.toOption).getOrElse(false)
 
-  override def getByte(parameterIndex: Int): Byte = parameters.get(parameterIndex).flatMap(_.toByteOption).getOrElse(0)
+  override def getByte(parameterIndex: Int): Byte = parameters.get(parameterIndex).flatMap(v => Try{v.toByte}.toOption).getOrElse(0)
 
-  override def getShort(parameterIndex: Int): Short = parameters.get(parameterIndex).flatMap(_.toShortOption).getOrElse(0)
+  override def getShort(parameterIndex: Int): Short = parameters.get(parameterIndex).flatMap(v => Try{v.toShort}.toOption).getOrElse(0)
 
-  override def getInt(parameterIndex: Int): Int = parameters.get(parameterIndex).flatMap(_.toIntOption).getOrElse(0)
+  override def getInt(parameterIndex: Int): Int = parameters.get(parameterIndex).flatMap(v => Try{v.toInt}.toOption).getOrElse(0)
 
-  override def getLong(parameterIndex: Int): Long = parameters.get(parameterIndex).flatMap(_.toLongOption).getOrElse(0)
+  override def getLong(parameterIndex: Int): Long = parameters.get(parameterIndex).flatMap(v => Try{v.toLong}.toOption).getOrElse(0)
 
-  override def getFloat(parameterIndex: Int): Float = parameters.get(parameterIndex).flatMap(_.toFloatOption).getOrElse(0.0.toFloat)
+  override def getFloat(parameterIndex: Int): Float = parameters.get(parameterIndex).flatMap(v => Try{v.toFloat}.toOption).getOrElse(0.0.toFloat)
 
-  override def getDouble(parameterIndex: Int): Double = parameters.get(parameterIndex).flatMap(_.toDoubleOption).getOrElse(0.0)
+  override def getDouble(parameterIndex: Int): Double = parameters.get(parameterIndex).flatMap(v => Try{v.toDouble}.toOption).getOrElse(0.0)
 
   override def getBigDecimal(parameterIndex: Int, scale: Int): java.math.BigDecimal = getBigDecimal(parameterIndex)
 
@@ -573,7 +557,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getObject(parameterIndex: Int): AnyRef = ???
 
-  override def getBigDecimal(parameterIndex: Int): java.math.BigDecimal = parameters.get(parameterIndex).flatMap(_.toDoubleOption).map(new java.math.BigDecimal(_)).orNull
+  override def getBigDecimal(parameterIndex: Int): java.math.BigDecimal = parameters.get(parameterIndex).flatMap(v => Try{v.toDouble}.toOption).map(new java.math.BigDecimal(_)).orNull
 
   override def getObject(parameterIndex: Int, map: util.Map[String, Class[_]]): AnyRef = ???
 
