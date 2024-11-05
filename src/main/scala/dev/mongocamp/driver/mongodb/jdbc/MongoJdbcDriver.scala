@@ -29,7 +29,7 @@ class MongoJdbcDriver extends java.sql.Driver {
 
     val string   = new ConnectionString(connectionUrl)
     val database = Option(string.getDatabase).getOrElse(Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.Database)).getOrElse("admin"))
-    val authDb   = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse(Option(string.getDatabase).getOrElse("admin"))
+    val authDb   = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse("admin")
     val provider = DatabaseProvider(
       MongoConfig(
         database,
