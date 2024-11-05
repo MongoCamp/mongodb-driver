@@ -90,7 +90,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       case b: BsonInt32  => b.doubleValue()
       case b: BsonInt64  => b.doubleValue()
       case b: BsonDouble => b.doubleValue()
-      case _             => Option(value).flatMap(v => v.toString.toDoubleOption).getOrElse(0)
+      case _             => Option(value).flatMap(v => Try(v.toString.toDouble).toOption).getOrElse(0)
     }
   }
 
@@ -187,7 +187,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       case b: BsonInt32  => b.doubleValue()
       case b: BsonInt64  => b.doubleValue()
       case b: BsonDouble => b.doubleValue()
-      case _             => Option(value).flatMap(v => v.toString.toDoubleOption).getOrElse(0)
+      case _             => Option(value).flatMap(v => Try(v.toString.toDouble).toOption).getOrElse(0)
     }
   }
 
