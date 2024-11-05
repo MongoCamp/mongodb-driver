@@ -1,3 +1,21 @@
+## [v2.8.1] - 2024-11-05
+### :sparkles: New Features
+- [`df5a348`](https://github.com/MongoCamp/mongodb-driver/commit/df5a348515cf60f7ff419efde4e619a5013b2fab) - joins without on statement in oracle style *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`0e64c07`](https://github.com/MongoCamp/mongodb-driver/commit/0e64c07a7cae391e90bc18b757abc5a2e4e4cb34) - use double to read number values from document *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`23fae6e`](https://github.com/MongoCamp/mongodb-driver/commit/23fae6e36b0d2a5f9f92b333942730dd9a215892) - added bytes read und write from and to mongodb *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`90f867b`](https://github.com/MongoCamp/mongodb-driver/commit/90f867b8eb34a34dd44530fa7ce33242ed43c538) - parameter replacement needs to keep order *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`242ee8e`](https://github.com/MongoCamp/mongodb-driver/commit/242ee8eaa570c59db110fe9364b3bb5306be6b78) - executeUpdate response sum from matched, delete and inserted count *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`43ee50b`](https://github.com/MongoCamp/mongodb-driver/commit/43ee50b5f197ee2488636f323c7a1e18036be83e) - conversion is now scala 2.12.x conform *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`323dc0a`](https://github.com/MongoCamp/mongodb-driver/commit/323dc0a1d265f5df8da5489d724d8881b545221f) - 3 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`5a12245`](https://github.com/MongoCamp/mongodb-driver/commit/5a122458ed2959f7fad029e49e7abd8fad0a0e0d) - 3 plugins and sbt versions updated *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v2.8.0] - 2024-10-22
 ### :boom: BREAKING CHANGES
 - due to [`51aa927`](https://github.com/MongoCamp/mongodb-driver/commit/51aa92708c5aa5585c1925b6c5d97f5adb9bcbd7) - drop java 11 and 19 support because `org.apache.lucene.queryparser` has dropped it *(commit by [@QuadStingray](https://github.com/QuadStingray))*:
@@ -233,3 +251,4 @@
 [v2.6.9]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.8...v2.6.9
 [v2.7.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.10...v2.7.0
 [v2.8.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.7.0...v2.8.0
+[v2.8.1]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.0...v2.8.1
