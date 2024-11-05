@@ -139,7 +139,7 @@ class MongoSqlQueryHolder {
           .insertMany(documentsToInsert.toList)
           .map(e => {
             val map      = e.getInsertedIds.asScala.map(d => d._1.toString -> d._2).toMap
-            val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map) , "insertedCount" -> map.size)
+            val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map), "insertedCount" -> map.size)
             document
           })
 
