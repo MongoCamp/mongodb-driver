@@ -2,7 +2,7 @@ package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
 import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
-import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
+import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
 import org.mongodb.scala.bson.collection.immutable.Document
 
 import java.io.{ InputStream, Reader }
@@ -14,6 +14,7 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 
 import java.nio.charset.StandardCharsets
+import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
@@ -197,7 +198,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getBytes(columnLabel: String): Array[Byte] = {
     checkClosed()
-    null
+    getString(columnLabel).replace("[", "").replace("]", "").split(",").filterNot(s => s.trim.isEmpty).map(_.trim.toByte)
   }
 
   override def getDate(columnLabel: String): Date = {
@@ -824,9 +825,13 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
     updateString(columnLabel, text)
   }
 
-  override def getBlob(columnIndex: Int): Blob = sqlFeatureNotSupported()
+  override def getBlob(columnIndex: Int): Blob = {
+    new SerialBlob(getBytes(columnIndex))
+  }
 
-  override def getBlob(columnLabel: String): Blob = sqlFeatureNotSupported()
+  override def getBlob(columnLabel: String): Blob = {
+    new SerialBlob(getBytes(columnLabel))
+  }
 
   override def updateBlob(columnIndex: Int, x: Blob): Unit = {
     checkClosed()
