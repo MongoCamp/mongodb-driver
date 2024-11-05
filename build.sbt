@@ -63,7 +63,7 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.9" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.11" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.12" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
@@ -86,7 +86,7 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJ
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.7" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-6" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-7" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.0.0"
 
@@ -102,7 +102,7 @@ libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
 libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.0"
 
-libraryDependencies += "org.liquibase" % "liquibase-core" % "4.29.2" % Test
+libraryDependencies += "org.liquibase" % "liquibase-core" % "4.30.0" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
