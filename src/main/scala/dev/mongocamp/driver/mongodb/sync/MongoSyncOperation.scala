@@ -11,6 +11,7 @@ import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Updates._
 
 import java.util.Date
+import org.mongodb.scala.bson.conversions.Bson
 
 case class MongoSyncOperation(
     collectionName: String,
@@ -19,7 +20,7 @@ case class MongoSyncOperation(
     idColumnName: String = DatabaseProvider.ObjectIdKey
 ) extends LazyLogging
     with Filter {
-  val includes = include(idColumnName, MongoSyncOperation.SyncColumnLastSync, MongoSyncOperation.SyncColumnLastUpdate)
+  val includes: Bson = include(idColumnName, MongoSyncOperation.SyncColumnLastSync, MongoSyncOperation.SyncColumnLastUpdate)
 
   def excecute(source: DatabaseProvider, target: DatabaseProvider): List[MongoSyncResult] =
     try {
@@ -91,6 +92,6 @@ object MongoSyncOperation extends ConfigHelper {
   val SyncColumnLastSync: String   = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastSync", default = "_lastSync").get
   val SyncColumnLastUpdate: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
 
-  val WriteSyncLogOnMaster     = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
+  val WriteSyncLogOnMaster: Boolean     = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
   val SyncLogTableName: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncLogTableName", default = "mongodb-sync-log").get
 }

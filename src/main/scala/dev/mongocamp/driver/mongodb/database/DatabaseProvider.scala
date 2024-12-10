@@ -20,7 +20,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def DefaultDatabaseName: String = defaultDatabaseName
 
-  def connectionString = {
+  def connectionString: String = {
     s"mongodb://${config.host}:${config.port}/${config.database}"
   }
 

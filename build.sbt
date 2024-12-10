@@ -40,7 +40,7 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.13.15", "2.12.20")
+crossScalaVersions := Seq("2.13.15")
 
 scalaVersion := crossScalaVersions.value.head
 
@@ -75,7 +75,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.1.4"
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.1.4").cross(CrossVersion.for3Use2_13)
 
 // MongoDB 5.2.0 not supported for de.bwaldvogel -> https://github.com/bwaldvogel/mongo-java-server/issues/233
 val MongoJavaServerVersion = "1.45.0"

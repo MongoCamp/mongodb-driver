@@ -35,6 +35,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 import scala.util.Try
+import net.sf.jsqlparser.statement.Statement
 
 class MongoSqlQueryHolder {
   private val aggregatePipeline: ArrayBuffer[Document]       = ArrayBuffer()
@@ -719,7 +720,7 @@ class MongoSqlQueryHolder {
 
 object MongoSqlQueryHolder {
 
-  def stringToStatement(sql: String, charset: String = "UTF-8") = {
+  def stringToStatement(sql: String, charset: String = "UTF-8"): Statement = {
     try {
       val stream: java.io.InputStream = new java.io.ByteArrayInputStream(sql.getBytes(charset))
       val jSqlParser                  = new CCJSqlParser(new StreamProvider(stream, charset))

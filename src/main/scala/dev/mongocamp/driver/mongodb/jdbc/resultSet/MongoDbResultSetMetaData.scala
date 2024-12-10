@@ -80,7 +80,7 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
       case _: BsonNumber  => java.sql.Types.DOUBLE
       case _: BsonString  => java.sql.Types.VARCHAR
       case _: BsonBoolean => java.sql.Types.BOOLEAN
-      case _: Document    => java.sql.Types.STRUCT
+//      case _: Document    => java.sql.Types.STRUCT // todo: check if this is correct
       case _              => java.sql.Types.NULL
     }
   }

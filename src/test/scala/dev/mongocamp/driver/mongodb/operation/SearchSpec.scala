@@ -14,12 +14,13 @@ class SearchSpec extends PersonSpecification with MongoImplicits {
 
       val findAllResult: List[Person] = PersonDAO.find()
 
-      findAllResult.size must be equalTo PersonDAO.count().result().toInt
+      (findAllResult.size must be).equalTo(PersonDAO.count().result().toInt)
 
-      findAllResult.head.name must not beEmpty
+      findAllResult.head.name must not be null
+      (findAllResult.head.name must not).equalTo("")
 
-      findAllResult.head._id.toString must not beEmpty
-
+      findAllResult.head._id.toString must not be null
+      (findAllResult.head._id.toString must not).equalTo("")
     }
 
     "support findOneById" in {
@@ -30,7 +31,7 @@ class SearchSpec extends PersonSpecification with MongoImplicits {
 
       findOneByIdResult must beSome[Person]
 
-      findOneByIdResult.get must be equalTo findAllResult.head
+      (findOneByIdResult.get must be).equalTo(findAllResult.head)
     }
 
     "support findOne with Filter" in {
@@ -39,9 +40,9 @@ class SearchSpec extends PersonSpecification with MongoImplicits {
 
       findOneResult must beSome[Person]
 
-      findOneResult.get.name must be equalTo "Dyer Mayer"
+      (findOneResult.get.name must be).equalTo("Dyer Mayer")
 
-      PersonDAO.find(Map("id" -> 125)).result().name must be equalTo "Gaines Valentine"
+      (PersonDAO.find(Map("id" -> 125)).result().name must be).equalTo("Gaines Valentine")
     }
 
     "support findOne with field name and value" in {
@@ -50,20 +51,20 @@ class SearchSpec extends PersonSpecification with MongoImplicits {
 
       findOneResult must beSome[Person]
 
-      findOneResult.get.name must be equalTo "Dyer Mayer"
+      (findOneResult.get.name must be).equalTo("Dyer Mayer")
 
-      PersonDAO.find("name", "Gaines Valentine").result().name must be equalTo "Gaines Valentine"
+      (PersonDAO.find("name", "Gaines Valentine").result().name must be).equalTo("Gaines Valentine")
     }
 
     "support findOne with Filter" in {
 
       val females = PersonDAO.find(Map("gender" -> "female"), sortByKey("name")).resultList()
 
-      females.size must be equalTo 98
+      (females.size must be).equalTo(98)
 
       val males = PersonDAO.find(Map("gender" -> "male")).resultList()
 
-      males.size must be equalTo 102
+      (males.size must be).equalTo(102)
 
     }
 

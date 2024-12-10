@@ -5,7 +5,7 @@ import dev.mongocamp.driver.mongodb.dao.PersonSpecification
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
 
 class LuceneSearchSpec extends PersonSpecification {
-  lazy val sortByBalance = Map("balance" -> -1)
+  lazy val sortByBalance: Map[String,Int] = Map("balance" -> -1)
 
   "LuceneSearch" should {
 

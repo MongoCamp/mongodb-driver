@@ -7,7 +7,7 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
 import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 class PersonDAOSpec extends PersonSpecification with MongoImplicits {
 
@@ -35,7 +35,7 @@ class PersonDAOSpec extends PersonSpecification with MongoImplicits {
 
     "support resultList" in {
       val option: Option[Person] = PersonDAO.find("id", 42)
-      option must not beEmpty
+      option must beSome[Person]
     }
 
     "support asFuture" in {

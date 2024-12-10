@@ -13,11 +13,11 @@ class MongoConfigSpec extends Specification {
       config.database must beEqualTo("config_test")
       val shortDescription =
         "{hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
-      config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
-      config.clientSettings.getApplicationName must be equalTo "mongocampdb-app"
-      config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
-      config.clientSettings.getConnectionPoolSettings.getMinSize must be equalTo 0
-      config.clientSettings.getConnectionPoolSettings.getMaxSize must be equalTo 50
+      (config.clientSettings.getClusterSettings.getShortDescription must be).equalTo(shortDescription)
+      (config.clientSettings.getApplicationName must be).equalTo("mongocampdb-app")
+      (config.clientSettings.getClusterSettings.getHosts.size() must be).equalTo(1)
+      (config.clientSettings.getConnectionPoolSettings.getMinSize must be).equalTo(0)
+      (config.clientSettings.getConnectionPoolSettings.getMaxSize must be).equalTo(50)
     }
 
     "be created with Properties " in {
@@ -27,11 +27,11 @@ class MongoConfigSpec extends Specification {
       config.database must beEqualTo("config_test")
       val shortDescription =
         "{hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
-      config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
-      config.clientSettings.getApplicationName must be equalTo "Awesome Application Name"
-      config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
-      config.clientSettings.getConnectionPoolSettings.getMinSize must be equalTo 0
-      config.clientSettings.getConnectionPoolSettings.getMaxSize must be equalTo 50
+      (config.clientSettings.getClusterSettings.getShortDescription must be).equalTo(shortDescription)
+      (config.clientSettings.getApplicationName must be).equalTo("Awesome Application Name")
+      (config.clientSettings.getClusterSettings.getHosts.size() must be).equalTo(1)
+      (config.clientSettings.getConnectionPoolSettings.getMinSize must be).equalTo(0)
+      (config.clientSettings.getConnectionPoolSettings.getMaxSize must be).equalTo(50)
     }
 
     "be created by config " in {
@@ -39,11 +39,11 @@ class MongoConfigSpec extends Specification {
       config.database must beEqualTo("mongocamp-unit-test")
       val shortDescription =
         "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
-      config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
-      config.clientSettings.getApplicationName must be equalTo "mongocamp-config-test"
-      config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
-      config.clientSettings.getConnectionPoolSettings.getMinSize must be equalTo 5
-      config.clientSettings.getConnectionPoolSettings.getMaxSize must be equalTo 100
+      (config.clientSettings.getClusterSettings.getShortDescription must be).equalTo(shortDescription)
+      (config.clientSettings.getApplicationName must be).equalTo("mongocamp-config-test")
+      (config.clientSettings.getClusterSettings.getHosts.size() must be).equalTo(1)
+      (config.clientSettings.getConnectionPoolSettings.getMinSize must be).equalTo(5)
+      (config.clientSettings.getConnectionPoolSettings.getMaxSize must be).equalTo(100)
       config.clientSettings.getCredential must beNull
 
     }
@@ -53,14 +53,14 @@ class MongoConfigSpec extends Specification {
       config.database must beEqualTo("mongocamp-unit-test")
       val shortDescription =
         "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms'}"
-      config.clientSettings.getClusterSettings.getShortDescription must be equalTo shortDescription
-      config.clientSettings.getApplicationName must be equalTo "mongocamp-config-test-with-auth"
-      config.clientSettings.getClusterSettings.getHosts.size() must be equalTo 1
-      config.clientSettings.getConnectionPoolSettings.getMinSize must be equalTo 5
-      config.clientSettings.getConnectionPoolSettings.getMaxSize must be equalTo 100
-      config.clientSettings.getCredential.getUserName must be equalTo "admin_user"
-      config.clientSettings.getCredential.getPassword must not beEmpty
-
+      (config.clientSettings.getClusterSettings.getShortDescription must be).equalTo(shortDescription)
+      (config.clientSettings.getApplicationName must be).equalTo("mongocamp-config-test-with-auth")
+      (config.clientSettings.getClusterSettings.getHosts.size() must be).equalTo(1)
+      (config.clientSettings.getConnectionPoolSettings.getMinSize must be).equalTo(5)
+      (config.clientSettings.getConnectionPoolSettings.getMaxSize must be).equalTo(100)
+      (config.clientSettings.getCredential.getUserName must be).equalTo("admin_user")
+      config.clientSettings.getCredential.getPassword must not be null
+      (config.clientSettings.getCredential.getPassword.length must not).equalTo(0)
     }
 
   }
