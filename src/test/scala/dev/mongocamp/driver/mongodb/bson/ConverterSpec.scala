@@ -24,7 +24,9 @@ class ConverterSpec extends Specification {
   def roundtrip[A <: AnyRef](value: A)(implicit ct: ClassTag[A]): Unit = {
     val document = Converter.toDocument(value)
 
-    value must not beNull
+    // todo: check if this is correct (test docuemnt)
+
+    value must not be null
 
     value must haveClass[A]
   }

@@ -12,10 +12,11 @@ case class MongoSyncer(
     targetConfig: MongoConfig,
     syncOperations: List[MongoSyncOperation] = List()
 ) {
-  private val registry     = fromProviders(classOf[MongoSyncResult])
+  // todo: check if this is correct
+//  private val registry     = fromProviders(classOf[MongoSyncResult])
   private val operationMap = new mutable.HashMap[String, MongoSyncOperation]()
 
-  val source: DatabaseProvider = DatabaseProvider(sourceConfig, registry)
+  val source: DatabaseProvider = DatabaseProvider(sourceConfig)
   val target: DatabaseProvider = DatabaseProvider(targetConfig)
 
   object MongoSyncResultDAO extends MongoDAO[MongoSyncResult](source, MongoSyncOperation.SyncLogTableName)

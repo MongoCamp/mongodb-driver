@@ -21,9 +21,11 @@ class PaginationFilterSpec extends PersonSpecification with MongoImplicits {
 
       page.databaseObjects.size must beEqualTo(10)
 
-      page.databaseObjects.head.name must not beEmpty
+      page.databaseObjects.head.name must not be null
+      (page.databaseObjects.head.name must not).equalTo("")
 
-      page.databaseObjects.head._id.toString must not beEmpty
+      page.databaseObjects.head._id must not be null
+      (page.databaseObjects.head._id must not).equalTo("")
 
     }
 

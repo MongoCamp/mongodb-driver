@@ -54,7 +54,8 @@ class CrudSpec extends PersonSpecification with LazyLogging {
 
     "delete Document in" in {
       val hexString = CodecDao.find().result()._id.toHexString
-      hexString must not beEmpty
+      hexString must not be null
+      (hexString must not).equalTo("")
 
       val result: DeleteResult =
         CodecDao.deleteOne(equal(DatabaseProvider.ObjectIdKey, new ObjectId(hexString))).result()
