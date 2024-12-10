@@ -21,12 +21,11 @@ case class MongoSyncOperation(
     idColumnName: String = DatabaseProvider.ObjectIdKey
 ) extends LazyLogging
     with Filter {
-  val includes: Bson = include(idColumnName, MongoSyncOperation.SyncColumnLastSync, MongoSyncOperation.SyncColumnLastUpdate)
 
   def excecute(source: DatabaseProvider, target: DatabaseProvider): List[MongoSyncResult] =
     try {
-      val sourceInfos: Seq[Document] = source.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
-      val targetInfos: Seq[Document] = target.dao(collectionName).find().projection(includes).results(MongoSyncOperation.MaxWait)
+      val sourceInfos: Seq[Document] = source.dao(collectionName).find().results(MongoSyncOperation.MaxWait)
+      val targetInfos: Seq[Document] = target.dao(collectionName).find().results(MongoSyncOperation.MaxWait)
 
       if (SyncDirection.SourceToTarget == syncDirection) {
         val diff = sourceInfos.diff(targetInfos)

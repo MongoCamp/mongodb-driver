@@ -12,7 +12,13 @@ import scala.concurrent.duration.durationToPair
 
 abstract class Base[A] extends LazyLogging {
 
-  protected def coll: MongoCollection[A]
+  implicit def documentToObject[A](document: Document): A = {
+    // docment to json
+    // json to object
+    null.asInstanceOf[A]
+  }
+
+  protected def coll: MongoCollection[Document]
 
   def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] = {
     coll.countDocuments(filter, options)

@@ -11,7 +11,7 @@ import org.mongodb.scala.gridfs.GridFSBucket
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
-class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) extends Serializable {
+class DatabaseProvider(val config: MongoConfig) extends Serializable {
   private val cachedDatabaseMap                 = new mutable.HashMap[String, MongoDatabase]()
   private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
   private var cachedClient: Option[MongoClient] = None
@@ -67,7 +67,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def database(databaseName: String = DefaultDatabaseName): MongoDatabase = {
     if (!cachedDatabaseMap.contains(databaseName)) {
-      cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName).withCodecRegistry(registry))
+      cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName))
     }
     cachedDatabaseMap(databaseName)
   }
@@ -155,16 +155,12 @@ object DatabaseProvider {
   val ObjectIdKey         = "_id"
   val CollectionSeparator = ":"
 
-  private val CustomRegistry = fromProviders(CustomCodecProvider())
-
-  private val codecRegistry: CodecRegistry = fromRegistries(CustomRegistry, DEFAULT_CODEC_REGISTRY)
-
-  def apply(config: MongoConfig, registry: CodecRegistry = codecRegistry): DatabaseProvider = {
-    new DatabaseProvider(config, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
+  def apply(config: MongoConfig): DatabaseProvider = {
+    new DatabaseProvider(config)
   }
 
-  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix, registry: CodecRegistry = codecRegistry): DatabaseProvider = {
-    apply(MongoConfig.fromPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
+  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix): DatabaseProvider = {
+    apply(MongoConfig.fromPath(configPath))
   }
 
 }
