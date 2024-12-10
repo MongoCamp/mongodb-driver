@@ -24,7 +24,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   val name: String = provider.guessName(collectionName)
 
-  val collection: MongoCollection[A] = provider.collection[A](collectionName)
+  val collection: MongoCollection[Document] = provider.collection[Document](collectionName)
 
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
     coll.watch[A]().subscribe(observer)
@@ -64,7 +64,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     BsonConverter.fromBson(aggregationResult.get("keySet").head).asInstanceOf[List[String]]
   }
 
-  protected def coll: MongoCollection[A] = collection
+  protected def coll: MongoCollection[Document] = collection
 
   // internal object for raw document access
   object Raw extends MongoDAO[Document](provider, collectionName)

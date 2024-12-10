@@ -16,7 +16,7 @@ class DocumentHelperSpec extends Specification {
 
       val document = DocumentHelper.documentFromJsonString(lines.head)
 
-      document must beSome()
+      document.isDefined must be equalTo(true)
 
     }
   }
