@@ -2,6 +2,7 @@ package dev.mongocamp.driver.mongodb
 
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import org.mongodb.scala.Document
+import org.mongodb.scala.bsonDocumentToDocument
 
 object Converter {
 

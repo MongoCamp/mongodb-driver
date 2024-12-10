@@ -12,6 +12,7 @@ import org.mongodb.scala.model.Updates._
 
 import java.util.Date
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.documentToUntypedDocument
 
 case class MongoSyncOperation(
     collectionName: String,
@@ -92,6 +93,6 @@ object MongoSyncOperation extends ConfigHelper {
   val SyncColumnLastSync: String   = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastSync", default = "_lastSync").get
   val SyncColumnLastUpdate: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncColumnLastUpdate", default = "_lastUpdate").get
 
-  val WriteSyncLogOnMaster: Boolean     = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
-  val SyncLogTableName: String = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncLogTableName", default = "mongodb-sync-log").get
+  val WriteSyncLogOnMaster: Boolean = booleanConfig(configPath = "dev.mongocamp.mongodb.sync", key = "writeSyncLogOnMaster")
+  val SyncLogTableName: String      = stringConfig(configPath = "dev.mongocamp.mongodb.sync", key = "syncLogTableName", default = "mongodb-sync-log").get
 }

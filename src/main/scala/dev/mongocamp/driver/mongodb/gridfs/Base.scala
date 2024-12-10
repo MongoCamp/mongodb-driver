@@ -11,6 +11,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSDownloadObservable }
 import org.mongodb.scala.{ Document, Observable, ReadConcern, ReadPreference, WriteConcern }
+import org.mongodb.scala.documentToUntypedDocument
 
 abstract class Base extends LazyLogging {
 

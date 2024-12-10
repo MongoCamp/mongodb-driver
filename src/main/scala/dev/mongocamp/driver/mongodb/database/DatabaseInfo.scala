@@ -4,6 +4,7 @@ import java.util.Date
 import dev.mongocamp.driver.mongodb._
 
 import org.mongodb.scala.bson.Document
+import org.mongodb.scala.documentToUntypedDocument
 
 case class DatabaseInfo(name: String, sizeOnDisk: Double, empty: Boolean, fetched: Date, map: Map[String, Any])
 

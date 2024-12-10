@@ -10,6 +10,7 @@ import org.mongodb.scala.bson.collection.immutable.Document
 
 import java.sql.{ Connection, DatabaseMetaData, ResultSet, RowIdLifetime, Types }
 import scala.collection.mutable.ArrayBuffer
+import org.mongodb.scala.documentToUntypedDocument
 
 class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMetaData {
   private lazy val semVer          = new Semver(BuildInfo.version)
