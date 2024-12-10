@@ -4,6 +4,7 @@ import java.util.Date
 
 import org.mongodb.scala.bson.Document
 import dev.mongocamp.driver.mongodb._
+import org.mongodb.scala.documentToUntypedDocument
 
 case class CollectionInfo(
     name: String,

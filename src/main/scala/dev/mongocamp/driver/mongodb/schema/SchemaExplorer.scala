@@ -9,6 +9,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.DurationInt
 import io.circe.parser.decode
+import org.mongodb.scala.documentToUntypedDocument
 
 class SchemaExplorer {
   private val NameSeparator: String = "."

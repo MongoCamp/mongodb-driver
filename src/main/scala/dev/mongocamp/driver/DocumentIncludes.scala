@@ -11,6 +11,8 @@ import org.mongodb.scala.bson.conversions.Bson
 
 import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
+import org.mongodb.scala.documentToUntypedDocument
+
 trait DocumentIncludes {
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 
@@ -52,6 +54,7 @@ trait DocumentIncludes {
   // ObjectId
   implicit def stringToObjectId(str: String): ObjectId = new ObjectId(str)
 
-  implicit def documentToObjectId(doc: Document): ObjectId =
+  implicit def documentToObjectId(doc: Document): ObjectId = {
     doc.getObjectId(DatabaseProvider.ObjectIdKey)
+  }
 }

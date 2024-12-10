@@ -8,6 +8,7 @@ import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, I
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.concurrent.duration.Duration
+import scala.concurrent.duration.durationToPair
 
 abstract class Base[A] extends LazyLogging {
 
