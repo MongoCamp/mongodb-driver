@@ -40,7 +40,7 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("2.13.15")
+crossScalaVersions := Seq("2.13.16")
 //crossScalaVersions := Seq("3.6.0")
 
 scalaVersion := crossScalaVersions.value.head
@@ -64,7 +64,7 @@ resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repos
 
 libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.9" % Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.12" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.16" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
@@ -76,10 +76,9 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser"
 ).map(_ % circeVersion)
 
-libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.1.4").cross(CrossVersion.for3Use2_13)
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.3.1").cross(CrossVersion.for3Use2_13)
 
-// MongoDB 5.2.0 not supported for de.bwaldvogel -> https://github.com/bwaldvogel/mongo-java-server/issues/233
-val MongoJavaServerVersion = "1.45.0"
+val MongoJavaServerVersion = "1.46.0"
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVersion % Provided
 
@@ -87,9 +86,9 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJ
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.7" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-7" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-9" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.0.0"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.1.0"
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2"
 
@@ -101,9 +100,9 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
-libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.0"
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.1"
 
-libraryDependencies += "org.liquibase" % "liquibase-core" % "4.30.0" % Test
+libraryDependencies += "org.liquibase" % "liquibase-core" % "4.31.0" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
