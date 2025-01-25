@@ -1,9 +1,13 @@
 package dev.mongocamp.driver.mongodb.schema
 
 import better.files.Resource
+import io.circe.{ Decoder, HCursor }
 import io.circe.jawn.decode
 import io.circe.syntax._
 import io.circe.generic.auto._
+import org.bson.Document
+
+import scala.collection.mutable
 class JsonConverter extends CirceSchema {
 
   def toJson(s: Any): String = {
@@ -20,4 +24,17 @@ class JsonConverter extends CirceSchema {
     readJsonMap(fileContent)
   }
 
+  def toObject[A](jsonString: String)(implicit decoder: Decoder[A]): A = {
+    decode[A](jsonString).getOrElse(null.asInstanceOf[A])
+  }
+
+}
+
+object JsonConverter extends CirceSchema {
+  implicit lazy val decoder: io.circe.Decoder[org.mongodb.scala.Document] = { (c: HCursor) =>
+    ???
+  }
+  implicit lazy val decoder2: io.circe.Decoder[Document] = { (c: HCursor) =>
+    ???
+  }
 }

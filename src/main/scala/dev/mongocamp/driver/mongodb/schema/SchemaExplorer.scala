@@ -10,6 +10,8 @@ import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.DurationInt
 import io.circe.parser.decode
 import org.mongodb.scala.documentToUntypedDocument
+import io.circe.generic.auto._, io.circe.syntax._
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 
 class SchemaExplorer {
   private val NameSeparator: String = "."

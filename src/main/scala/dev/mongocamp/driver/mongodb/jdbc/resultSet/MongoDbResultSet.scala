@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets
 import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
 import org.mongodb.scala.documentToUntypedDocument
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
   private var currentRow: Document = _

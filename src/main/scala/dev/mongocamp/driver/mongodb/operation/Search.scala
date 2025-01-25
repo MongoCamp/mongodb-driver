@@ -4,6 +4,8 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.bson.BsonConverter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import io.circe.Decoder.Result
+import io.circe.{ Decoder, HCursor }
 import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
@@ -21,20 +23,23 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
       sort: Bson = Document(),
       projection: Bson = Document(),
       limit: Int = 0
-  ): Observable[A] = {
-    {
+  )(implicit decoder: Decoder[A]): Observable[A] = {
+    val findObservable = {
       if (limit > 0) {
         coll.find(filter).sort(sort).projection(projection).limit(limit)
       }
       else {
         coll.find(filter).sort(sort).projection(projection)
       }
-    }.map(doc => documentToObject[A](doc))
+    }
+    findObservable.map(doc => documentToObject[A](doc))
   }
 
-  def findById(oid: ObjectId): Observable[A] = find(equal(DatabaseProvider.ObjectIdKey, oid))
+  def findById(oid: ObjectId)(implicit decoder: Decoder[A]): Observable[A] = {
+    find(equal(DatabaseProvider.ObjectIdKey, oid))
+  }
 
-  def find(name: String, value: Any): Observable[A] = {
+  def find(name: String, value: Any)(implicit decoder: Decoder[A]): Observable[A] = {
     find(equal(name, value))
   }
 
@@ -46,8 +51,14 @@ abstract class Search[A]()(implicit ct: ClassTag[A]) extends Base[A] {
     distinct(fieldName, filter).resultList().map(v => fromBson(v).asInstanceOf[S])
   }
 
-  def findAggregated(pipeline: Seq[Bson], allowDiskUse: Boolean = false): Observable[A] = {
-    coll.aggregate(pipeline).allowDiskUse(allowDiskUse).map(doc => documentToObject[A](doc)).asInstanceOf[AggregateObservable[A]]
+  def findAggregated(pipeline: Seq[Bson], allowDiskUse: Boolean = false)(implicit decoder: Decoder[A]): Observable[A] = {
+    val aggregateObservable = coll.aggregate(pipeline).allowDiskUse(allowDiskUse)
+    aggregateObservable.map {
+      case a: A =>
+        a
+      case doc =>
+        documentToObject[A](doc)
+    }
   }
 
 }
