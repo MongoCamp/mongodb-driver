@@ -8,6 +8,7 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Aggregates
 
 import scala.jdk.CollectionConverters._
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 
 case class MongoPaginatedAggregation[A <: Any](
     dao: MongoDAO[A],

@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
-import dev.mongocamp.driver.mongodb._
 
 import java.sql.{ ResultSetMetaData, SQLException }
 
@@ -81,7 +81,7 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
       case _: BsonString  => java.sql.Types.VARCHAR
       case _: BsonBoolean => java.sql.Types.BOOLEAN
 //      case _: Document    => java.sql.Types.STRUCT // todo: check if this is correct
-      case _              => java.sql.Types.NULL
+      case _ => java.sql.Types.NULL
     }
   }
 

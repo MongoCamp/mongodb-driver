@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.sync
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
 import org.mongodb.scala.Document
@@ -13,6 +14,7 @@ import org.mongodb.scala.model.Updates._
 import java.util.Date
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.documentToUntypedDocument
+import io.circe.generic.auto._, io.circe.syntax._
 
 case class MongoSyncOperation(
     collectionName: String,
