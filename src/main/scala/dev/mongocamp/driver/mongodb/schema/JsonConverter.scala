@@ -30,11 +30,4 @@ class JsonConverter extends CirceSchema {
 
 }
 
-object JsonConverter extends CirceSchema {
-  implicit lazy val decoder: io.circe.Decoder[org.mongodb.scala.Document] = { (c: HCursor) =>
-    ???
-  }
-  implicit lazy val decoder2: io.circe.Decoder[Document] = { (c: HCursor) =>
-    ???
-  }
-}
+object JsonConverter extends CirceSchema {}

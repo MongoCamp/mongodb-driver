@@ -3,37 +3,32 @@ package dev.mongocamp.driver.mongodb.operation
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
-import dev.mongocamp.driver.mongodb.schema.{ CirceSchema, JsonConverter }
+import dev.mongocamp.driver.mongodb.schema.CirceSchema
+import io.circe.Decoder
+import io.circe.jawn.decode
+import io.circe.syntax._
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
 import scala.collection.mutable
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.durationToPair
+import scala.concurrent.duration.{ durationToPair, Duration }
 import scala.reflect.ClassTag
-import io.circe.generic.auto._
-import io.circe.syntax._
-import better.files.Resource
-import io.circe.{ Decoder, HCursor }
-import io.circe.jawn.decode
-import io.circe.syntax._
-import io.circe.generic.auto._
 
-abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging {
-  def jsonConverter = new JsonConverter()
-  def documentToObject[A](document: Document)(implicit decoder: Decoder[A]): A = {
+abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
+  def documentToObject[A](document: Document, decoder: Decoder[A]): A = {
     if (classTag.runtimeClass == classOf[Document]) {
       document.asInstanceOf[A]
     }
     else {
-      val helperMap = mutable.Map[String, Any]()
-      document.keys.foreach(k => helperMap.put(k, BsonConverter.fromBson(document(k))))
-      val jsonString = jsonConverter.toJson(helperMap)
-      val response   = jsonConverter.toObject(jsonString)
-//      val decoder         = converter.decodeString[A](jsonString)
-      response
+      val helperMap = BsonConverter.asMap(document)
+      val jsonString = helperMap.asJson.noSpaces
+      val response   = decode[A](jsonString)(decoder)
+      if (response.isLeft) {
+        logger.error(s"Error decoding document to object: ${response.swap.getOrElse("")}")
+      }
+      response.getOrElse(null.asInstanceOf[A])
     }
   }
 

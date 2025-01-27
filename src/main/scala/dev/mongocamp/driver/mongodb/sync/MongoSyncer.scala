@@ -6,7 +6,10 @@ import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.mongodb.scala.bson.codecs.Macros._
 
 import scala.collection.mutable
+import io.circe.generic.auto._
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 
+import io.circe.syntax._
 case class MongoSyncer(
     sourceConfig: MongoConfig,
     targetConfig: MongoConfig,

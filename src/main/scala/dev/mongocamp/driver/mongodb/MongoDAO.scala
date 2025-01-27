@@ -18,7 +18,7 @@ import java.nio.charset.Charset
 import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
-
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
 /** Created by tom on 20.01.17.
   */
 abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Crud[A] {
