@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.operation
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.sync.MongoSyncOperation
 import dev.mongocamp.driver.mongodb.{ Converter, _ }
+import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
@@ -14,7 +15,7 @@ import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
-abstract class Crud[A]()(implicit ct: ClassTag[A]) extends Search[A] {
+abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Search[A] {
 
   // create
   def insertOne(value: A): Observable[InsertOneResult] = {

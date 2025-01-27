@@ -4,6 +4,9 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.server.LocalServer
 import dev.mongocamp.driver.mongodb.{GridFSDAO, MongoDAO}
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 
 object UniversityDatabase {

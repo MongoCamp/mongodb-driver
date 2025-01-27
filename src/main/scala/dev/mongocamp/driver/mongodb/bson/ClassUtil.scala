@@ -1,32 +1,7 @@
 package dev.mongocamp.driver.mongodb.bson
 
 import java.lang.reflect.Field
-
-import org.bson.BsonValue
-import org.mongodb.scala.bson.BsonNull
-
 import scala.collection.mutable
-
-class BaseConverterPlugin extends AbstractConverterPlugin
-
-abstract class AbstractConverterPlugin {
-
-  def customClassList: List[Class[_]] = List()
-
-  def hasCustomClass(v: Any): Boolean =
-    customClassList.exists(c => c.isAssignableFrom(v.getClass))
-
-  def objectToBson(value: AnyRef): BsonValue = {
-    val map: Map[String, Any] = ClassUtil.membersToMap(value)
-    BsonConverter.toBson(map)
-  }
-
-  def toBson(value: Any): BsonValue =
-    value match {
-      case _ =>
-        BsonNull()
-    }
-}
 
 object ClassUtil {
   private val classRegistry =

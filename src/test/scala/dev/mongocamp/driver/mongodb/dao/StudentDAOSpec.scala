@@ -8,6 +8,9 @@ import dev.mongocamp.driver.mongodb.test.UniversityDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.{GradeDAO, StudentDAO}
 import org.specs2.mutable.Specification
 import org.specs2.specification.{AfterAll, BeforeAll}
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 class StudentDAOSpec extends Specification with BeforeAll with AfterAll with MongoImplicits {
   sequential

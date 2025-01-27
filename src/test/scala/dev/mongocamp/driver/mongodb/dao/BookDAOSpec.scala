@@ -15,6 +15,12 @@ import org.specs2.specification.BeforeAll
 
 import java.text.SimpleDateFormat
 import java.util.Date
+import io.circe.syntax._
+import io.circe.generic.auto._
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.Decoder.Result
+import org.joda.time.DateTime
 
 class BookDAOSpec extends Specification with BeforeAll {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
@@ -68,7 +74,9 @@ class BookDAOSpec extends Specification with BeforeAll {
 
     "update one" in {
       BookDAO.updateOne(Map(DatabaseProvider.ObjectIdKey -> 10), set("title", "new title")).result()
-      BookDAO.find(DatabaseProvider.ObjectIdKey, 10).result().title mustEqual "new title"
+      val headResult = BookDAO.find(DatabaseProvider.ObjectIdKey, 10).result()
+      headResult.title mustEqual "new title"
     }
+
   }
 }

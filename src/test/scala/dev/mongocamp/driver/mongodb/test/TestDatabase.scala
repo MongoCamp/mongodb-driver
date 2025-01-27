@@ -10,7 +10,11 @@ import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistr
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.syntax._
+import io.circe.generic.auto._
 
+import scala.collection.mutable
 object TestDatabase extends LazyLogging {
   val ImageDAOSourcePath = "src/test/resources/images/"
   val ImageDAOTargetPath = "/tmp/_download/"

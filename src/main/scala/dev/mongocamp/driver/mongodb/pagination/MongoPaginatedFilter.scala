@@ -6,9 +6,8 @@ import io.circe.Decoder
 import io.circe.generic.auto._
 import org.mongodb.scala.bson.conversions.Bson
 
-case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map(), maxWait: Int = DefaultMaxWait)(
-    implicit decoder: Decoder[A]
-) extends MongoPagination[A] {
+case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map(), maxWait: Int = DefaultMaxWait)
+    extends MongoPagination[A] {
 
   def paginate(page: Long, rows: Long): PaginationResult[A] = {
     val count = countResult

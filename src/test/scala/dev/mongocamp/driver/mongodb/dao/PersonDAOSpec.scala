@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ Await, Future }
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 class PersonDAOSpec extends PersonSpecification with MongoImplicits {
 
@@ -43,7 +46,6 @@ class PersonDAOSpec extends PersonSpecification with MongoImplicits {
       val mapped: Future[Seq[String]] = future.map(personSeq => personSeq.map(p => p.name))
       val names: Seq[String]          = Await.result(mapped, Duration(10, TimeUnit.SECONDS))
       names must haveSize(200)
-
     }
 
   }
