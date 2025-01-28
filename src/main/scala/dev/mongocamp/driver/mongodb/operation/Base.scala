@@ -4,20 +4,16 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.driver.mongodb.schema.CirceSchema
+import dev.mongocamp.driver.mongodb.schema.JsonConverter.*
 import io.circe.Decoder
-import io.circe.jawn.decode
-import io.circe.syntax._
+import io.circe.syntax.*
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Sorts._
+import org.mongodb.scala.model.Sorts.*
 import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
-import scala.collection.mutable
 import scala.concurrent.duration.{ durationToPair, Duration }
 import scala.reflect.ClassTag
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
-import io.circe.syntax._
-import io.circe.generic.auto._
 
 abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
 
@@ -27,8 +23,7 @@ abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with 
     }
     else {
       val helperMap = BsonConverter.asMap(document)
-      val jsonString = helperMap.asJson.noSpaces
-      val response   = decode[A](jsonString)(decoder)
+      val response = decoder.decodeJson(helperMap.asJson)
       if (response.isLeft) {
         logger.error(s"Error decoding document to object: ${response.swap.getOrElse("")}")
       }
