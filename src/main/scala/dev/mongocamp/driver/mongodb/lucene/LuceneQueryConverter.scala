@@ -4,8 +4,8 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.NotSupportedException
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.BooleanClause.Occur
 import org.apache.lucene.search._
+import org.apache.lucene.search.BooleanClause.Occur
 import org.mongodb.scala.bson.conversions.Bson
 
 import java.text.SimpleDateFormat

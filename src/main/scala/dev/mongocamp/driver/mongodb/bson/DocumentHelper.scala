@@ -1,9 +1,8 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import better.files.{ Scanner, StringSplitter }
+import better.files.{ Scanner, StringSplitter, stringSource }
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Document
-import better.files.stringSource
 
 object DocumentHelper extends LazyLogging {
   val SplitterDelimeter = ' '

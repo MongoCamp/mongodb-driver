@@ -5,9 +5,9 @@ import dev.mongocamp.driver.mongodb.sync.MongoSyncOperation
 import dev.mongocamp.driver.mongodb.{ Converter, _ }
 import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.model._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.model._
 import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
 import org.mongodb.scala.{ BulkWriteResult, Document, Observable, SingleObservable }
 

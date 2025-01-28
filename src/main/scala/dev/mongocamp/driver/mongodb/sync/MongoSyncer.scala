@@ -1,15 +1,12 @@
 package dev.mongocamp.driver.mongodb.sync
 
-import dev.mongocamp.driver.mongodb.*
-import dev.mongocamp.driver.mongodb.database.{DatabaseProvider, MongoConfig}
-import org.bson.codecs.configuration.CodecRegistries.fromProviders
-import org.mongodb.scala.bson.codecs.Macros.*
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.HCursor
+import io.circe.generic.auto._
 
 import scala.collection.mutable
-import io.circe.generic.auto.*
-import dev.mongocamp.driver.mongodb.json.*
-import io.circe.HCursor
-import io.circe.syntax.*
 case class MongoSyncer(
     sourceConfig: MongoConfig,
     targetConfig: MongoConfig,

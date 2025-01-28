@@ -6,12 +6,11 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
-import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.{ documentToUntypedDocument, Document }
 
 import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
-import org.mongodb.scala.documentToUntypedDocument
 
 trait DocumentIncludes {
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)

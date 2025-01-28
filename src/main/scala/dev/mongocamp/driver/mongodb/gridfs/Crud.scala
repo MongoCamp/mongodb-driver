@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
-import java.io.InputStream
-
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.{ Document, Observable }
+
+import java.io.InputStream
 
 abstract class Crud extends Search {
 

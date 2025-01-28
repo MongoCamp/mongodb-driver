@@ -17,8 +17,8 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     if (page <= 0) {
       throw MongoCampPaginationException("page must be greater then 0.")
     }
-    val allPages = Math.ceil(count.toDouble / rows).toInt
-    val skip     = (page - 1) * rows
+    val allPages     = Math.ceil(count.toDouble / rows).toInt
+    val skip         = (page - 1) * rows
     val responseList = dao.find(filter, sort, projection, rows.toInt, skip.toInt).resultList(maxWait)
     PaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }

@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
+import com.typesafe.scalalogging.LazyLogging
+import org.mongodb.scala.{ Observable, Observer, Subscription }
+
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.concurrent.atomic.AtomicBoolean
-
-import com.typesafe.scalalogging.LazyLogging
-import org.mongodb.scala.{ Observable, Observer, Subscription }
 
 case class GridFSStreamObservable(inputStream: InputStream, bufferSize: Int = 1024 * 64) extends Observable[ByteBuffer] with LazyLogging {
   val isPublishing = new AtomicBoolean(false)

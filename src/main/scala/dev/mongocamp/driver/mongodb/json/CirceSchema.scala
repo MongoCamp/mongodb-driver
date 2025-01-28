@@ -12,12 +12,12 @@ trait CirceSchema extends CirceProductSchema {
 
   implicit lazy val DocumentOneFormat: io.circe.Decoder[org.mongodb.scala.Document] = { (c: HCursor) =>
     // not really needed only for decoder must exists
-  ???
+    ???
   }
 
   implicit lazy val DocumentTowFormat: io.circe.Decoder[org.bson.Document] = { (c: HCursor) =>
     // not really needed only for decoder must exists
-  ???
+    ???
   }
 
   implicit val DateFormat: Encoder[Date] with io.circe.Decoder[Date] = new io.circe.Encoder[Date] with io.circe.Decoder[Date] {
@@ -56,7 +56,8 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with io.circe.Decoder[Map[String, Any]] = new io.circe.Encoder[Map[String, Any]] with io.circe.Decoder[Map[String, Any]] {
+  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with io.circe.Decoder[Map[String, Any]] = new io.circe.Encoder[Map[String, Any]]
+    with io.circe.Decoder[Map[String, Any]] {
     override def apply(a: Map[String, Any]): Json = {
       encodeMapStringAny(a)
     }

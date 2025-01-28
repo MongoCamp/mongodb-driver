@@ -1,23 +1,22 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
-import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
+import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
+import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
+import org.mongodb.scala.documentToUntypedDocument
 
 import java.io.{ InputStream, Reader }
 import java.net.{ URI, URL }
 import java.{ sql, util }
 import java.sql.{ Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp }
 import java.util.Calendar
-import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
-
-import java.nio.charset.StandardCharsets
+import java.{ sql, util }
 import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
-import org.mongodb.scala.documentToUntypedDocument
-import dev.mongocamp.driver.mongodb.json._
+import java.nio.charset.StandardCharsets
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
   private var currentRow: Document = _

@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.relation
 
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb._
 import org.bson.codecs.configuration.CodecRegistries.fromProviders
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.codecs.Macros._

@@ -3,11 +3,11 @@ package dev.mongocamp.driver.mongodb.operation
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
-import dev.mongocamp.driver.mongodb.json.*
+import dev.mongocamp.driver.mongodb.json._
 import io.circe.Decoder
-import io.circe.syntax.*
+import io.circe.syntax._
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Sorts.*
+import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
@@ -22,7 +22,7 @@ abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with 
     }
     else {
       val helperMap = BsonConverter.asMap(document)
-      val response = decoder.decodeJson(helperMap.asJson)
+      val response  = decoder.decodeJson(helperMap.asJson)
       if (response.isLeft) {
         logger.error(s"Error decoding document to object: ${response.swap.getOrElse("")}")
       }
