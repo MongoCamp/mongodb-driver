@@ -156,9 +156,8 @@ object BsonConverter {
         BsonNull()
     }
 
-  def fromBson(value: BsonValue): Any =
+  def fromBson(value: BsonValue): Any = {
     value match {
-
       case b: BsonBoolean           => b.getValue
       case s: BsonString            => s.getValue
       case bytes: BsonBinary        => bytes.getData
@@ -176,6 +175,7 @@ object BsonConverter {
       case n: BsonNull => null
       case _           => value
     }
+  }
 
   def asMap(document: Document): Map[String, Any] = {
     val result = new mutable.HashMap[String, Any]()
