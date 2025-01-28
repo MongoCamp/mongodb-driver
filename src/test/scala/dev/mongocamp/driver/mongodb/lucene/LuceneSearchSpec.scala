@@ -3,15 +3,19 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.PersonSpecification
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import org.joda.time.DateTime
+
+import java.util.TimeZone
 
 class LuceneSearchSpec extends PersonSpecification {
-  lazy val sortByBalance: Map[String,Int] = Map("balance" -> -1)
+  lazy val sortByBalance: Map[String, Int] = Map("balance" -> -1)
+  TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
   "LuceneSearch" should {
 
     "search with with number in string" in {
       val luceneQuery = LuceneQueryConverter.parse("stringNumber: 123", "id")
-      val search2 = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+      val search2     = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
       search2 must haveSize(0)
       val search = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery, searchWithValueAndString = true), sortByBalance).resultList()
       search must haveSize(1)
@@ -60,16 +64,19 @@ class LuceneSearchSpec extends PersonSpecification {
     }
 
     "between filter for date value" in {
-      val luceneQuery = LuceneQueryConverter.parse("[2014-04-20T00:00:00Z TO 2014-04-22T23:59:59Z]", "registered")
-      val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
-      search must haveSize(10)
+      val luceneQuery    = LuceneQueryConverter.parse("[2014-04-20T00:00:00Z TO 2014-04-22T23:59:59Z]", "registered")
+      val luceneDocument = LuceneQueryConverter.toDocument(luceneQuery)
+      val expected       = "Iterable((registered,{\"$lte\": {\"$date\": \"2014-04-22T23:59:59Z\"}, \"$gte\": {\"$date\": \"2014-04-20T00:00:00Z\"}}))"
+      luceneDocument.toString must beEqualTo(expected)
+      val search = PersonDAO.find(luceneDocument, sortByBalance).resultList()
+      search must haveSize(7)
       search.head.age mustEqual 25
       search.head.name mustEqual "Allison Turner"
       search.head.balance mustEqual 3961.0
     }
 
     "equals Query with Date" in {
-      val luceneQuery = LuceneQueryConverter.parse("registered:20140420T004427000+0200", "unbekannt")
+      val luceneQuery = LuceneQueryConverter.parse("registered:20140419T224427000\\+0200", "unbekannt")
       val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
       search must haveSize(1)
       search.head.age mustEqual 31

@@ -6,6 +6,7 @@ import dev.mongocamp.driver.mongodb.exception.NotSupportedException
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.search.BooleanClause.Occur
+import org.joda.time.DateTime
 import org.mongodb.scala.bson.conversions.Bson
 
 import java.text.SimpleDateFormat
@@ -13,6 +14,7 @@ import java.util.Date
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 object LuceneQueryConverter extends LazyLogging {
 
@@ -217,25 +219,23 @@ object LuceneQueryConverter extends LazyLogging {
     try {
       val convertedValue: Option[Any] =
         (List() ++ checkOrReturn(() => s.toDouble) ++ checkOrReturn(() => s.toLong) ++ checkOrReturn(() => s.toBoolean)).headOption
-      convertedValue.getOrElse({
-        val parsedOptions: Option[Date] = datePatters
-          .map(pattern => {
-            try {
-              val formatter = new SimpleDateFormat(pattern)
-              Option(formatter.parse(s))
-            }
-            catch {
-              case _: Exception =>
-                None
-            }
-          })
-          .find(_.nonEmpty)
-          .flatten
-        parsedOptions.getOrElse(s)
+      val response = convertedValue.getOrElse({
+        val parsedOptions: List[Date] = Try(new DateTime(s).toDate).toOption.toList ++ datePatters.flatMap(pattern => {
+          try {
+            val formatter = new SimpleDateFormat(pattern)
+            Option(formatter.parse(s))
+          }
+          catch {
+            case _: Exception =>
+              None
+          }
+        }).distinct
+        parsedOptions.headOption.getOrElse(s)
       })
+      response
     }
     catch {
-      case _: Exception =>
+      case _: Throwable =>
         s
     }
   }

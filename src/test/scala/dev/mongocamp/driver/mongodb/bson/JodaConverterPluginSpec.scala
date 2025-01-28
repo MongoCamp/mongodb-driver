@@ -13,9 +13,10 @@ class JodaConverterPluginSpec extends Specification with BeforeAfterAll {
   "JodaConverterPlugin" should {
 
     "convert joda dates to bson dates" in {
-      val dateTime     = new DateTime("2023-11-02")
-      val bsonDocument = BsonConverter.toBson(dateTime)
-      (bsonDocument.toString must be).equalTo("BsonDateTime{value=1698879600000}")
+      val dateTime      = new DateTime("2023-11-02")
+      val bsonDocument  = BsonConverter.toBson(dateTime)
+      val roundTripDate = new DateTime(bsonDocument.asDateTime().getValue)
+      (roundTripDate must be).equalTo(dateTime)
     }
 
     "convert joda duration to bson string" in {
