@@ -27,7 +27,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   val name: String = provider.guessName(collectionName)
 
-  val collection: MongoCollection[Document] = provider.collection[Document](collectionName)
+  val collection: MongoCollection[Document] = provider.collection(collectionName)
 
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
     coll.watch[A]().subscribe(observer)
