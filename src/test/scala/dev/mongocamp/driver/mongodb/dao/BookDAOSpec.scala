@@ -1,12 +1,12 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.{File, Resource}
+import better.files.{ File, Resource }
 import dev.mongocamp.driver.mongodb.Filter._
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.test.TestDatabase.BookDAO
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{filter, group, project}
+import org.mongodb.scala.model.Aggregates.{ filter, group, project }
 import org.mongodb.scala.model.Filters.and
 import org.mongodb.scala.model.Projections
 import org.mongodb.scala.model.Updates._
@@ -15,12 +15,6 @@ import org.specs2.specification.BeforeAll
 
 import java.text.SimpleDateFormat
 import java.util.Date
-import io.circe.syntax._
-import io.circe.generic.auto._
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
-import io.circe.{Decoder, Encoder, HCursor, Json}
-import io.circe.Decoder.Result
-import org.joda.time.DateTime
 
 class BookDAOSpec extends Specification with BeforeAll {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
@@ -74,9 +68,7 @@ class BookDAOSpec extends Specification with BeforeAll {
 
     "update one" in {
       BookDAO.updateOne(Map(DatabaseProvider.ObjectIdKey -> 10), set("title", "new title")).result()
-      val headResult = BookDAO.find(DatabaseProvider.ObjectIdKey, 10).result()
-      headResult.title mustEqual "new title"
+      BookDAO.find(DatabaseProvider.ObjectIdKey, 10).result().title mustEqual "new title"
     }
-
   }
 }
