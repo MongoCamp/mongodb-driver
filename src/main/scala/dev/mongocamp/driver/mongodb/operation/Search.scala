@@ -4,11 +4,12 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import io.circe.Decoder
+import net.sf.jsqlparser.statement.select.Skip
 import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{ DistinctObservable, Document, MongoCollection, Observable }
+import org.mongodb.scala.{DistinctObservable, Document, MongoCollection, Observable}
 
 import scala.reflect.ClassTag
 
@@ -20,14 +21,15 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
       filter: Bson = Document(),
       sort: Bson = Document(),
       projection: Bson = Document(),
-      limit: Int = 0
+      limit: Int = 0,
+      skip: Int = 0
   ): Observable[A] = {
     val findObservable = {
       if (limit > 0) {
-        coll.find(filter).sort(sort).projection(projection).limit(limit)
+        coll.find(filter).sort(sort).projection(projection).limit(limit).skip(skip)
       }
       else {
-        coll.find(filter).sort(sort).projection(projection)
+        coll.find(filter).sort(sort).projection(projection).skip(skip)
       }
     }
     findObservable.map(doc => documentToObject[A](doc, decoder))

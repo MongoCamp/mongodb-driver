@@ -8,6 +8,7 @@ import io.circe.generic.auto._
 import org.bson.Document
 
 import scala.collection.mutable
+
 class JsonConverter extends CirceSchema {
 
   def toJson(s: Any): String = {

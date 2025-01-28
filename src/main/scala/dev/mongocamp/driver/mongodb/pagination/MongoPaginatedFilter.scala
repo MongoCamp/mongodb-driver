@@ -19,9 +19,7 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     }
     val allPages = Math.ceil(count.toDouble / rows).toInt
     val skip     = (page - 1) * rows
-    // todo: add projection
-    val responseList = dao.find(filter, sort, projection, rows.toInt).resultList(maxWait)
-//    val responseList = dao.find(filter, sort, projection, rows.toInt).skip(skip.toInt).resultList(maxWait)
+    val responseList = dao.find(filter, sort, projection, rows.toInt, skip.toInt).resultList(maxWait)
     PaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }
 
