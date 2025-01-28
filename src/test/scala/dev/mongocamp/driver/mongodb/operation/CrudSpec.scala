@@ -10,7 +10,7 @@ import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.DeleteResult
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 import io.circe.syntax._
 import io.circe.generic.auto._
 

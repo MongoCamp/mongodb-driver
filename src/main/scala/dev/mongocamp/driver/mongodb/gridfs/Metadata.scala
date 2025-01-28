@@ -10,7 +10,7 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.{ Document, Observable }
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 
 abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 

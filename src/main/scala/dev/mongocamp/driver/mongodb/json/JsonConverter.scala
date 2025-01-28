@@ -1,10 +1,10 @@
-package dev.mongocamp.driver.mongodb.schema
+package dev.mongocamp.driver.mongodb.json
 
 import better.files.Resource
-import io.circe.{ Decoder, HCursor }
+import io.circe.generic.auto.*
 import io.circe.jawn.decode
-import io.circe.syntax._
-import io.circe.generic.auto._
+import io.circe.syntax.*
+import io.circe.{ Decoder, HCursor }
 import org.bson.Document
 
 import scala.collection.mutable
@@ -30,5 +30,3 @@ class JsonConverter extends CirceSchema {
   }
 
 }
-
-object JsonConverter extends CirceSchema {}

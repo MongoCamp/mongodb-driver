@@ -5,7 +5,7 @@ import com.mongodb.client.model.changestream.OperationType
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.model._
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
 import io.circe.generic.auto._
 import org.mongodb.scala.Document

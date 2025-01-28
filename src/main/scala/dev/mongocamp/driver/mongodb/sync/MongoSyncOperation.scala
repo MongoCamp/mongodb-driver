@@ -3,7 +3,7 @@ package dev.mongocamp.driver.mongodb.sync
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
 import org.mongodb.scala.Document

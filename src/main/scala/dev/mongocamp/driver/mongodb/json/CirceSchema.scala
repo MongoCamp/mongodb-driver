@@ -1,7 +1,7 @@
-package dev.mongocamp.driver.mongodb.schema
+package dev.mongocamp.driver.mongodb.json
 
 import io.circe.Decoder.Result
-import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.{ Decoder, Encoder, HCursor, Json }
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
@@ -11,19 +11,13 @@ import java.util.Date
 trait CirceSchema extends CirceProductSchema {
 
   implicit lazy val DocumentOneFormat: io.circe.Decoder[org.mongodb.scala.Document] = { (c: HCursor) =>
-    ???
+    // not really needed only for decoder must exists
+  ???
   }
 
   implicit lazy val DocumentTowFormat: io.circe.Decoder[org.bson.Document] = { (c: HCursor) =>
-    ???
-  }
-
-  implicit lazy val ThrowableFormat: io.circe.Decoder[Throwable] = { (c: HCursor) =>
-    ???
-  }
-
-  implicit lazy val ExceptionFormat: io.circe.Decoder[Exception] = { (c: HCursor) =>
-    ???
+    // not really needed only for decoder must exists
+  ???
   }
 
   implicit val DateFormat: Encoder[Date] with io.circe.Decoder[Date] = new io.circe.Encoder[Date] with io.circe.Decoder[Date] {

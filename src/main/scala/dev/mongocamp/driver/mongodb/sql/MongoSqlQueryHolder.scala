@@ -37,7 +37,7 @@ import scala.jdk.CollectionConverters._
 import scala.util.Try
 import net.sf.jsqlparser.statement.Statement
 import io.circe.generic.auto._, io.circe.syntax._
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 
 class MongoSqlQueryHolder {
   private val aggregatePipeline: ArrayBuffer[Document]       = ArrayBuffer()
