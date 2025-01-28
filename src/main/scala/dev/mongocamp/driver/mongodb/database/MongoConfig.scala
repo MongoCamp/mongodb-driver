@@ -3,8 +3,15 @@ package dev.mongocamp.driver.mongodb.database
 import com.mongodb.MongoCompressor
 import com.mongodb.MongoCredential.createCredential
 import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
-import com.typesafe.config.{ Config, ConfigFactory }
-import dev.mongocamp.driver.mongodb.database.MongoConfig._
+import dev.mongocamp.driver.mongodb.database.MongoConfig.{
+  CompressionSnappy,
+  CompressionZlib,
+  CompressionZstd,
+  DefaultApplicationName,
+  DefaultAuthenticationDatabaseName,
+  DefaultHost,
+  DefaultPort
+}
 import org.mongodb.scala.connection._
 import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 
