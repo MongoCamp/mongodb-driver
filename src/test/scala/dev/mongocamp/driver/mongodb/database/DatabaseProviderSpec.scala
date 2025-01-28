@@ -47,7 +47,7 @@ class DatabaseProviderSpec extends PersonSpecification {
 
     "must evaluate collection status" in {
       val status: Option[CollectionStatus] = provider.collectionStatus("people").resultOption()
-      status must beSome()
+      status.isDefined must beTrue
       status.get.ns mustEqual "mongocamp-unit-test.people"
     }
 

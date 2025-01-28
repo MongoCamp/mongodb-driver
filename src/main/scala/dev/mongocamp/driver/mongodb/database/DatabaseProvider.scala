@@ -94,14 +94,14 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
     runCommand(Map("collStats" -> collectionName), databaseName).map(document => CollectionStatus(document))
   }
 
-  def collection[A](collectionName: String)(implicit ct: ClassTag[A]): MongoCollection[A] =
+  def collection(collectionName: String): MongoCollection[Document] =
     if (collectionName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName: String   = guessDatabaseName(collectionName)
       val newCollectionName: String = guessName(collectionName)
-      database(newDatabaseName).getCollection[A](newCollectionName)
+      database(newDatabaseName).getCollection(newCollectionName)
     }
     else {
-      database().getCollection[A](collectionName)
+      database().getCollection(collectionName)
     }
 
   def guessDatabaseName(maybeSeparatedName: String): String = {

@@ -24,7 +24,7 @@ class CompactSpec extends Specification with BeforeAll {
   "CompactSpec" should {
     "compact single collection" in {
       val count: Option[CompactResult] = BookDAO.compact.result()
-      count must beSome()
+      count.isDefined must beTrue
       count.get.bytesFreed must beGreaterThanOrEqualTo(0L)
     }
     "compact complete database" in {
