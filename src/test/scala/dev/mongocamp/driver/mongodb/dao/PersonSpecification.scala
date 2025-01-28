@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.{File, Resource}
-import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import better.files.{ File, Resource }
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeAll
 

@@ -5,16 +5,12 @@ import com.mongodb.client.model.changestream.OperationType
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.model._
-import dev.mongocamp.driver.mongodb.{GridFSDAO, MongoDAO}
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
-import org.mongodb.scala.Document
-import org.mongodb.scala.bson.codecs.Macros._
-import org.mongodb.scala.model.changestream.ChangeStreamDocument
 import dev.mongocamp.driver.mongodb.schema.JsonConverter._
-import io.circe.syntax._
+import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
 import io.circe.generic.auto._
+import org.mongodb.scala.Document
+import org.mongodb.scala.model.changestream.ChangeStreamDocument
 
-import scala.collection.mutable
 object TestDatabase extends LazyLogging {
   val ImageDAOSourcePath = "src/test/resources/images/"
   val ImageDAOTargetPath = "/tmp/_download/"
