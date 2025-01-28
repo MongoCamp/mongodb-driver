@@ -15,8 +15,12 @@ import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Obs
 import scala.collection.mutable
 import scala.concurrent.duration.{ durationToPair, Duration }
 import scala.reflect.ClassTag
+import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import io.circe.syntax._
+import io.circe.generic.auto._
 
 abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
+
   def documentToObject[A](document: Document, decoder: Decoder[A]): A = {
     if (classTag.runtimeClass == classOf[Document]) {
       document.asInstanceOf[A]

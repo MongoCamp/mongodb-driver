@@ -10,6 +10,7 @@ trait MongoPagination[A <: Any] extends ConfigHelper {
     val rows = intConfig(configPath = "dev.mongocamp.mongodb.pagination", key = "rows")
     foreach(rows)(a)
   }
+
   def foreach(rows: Int)(a: A => Unit): Unit = {
     var currentPageNumber = 1
     val rowsPerPage       = if (rows < 1) Int.MaxValue else rows
