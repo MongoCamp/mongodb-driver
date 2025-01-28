@@ -3,8 +3,7 @@ package dev.mongocamp.driver.mongodb.operation
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
-import dev.mongocamp.driver.mongodb.schema.CirceSchema
-import dev.mongocamp.driver.mongodb.schema.JsonConverter.*
+import dev.mongocamp.driver.mongodb.json.*
 import io.circe.Decoder
 import io.circe.syntax.*
 import org.mongodb.scala.bson.conversions.Bson

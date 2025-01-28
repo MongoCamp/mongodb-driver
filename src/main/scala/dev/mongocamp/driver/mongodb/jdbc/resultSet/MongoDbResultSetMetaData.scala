@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
 

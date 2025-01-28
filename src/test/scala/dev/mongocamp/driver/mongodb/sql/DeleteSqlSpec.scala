@@ -6,7 +6,7 @@ import dev.mongocamp.driver.mongodb.{ GenericObservable, MongoDAO }
 import org.bson.types.ObjectId
 import org.specs2.mutable.Specification
 import org.specs2.specification.BeforeEach
-import dev.mongocamp.driver.mongodb.schema.JsonConverter._
+import dev.mongocamp.driver.mongodb.json._
 import io.circe.syntax._
 import io.circe.generic.auto._
 

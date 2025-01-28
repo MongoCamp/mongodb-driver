@@ -1,4 +1,4 @@
-package dev.mongocamp.driver.mongodb.schema
+package dev.mongocamp.driver.mongodb.json
 
 import io.circe.Decoder.Result
 import io.circe.{ Decoder, Encoder, HCursor, Json }
