@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.gridfs
 import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.json._
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
@@ -10,7 +11,6 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.{ Document, Observable }
-import dev.mongocamp.driver.mongodb.json._
 
 abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 

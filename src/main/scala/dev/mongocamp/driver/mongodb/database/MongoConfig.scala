@@ -1,24 +1,16 @@
 package dev.mongocamp.driver.mongodb.database
 
-import java.util.concurrent.TimeUnit
 import com.mongodb.MongoCompressor
 import com.mongodb.MongoCredential.createCredential
 import com.mongodb.event.{ CommandListener, ConnectionPoolListener }
 import com.typesafe.config.{ Config, ConfigFactory }
-import dev.mongocamp.driver.mongodb.database.MongoConfig.{
-  CompressionSnappy,
-  CompressionZlib,
-  CompressionZstd,
-  DefaultApplicationName,
-  DefaultAuthenticationDatabaseName,
-  DefaultHost,
-  DefaultPort
-}
+import dev.mongocamp.driver.mongodb.database.MongoConfig._
 import org.mongodb.scala.connection._
 import org.mongodb.scala.{ MongoClientSettings, MongoCredential, ServerAddress }
 
-import scala.jdk.CollectionConverters._
+import java.util.concurrent.TimeUnit
 import scala.collection.mutable.ArrayBuffer
+import scala.jdk.CollectionConverters._
 
 case class MongoConfig(
     database: String,

@@ -9,7 +9,7 @@ import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{DistinctObservable, Document, MongoCollection, Observable}
+import org.mongodb.scala.{ DistinctObservable, Document, MongoCollection, Observable }
 
 import scala.reflect.ClassTag
 

@@ -5,13 +5,16 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
+import io.circe.generic.auto._
+import io.circe.syntax._
 import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.expression.{ ArrayConstructor, Expression, NotExpression, SignedExpression }
 import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
 import net.sf.jsqlparser.schema.{ Column, Table }
-import net.sf.jsqlparser.statement.ShowStatement
+import net.sf.jsqlparser.statement.{ ShowStatement, Statement }
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -35,9 +38,6 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 import scala.util.Try
-import net.sf.jsqlparser.statement.Statement
-import io.circe.generic.auto._, io.circe.syntax._
-import dev.mongocamp.driver.mongodb.json._
 
 class MongoSqlQueryHolder {
   private val aggregatePipeline: ArrayBuffer[Document]       = ArrayBuffer()

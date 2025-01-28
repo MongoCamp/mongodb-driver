@@ -6,15 +6,15 @@ import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
-import org.mongodb.scala.Document
+import io.circe.generic.auto._
+import io.circe.syntax._
 import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.{ documentToUntypedDocument, Document }
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Updates._
 
 import java.util.Date
-import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.documentToUntypedDocument
-import io.circe.generic.auto._, io.circe.syntax._
 
 case class MongoSyncOperation(
     collectionName: String,

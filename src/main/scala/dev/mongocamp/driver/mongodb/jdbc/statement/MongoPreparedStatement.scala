@@ -1,16 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc.statement
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
-import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
+import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
+import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
 import org.joda.time.DateTime
 
 import java.io.{ InputStream, Reader }
 import java.net.URL
-import java.{ sql, util }
 import java.sql.{
   Blob,
   CallableStatement,
@@ -19,7 +18,6 @@ import java.sql.{
   Date,
   NClob,
   ParameterMetaData,
-  PreparedStatement,
   Ref,
   ResultSet,
   ResultSetMetaData,
@@ -30,6 +28,7 @@ import java.sql.{
   Timestamp
 }
 import java.util.Calendar
+import java.{ sql, util }
 import scala.collection.mutable
 import scala.util.Try
 

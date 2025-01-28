@@ -1,6 +1,6 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }

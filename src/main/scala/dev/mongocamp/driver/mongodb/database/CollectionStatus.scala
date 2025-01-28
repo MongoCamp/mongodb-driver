@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.database
 
-import java.util.Date
-
-import org.mongodb.scala.bson.Document
 import dev.mongocamp.driver.mongodb._
+import org.mongodb.scala.bson.Document
+
+import java.util.Date
 
 case class CollectionStatus(
     ns: String,

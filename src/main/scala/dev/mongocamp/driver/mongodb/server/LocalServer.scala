@@ -1,10 +1,10 @@
 package dev.mongocamp.driver.mongodb.server
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.server.ServerConfig.DefaultServerConfigPathPrefix
 import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.h2.H2Backend
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import dev.mongocamp.driver.mongodb.server.ServerConfig.DefaultServerConfigPathPrefix
 
 case class LocalServer(serverConfig: ServerConfig = ServerConfig()) {
   private var h2Path = "undefined"

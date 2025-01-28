@@ -1,10 +1,10 @@
 import com.vdurmont.semver4j.Semver
 import dev.quadstingray.sbt.json.JsonFile
 import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations.*
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.runtimeVersion
 
-import scala.sys.process.*
+import scala.sys.process._
 
 releaseVersionBump := sbtrelease.Version.Bump.NextStable
 

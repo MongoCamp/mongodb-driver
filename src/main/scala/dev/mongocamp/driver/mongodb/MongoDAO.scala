@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb
 import better.files.File
 import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
 import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import io.circe.Decoder
 import org.bson.json.JsonParseException
@@ -11,14 +12,12 @@ import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
 import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
-import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 
 import java.nio.charset.Charset
 import java.util.Date
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
-import dev.mongocamp.driver.mongodb.json._
+
 /** Created by tom on 20.01.17.
   */
 abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Crud[A] {

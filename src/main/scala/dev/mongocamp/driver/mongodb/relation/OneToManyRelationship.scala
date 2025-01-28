@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.relation
 
-import dev.mongocamp.driver.mongodb.{ GenericObservable, MongoDAO }
 import dev.mongocamp.driver.mongodb.relation.RelationCache.{ addCachedValue, getCachedValue, hasCachedValue }
+import dev.mongocamp.driver.mongodb.{ GenericObservable, MongoDAO }
 import io.circe.Decoder
 
 case class OneToManyRelationship[A](dao: MongoDAO[A], daoKey: String, useCache: Boolean = true) extends Relationship {
