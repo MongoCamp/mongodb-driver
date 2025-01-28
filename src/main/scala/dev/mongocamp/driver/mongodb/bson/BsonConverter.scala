@@ -169,7 +169,7 @@ object BsonConverter {
       case i: BsonInt32             => i.getValue
       case l: BsonInt64             => l.getValue
       case d: BsonDouble            => d.doubleValue()
-      case d: BsonDecimal128        => d.getValue.bigDecimalValue()
+      case d: BsonDecimal128        => new scala.math.BigDecimal(d.getValue.bigDecimalValue())
       case doc: BsonDocument        => Document(doc)
       case array: BsonArray =>
         array.getValues.asScala.toList.map(v => fromBson(v))
