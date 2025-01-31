@@ -43,7 +43,7 @@ licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html
 //crossScalaVersions := Seq("2.13.16")
 crossScalaVersions := Seq("3.6.0", "2.13.16")
 
-scalaVersion := crossScalaVersions.value.head
+scalaVersion := crossScalaVersions.value.last
 
 scalacOptions += "-deprecation"
 
@@ -59,12 +59,6 @@ lazy val mongodb = (project in file("."))
 buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
-
-// Test
-
-libraryDependencies += "org.specs2" %% "specs2-core" % "4.20.9" % Test
-
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.16" % Test
 
 libraryDependencies += "joda-time" % "joda-time" % "2.13.0"
 
@@ -96,13 +90,11 @@ libraryDependencies += "com.typesafe" % "config" % "1.4.3"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
+//libraryDependencies += "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0"
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
 libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.1"
-
-libraryDependencies += "org.liquibase" % "liquibase-core" % "4.31.0" % Test
 
 buildInfoPackage := "dev.mongocamp.driver.mongodb"
 
