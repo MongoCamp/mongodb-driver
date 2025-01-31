@@ -33,6 +33,6 @@ class LiquibaseJdbcSpec extends BaseJdbcSpec with LazyLogging {
           logger.error(e.getMessage, e)
           false must beTrue
       }
-    }.pendingUntilFixed()
+    }
   }
 }
