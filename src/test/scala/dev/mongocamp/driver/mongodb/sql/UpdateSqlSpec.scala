@@ -1,23 +1,17 @@
 package dev.mongocamp.driver.mongodb.sql
 
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.model.{ Grade, Score }
 import dev.mongocamp.driver.mongodb.test.TestDatabase
-import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
+import munit.FunSuite
 import org.bson.types.ObjectId
-import org.specs2.mutable.Specification
-import org.specs2.specification.BeforeEach
-import dev.mongocamp.driver.mongodb.json._
-import io.circe.syntax._
-import io.circe.generic.auto._
 
-class UpdateSqlSpec extends Specification with BeforeEach {
-  sequential
+class UpdateSqlSpec extends FunSuite {
 
-  object GradeDAO extends MongoDAO[Grade](TestDatabase.provider, "universityGrades")
-
-  override def before(): Unit = {
-    this.GradeDAO.drop().result()
-    this.GradeDAO
+  override def beforeEach(context: BeforeEach): Unit = {
+    GradeDAO.drop().result()
+    GradeDAO
       .insertMany(
         List(
           Grade(new ObjectId(), 1, 2, List(Score(1.20, "test"), Score(120, "test1"))),
@@ -28,49 +22,46 @@ class UpdateSqlSpec extends Specification with BeforeEach {
       .result()
   }
 
-  "MongoSqlQueryHolder" should {
-
-    "update single document" in {
-      val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47 WHERE studentId = 1;")
-      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
-      selectResponse.size mustEqual 1
-      selectResponse.head.getBoolean("wasAcknowledged") mustEqual true
-      selectResponse.head.getLong("modifiedCount") mustEqual 1
-      selectResponse.head.getLong("matchedCount") mustEqual 1
-      val grade = GradeDAO.find(Map("studentId" -> 1)).result()
-      grade.classId mustEqual 47
-      val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 1)).result()
-      documents.getLong("classId") mustEqual 47
-      documents.getStringValue("column1") mustEqual "hello"
-    }
-
-    "update all" in {
-      val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47;")
-      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
-      selectResponse.size mustEqual 1
-      selectResponse.head.getBoolean("wasAcknowledged") mustEqual true
-      selectResponse.head.getLong("modifiedCount") mustEqual 3
-      selectResponse.head.getLong("matchedCount") mustEqual 3
-      val grade = GradeDAO.find(Map("studentId" -> 1)).result()
-      grade.classId mustEqual 47
-      val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 1)).result()
-      documents.getLong("classId") mustEqual 47
-      documents.getStringValue("column1") mustEqual "hello"
-    }
-
-    "update multiple with or" in {
-      val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47 WHERE classId = 4 or classId = 7;")
-      val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
-      selectResponse.size mustEqual 1
-      selectResponse.head.getBoolean("wasAcknowledged") mustEqual true
-      selectResponse.head.getLong("modifiedCount") mustEqual 2
-      selectResponse.head.getLong("matchedCount") mustEqual 2
-      val grade = GradeDAO.find(Map("studentId" -> 2)).result()
-      grade.classId mustEqual 47
-      val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 2)).result()
-      documents.getLong("classId") mustEqual 47
-      documents.getStringValue("column1") mustEqual "hello"
-    }
-
+  test("update single document") {
+    val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47 WHERE studentId = 1;")
+    val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+    assertEquals(selectResponse.size, 1)
+    assert(selectResponse.head.getBoolean("wasAcknowledged"))
+    assertEquals(selectResponse.head.getLong("modifiedCount").toInt, 1)
+    assertEquals(selectResponse.head.getLong("matchedCount").toInt, 1)
+    val grade = GradeDAO.find(Map("studentId" -> 1)).result()
+    assertEquals(grade.classId.toInt, 47)
+    val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 1)).result()
+    assertEquals(documents.getLong("classId").toInt, 47)
+    assertEquals(documents.getStringValue("column1"), "hello")
   }
+
+  test("update all") {
+    val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47;")
+    val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+    assertEquals(selectResponse.size, 1)
+    assert(selectResponse.head.getBoolean("wasAcknowledged"))
+    assertEquals(selectResponse.head.getLong("modifiedCount").toInt, 3)
+    assertEquals(selectResponse.head.getLong("matchedCount").toInt, 3)
+    val grade = GradeDAO.find(Map("studentId" -> 1)).result()
+    assertEquals(grade.classId.toInt, 47)
+    val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 1)).result()
+    assertEquals(documents.getLong("classId").toInt, 47)
+    assertEquals(documents.getStringValue("column1"), "hello")
+  }
+
+  test("update multiple with or") {
+    val queryConverter = MongoSqlQueryHolder("UPDATE universityGrades SET column1 = 'hello', classId = 47 WHERE classId = 4 or classId = 7;")
+    val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
+    assertEquals(selectResponse.size, 1)
+    assert(selectResponse.head.getBoolean("wasAcknowledged"))
+    assertEquals(selectResponse.head.getLong("modifiedCount").toInt, 2)
+    assertEquals(selectResponse.head.getLong("matchedCount").toInt, 2)
+    val grade = GradeDAO.find(Map("studentId" -> 2)).result()
+    assertEquals(grade.classId.toInt, 47)
+    val documents = TestDatabase.provider.dao("universityGrades").find(Map("studentId" -> 2)).result()
+    assertEquals(documents.getLong("classId").toInt, 47)
+    assertEquals(documents.getStringValue("column1"), "hello")
+  }
+
 }

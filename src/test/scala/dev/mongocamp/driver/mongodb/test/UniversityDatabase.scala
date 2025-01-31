@@ -21,10 +21,10 @@ object UniversityDatabase {
 
   // setup DAO objects with mongodb collection names
 
-  object StudentDAO extends MongoDAO[Student](provider, "university-students")
+  object StudentDAO extends MongoDAO[Student](provider, "universityStudents")
 
-  object GradeDAO extends MongoDAO[Book](provider, "university-grades")
+  object GradeDAO extends MongoDAO[Grade](TestDatabase.provider, "universityGrades")
 
-  object SudentImagesDAO extends GridFSDAO(provider, "university-images")
+  object SudentImagesDAO extends GridFSDAO(provider, "universityImages")
 
 }
