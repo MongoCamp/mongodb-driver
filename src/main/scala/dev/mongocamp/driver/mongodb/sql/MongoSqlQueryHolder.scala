@@ -5,16 +5,13 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
-import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
-import io.circe.generic.auto._
-import io.circe.syntax._
-import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
+import net.sf.jsqlparser.expression.operators.arithmetic.Concat
+import net.sf.jsqlparser.expression.operators.conditional.{AndExpression, OrExpression}
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{ ArrayConstructor, Expression, NotExpression, SignedExpression }
-import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
-import net.sf.jsqlparser.schema.{ Column, Table }
-import net.sf.jsqlparser.statement.{ ShowStatement, Statement }
+import net.sf.jsqlparser.expression.{ArrayConstructor, Expression, NotExpression, SignedExpression}
+import net.sf.jsqlparser.parser.{CCJSqlParser, StreamProvider}
+import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -22,14 +19,15 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.execute.Execute
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
+import net.sf.jsqlparser.statement.select.{FromItem, PlainSelect, Select, SelectItem}
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
+import net.sf.jsqlparser.statement.{ShowStatement, Statement}
 import org.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
-import org.mongodb.scala.model.Sorts.{ ascending, metaTextScore }
-import org.mongodb.scala.{ Document, Observable, SingleObservable }
+import org.mongodb.scala.model.Sorts.ascending
+import org.mongodb.scala.{Document, Observable, SingleObservable}
 
 import java.sql.SQLException
 import java.util.Date
@@ -232,10 +230,12 @@ class MongoSqlQueryHolder {
         else {
           e.getValue
         }
+      case e: net.sf.jsqlparser.expression.BooleanValue   => e.getValue
       case e: net.sf.jsqlparser.expression.DateValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimeValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimestampValue => e.getValue
       case _: net.sf.jsqlparser.expression.NullValue      => null
+      case e: Concat => Map("$concat" -> List(convertValue(e.getLeftExpression), convertValue(e.getRightExpression)))
       case t: net.sf.jsqlparser.expression.TimeKeyExpression =>
         t.getStringValue.toUpperCase match {
           case "CURRENT_TIMESTAMP" => new Date()

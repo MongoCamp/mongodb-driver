@@ -186,7 +186,15 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendPhraseQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PhraseQuery): Unit = {
-    val listOfSearches = query.getTerms.map(term => Map(term.field() -> generateRegexQuery(s"(.*?)${checkAndConvertValue(term.text())}(.*?)", "i"))).toList
+    val listOfSearches = query.getTerms.map(term => {
+      val convertedValue = checkAndConvertValue(term.text())
+      if (convertedValue.isInstanceOf[String]) {
+        Map(term.field() -> generateRegexQuery(s"(.*?)$convertedValue(.*?)", "i"))
+      }
+      else {
+        Map(term.field() -> Map("$eq" -> convertedValue))
+      }
+    }).toList
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
     }
@@ -223,10 +231,12 @@ object LuceneQueryConverter extends LazyLogging {
         val parsedOptions: List[Date] = Try(new DateTime(s).toDate).toOption.toList ++ datePatters.flatMap(pattern => {
           try {
             val formatter = new SimpleDateFormat(pattern)
-            Option(formatter.parse(s))
+            val r = Option(formatter.parse(s))
+            logger.info(s"parsed date $s with pattern $pattern to $r")
+            r
           }
           catch {
-            case _: Exception =>
+            case e: Exception =>
               None
           }
         }).distinct
@@ -241,9 +251,9 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private lazy val datePatters = List(
-    "yyyyMMdd'T'HHmmssSSSZZ",
-    "yyyyMMdd'T'HHmmssZZ",
-    "yyyyMMdd'T'HHmmZZ",
+    "yyyyMMdd'T'HHmmssSSS'Z'",
+    "yyyyMMdd'T'HHmmssZ",
+    "yyyyMMdd'T'HHmmZ",
     "yyyyMMdd'T'HHmmssSSS",
     "yyyyMMdd'T'HHmmss",
     "yyyyMMdd'T'HHmm",
