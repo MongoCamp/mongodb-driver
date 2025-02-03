@@ -2,8 +2,8 @@ package dev.mongocamp.driver.mongodb.pagination
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.MongoImplicits
-import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.model.Person
 import dev.mongocamp.driver.mongodb.test.TestDatabase._

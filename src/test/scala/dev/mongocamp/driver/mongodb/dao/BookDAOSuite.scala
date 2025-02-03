@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.dao
 
 import better.files.{ File, Resource }
-import dev.mongocamp.driver.mongodb.Filter._
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.Filter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.test.TestDatabase.BookDAO
 import org.mongodb.scala.bson.conversions.Bson

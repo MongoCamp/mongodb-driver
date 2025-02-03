@@ -10,13 +10,12 @@ import org.mongodb.scala.documentToUntypedDocument
 
 import java.io.{ InputStream, Reader }
 import java.net.{ URI, URL }
-import java.{ sql, util }
+import java.nio.charset.StandardCharsets
 import java.sql.{ Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp }
 import java.util.Calendar
 import java.{ sql, util }
 import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
-import java.nio.charset.StandardCharsets
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int, keySet: List[String] = List.empty)
     extends ResultSet

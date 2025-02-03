@@ -1,6 +1,6 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import better.files.{File, Resource}
+import better.files.{ File, Resource }
 
 /** Created by tom on 22.01.17.
   */

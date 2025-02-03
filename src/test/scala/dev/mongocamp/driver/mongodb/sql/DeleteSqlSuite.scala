@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.sql
 
 import dev.mongocamp.driver.mongodb.GenericObservable
-import dev.mongocamp.driver.mongodb.model.{Grade, Score}
+import dev.mongocamp.driver.mongodb.model.{ Grade, Score }
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import org.bson.types.ObjectId

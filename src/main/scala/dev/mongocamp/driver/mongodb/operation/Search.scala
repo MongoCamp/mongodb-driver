@@ -4,7 +4,6 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import io.circe.Decoder
-import net.sf.jsqlparser.statement.select.Skip
 import org.bson.BsonValue
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson

@@ -5,7 +5,6 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 
-import java.{ sql, util }
 import java.sql.{
   Blob,
   CallableStatement,
