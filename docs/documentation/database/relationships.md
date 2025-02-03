@@ -20,14 +20,16 @@ Simple Setup.
 * Friend Collection
 
 ```scala
-  case class User(id: Long, name: String, loginId: String)
-  case class Login(id: String, email: String, password: String)
-  case class Friend(id: Long, name: String, userId: Long)
-  
-  object UserDAO extends MongoDAO[User](database, "user")
-  object LoginDAO extends MongoDAO[Login](database, "login")
-  object FriendDAO extends MongoDAO[Friend](database, "friend")
-  
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.generic.auto._
+
+case class User(id: Long, name: String, loginId: String)
+case class Login(id: String, email: String, password: String)
+case class Friend(id: Long, name: String, userId: Long)
+
+object UserDAO extends MongoDAO[User](database, "user")
+object LoginDAO extends MongoDAO[Login](database, "login")
+object FriendDAO extends MongoDAO[Friend](database, "friend")
 ```
 
 For relationship setup we create two Relationships in the UserDAO.

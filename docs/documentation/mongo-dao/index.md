@@ -18,26 +18,30 @@ The MongoDAO object holds a reference to a [MongoCollection](http://mongodb.gith
 A DatabaseProvider is needed.
 
 ```scala
-
-private val registry = fromProviders(classOf[Restaurant])
-
-val provider = DatabaseProvider("database", registry)
+val provider = DatabaseProvider.fromPath("dev.mongocamp")
 ```
 
 ### Create DAO
 
-A Type Parameter is used for automatic Document to Class conversion (case classes needs to be registered).
+::: warning
+Since Version 3.0.0 with Scala 3 support, we use Circe for automatic case class conversion.
+In the most cases, you can use the generic auto import. More Information about Circe can be found [here](https://circe.github.io/circe/codecs/auto-derivation.html).
+:::
+
+A Type Parameter is used for automatic Document to Class conversion. 
 
 ```scala
-  object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.generic.auto._
+object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
 ```
 
 ### Use DAO
 
 ```scala
- import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb._
 
-  def restaurantsSize: Long = RestaurantDAO.count()
+def restaurantsSize: Long = RestaurantDAO.count()
 
-  def findAllRestaurants:List[Restaurant] = RestaurantDAO.find()
+def findAllRestaurants:List[Restaurant] = RestaurantDAO.find()
 ```

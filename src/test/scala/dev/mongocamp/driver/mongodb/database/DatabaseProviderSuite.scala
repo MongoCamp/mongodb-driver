@@ -19,8 +19,10 @@ class DatabaseProviderSuite extends BasePersonSuite {
   }
 
   test("must evaluate mongo-dao by name") {
+    // #region document-dao
     val dao         = provider.dao("people")
     val count: Long = dao.count().result()
+    // #endregion document-dao
     assertEquals(count, 200L)
   }
 

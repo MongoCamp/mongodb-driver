@@ -7,7 +7,7 @@ The JDBC driver is a way to use the SQL queries in your application and run them
 ### Register Driver
 In some environments you have to register the driver manually. This is the case for example in the tests. 
 
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/jdbc/BaseJdbcSpec.scala#register-driver
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/jdbc/BaseJdbcSuite.scala#register-driver
 
 After the driver is registered you can use the driver like a normal [JDBC driver](https://www.baeldung.com/java-jdbc).
 
