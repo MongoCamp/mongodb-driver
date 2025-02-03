@@ -11,6 +11,11 @@ class SelectJDBCSuite extends BaseJdbcSuite {
     var i           = 0
     val arrayBuffer = ArrayBuffer[ResultSet]()
     while (result.next()) {
+      assertEquals(result.getLong(1),result.getLong("id"))
+      assertEquals(result.getString(2),result.getString("guid"))
+      assertEquals(result.getString(3),result.getString("name"))
+      assertEquals(result.getInt(4),result.getInt("age"))
+      assertEquals(result.getDouble(5),result.getDouble("balance"))
       i += 1
       arrayBuffer += result
     }

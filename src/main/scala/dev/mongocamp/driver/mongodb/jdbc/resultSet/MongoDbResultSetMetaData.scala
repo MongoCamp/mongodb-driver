@@ -10,6 +10,7 @@ import java.sql.{ ResultSetMetaData, SQLException }
 class MongoDbResultSetMetaData extends ResultSetMetaData {
   private var document: Document                = _
   private var collectionDao: MongoDAO[Document] = _
+  private var keySet: List[String] = List.empty
 
   def this(dao: MongoDAO[Document]) = {
     this()
@@ -29,6 +30,14 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
     val row: Document = extractDocumentFromDataList(data)
     this.document = row
     this.collectionDao = dao
+  }
+
+  def this(dao: MongoDAO[Document], data: List[Document], keySet: List[String]) = {
+    this()
+    val row: Document = extractDocumentFromDataList(data)
+    this.document = row
+    this.collectionDao = dao
+    this.keySet = keySet
   }
 
   private def extractDocumentFromDataList(data: List[Document]) = {
@@ -59,7 +68,14 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnDisplaySize(column: Int): Int = Int.MaxValue
 
-  override def getColumnLabel(column: Int): String = document.keys.toList(column - 1)
+  override def getColumnLabel(column: Int): String = {
+    val keys : Iterable[String] =if (keySet.nonEmpty) {
+      keySet
+    } else {
+      document.keys
+    }
+    keys.toList(column - 1)
+  }
 
   override def getColumnName(column: Int): String = getColumnLabel(column)
 

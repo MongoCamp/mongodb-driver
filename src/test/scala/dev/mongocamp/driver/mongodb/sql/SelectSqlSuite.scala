@@ -53,7 +53,7 @@ class SelectSqlSuite extends BasePersonSuite {
     val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
     assertEquals(selectResponse.head.getInteger("anz").toInt, 99)
     assertEquals(queryConverter.getCollection, "people")
-    assertEquals(queryConverter.getKeysForEmptyDocument, Set("anz"))
+    assertEquals(queryConverter.getKeysFromSelect, List("anz"))
     assertEquals(queryConverter.hasFunctionCallInSelect, true)
   }
 
