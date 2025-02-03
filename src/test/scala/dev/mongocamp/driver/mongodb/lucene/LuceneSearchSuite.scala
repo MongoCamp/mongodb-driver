@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import org.mongodb.scala.Document
 
 import java.util.TimeZone
 
@@ -133,6 +134,15 @@ class LuceneSearchSuite extends BasePersonSuite {
     val luceneQuery = LuceneQueryConverter.parse("-name:\"Latasha*millan\"", "ube")
     val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
     assertEquals(search.size, 199)
+  }
+
+  test("negate query with values in braces") {
+    val luceneQuery = LuceneQueryConverter.parse("NOT fieldName:('value1' OR 'value2' OR 'value2')", "ube")
+    val document      = LuceneQueryConverter.toDocument(luceneQuery)
+    assertEquals("{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}", document.asInstanceOf[Document].toJson())
+    val luceneQuery2 = LuceneQueryConverter.parse("NOT fieldName:('value1' AND 'value2' AND 'value2')", "ube")
+    val document2      = LuceneQueryConverter.toDocument(luceneQuery2)
+    assertEquals("{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}", document2.asInstanceOf[Document].toJson())
   }
 
 }
