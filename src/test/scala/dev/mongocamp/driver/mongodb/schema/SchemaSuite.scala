@@ -1,12 +1,13 @@
 package dev.mongocamp.driver.mongodb.schema
 
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.relation.RelationDemoDatabase._
 import dev.mongocamp.driver.mongodb.test.TestDatabase.{ PersonDAO, PersonDocumentDAO }
 
 import scala.util.Try
 
-class SchemaSuite extends munit.FunSuite {
+class SchemaSuite extends BasePersonSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
