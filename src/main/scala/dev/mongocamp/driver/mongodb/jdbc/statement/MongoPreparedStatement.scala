@@ -78,7 +78,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       var response = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
       if (response.isEmpty && queryHolder.hasFunctionCallInSelect) {
         val emptyDocument = mutable.Map[String, Any]()
-        queryHolder.getKeysForEmptyDocument.foreach(key => emptyDocument.put(key, null))
+        queryHolder.getKeysFromSelect.foreach(key => emptyDocument.put(key, null))
         val doc = Converter.toDocument(emptyDocument.toMap)
         response = Seq(doc)
       }
@@ -89,7 +89,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
           newDoc
         })
       }
-      val resultSet = new MongoDbResultSet(collectionName.orNull, response.toList, getQueryTimeout)
+      val resultSet = new MongoDbResultSet(collectionName.orNull, response.toList, getQueryTimeout, queryHolder.getKeysFromSelect)
       _lastResultSet = resultSet
       resultSet
     }

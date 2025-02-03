@@ -18,11 +18,13 @@ import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
 import java.nio.charset.StandardCharsets
 
-class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
+class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int, keySet: List[String] = List.empty)
+    extends ResultSet
+    with MongoJdbcCloseable {
   private var currentRow: Document = _
   private var index: Int           = 0
 
-  private lazy val metaData = new MongoDbResultSetMetaData(collectionDao, data)
+  private lazy val metaData = new MongoDbResultSetMetaData(collectionDao, data, keySet)
 
   def getDocument: Document = currentRow
 
