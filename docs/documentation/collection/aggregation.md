@@ -7,10 +7,10 @@ MongoDB support an easy to use [Aggregation Handling](https://docs.mongodb.com/m
 ## Demo
 
 ### Setup imports
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSpec.scala#agg_imports
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSuite.scala#agg_imports
 
 ### Define stages
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSpec.scala#agg_stages
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSuite.scala#agg_stages
 
 ### Execute Aggregation
 
@@ -19,10 +19,10 @@ MongoDB support an easy to use [Aggregation Handling](https://docs.mongodb.com/m
 :::
 
 
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSpec.scala#agg_execute
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSuite.scala#agg_execute
 
 ### Convert Result
 
 For easy result handling, using the implicit Document to Map conversion can be useful.
 
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSpec.scala#agg_convert
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSuite.scala#agg_convert

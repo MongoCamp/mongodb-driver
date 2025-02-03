@@ -17,6 +17,8 @@ hero:
        link: https://github.com/MongoCamp/mongodb-driver
 
 features:
+  - title: Scala 3 Support
+    details: Since Version 3.0.0 we support Scala 3.
   - title: Easy Config
     details: Easy Database Config with provider and MongoConfig
   - title: SQL Support
@@ -25,8 +27,6 @@ features:
     details: Implement the DAO Pattern for simple MongoDB usage [MongoDAO.
   - title: Pagination
     details: Use Pagination in your MongoDB for a lower RAM needing over large responses.
-  - title: Enhanced BSON
-    details: Implicit Conversion from Scala Map to BSON 
   - title: GridFS Support
     details: It provides easy upload, download and metadata handling.
   - title: Reactive Streams

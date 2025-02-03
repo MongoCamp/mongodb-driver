@@ -40,7 +40,7 @@ mongo.db.test {
 
 Scala Code Snippet
 ```scala
-  val customConfig: MongoConfig = MongoConfig.fromPath("mongodb.db.prod")
+val customConfig: MongoConfig = MongoConfig.fromPath("mongodb.db.prod")
 ```
 
 
@@ -75,6 +75,4 @@ It is used for DatabaseProvider creation.
 | maxSize                        | 50            |
 | minSize                        | 0             |
 | DefaultMaintenanceInitialDelay | 0             |
-
-## Multiple databases access
 

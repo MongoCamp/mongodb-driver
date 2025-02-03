@@ -2,8 +2,8 @@ package dev.mongocamp.driver.mongodb.sync
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
-import dev.mongocamp.driver.mongodb.json._
 import io.circe.HCursor
+import dev.mongocamp.driver.mongodb.json._
 import io.circe.generic.auto._
 
 import scala.collection.mutable

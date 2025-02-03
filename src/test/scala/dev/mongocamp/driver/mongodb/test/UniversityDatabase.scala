@@ -1,12 +1,10 @@
 package dev.mongocamp.driver.mongodb.test
 
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.server.LocalServer
-import dev.mongocamp.driver.mongodb.{GridFSDAO, MongoDAO}
-
-import dev.mongocamp.driver.mongodb.json._
-import io.circe.syntax._
+import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
 import io.circe.generic.auto._
 
 

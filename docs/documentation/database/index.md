@@ -13,10 +13,10 @@ DatabaseProvider is the central repository for MongoClient, registries, database
 Every [Mongo DAO](../mongo-dao/index.md) / [GridFs DAO](../gridfs-dao/index.md) Instance needs this class.
 
 ```scala
-  val provider: DatabaseProvider = DatabaseProvider(MongoConfig.fromPath())
+val provider: DatabaseProvider = DatabaseProvider(MongoConfig.fromPath())
 
-  val database: MongoDatabase = provider.database()
+val database: MongoDatabase = provider.database()
 
-  // Infos for all collections in the default database
-  val collectionInfos: List[CollectionInfo] = provider.collectionInfos()
+// Infos for all collections in the default database
+val collectionInfos: List[CollectionInfo] = provider.collectionInfos()
 ```
