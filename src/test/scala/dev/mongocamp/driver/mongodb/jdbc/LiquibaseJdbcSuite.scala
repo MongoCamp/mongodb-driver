@@ -2,12 +2,12 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.GenericObservable
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.{Contexts, LabelExpression, Liquibase}
-import dev.mongocamp.driver.mongodb.json._
+import liquibase.{ Contexts, LabelExpression, Liquibase }
 
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._

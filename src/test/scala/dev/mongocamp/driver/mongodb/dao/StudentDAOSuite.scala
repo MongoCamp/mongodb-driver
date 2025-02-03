@@ -6,7 +6,6 @@ import dev.mongocamp.driver.mongodb.model.Student
 import dev.mongocamp.driver.mongodb.server.LocalServer
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.{ GradeDAO, StudentDAO }
-
 import munit.FunSuite
 
 class StudentDAOSuite extends FunSuite with MongoImplicits {

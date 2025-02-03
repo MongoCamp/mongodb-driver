@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.pagination
 
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
-import dev.mongocamp.driver.mongodb.{ MongoDAO, _ }
+import dev.mongocamp.driver.mongodb.{ MongoDAO , _ }
 import io.circe.Decoder
 import io.circe.generic.auto._
 import org.mongodb.scala.bson.conversions.Bson
