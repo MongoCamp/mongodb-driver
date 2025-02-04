@@ -7,7 +7,7 @@ import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import munit.FunSuite
 import org.bson.types.ObjectId
 
-class UpdateSqlSpec extends FunSuite {
+class UpdateSqlSuite extends FunSuite {
 
   override def beforeEach(context: BeforeEach): Unit = {
     GradeDAO.drop().result()

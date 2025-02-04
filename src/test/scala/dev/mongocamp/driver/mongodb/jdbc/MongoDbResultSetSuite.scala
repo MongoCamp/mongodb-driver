@@ -1,0 +1,231 @@
+package dev.mongocamp.driver.mongodb.jdbc
+
+import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
+import munit.FunSuite
+import org.joda.time.DateTime
+import org.mongodb.scala.bson.collection.immutable.Document
+import dev.mongocamp.driver.mongodb.*
+import org.mongodb.scala.model.Updates
+
+import java.sql.{Date, ResultSet, SQLFeatureNotSupportedException, Time, Timestamp}
+
+class MongoDbResultSetSuite extends BaseJdbcSuite {
+
+  def initializeResultSet(): ResultSet = {
+    super.beforeAll()
+    val data = List(
+      Document("id" -> 1, "name" -> "test_name", "active"    -> true, "date" -> new DateTime("2021-01-01T00:00:00Z").toDate),
+      Document("id" -> 2, "name" -> "another_name", "active" -> false)
+    )
+    val resultSet = new MongoDbResultSet(null, data, 0)
+    resultSet
+  }
+
+  test("next() should move to the next row") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.next())
+    assertEquals(resultSet.getInt("id"), 1)
+    assert(resultSet.next())
+    assertEquals(resultSet.getInt("id"), 2)
+    assert(!resultSet.next())
+  }
+
+  test("wasNull() should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.wasNull())
+  }
+
+  test("getString() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getString("name"), "test_name")
+  }
+
+  test("getBoolean() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assert(resultSet.getBoolean("active"))
+  }
+
+  test("getInt() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getInt("id"), 1)
+  }
+
+  test("getDouble() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getDouble("id"), 1.0)
+  }
+
+  test("getDate() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getDate("date").toString, "2021-01-01")
+  }
+
+  test("getTime() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getTime("date").toString, new DateTime("2021-01-01T00:00:00Z").toString("HH:mm:ss"))
+  }
+
+  test("getTimestamp() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getTimestamp("date").toInstant.toString, "2021-01-01T00:00:00Z")
+  }
+
+  test("isBeforeFirst() should return true initially") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.isBeforeFirst)
+  }
+
+  test("isAfterLast() should return false initially") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.isAfterLast)
+  }
+
+  test("isFirst() should return true after first next()") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assert(resultSet.isFirst)
+  }
+
+  test("isLast() should return true after last next()") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.next()
+    assert(resultSet.isLast)
+  }
+
+  test("getRow() should return the correct row number") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getRow, 1)
+  }
+
+  test("absolute() should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.absolute(1))
+  }
+
+  test("relative() should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.relative(1))
+  }
+
+  test("previous() should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.previous())
+  }
+
+  test("getFetchDirection() should return FETCH_FORWARD") {
+    val resultSet = initializeResultSet()
+    assertEquals(resultSet.getFetchDirection, ResultSet.FETCH_FORWARD)
+  }
+
+  test("getFetchSize() should return 1") {
+    val resultSet = initializeResultSet()
+    assertEquals(resultSet.getFetchSize, 1)
+  }
+
+  test("getType() should return TYPE_FORWARD_ONLY") {
+    val resultSet = initializeResultSet()
+    assertEquals(resultSet.getType, ResultSet.TYPE_FORWARD_ONLY)
+  }
+
+  test("getObject() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getObject("id"), 1.asInstanceOf[AnyRef])
+  }
+
+  test("updateString() should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateString("name", "updated_name")
+    assertEquals(resultSet.getString("name"), "updated_name")
+  }
+
+  test("insertRow() should insert a new row") {
+    intercept[SQLFeatureNotSupportedException] {
+      val resultSet = initializeResultSet()
+      resultSet.moveToInsertRow()
+      resultSet.updateInt("id", 3)
+      resultSet.updateString("name", "new_name")
+      resultSet.updateBoolean("active", true)
+      resultSet.insertRow()
+    }
+  }
+
+  test("updateRow() should update the current row") {
+    val resultSet = connection.createStatement().executeQuery("select _id, id, name, age from people where age < 30 order by id asc")
+    resultSet.next()
+    resultSet.updateString("name", "updated_name")
+    resultSet.updateRow()
+    assertEquals(resultSet.getString("name"), "updated_name")
+    resultSet.refreshRow()
+    val document = connection.asInstanceOf[MongoJdbcConnection].getDatabaseProvider.dao("people").find("id", resultSet.getLong("id")).result()
+    assertEquals(document, resultSet.asInstanceOf[MongoDbResultSet].getDocument)
+  }
+
+  test("deleteRow() should delete the current row") {
+    val resultSet = connection.createStatement().executeQuery("select _id, id, name, age from people where id = 10")
+    resultSet.next()
+    resultSet.deleteRow()
+    assert(!resultSet.next())
+    val document = connection.asInstanceOf[MongoJdbcConnection].getDatabaseProvider.dao("people").find("id", 10).resultOption()
+    assert(document.isEmpty)
+  }
+
+  test("refreshRow() should refresh the current row") {
+    val resultSet = connection.createStatement().executeQuery("select _id, id, name, age from people where id = 42")
+    resultSet.next()
+    assertEquals(resultSet.getString("name"), "Aisha Buckner")
+    connection.asInstanceOf[MongoJdbcConnection].getDatabaseProvider.dao("people").updateOne(Map("id" -> 42), Updates.set("name", "updated_name")).result()
+    resultSet.refreshRow()
+    assertEquals(resultSet.getString("name"), "updated_name")
+  }
+
+  test("getMetaData() should return the correct metadata") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.getMetaData != null)
+  }
+
+  test("findColumn() should return the correct column index") {
+    val resultSet = initializeResultSet()
+    assertEquals(resultSet.findColumn("id"), 0)
+  }
+
+  test("getWarnings() should return null") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.getWarnings == null)
+  }
+
+  test("clearWarnings() should not throw an exception") {
+    val resultSet = initializeResultSet()
+    resultSet.clearWarnings()
+  }
+
+  test("getCursorName() should return null") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.getCursorName == null)
+  }
+
+  test("getStatement() should return null") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.getStatement == null)
+  }
+
+  test("unwrap() should return null") {
+    val resultSet = initializeResultSet()
+    assert(resultSet.unwrap(classOf[MongoDbResultSet]) == null)
+  }
+
+  test("isWrapperFor() should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.isWrapperFor(classOf[MongoDbResultSet]))
+  }
+}

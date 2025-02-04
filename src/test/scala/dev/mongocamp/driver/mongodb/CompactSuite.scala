@@ -9,7 +9,7 @@ import munit.FunSuite
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class CompactSpec extends FunSuite {
+class CompactSuite extends FunSuite {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
   val From: Date = DateFormat.parse("2000-01-01")
 
