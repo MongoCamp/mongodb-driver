@@ -14,7 +14,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMetaData {
   private lazy val semVer          = new Semver(BuildInfo.version)
-  private lazy val jdbcSemVer      = new Semver("4.2")
+  private lazy val jdbcSemVer      = new Semver("4.2.0")
   private lazy val DatabaseNameKey = "mongodb"
 
   override def allProceduresAreCallable() = false
