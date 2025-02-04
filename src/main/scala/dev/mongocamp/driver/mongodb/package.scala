@@ -62,6 +62,5 @@ package object mongodb extends ObservableIncludes with DocumentIncludes {
 
     def getFloatValue(key: String): Float = getDoubleValue(key).floatValue()
 
-    def updateValue(key: String, value: Any): Any = BsonConverter.updateDocumentValue(document, key, value)
   }
 }
