@@ -1,28 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
+import dev.mongocamp.driver.mongodb.json.JsonConverter
+import org.mongodb.scala.bson.collection.immutable.Document
 
-import java.sql.{
-  Blob,
-  CallableStatement,
-  Clob,
-  Connection,
-  DatabaseMetaData,
-  NClob,
-  PreparedStatement,
-  SQLException,
-  SQLWarning,
-  SQLXML,
-  Savepoint,
-  Statement,
-  Struct
-}
+import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
 import java.util.Properties
 import java.util.concurrent.Executor
-import java.{ sql, util }
+import java.{sql, util}
 import scala.jdk.CollectionConverters._
 
 class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection with MongoJdbcCloseable {
@@ -186,23 +173,19 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
   }
 
   override def createClob(): Clob = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def createBlob(): Blob = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def createNClob(): NClob = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def createSQLXML(): SQLXML = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def isValid(timeout: Int): Boolean = {
@@ -237,19 +220,17 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
   override def getClientInfo: Properties = {
     val properties = new Properties()
     properties.setProperty("ApplicationName", databaseProvider.config.applicationName)
-    val document = Converter.toDocument(databaseProvider.config)
+    val document = Document(JsonConverter().toJson(databaseProvider.config))
     BsonConverter.asMap(document).foreach(entry => properties.setProperty(entry._1, entry._2.toString))
     properties
   }
 
   override def createArrayOf(typeName: String, elements: Array[AnyRef]): sql.Array = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def createStruct(typeName: String, attributes: Array[AnyRef]): Struct = {
-    checkClosed()
-    null
+    throw sqlFeatureNotSupported()
   }
 
   override def setSchema(schema: String): Unit = {
