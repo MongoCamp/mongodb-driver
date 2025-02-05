@@ -1,13 +1,12 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
-import munit.FunSuite
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
-import dev.mongocamp.driver.mongodb.*
 import org.mongodb.scala.model.Updates
 
-import java.sql.{Date, ResultSet, SQLFeatureNotSupportedException, Time, Timestamp}
+import java.sql.{ResultSet, SQLFeatureNotSupportedException, Time}
 
 class MongoDbResultSetSuite extends BaseJdbcSuite {
 
@@ -68,7 +67,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
   test("getTime() should return the correct value") {
     val resultSet = initializeResultSet()
     resultSet.next()
-    assertEquals(resultSet.getTime("date").toString, new DateTime("2021-01-01T00:00:00Z").toString("HH:mm:ss"))
+    assertEquals(resultSet.getTime("date"), new Time(new DateTime("2021-01-01T00:00:00Z").toDate.getTime))
   }
 
   test("getTimestamp() should return the correct value") {

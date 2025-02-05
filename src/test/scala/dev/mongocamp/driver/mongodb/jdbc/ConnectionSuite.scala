@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 
-import java.sql.{Connection, DriverManager, SQLFeatureNotSupportedException, SQLWarning, Savepoint}
+import java.sql.{ Connection, SQLFeatureNotSupportedException, Savepoint }
 import java.util.Properties
 import java.util.concurrent.Executor
 

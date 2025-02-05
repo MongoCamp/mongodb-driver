@@ -220,7 +220,7 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
   override def getClientInfo: Properties = {
     val properties = new Properties()
     properties.setProperty("ApplicationName", databaseProvider.config.applicationName)
-    val document = Document(JsonConverter().toJson(databaseProvider.config))
+    val document = Document(new JsonConverter().toJson(databaseProvider.config))
     BsonConverter.asMap(document).foreach(entry => properties.setProperty(entry._1, entry._2.toString))
     properties
   }
