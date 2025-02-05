@@ -26,7 +26,7 @@ Documentation can be found [here](https://mongodb-driver.mongocamp.dev/).
 
 ## Version
 
-Scala Version is 2.13.x / 2.12.x.
+Scala Version is 3.6.x / 2.13.x
 
 ## CI
 
@@ -153,7 +153,6 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
 ```shell
 docker rm -f mongodb;
 docker run -d --publish 27017:27017 --name mongodb  mongocamp/mongodb:latest; 
-sbt +test; 
 ```
 
 ## Supporters

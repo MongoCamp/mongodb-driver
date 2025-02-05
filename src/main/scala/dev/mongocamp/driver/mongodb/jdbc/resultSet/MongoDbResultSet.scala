@@ -1,11 +1,10 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.*
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
-import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
+import org.mongodb.scala.bson.{ BsonDouble, BsonInt32, BsonInt64, BsonObjectId, BsonString }
 import org.mongodb.scala.documentToUntypedDocument
 
 import java.io.{ InputStream, Reader }
