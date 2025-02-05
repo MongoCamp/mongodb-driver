@@ -1,15 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.*
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Updates
 
-import java.sql.{ResultSet, SQLFeatureNotSupportedException, Time}
+import java.sql.{Date, ResultSet, SQLFeatureNotSupportedException, Time, Timestamp}
 
 class MongoDbResultSetSuite extends BaseJdbcSuite {
-
+  
   def initializeResultSet(): ResultSet = {
     super.beforeAll()
     val data = List(
@@ -226,5 +226,86 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
   test("isWrapperFor() should return false") {
     val resultSet = initializeResultSet()
     assert(!resultSet.isWrapperFor(classOf[MongoDbResultSet]))
+  }
+  
+  test("updateNull should update the value to null") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateNull(1)
+    assert(resultSet.getObject(1) == null)
+  }
+
+  test("updateBoolean should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateBoolean(3, false)
+    assert(!resultSet.getBoolean(3))
+  }
+
+  test("updateInt should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateInt(1, 42)
+    assert(resultSet.getInt(1) == 42)
+  }
+
+  test("updateString should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateString(2, "updated_name")
+    assert(resultSet.getString(2) == "updated_name")
+  }
+
+  test("updateDate should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    val newDate = new Date(1622505600000L)
+    resultSet.updateDate(4, newDate)
+    assert(resultSet.getDate(4) == newDate)
+  }
+
+  test("updateTime should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    val newTime = new Time(1622505600000L)
+    resultSet.updateTime(4, newTime)
+    assert(resultSet.getTime(4) == newTime)
+  }
+
+  test("updateTimestamp should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    val newTimestamp = new Timestamp(1622505600000L)
+    resultSet.updateTimestamp(4, newTimestamp)
+    assert(resultSet.getTimestamp(4) == newTimestamp)
+  }
+
+  test("updateObject should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateObject(1, 99)
+    assertEquals(resultSet.getObject(1).asInstanceOf[Int], 99)
+  }
+
+  test("rowUpdated should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.rowUpdated())
+  }
+
+  test("rowInserted should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.rowInserted())
+  }
+
+  test("rowDeleted should return false") {
+    val resultSet = initializeResultSet()
+    assert(!resultSet.rowDeleted())
+  }
+
+  test("getConcurrency should throw SQLFeatureNotSupportedException") {
+    val resultSet = initializeResultSet()
+    intercept[SQLFeatureNotSupportedException] {
+      resultSet.getConcurrency
+    }
   }
 }
