@@ -1,8 +1,11 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
-import scala.collection.convert._
+
+import java.io.{InputStream, Reader}
+import java.net.URL
 import java.sql.{Date, Time, Timestamp}
+import java.util.Calendar
 
 class MongoPreparedStatementSuite extends BaseJdbcSuite {
   var preparedStatement: MongoPreparedStatement = _
@@ -80,7 +83,7 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   }
 
   test("setBytes should set byte array parameter") {
-    val bytes = Array[Byte](1, 2, 3)
+    val bytes = Array[Byte](1.toByte, 2.toByte, 3.toByte)
     preparedStatement.setBytes(1, bytes)
     assertEquals(preparedStatement.getBytes(1).toList, bytes.toList)
   }
@@ -94,19 +97,19 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   test("setTime should set time parameter") {
     val time = new Time(System.currentTimeMillis())
     preparedStatement.setTime(1, time)
-    assertEquals(preparedStatement.getTime(1) , time)
+    assertEquals(preparedStatement.getTime(1), time)
   }
 
   test("setTimestamp should set timestamp parameter") {
     val timestamp = new Timestamp(System.currentTimeMillis())
     preparedStatement.setTimestamp(1, timestamp)
-    assertEquals(preparedStatement.getTimestamp(1) , timestamp)
+    assertEquals(preparedStatement.getTimestamp(1), timestamp)
   }
 
   test("clearParameters should clear all parameters") {
     preparedStatement.setString(1, "test")
     preparedStatement.clearParameters()
-    assertEquals(preparedStatement.getString(1) , null)
+    assertEquals(preparedStatement.getString(1), null)
   }
 
   test("getConnection should return the connection") {
@@ -114,16 +117,16 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   }
 
   test("getQueryTimeout should return the query timeout") {
-    assertEquals(preparedStatement.getQueryTimeout , 10)
+    assertEquals(preparedStatement.getQueryTimeout, 10)
   }
 
   test("setQueryTimeout should set the query timeout") {
     preparedStatement.setQueryTimeout(20)
-    assertEquals(preparedStatement.getQueryTimeout , 20)
+    assertEquals(preparedStatement.getQueryTimeout, 20)
   }
 
   test("getWarnings should return null") {
-    assertEquals(preparedStatement.getWarnings , null)
+    assertEquals(preparedStatement.getWarnings, null)
   }
 
   test("clearWarnings should not throw exception") {
@@ -131,17 +134,19 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   }
 
   test("getResultSet should return the last result set") {
-    assertNotEquals(preparedStatement.getResultSet , null)
+    assertNotEquals(preparedStatement.getResultSet, null)
   }
 
   test("getUpdateCount should return the last update count") {
-    assertEquals(preparedStatement.getUpdateCount , -1)
-    preparedStatement.executeUpdate("INSERT INTO table_name (column1, column2, column3) VALUES ('value1', 123, '2022-01-01T00:00:00.000Z'), ('value2', 456, '2022-02-01T00:00:00.000Z');")
-    assertEquals(preparedStatement.getUpdateCount , 2)
+    assertEquals(preparedStatement.getUpdateCount, -1)
+    preparedStatement.executeUpdate(
+      "INSERT INTO table_name (column1, column2, column3) VALUES ('value1', 123, '2022-01-01T00:00:00.000Z'), ('value2', 456, '2022-02-01T00:00:00.000Z');"
+    )
+    assertEquals(preparedStatement.getUpdateCount, 2)
     preparedStatement.executeUpdate("Update table_name SET column1 = 'value3' WHERE column2 = 123;")
-    assertEquals(preparedStatement.getUpdateCount , 1)
+    assertEquals(preparedStatement.getUpdateCount, 1)
     preparedStatement.executeUpdate("DELETE FROM table_name WHERE column2 = 123;")
-    assertEquals(preparedStatement.getUpdateCount , 1)
+    assertEquals(preparedStatement.getUpdateCount, 1)
   }
 
   test("getMoreResults should return false") {
@@ -149,23 +154,23 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   }
 
   test("getFetchDirection should return FETCH_FORWARD") {
-    assertEquals(preparedStatement.getFetchDirection , java.sql.ResultSet.FETCH_FORWARD)
+    assertEquals(preparedStatement.getFetchDirection, java.sql.ResultSet.FETCH_FORWARD)
   }
 
   test("getFetchSize should return -1") {
-    assertEquals(preparedStatement.getFetchSize , -1)
+    assertEquals(preparedStatement.getFetchSize, -1)
   }
 
   test("getResultSetType should return TYPE_FORWARD_ONLY") {
-    assertEquals(preparedStatement.getResultSetType , java.sql.ResultSet.TYPE_FORWARD_ONLY)
+    assertEquals(preparedStatement.getResultSetType, java.sql.ResultSet.TYPE_FORWARD_ONLY)
   }
 
   test("getGeneratedKeys should return null") {
-    assertEquals(preparedStatement.getGeneratedKeys , null)
+    assertEquals(preparedStatement.getGeneratedKeys, null)
   }
 
   test("getResultSetHoldability should return 0") {
-    assertEquals(preparedStatement.getResultSetHoldability , 0)
+    assertEquals(preparedStatement.getResultSetHoldability, 0)
   }
 
   test("isPoolable should return false") {
@@ -182,18 +187,33 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
 
   test("getObject should return the parameter value") {
     preparedStatement.setString(1, "test")
-    assertEquals(preparedStatement.getObject(1) , "test")
+    assertEquals(preparedStatement.getObject(1), "test")
   }
 
   test("getURL should return the URL parameter") {
     preparedStatement.setString(1, "http://example.com")
-    assertEquals(preparedStatement.getURL(1) , new java.net.URL("http://example.com"))
+    assertEquals(preparedStatement.getURL(1), new java.net.URL("http://example.com"))
+  }
+
+  test("setObject should return an string") {
+    preparedStatement.setObject(1, "value")
+    assertEquals(preparedStatement.getString(1), "value")
+    preparedStatement.setObject(1, "value1", java.sql.Types.VARCHAR)
+    assertEquals(preparedStatement.getString(1), "value1")
+    preparedStatement.setObject(1, "value2", java.sql.Types.VARCHAR, 0)
+    assertEquals(preparedStatement.getString(1), "value2")
+    preparedStatement.setObject(1, null)
+    assertEquals(preparedStatement.getString(1), "null")
+    preparedStatement.setObject(1, List(1, 2, 3))
+    assertEquals(preparedStatement.getString(1), "[1,2,3]")
+    preparedStatement.setObject(1, List("hallo", "world"))
+    assertEquals(preparedStatement.getString(1), "[\"hallo\",\"world\"]")
   }
 
   test("set URL should set the URL parameter") {
     preparedStatement.setURL(1, new java.net.URL("http://example.com"))
-    assertEquals(preparedStatement.getURL(1) , new java.net.URL("http://example.com"))
-    assertEquals(preparedStatement.getString(1) , "http://example.com")
+    assertEquals(preparedStatement.getURL(1), new java.net.URL("http://example.com"))
+    assertEquals(preparedStatement.getString(1), "http://example.com")
   }
 
   import java.sql.SQLFeatureNotSupportedException
@@ -287,5 +307,44 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
     assertThrowsFeatureNotSupportedException(preparedStatement.setTime("param", null, null))
     assertThrowsFeatureNotSupportedException(preparedStatement.setTimestamp("param", null, null))
     assertThrowsFeatureNotSupportedException(preparedStatement.setNull("param", 0, null))
+    assertThrowsFeatureNotSupportedException(preparedStatement.setClob("param", null.asInstanceOf[Reader]))
+    assertThrowsFeatureNotSupportedException(preparedStatement.setNClob("param", null.asInstanceOf[Reader]))
+    assertThrowsFeatureNotSupportedException(preparedStatement.setBlob("param", null.asInstanceOf[InputStream]))
+  }
+
+  test("set values should not throw exception") {
+    preparedStatement.addBatch()
+    preparedStatement.setCharacterStream(1, null, 0)
+    preparedStatement.setRef(1, null)
+    preparedStatement.setBlob(1, null.asInstanceOf[java.sql.Blob])
+    preparedStatement.setClob(1, null.asInstanceOf[java.sql.Clob])
+    preparedStatement.setDate(1, new Date(0), Calendar.getInstance())
+    preparedStatement.setTime(1, new Time(0), Calendar.getInstance())
+    preparedStatement.setTimestamp(1, new Timestamp(0), Calendar.getInstance())
+    preparedStatement.setNull(1, 0, "typeName")
+    preparedStatement.setURL(1, new URL("http://example.com"))
+    preparedStatement.setRowId(1, null)
+    preparedStatement.setNString(1, null)
+    preparedStatement.setNCharacterStream(1, null, 0L)
+    preparedStatement.setNClob(1, null.asInstanceOf[java.sql.NClob])
+    preparedStatement.setClob(1, null, 0L)
+    preparedStatement.setBlob(1, null, 0L)
+    preparedStatement.setNClob(1, null, 0L)
+    preparedStatement.setSQLXML(1, null)
+    preparedStatement.setAsciiStream(1, null, 0L)
+    preparedStatement.setBinaryStream(1, null, 0L)
+    preparedStatement.setCharacterStream(1, null, 0L)
+    preparedStatement.setAsciiStream(1, null)
+    preparedStatement.setBinaryStream(1, null)
+    preparedStatement.setCharacterStream(1, null)
+    preparedStatement.setNCharacterStream(1, null)
+    preparedStatement.setClob(1, null.asInstanceOf[java.sql.Clob])
+    preparedStatement.setBlob(1, null.asInstanceOf[java.sql.Blob])
+    preparedStatement.setNClob(1, null.asInstanceOf[java.sql.NClob])
+    preparedStatement.setArray(1, null.asInstanceOf[java.sql.Array])
+    preparedStatement.setAsciiStream(1, null.asInstanceOf[InputStream], 1)
+    preparedStatement.setUnicodeStream(1, null.asInstanceOf[InputStream], 1)
+    preparedStatement.setBinaryStream(1, null.asInstanceOf[InputStream], 1)
+    assertEquals(preparedStatement.getMetaData, null)
   }
 }

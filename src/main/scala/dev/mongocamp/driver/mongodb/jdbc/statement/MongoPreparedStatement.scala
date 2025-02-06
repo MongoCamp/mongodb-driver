@@ -7,7 +7,6 @@ import dev.mongocamp.driver.mongodb.jdbc.{MongoJdbcCloseable, MongoJdbcConnectio
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
 import dev.mongocamp.driver.mongodb.{Converter, GenericObservable}
-import jdk.graal.compiler.util.json.JsonParser
 import org.joda.time.DateTime
 
 import java.io.{InputStream, Reader}
@@ -224,9 +223,9 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       case t: Time =>
         parameters.put(parameterIndex, s"'${t.toInstant.toString}'")
       case a: Array[Byte] =>
-        parameters.put(parameterIndex, a.mkString("[", ",", "]"))
+        parameters.put(parameterIndex, new JsonConverter().toJson(a))
       case a: Iterable[_] =>
-        parameters.put(parameterIndex, a.mkString("[", ",", "]"))
+        parameters.put(parameterIndex, new JsonConverter().toJson(a))
       case _ =>
         parameters.put(parameterIndex, x.toString)
     }
