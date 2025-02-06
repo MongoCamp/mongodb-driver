@@ -54,6 +54,17 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnCount: Int = document.size
 
+  override def getColumnLabel(column: Int): String = {
+    val keys: Iterable[String] = if (keySet.nonEmpty) {
+      keySet
+    } else {
+      document.keys
+    }
+    keys.toList(column - 1)
+  }
+
+  override def getColumnName(column: Int): String = getColumnLabel(column)
+
   override def isAutoIncrement(column: Int): Boolean = false
 
   override def isCaseSensitive(column: Int): Boolean = true
@@ -68,17 +79,6 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnDisplaySize(column: Int): Int = Int.MaxValue
 
-  override def getColumnLabel(column: Int): String = {
-    val keys : Iterable[String] =if (keySet.nonEmpty) {
-      keySet
-    } else {
-      document.keys
-    }
-    keys.toList(column - 1)
-  }
-
-  override def getColumnName(column: Int): String = getColumnLabel(column)
-
   override def getSchemaName(column: Int): String = collectionDao.databaseName
 
   override def getPrecision(column: Int): Int = 0
@@ -90,7 +90,7 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   override def getCatalogName(column: Int): String = collectionDao.name
 
   override def getColumnType(column: Int): Int = {
-    document.values.toList(column - 1) match {
+    document(getColumnLabel(column)) match {
       case _: BsonInt32   => java.sql.Types.INTEGER
       case _: BsonInt64   => java.sql.Types.BIGINT
       case _: BsonNumber  => java.sql.Types.DOUBLE
@@ -136,6 +136,11 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   override def isWrapperFor(iface: Class[_]): Boolean = false
 
   def getColumnIndex(columnLabel: String): Int = {
-    document.keys.toList.indexOf(columnLabel)
+    val keys: List[String] = if (keySet.nonEmpty) {
+      keySet
+    } else {
+      document.keys.toList
+    }
+    keys.indexOf(columnLabel) + 1
   }
 }

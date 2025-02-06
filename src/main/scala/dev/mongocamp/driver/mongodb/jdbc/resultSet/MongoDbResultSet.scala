@@ -251,7 +251,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getMetaData: ResultSetMetaData = {
     checkClosed()
-    new MongoDbResultSetMetaData(collectionDao, data)
+    new MongoDbResultSetMetaData(collectionDao, data, keySet)
   }
 
   override def getObject(columnIndex: Int): AnyRef = {

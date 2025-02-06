@@ -6,12 +6,11 @@ import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Updates
 
-import java.sql.{Date, ResultSet, SQLFeatureNotSupportedException, Time, Timestamp}
+import java.sql.*
 
 class MongoDbResultSetSuite extends BaseJdbcSuite {
-  
+
   def initializeResultSet(): ResultSet = {
-    super.beforeAll()
     val data = List(
       Document("id" -> 1, "name" -> "test_name", "active"    -> true, "date" -> new DateTime("2021-01-01T00:00:00Z").toDate),
       Document("id" -> 2, "name" -> "another_name", "active" -> false)
@@ -52,10 +51,41 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     assertEquals(resultSet.getInt("id"), 1)
   }
 
+  test("getByte() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getByte("id"), 1.toByte)
+  }
+
+  test("getBytes() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getByte("id"), 1.toByte)
+  }
+
+  test("getShort() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getShort("id"), 1.toShort)
+  }
+
+  test("getFloat() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getFloat("id"), 1.toFloat)
+  }
+
   test("getDouble() should return the correct value") {
     val resultSet = initializeResultSet()
     resultSet.next()
     assertEquals(resultSet.getDouble("id"), 1.0)
+  }
+
+  test("getBigDecimal() should return the correct value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getBigDecimal("id"), new java.math.BigDecimal(1))
+    assertEquals(resultSet.getBigDecimal("id", 1), new java.math.BigDecimal(1).setScale(1))
   }
 
   test("getDate() should return the correct value") {
@@ -195,7 +225,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
 
   test("findColumn() should return the correct column index") {
     val resultSet = initializeResultSet()
-    assertEquals(resultSet.findColumn("id"), 0)
+    assertEquals(resultSet.findColumn("id"), 1)
   }
 
   test("getWarnings() should return null") {
@@ -227,7 +257,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     val resultSet = initializeResultSet()
     assert(!resultSet.isWrapperFor(classOf[MongoDbResultSet]))
   }
-  
+
   test("updateNull should update the value to null") {
     val resultSet = initializeResultSet()
     resultSet.next()
@@ -246,14 +276,28 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     val resultSet = initializeResultSet()
     resultSet.next()
     resultSet.updateInt(1, 42)
-    assert(resultSet.getInt(1) == 42)
+    assertEquals(resultSet.getInt(1), 42)
+  }
+
+  test("updateFloat should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateFloat(1, 42.toFloat)
+    assertEquals(resultSet.getFloat(1), 42.toFloat)
+  }
+
+  test("updateBigDecimal should update the value") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.updateBigDecimal(1, new java.math.BigDecimal(42))
+    assertEquals(resultSet.getBigDecimal(1), new java.math.BigDecimal(42))
   }
 
   test("updateString should update the value") {
     val resultSet = initializeResultSet()
     resultSet.next()
     resultSet.updateString(2, "updated_name")
-    assert(resultSet.getString(2) == "updated_name")
+    assertEquals(resultSet.getString(2), "updated_name")
   }
 
   test("updateDate should update the value") {
@@ -261,7 +305,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     resultSet.next()
     val newDate = new Date(1622505600000L)
     resultSet.updateDate(4, newDate)
-    assert(resultSet.getDate(4) == newDate)
+    assertEquals(resultSet.getDate(4), newDate)
   }
 
   test("updateTime should update the value") {
@@ -269,7 +313,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     resultSet.next()
     val newTime = new Time(1622505600000L)
     resultSet.updateTime(4, newTime)
-    assert(resultSet.getTime(4) == newTime)
+    assertEquals(resultSet.getTime(4), newTime)
   }
 
   test("updateTimestamp should update the value") {
@@ -277,7 +321,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     resultSet.next()
     val newTimestamp = new Timestamp(1622505600000L)
     resultSet.updateTimestamp(4, newTimestamp)
-    assert(resultSet.getTimestamp(4) == newTimestamp)
+    assertEquals(resultSet.getTimestamp(4), newTimestamp)
   }
 
   test("updateObject should update the value") {
@@ -304,8 +348,24 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
 
   test("getConcurrency should throw SQLFeatureNotSupportedException") {
     val resultSet = initializeResultSet()
-    intercept[SQLFeatureNotSupportedException] {
-      resultSet.getConcurrency
-    }
+    intercept[SQLFeatureNotSupportedException] (resultSet.getConcurrency)
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateAsciiStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateAsciiStream("updateAsciiStream", null, 1))
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateBinaryStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateBinaryStream("updateBinaryStream", null, 1))
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateCharacterStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException] (resultSet.updateCharacterStream("updateCharacterStream", null, 1))
+
   }
+
+  test("null values for not implemented get methods") {
+    val resultSet = initializeResultSet()
+    assertEquals(resultSet.getAsciiStream(1), null)
+    assertEquals(resultSet.getUnicodeStream(1), null)
+    assertEquals(resultSet.getBinaryStream(1), null)
+    assertEquals(resultSet.getAsciiStream("id"), null)
+    assertEquals(resultSet.getUnicodeStream("id"), null)
+    assertEquals(resultSet.getBinaryStream("id"), null)
+  }
+
 }
