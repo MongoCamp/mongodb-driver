@@ -1,12 +1,12 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Updates
 
-import java.sql.*
+import java.sql._
 
 class MongoDbResultSetSuite extends BaseJdbcSuite {
 

@@ -551,37 +551,37 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getBoolean(parameterIndex: Int): Boolean = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toBoolean).toOption).orNull.asInstanceOf[Boolean]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toBoolean).toOption).getOrElse(false)
   }
 
   override def getByte(parameterIndex: Int): Byte = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toByte).toOption).orNull.asInstanceOf[Byte]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toByte).toOption).getOrElse(Byte.MinValue)
   }
 
   override def getShort(parameterIndex: Int): Short = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toShort).toOption).orNull.asInstanceOf[Short]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toShort).toOption).getOrElse(Short.MinValue)
   }
 
   override def getInt(parameterIndex: Int): Int = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toInt).toOption).orNull.asInstanceOf[Int]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toInt).toOption).getOrElse(Int.MinValue)
   }
 
   override def getLong(parameterIndex: Int): Long = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toLong).toOption).orNull.asInstanceOf[Long]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toLong).toOption).getOrElse(Long.MinValue)
   }
 
   override def getFloat(parameterIndex: Int): Float = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toFloat).toOption).orNull.asInstanceOf[Float]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toFloat).toOption).getOrElse(Float.MinValue)
   }
 
   override def getDouble(parameterIndex: Int): Double = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toDouble).toOption).orNull.asInstanceOf[Double]
+    getStringOption(parameterIndex).flatMap(v => Try(v.toDouble).toOption).getOrElse(Double.MinValue)
   }
 
   override def getBigDecimal(parameterIndex: Int, scale: Int): java.math.BigDecimal = getBigDecimal(parameterIndex)
@@ -680,7 +680,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
   override def getURL(parameterIndex: Int): URL = {
     checkClosed()
     Option(getString(parameterIndex)).flatMap(v => {
-      val urlParser = Try(java.net.URI(v).toURL)
+      val urlParser = Try(new java.net.URI(v).toURL)
       urlParser.toOption
     }).orNull
   }
