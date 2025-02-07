@@ -1,3 +1,45 @@
+## [v3.0.0] - 2025-02-07
+### :sparkles: New Features
+- [`968c4b5`](https://github.com/MongoCamp/mongodb-driver/commit/968c4b5dfb93dd562bef51987bce278ab6eea4cd) - try to implement conversion from document to object with circe *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`b1f5d78`](https://github.com/MongoCamp/mongodb-driver/commit/b1f5d789d50d74b30eaf00bd8692973557ac1a14) - use circe scheme to convert documents to objects *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`22f09e8`](https://github.com/MongoCamp/mongodb-driver/commit/22f09e8b2944cb0b5ac0b50c5005f92d05923300) - added skip to find method *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`73b7e40`](https://github.com/MongoCamp/mongodb-driver/commit/73b7e4009699244f462ede31fe2ce8d11b0bd641) - more converter for net.sf.jsqlparser expressions *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`986aa14`](https://github.com/MongoCamp/mongodb-driver/commit/986aa140ba6a266697a09d63dbca9aac2c467634) - Migration Plugin needed *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`76d4bc6`](https://github.com/MongoCamp/mongodb-driver/commit/76d4bc6221c0b68c690d8467507b2be3c3d46bda) - Field order in JDBC Driver closes[#72](https://github.com/MongoCamp/mongodb-driver/pull/72) *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`3d3b60a`](https://github.com/MongoCamp/mongodb-driver/commit/3d3b60ab5fc1976b9209eec245763d11aa0e7ef7) - lucene query some cases not negates closes[#71](https://github.com/MongoCamp/mongodb-driver/pull/71) *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d1ce373`](https://github.com/MongoCamp/mongodb-driver/commit/d1ce3739a5dd9ce6bc0ff683eca85494e1ce9148) - scala 2 compatibility *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`b4982df`](https://github.com/MongoCamp/mongodb-driver/commit/b4982df67cdbd2cc0703f6aac2d30a77c6959443) - scala 2 compatibility *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`319babd`](https://github.com/MongoCamp/mongodb-driver/commit/319babd7d74eef89d1a2846e12ab77a0c76efc90) - use sbt-scala3-migrate plugin to optimize code *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`3caf2e6`](https://github.com/MongoCamp/mongodb-driver/commit/3caf2e6a91b0742239d0ebde4187be89240159ec) - remove compilation errors for source *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`ec72741`](https://github.com/MongoCamp/mongodb-driver/commit/ec72741285c76d506e40190dd698a37d62faf2b6) - first try to refactor DAO Pattern *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`1e90836`](https://github.com/MongoCamp/mongodb-driver/commit/1e90836e5541bf3539781e148428a878a178831a) - return scala BigDecimal *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d2760e2`](https://github.com/MongoCamp/mongodb-driver/commit/d2760e25901702b65f3e3aa7d23583c53c2e67e9) - collection only can use document *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`7bc6716`](https://github.com/MongoCamp/mongodb-driver/commit/7bc6716462cb56e5d7f74406eeecd455846ae042) - remove not longer needed bson codecs *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`7b95ad0`](https://github.com/MongoCamp/mongodb-driver/commit/7b95ad0ef25a3d03a28fa050d0436941b050c9db) - remove duplicate conversion to circe.JSON *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`bc44de2`](https://github.com/MongoCamp/mongodb-driver/commit/bc44de26c16f8ad34642b108b184adcd3ae66435) - moved json conversion to own package *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`6104bd4`](https://github.com/MongoCamp/mongodb-driver/commit/6104bd499b42755d6e2cb58d974f793a2b1d4d93) - code cleanup on jdbc package *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`b73cf96`](https://github.com/MongoCamp/mongodb-driver/commit/b73cf96a55c9788543ca9cf927eb2fe81d2a6469) - Remove not working methode updateValue on document *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`7107c59`](https://github.com/MongoCamp/mongodb-driver/commit/7107c5949e428e35499219736325359d296e3701) - revert all test *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`05cd13e`](https://github.com/MongoCamp/mongodb-driver/commit/05cd13e5d6c797c00cbb7c00bb3a506412d4e0f2) - try to fix ci test problem *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`9cd33ce`](https://github.com/MongoCamp/mongodb-driver/commit/9cd33cebdc7e2aeff338f0d9397a08d2dd9cf6e1) - changed all test from spec2 to munit *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`5f60784`](https://github.com/MongoCamp/mongodb-driver/commit/5f6078476908a1e36e72c8c0016a24f66183b4fe) - drop database before checking liquibase *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`6bdd907`](https://github.com/MongoCamp/mongodb-driver/commit/6bdd907d04afce28f83f79d5a9fc8770c1490446) - drop database before SchemaSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`2a32bad`](https://github.com/MongoCamp/mongodb-driver/commit/2a32bad5ecbe716103a212657cc606e9c4c496ff) - added more tests for jdbc package *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`c047fbb`](https://github.com/MongoCamp/mongodb-driver/commit/c047fbb0fd12209da5ef08327de13aca6f7cba6c) - added more tests for jdbc package *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`8d28c81`](https://github.com/MongoCamp/mongodb-driver/commit/8d28c81c3651a3c5837824ce1a57054d358bb42c) - added more tests for jdbc package *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`37a07f4`](https://github.com/MongoCamp/mongodb-driver/commit/37a07f405376a5da2af3bca6639d423777a0aa62) - fix to have space between key and value *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`91ed0be`](https://github.com/MongoCamp/mongodb-driver/commit/91ed0be2adce3fe38ea180f74b74278153c62601) - 9 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`60e1350`](https://github.com/MongoCamp/mongodb-driver/commit/60e1350cbdbc3f6abb1f8e304ad3e57db356d843) - plugin updates *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v2.8.1] - 2024-11-05
 ### :sparkles: New Features
 - [`df5a348`](https://github.com/MongoCamp/mongodb-driver/commit/df5a348515cf60f7ff419efde4e619a5013b2fab) - joins without on statement in oracle style *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -252,3 +294,4 @@
 [v2.7.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.6.10...v2.7.0
 [v2.8.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.7.0...v2.8.0
 [v2.8.1]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.0...v2.8.1
+[v3.0.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.1...v3.0.0
