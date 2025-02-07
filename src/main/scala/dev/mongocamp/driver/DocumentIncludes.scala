@@ -52,5 +52,5 @@ trait DocumentIncludes {
   implicit def documentToObjectId(doc: Document): ObjectId = {
     doc.getObjectId(DatabaseProvider.ObjectIdKey)
   }
-  
+
 }

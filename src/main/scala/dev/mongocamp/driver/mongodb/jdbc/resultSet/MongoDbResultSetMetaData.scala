@@ -10,7 +10,7 @@ import java.sql.{ ResultSetMetaData, SQLException }
 class MongoDbResultSetMetaData extends ResultSetMetaData {
   private var document: Document                = _
   private var collectionDao: MongoDAO[Document] = _
-  private var keySet: List[String] = List.empty
+  private var keySet: List[String]              = List.empty
 
   def this(dao: MongoDAO[Document]) = {
     this()
@@ -57,7 +57,8 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   override def getColumnLabel(column: Int): String = {
     val keys: Iterable[String] = if (keySet.nonEmpty) {
       keySet
-    } else {
+    }
+    else {
       document.keys
     }
     keys.toList(column - 1)
@@ -138,7 +139,8 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   def getColumnIndex(columnLabel: String): Int = {
     val keys: List[String] = if (keySet.nonEmpty) {
       keySet
-    } else {
+    }
+    else {
       document.keys.toList
     }
     keys.indexOf(columnLabel) + 1

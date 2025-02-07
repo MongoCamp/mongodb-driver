@@ -6,10 +6,24 @@ import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import org.mongodb.scala.bson.collection.immutable.Document
 
-import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
+import java.sql.{
+  Blob,
+  CallableStatement,
+  Clob,
+  Connection,
+  DatabaseMetaData,
+  NClob,
+  PreparedStatement,
+  SQLException,
+  SQLWarning,
+  SQLXML,
+  Savepoint,
+  Statement,
+  Struct
+}
 import java.util.Properties
 import java.util.concurrent.Executor
-import java.{sql, util}
+import java.{ sql, util }
 import scala.jdk.CollectionConverters._
 
 class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection with MongoJdbcCloseable {

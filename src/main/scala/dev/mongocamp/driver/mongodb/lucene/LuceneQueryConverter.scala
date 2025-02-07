@@ -59,12 +59,12 @@ object LuceneQueryConverter extends LazyLogging {
     val subQueries  = booleanQuery.clauses().asScala
     val listOfAnd   = ArrayBuffer[Map[String, Any]]()
     val listOfOr    = ArrayBuffer[Map[String, Any]]()
-    val listOfNOr    = ArrayBuffer[Map[String, Any]]()
+    val listOfNOr   = ArrayBuffer[Map[String, Any]]()
     var nextTypeAnd = true
     subQueries.foreach(c => {
       val negateSubquery = (c.occur() == Occur.MUST_NOT)
-      val queryMap    = getMongoDbSearchMap(c.query(), negateSubquery, searchWithValueAndString)
-      var thisTypeAnd = true
+      val queryMap       = getMongoDbSearchMap(c.query(), negateSubquery, searchWithValueAndString)
+      var thisTypeAnd    = true
 
       if (c.occur == Occur.MUST) {
         thisTypeAnd = true
@@ -92,14 +92,16 @@ object LuceneQueryConverter extends LazyLogging {
     if (listOfAnd.nonEmpty) {
       if (negate) {
         searchMapResponse.put("$nor", listOfAnd.toList)
-      } else {
+      }
+      else {
         searchMapResponse.put("$and", listOfAnd.toList)
       }
     }
     if (listOfOr.nonEmpty) {
       if (negate) {
         searchMapResponse.put("$nor", listOfOr.toList)
-      } else {
+      }
+      else {
         searchMapResponse.put("$or", listOfOr.toList)
       }
     }
