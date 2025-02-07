@@ -13,7 +13,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
     val map  = Map("key" -> "value")
     val bson = mapToBson(map)
     assert(bson.isInstanceOf[Document])
-    assertEquals(bson.toBsonDocument.toJson(), "{\"key\":\"value\"}")
+    assertEquals(bson.toBsonDocument.toJson(), "{\"key\": \"value\"}")
     assertEquals(bson.asInstanceOf[Document].getString("key"), "value")
   }
 
@@ -28,7 +28,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
     javaMap.put("key", "value")
     val document = documentFromJavaMap(javaMap)
     assert(document.isInstanceOf[Document])
-    assertEquals(document.toBsonDocument.toJson(), "{\"key\":\"value\"}")
+    assertEquals(document.toBsonDocument.toJson(), "{\"key\": \"value\"}")
     assertEquals(document.getString("key"), "value")
   }
 
@@ -36,7 +36,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
     val mutableMap: collection.mutable.Map[String, Any] = collection.mutable.Map("key" -> "value")
     val document                                        = documentFromMutableMap(mutableMap)
     assert(document.isInstanceOf[Document])
-    assertEquals(document.toBsonDocument.toJson(), "{\"key\":\"value\"}")
+    assertEquals(document.toBsonDocument.toJson(), "{\"key\": \"value\"}")
     assertEquals(document.getString("key"), "value")
   }
 
@@ -44,7 +44,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
     val map      = Map("key" -> "value")
     val document = documentFromScalaMap(map)
     assert(document.isInstanceOf[Document])
-    assertEquals(document.toBsonDocument.toJson(), "{\"key\":\"value\"}")
+    assertEquals(document.toBsonDocument.toJson(), "{\"key\": \"value\"}")
     assertEquals(document.getString("key"), "value")
   }
 
@@ -52,7 +52,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
     val bsonDoc  = new org.bson.Document("key", "value")
     val document = documentFromDocument(bsonDoc)
     assert(document.isInstanceOf[Document])
-    assertEquals(document.toBsonDocument.toJson(), "{\"key\":\"value\"}")
+    assertEquals(document.toBsonDocument.toJson(), "{\"key\": \"value\"}")
     assertEquals(document.getString("key"), "value")
   }
 
