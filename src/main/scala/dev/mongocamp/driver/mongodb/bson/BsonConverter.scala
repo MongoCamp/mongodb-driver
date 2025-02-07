@@ -156,9 +156,8 @@ object BsonConverter {
         BsonNull()
     }
 
-  def fromBson(value: BsonValue): Any =
+  def fromBson(value: BsonValue): Any = {
     value match {
-
       case b: BsonBoolean           => b.getValue
       case s: BsonString            => s.getValue
       case bytes: BsonBinary        => bytes.getData
@@ -169,13 +168,14 @@ object BsonConverter {
       case i: BsonInt32             => i.getValue
       case l: BsonInt64             => l.getValue
       case d: BsonDouble            => d.doubleValue()
-      case d: BsonDecimal128        => d.getValue.bigDecimalValue()
+      case d: BsonDecimal128        => new scala.math.BigDecimal(d.getValue.bigDecimalValue())
       case doc: BsonDocument        => Document(doc)
       case array: BsonArray =>
         array.getValues.asScala.toList.map(v => fromBson(v))
       case n: BsonNull => null
       case _           => value
     }
+  }
 
   def asMap(document: Document): Map[String, Any] = {
     val result = new mutable.HashMap[String, Any]()

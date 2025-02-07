@@ -1,15 +1,16 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
-import dev.mongocamp.driver.mongodb._
 
 import java.sql.{ ResultSetMetaData, SQLException }
 
 class MongoDbResultSetMetaData extends ResultSetMetaData {
   private var document: Document                = _
   private var collectionDao: MongoDAO[Document] = _
+  private var keySet: List[String] = List.empty
 
   def this(dao: MongoDAO[Document]) = {
     this()
@@ -31,6 +32,14 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
     this.collectionDao = dao
   }
 
+  def this(dao: MongoDAO[Document], data: List[Document], keySet: List[String]) = {
+    this()
+    val row: Document = extractDocumentFromDataList(data)
+    this.document = row
+    this.collectionDao = dao
+    this.keySet = keySet
+  }
+
   private def extractDocumentFromDataList(data: List[Document]) = {
     var row          = data.headOption.getOrElse(throw new SQLException("No data in ResultSet")).copy()
     val distinctKeys = data.flatMap(_.keys).distinct
@@ -44,6 +53,17 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   }
 
   override def getColumnCount: Int = document.size
+
+  override def getColumnLabel(column: Int): String = {
+    val keys: Iterable[String] = if (keySet.nonEmpty) {
+      keySet
+    } else {
+      document.keys
+    }
+    keys.toList(column - 1)
+  }
+
+  override def getColumnName(column: Int): String = getColumnLabel(column)
 
   override def isAutoIncrement(column: Int): Boolean = false
 
@@ -59,10 +79,6 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnDisplaySize(column: Int): Int = Int.MaxValue
 
-  override def getColumnLabel(column: Int): String = document.keys.toList(column - 1)
-
-  override def getColumnName(column: Int): String = getColumnLabel(column)
-
   override def getSchemaName(column: Int): String = collectionDao.databaseName
 
   override def getPrecision(column: Int): Int = 0
@@ -74,14 +90,14 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   override def getCatalogName(column: Int): String = collectionDao.name
 
   override def getColumnType(column: Int): Int = {
-    document.values.toList(column - 1) match {
+    document(getColumnLabel(column)) match {
       case _: BsonInt32   => java.sql.Types.INTEGER
       case _: BsonInt64   => java.sql.Types.BIGINT
       case _: BsonNumber  => java.sql.Types.DOUBLE
       case _: BsonString  => java.sql.Types.VARCHAR
       case _: BsonBoolean => java.sql.Types.BOOLEAN
-      case _: Document    => java.sql.Types.STRUCT
-      case _              => java.sql.Types.NULL
+//      case _: Document    => java.sql.Types.STRUCT // todo: check if this is correct
+      case _ => java.sql.Types.NULL
     }
   }
 
@@ -120,6 +136,11 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
   override def isWrapperFor(iface: Class[_]): Boolean = false
 
   def getColumnIndex(columnLabel: String): Int = {
-    document.keys.toList.indexOf(columnLabel)
+    val keys: List[String] = if (keySet.nonEmpty) {
+      keySet
+    } else {
+      document.keys.toList
+    }
+    keys.indexOf(columnLabel) + 1
   }
 }

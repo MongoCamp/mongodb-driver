@@ -1,17 +1,14 @@
 package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.bson.codecs.CustomCodecProvider
-import org.bson.codecs.configuration.CodecRegistries.{ fromProviders, fromRegistries }
-import org.bson.codecs.configuration.CodecRegistry
-import org.mongodb.scala.MongoClient.DEFAULT_CODEC_REGISTRY
+import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala._
 import org.mongodb.scala.gridfs.GridFSBucket
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
-class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) extends Serializable {
+class DatabaseProvider(val config: MongoConfig) extends Serializable {
   private val cachedDatabaseMap                 = new mutable.HashMap[String, MongoDatabase]()
   private val cachedMongoDAOMap                 = new mutable.HashMap[String, MongoDAO[Document]]()
   private var cachedClient: Option[MongoClient] = None
@@ -20,7 +17,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def DefaultDatabaseName: String = defaultDatabaseName
 
-  def connectionString = {
+  def connectionString: String = {
     s"mongodb://${config.host}:${config.port}/${config.database}"
   }
 
@@ -67,7 +64,7 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
 
   def database(databaseName: String = DefaultDatabaseName): MongoDatabase = {
     if (!cachedDatabaseMap.contains(databaseName)) {
-      cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName).withCodecRegistry(registry))
+      cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName))
     }
     cachedDatabaseMap(databaseName)
   }
@@ -97,14 +94,14 @@ class DatabaseProvider(val config: MongoConfig, val registry: CodecRegistry) ext
     runCommand(Map("collStats" -> collectionName), databaseName).map(document => CollectionStatus(document))
   }
 
-  def collection[A](collectionName: String)(implicit ct: ClassTag[A]): MongoCollection[A] =
+  def collection(collectionName: String): MongoCollection[Document] =
     if (collectionName.contains(DatabaseProvider.CollectionSeparator)) {
       val newDatabaseName: String   = guessDatabaseName(collectionName)
       val newCollectionName: String = guessName(collectionName)
-      database(newDatabaseName).getCollection[A](newCollectionName)
+      database(newDatabaseName).getCollection(newCollectionName)
     }
     else {
-      database().getCollection[A](collectionName)
+      database().getCollection(collectionName)
     }
 
   def guessDatabaseName(maybeSeparatedName: String): String = {
@@ -155,16 +152,12 @@ object DatabaseProvider {
   val ObjectIdKey         = "_id"
   val CollectionSeparator = ":"
 
-  private val CustomRegistry = fromProviders(CustomCodecProvider())
-
-  private val codecRegistry: CodecRegistry = fromRegistries(CustomRegistry, DEFAULT_CODEC_REGISTRY)
-
-  def apply(config: MongoConfig, registry: CodecRegistry = codecRegistry): DatabaseProvider = {
-    new DatabaseProvider(config, fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
+  def apply(config: MongoConfig): DatabaseProvider = {
+    new DatabaseProvider(config)
   }
 
-  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix, registry: CodecRegistry = codecRegistry): DatabaseProvider = {
-    apply(MongoConfig.fromPath(configPath), fromRegistries(registry, CustomRegistry, DEFAULT_CODEC_REGISTRY))
+  def fromPath(configPath: String = MongoConfig.DefaultConfigPathPrefix): DatabaseProvider = {
+    apply(MongoConfig.fromPath(configPath))
   }
 
 }

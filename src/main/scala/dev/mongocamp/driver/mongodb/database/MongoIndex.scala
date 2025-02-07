@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.database
 
-import java.util.Date
-
-import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
 import org.mongodb.scala.ListIndexesObservable
 import org.mongodb.scala.model.IndexOptions
+
+import java.util.Date
 
 case class MongoIndex(
     name: String,

@@ -1,10 +1,10 @@
 package dev.mongocamp.driver.mongodb.relation
 
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb.{MongoDAO, _}
-import org.bson.codecs.configuration.CodecRegistries.fromProviders
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.generic.auto._
 import org.mongodb.scala.bson.ObjectId
-import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.result.UpdateResult
 
 object RelationDemoDatabase {
@@ -41,8 +41,8 @@ object RelationDemoDatabase {
 
   // #region user_dao
   object UserDAO extends MongoDAO[User](provider, "user") {
-    lazy val loginRelation   = OneToOneRelationship(LoginDAO, "id")
-    lazy val friendsRelation = OneToManyRelationship(SimplePersonDAO, "userId")
+    lazy val loginRelation: OneToOneRelationship[Login]   = OneToOneRelationship(LoginDAO, "id")
+    lazy val friendsRelation: OneToManyRelationship[SimplePerson] = OneToManyRelationship(SimplePersonDAO, "userId")
   }
   // #endregion user_dao
 
@@ -50,15 +50,11 @@ object RelationDemoDatabase {
 
   object SimplePersonDAO extends MongoDAO[SimplePerson](provider, "friend")
 
-  // #region registry
-  private val registry = fromProviders(classOf[Node], classOf[User], classOf[Login], classOf[SimplePerson])
-  // #endregion registry
-
-  val provider = DatabaseProvider.fromPath("unit.test.mongo", registry)
+  val provider: DatabaseProvider = DatabaseProvider.fromPath("unit.test.mongo")
 
   object NodeDAO extends MongoDAO[Node](provider, "nodes") {
-    lazy val parentRelation   = OneToOneRelationship(this, "id")
-    lazy val childrenRelation = OneToManyRelationship(this, "parentId")
+    lazy val parentRelation: OneToOneRelationship[Node]   = OneToOneRelationship(this, "id")
+    lazy val childrenRelation: OneToManyRelationship[Node] = OneToManyRelationship(this, "parentId")
   }
 
 }

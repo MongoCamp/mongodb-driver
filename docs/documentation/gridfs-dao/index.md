@@ -19,15 +19,14 @@ A [MongoDatabase](http://mongodb.github.io/mongo-scala-driver/2.3/scaladoc/org/m
 ### Create DAO
 
 ```scala
+/**
+* use bucket name fs
+*/
+object ImageFilesDAO extends GridFSDAO(database)
 
-  /**
-  * use bucket name fs
-  */
-  object ImageFilesDAO extends GridFSDAO(database)
-
-  /**
-  * use bucket name images
-  */
-  object ImageFilesDAO extends GridFSDAO(database, "images")
+/**
+* use bucket name images
+*/
+object ImageFilesDAO extends GridFSDAO(database, "images")
 
 ```

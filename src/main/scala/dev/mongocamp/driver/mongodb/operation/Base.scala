@@ -1,17 +1,36 @@
 package dev.mongocamp.driver.mongodb.operation
 
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.Decoder
+import io.circe.syntax._
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
 import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{ durationToPair, Duration }
+import scala.reflect.ClassTag
 
-abstract class Base[A] extends LazyLogging {
+abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
 
-  protected def coll: MongoCollection[A]
+  def documentToObject[A](document: Document, decoder: Decoder[A]): A = {
+    if (classTag.runtimeClass == classOf[Document]) {
+      document.asInstanceOf[A]
+    }
+    else {
+      val helperMap = BsonConverter.asMap(document)
+      val response  = decoder.decodeJson(helperMap.asJson)
+      if (response.isLeft) {
+        logger.error(s"Error decoding document to object: ${response.swap.getOrElse("")}")
+      }
+      response.getOrElse(null.asInstanceOf[A])
+    }
+  }
+
+  protected def coll: MongoCollection[Document]
 
   def count(filter: Bson = Document(), options: CountOptions = CountOptions()): Observable[Long] = {
     coll.countDocuments(filter, options)

@@ -3,7 +3,9 @@ package dev.mongocamp.driver.mongodb
 import better.files.File
 import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
 import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.operation.Crud
+import io.circe.Decoder
 import org.bson.json.JsonParseException
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
@@ -18,13 +20,13 @@ import scala.reflect.ClassTag
 
 /** Created by tom on 20.01.17.
   */
-abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A]) extends Crud[A] {
+abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Crud[A] {
 
   val databaseName: String = provider.guessDatabaseName(collectionName)
 
   val name: String = provider.guessName(collectionName)
 
-  val collection: MongoCollection[A] = provider.collection[A](collectionName)
+  val collection: MongoCollection[Document] = provider.collection(collectionName)
 
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
     coll.watch[A]().subscribe(observer)
@@ -64,7 +66,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     BsonConverter.fromBson(aggregationResult.get("keySet").head).asInstanceOf[List[String]]
   }
 
-  protected def coll: MongoCollection[A] = collection
+  protected def coll: MongoCollection[Document] = collection
 
   // internal object for raw document access
   object Raw extends MongoDAO[Document](provider, collectionName)

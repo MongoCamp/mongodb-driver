@@ -17,10 +17,9 @@ UpdateMetadataElement/s update some part of the metadata by a given filter.
 
 
 ```scala
-
- val elements =  Map("category"->"logos")
- val filter = Map() // all files
- ImageFilesDAO.updateMetadataElements(filter, elements)
+val elements =  Map("category"->"logos")
+val filter = Map() // all files
+ImageFilesDAO.updateMetadataElements(filter, elements)
 ```
 
 

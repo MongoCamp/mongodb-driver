@@ -4,16 +4,16 @@ import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
-import org.mongodb.scala.{ FindObservable, Observable, ObservableImplicits }
+import org.mongodb.scala.{ Observable, ObservableImplicits }
 
 import scala.language.implicitConversions
 trait MongoImplicits extends ObservableIncludes with ObservableImplicits {
 
   implicit def observableToResult[T](obs: Observable[T]): T = obs.result()
 
-  implicit def findObservableToResultList[T](obs: FindObservable[T]): List[T] = obs.resultList()
+  implicit def findObservableToResultList[T](obs: Observable[T]): List[T] = obs.resultList()
 
-  implicit def findObservableToResultOption[T](obs: FindObservable[T]): Option[T] = obs.resultOption()
+  implicit def findObservableToResultOption[T](obs: Observable[T]): Option[T] = obs.resultOption()
 
   // gridfs-dao
 

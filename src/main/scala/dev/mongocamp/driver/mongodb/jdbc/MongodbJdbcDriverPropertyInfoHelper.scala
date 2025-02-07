@@ -1,5 +1,5 @@
 package dev.mongocamp.driver.mongodb.jdbc
-import MongodbJdbcDriverPropertyInfoHelper._
+import dev.mongocamp.driver.mongodb.jdbc.MongodbJdbcDriverPropertyInfoHelper._
 
 object MongodbJdbcDriverPropertyInfoHelper {
   val ApplicationName = "appName"

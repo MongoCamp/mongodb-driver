@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.gridfs
 import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.json._
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson

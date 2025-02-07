@@ -1,14 +1,14 @@
 package dev.mongocamp.driver.mongodb.schema
 
-import better.files.Resource
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.generic.auto._
 import org.bson.conversions.Bson
-import org.mongodb.scala.Document
+import org.mongodb.scala.{ documentToUntypedDocument, Document }
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.DurationInt
-import io.circe.parser.decode
 
 class SchemaExplorer {
   private val NameSeparator: String = "."
