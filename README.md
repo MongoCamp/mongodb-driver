@@ -3,9 +3,7 @@
 A library for easy usage of the mongo-scala-driver (5.1.xa). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
-
-Support MongoDB 3.6 to 7.0.x.
-
+We currently testing with '4.4', '5.0', '6.0', '7.0' and '8.0'.
 
 ## Features
 
@@ -28,7 +26,7 @@ Documentation can be found [here](https://mongodb-driver.mongocamp.dev/).
 
 ## Version
 
-Scala Version is 2.13.x / 2.12.x.
+Scala Version is 3.6.x / 2.13.x
 
 ## CI
 
@@ -46,7 +44,7 @@ Add following lines to your build.sbt (replace x.x with the actual Version)
 
 ```
 
-libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "2.x.x"
+libraryDependencies += "dev.mongocamp" %% "mongodb-driver" % "3.x.x"
 
 ```
 
@@ -61,6 +59,8 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.codecs.Macros._
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.generic.auto._
 
 /**
  * import mongodb restaurants sample data
@@ -71,12 +71,9 @@ object RestaurantDatabase {
 
   case class Grade(date: Date, grade: String, score: Int)
 
-  case class Restaurant(restaurant_id: String, name: String, borough: String, cuisine: String,
-                        grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
+  case class Restaurant(restaurant_id: String, name: String, borough: String, cuisine: String, grades: List[Grade], address: Address, _id: ObjectId = new ObjectId())
 
-  private val registry = fromProviders(classOf[Restaurant], classOf[Address], classOf[Grade])
-
-  val provider = DatabaseProvider("test", registry)
+  val provider = DatabaseProvider.fromPath("dev.mongocamp")
 
   object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
 
@@ -88,7 +85,6 @@ object RestaurantDatabase {
 Import the database object and execute some find and CRUD functions on the DAO object ...
 
 ```scala
-
 import dev.mongocamp.driver.mongodb.demo.restaurant.RestaurantDemoDatabase._
 import dev.mongocamp.driver.mongodb._
 
@@ -97,17 +93,14 @@ trait RestaurantDemoDatabaseFunctions {
   /**
    * single result with implicit conversion to Entity Option
    */
-  def findRestaurantByName(name: String): Option[Restaurant] =
-    RestaurantDAO.find("name", name)
+  def findRestaurantByName(name: String): Option[Restaurant] = RestaurantDAO.find("name", name)
 
   def restaurantsSize: Long = RestaurantDAO.count()
 
   /**
    * result with implicit conversion to List of Entities
    */
-  def findAllRestaurants(filterValues: Map[String, Any] = Map()): List[Restaurant] =
-    RestaurantDAO.find(filterValues)
-
+  def findAllRestaurants(filterValues: Map[String, Any] = Map()): List[Restaurant] = RestaurantDAO.find(filterValues)
 ```
 
 
@@ -137,7 +130,6 @@ Use the mongodb functions in your app ...
 Write some spec tests ...
 
 ```scala
-
 import dev.mongocamp.driver.mongodb.demo.restaurant.RestaurantDemoDatabase._
 import org.specs2.mutable.Specification
 
@@ -159,9 +151,9 @@ class RestaurantDemoSpec extends Specification with RestaurantDemoDatabaseFuncti
 
 ## Run Tests
 ```shell
-docker run -d --publish 27017:27017 --name mongodb  mongocamp/mongodb:latest; 
-sbt test; 
 docker rm -f mongodb;
+docker run -d --publish 27017:27017 --name mongodb  mongocamp/mongodb:latest;
+sbt +test 
 ```
 
 ## Supporters

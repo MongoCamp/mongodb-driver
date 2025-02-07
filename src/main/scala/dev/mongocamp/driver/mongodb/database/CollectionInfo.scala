@@ -1,9 +1,10 @@
 package dev.mongocamp.driver.mongodb.database
 
-import java.util.Date
-
-import org.mongodb.scala.bson.Document
 import dev.mongocamp.driver.mongodb._
+import org.mongodb.scala.bson.Document
+import org.mongodb.scala.documentToUntypedDocument
+
+import java.util.Date
 
 case class CollectionInfo(
     name: String,

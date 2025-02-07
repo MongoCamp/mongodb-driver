@@ -4,11 +4,11 @@ import better.files.File
 import com.mongodb.client.model.changestream.OperationType
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.model._
-import dev.mongocamp.driver.mongodb.{GridFSDAO, MongoDAO}
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
+import io.circe.generic.auto._
 import org.mongodb.scala.Document
-import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
 
 object TestDatabase extends LazyLogging {
@@ -17,9 +17,8 @@ object TestDatabase extends LazyLogging {
 
   File(ImageDAOTargetPath).createIfNotExists()
 
-  private val registry = fromProviders(classOf[Person], classOf[Friend], classOf[CodecTest], classOf[Book], classOf[Grade], classOf[Score])
 
-  val provider: DatabaseProvider = DatabaseProvider.fromPath(configPath = "unit.test.mongo", registry = fromRegistries(registry))
+  val provider: DatabaseProvider = DatabaseProvider.fromPath(configPath = "unit.test.mongo")
 
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit = {
     if (changeStreamDocument.getOperationType != OperationType.INSERT) {

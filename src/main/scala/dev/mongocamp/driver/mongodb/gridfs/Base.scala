@@ -1,16 +1,16 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
-import java.io.OutputStream
-import java.nio.ByteBuffer
-
 import better.files.File
 import com.mongodb.client.gridfs.model.GridFSUploadOptions
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.{ GridFSBucket, GridFSDownloadObservable }
-import org.mongodb.scala.{ Document, Observable, ReadConcern, ReadPreference, WriteConcern }
+import org.mongodb.scala.{ documentToUntypedDocument, Document, Observable, ReadConcern, ReadPreference, WriteConcern }
+
+import java.io.OutputStream
+import java.nio.ByteBuffer
 
 abstract class Base extends LazyLogging {
 

@@ -8,11 +8,13 @@ case class ChangeObserver[A](onChangeCallback: ChangeStreamDocument[A] => Unit) 
 
   override def onSubscribe(subscription: Subscription): Unit = subscription.request(Long.MaxValue) // Request data
 
-  override def onNext(changeDocument: ChangeStreamDocument[A]): Unit =
+  override def onNext(changeDocument: ChangeStreamDocument[A]): Unit = {
     onChangeCallback(changeDocument)
+  }
 
-  override def onError(throwable: Throwable): Unit =
+  override def onError(throwable: Throwable): Unit = {
     logger.error(throwable.getMessage, throwable)
+  }
 
   override def onComplete(): Unit = {}
 

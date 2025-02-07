@@ -1,6 +1,6 @@
 # DatabaseProvider
 
-DatabaseProvider is the central repository for MongoClient, registries, databases and collections.
+DatabaseProvider is the central repository for MongoClient, databases, collections and DocumentDAO`s.
 
 DatabaseProvider gives access to
 
@@ -8,30 +8,13 @@ DatabaseProvider gives access to
 * MongoDatabase
 * MongoCollection
 
-## Registries
+## DocumentDAO 
+From an DocumentDAO you can perform DocumentDAO initialization and caching. On this DAO you can perform CRUD operations.
 
-::: tip ScalaDriverDocs
-Additional Info for [Registries](https://mongodb.github.io/mongo-java-driver/4.0/driver-scala/getting-started/quick-start-case-class/#configuring-case-classes)
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/database/DatabaseProviderSuite.scala#document-dao
+
+## ~~Registries~~
+
+::: danger 
+Registries are no longer supported for automatic case class conversion. For scala 3 support we changed from mongodb driver conversion to circe conversion.
 :::
-
-### Create Case Classes
-```scala
-case class Student(_id: Long, name: String, scores: List[Score])
-
-case class Score(score: Double, `type`: String)
-
-case class Grade(_id: ObjectId, student_id: Long, class_id: Long, scores: List[Score])
-```
-
-### Create Registry
-```scala
-val registry: CodecRegistry = fromProviders(classOf[Student], classOf[Score], classOf[Grade])
-
-val providerWithRegistry: DatabaseProvider = DatabaseProvider(MongoConfig.fromPath(), registry)
-```
-## Multiple databases access
-
-
-
-
-

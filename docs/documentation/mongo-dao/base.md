@@ -41,7 +41,7 @@ Sometimes we need Raw Support (DAO maps to Document).
 This is automatically included in the MongoDAO class.
 Simply call Raw on your DAO Object.
 
-<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSpec.scala#agg_execute
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/operation/AggregationSuite.scala#agg_execute
 
 ## Base Functions
 

@@ -6,12 +6,12 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
+import net.sf.jsqlparser.expression.operators.arithmetic.Concat
 import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
 import net.sf.jsqlparser.expression.operators.relational._
 import net.sf.jsqlparser.expression.{ ArrayConstructor, Expression, NotExpression, SignedExpression }
 import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
 import net.sf.jsqlparser.schema.{ Column, Table }
-import net.sf.jsqlparser.statement.ShowStatement
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -23,9 +23,10 @@ import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, Selec
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
+import net.sf.jsqlparser.statement.{ ShowStatement, Statement }
 import org.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
-import org.mongodb.scala.model.Sorts.{ ascending, metaTextScore }
+import org.mongodb.scala.model.Sorts.ascending
 import org.mongodb.scala.{ Document, Observable, SingleObservable }
 
 import java.sql.SQLException
@@ -47,7 +48,7 @@ class MongoSqlQueryHolder {
   private var indexOptions: Option[IndexOptions]             = None
   private var callFunction: Option[String]                   = None
   private var keepOneDocument: Boolean                       = false
-  private val keysForEmptyDocument: mutable.Set[String]      = mutable.Set.empty
+  private val keysFromSelect: mutable.ListBuffer[String]            = mutable.ListBuffer.empty
 
   def this(statement: net.sf.jsqlparser.statement.Statement) = {
     this()
@@ -210,7 +211,7 @@ class MongoSqlQueryHolder {
     }
   }
 
-  def getKeysForEmptyDocument: Set[String] = keysForEmptyDocument.toSet
+  def getKeysFromSelect: List[String] = keysFromSelect.toList
 
   def hasFunctionCallInSelect: Boolean = keepOneDocument
 
@@ -229,10 +230,12 @@ class MongoSqlQueryHolder {
         else {
           e.getValue
         }
+      case e: net.sf.jsqlparser.expression.BooleanValue   => e.getValue
       case e: net.sf.jsqlparser.expression.DateValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimeValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimestampValue => e.getValue
       case _: net.sf.jsqlparser.expression.NullValue      => null
+      case e: Concat                                      => Map("$concat" -> List(convertValue(e.getLeftExpression), convertValue(e.getRightExpression)))
       case t: net.sf.jsqlparser.expression.TimeKeyExpression =>
         t.getStringValue.toUpperCase match {
           case "CURRENT_TIMESTAMP" => new Date()
@@ -339,6 +342,14 @@ class MongoSqlQueryHolder {
         selectItems.foreach(sI => {
           if (classOf[net.sf.jsqlparser.expression.Function].isAssignableFrom(sI.getExpression.getClass)) {
             keepOneDocument = maybeDistinct.isEmpty
+          }
+          sI match {
+            case se: SelectItem[Expression] =>
+              val expressionName = se.getExpression.toString
+              val keyFromSelect = Option(se.getAlias).map(_.getName).getOrElse(expressionName)
+              if (keyFromSelect != "*") {
+                keysFromSelect += keyFromSelect
+              }
           }
         })
         val aliasList = ArrayBuffer[String]()
@@ -493,7 +504,6 @@ class MongoSqlQueryHolder {
               val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
               group += expressionName -> expression
             }
-            keysForEmptyDocument += Option(se.getAlias).map(_.getName).getOrElse(expressionName)
           }
 
           val groupMap = Map("_id" -> idGroupMap) ++ group.toMap
@@ -719,7 +729,7 @@ class MongoSqlQueryHolder {
 
 object MongoSqlQueryHolder {
 
-  def stringToStatement(sql: String, charset: String = "UTF-8") = {
+  def stringToStatement(sql: String, charset: String = "UTF-8"): Statement = {
     try {
       val stream: java.io.InputStream = new java.io.ByteArrayInputStream(sql.getBytes(charset))
       val jSqlParser                  = new CCJSqlParser(new StreamProvider(stream, charset))

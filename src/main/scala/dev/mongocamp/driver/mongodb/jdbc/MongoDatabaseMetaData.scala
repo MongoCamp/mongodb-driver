@@ -2,18 +2,19 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import com.vdurmont.semver4j.Semver
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
-import dev.mongocamp.driver.mongodb.{ BuildInfo, Converter, GenericObservable }
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.schema.SchemaExplorer
-import org.mongodb.scala.bson.{ BsonNull, BsonString }
+import dev.mongocamp.driver.mongodb.{ BuildInfo, Converter, GenericObservable }
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.{ BsonNull, BsonString }
+import org.mongodb.scala.documentToUntypedDocument
 
 import java.sql.{ Connection, DatabaseMetaData, ResultSet, RowIdLifetime, Types }
 import scala.collection.mutable.ArrayBuffer
 
 class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMetaData {
   private lazy val semVer          = new Semver(BuildInfo.version)
-  private lazy val jdbcSemVer      = new Semver("4.2")
+  private lazy val jdbcSemVer      = new Semver("4.2.0")
   private lazy val DatabaseNameKey = "mongodb"
 
   override def allProceduresAreCallable() = false

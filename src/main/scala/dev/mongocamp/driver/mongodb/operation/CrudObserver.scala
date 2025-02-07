@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.operation
 
+import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Observer
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal

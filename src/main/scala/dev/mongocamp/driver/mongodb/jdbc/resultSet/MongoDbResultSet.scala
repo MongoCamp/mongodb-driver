@@ -1,27 +1,28 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.MongoDAO
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
-import org.mongodb.scala.bson.{ BsonArray, BsonBoolean, BsonDateTime, BsonDouble, BsonInt32, BsonInt64, BsonNull, BsonNumber, BsonObjectId, BsonString }
+import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.{ BsonDouble, BsonInt32, BsonInt64, BsonObjectId, BsonString }
+import org.mongodb.scala.documentToUntypedDocument
 
 import java.io.{ InputStream, Reader }
 import java.net.{ URI, URL }
-import java.{ sql, util }
+import java.nio.charset.StandardCharsets
 import java.sql.{ Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp }
 import java.util.Calendar
-import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
-
-import java.nio.charset.StandardCharsets
+import java.{ sql, util }
 import javax.sql.rowset.serial.SerialBlob
 import scala.util.Try
 
-class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int) extends ResultSet with MongoJdbcCloseable {
+class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int, keySet: List[String] = List.empty)
+    extends ResultSet
+    with MongoJdbcCloseable {
   private var currentRow: Document = _
   private var index: Int           = 0
 
-  private lazy val metaData = new MongoDbResultSetMetaData(collectionDao, data)
+  private lazy val metaData = new MongoDbResultSetMetaData(collectionDao, data, keySet)
 
   def getDocument: Document = currentRow
 
@@ -250,7 +251,7 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getMetaData: ResultSetMetaData = {
     checkClosed()
-    new MongoDbResultSetMetaData(collectionDao, data)
+    new MongoDbResultSetMetaData(collectionDao, data, keySet)
   }
 
   override def getObject(columnIndex: Int): AnyRef = {
@@ -390,143 +391,116 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   }
 
   override def updateNull(columnIndex: Int): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNull())
+    updateObject(columnIndex, null)
   }
 
   override def updateNull(columnLabel: String): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNull())
+    updateObject(columnLabel, null)
   }
 
   override def updateBoolean(columnIndex: Int, x: Boolean): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonBoolean(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateBoolean(columnLabel: String, x: Boolean): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonBoolean(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateByte(columnIndex: Int, x: Byte): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateByte(columnLabel: String, x: Byte): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateShort(columnIndex: Int, x: Short): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateShort(columnLabel: String, x: Short): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateInt(columnIndex: Int, x: Int): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
+
   }
 
   override def updateInt(columnLabel: String, x: Int): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateLong(columnIndex: Int, x: Long): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateLong(columnLabel: String, x: Long): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateFloat(columnIndex: Int, x: Float): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateFloat(columnLabel: String, x: Float): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateDouble(columnIndex: Int, x: Double): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateDouble(columnLabel: String, x: Double): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateBigDecimal(columnIndex: Int, x: java.math.BigDecimal): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonNumber(x.doubleValue()))
+    updateObject(columnIndex, x)
   }
 
   override def updateBigDecimal(columnLabel: String, x: java.math.BigDecimal): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonNumber(x.doubleValue()))
+    updateObject(columnLabel, x)
   }
 
   override def updateString(columnIndex: Int, x: String): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonString(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateString(columnLabel: String, x: String): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonString(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateBytes(columnIndex: Int, x: Array[Byte]): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonArray(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateBytes(columnLabel: String, x: Array[Byte]): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonArray(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateDate(columnIndex: Int, x: Date): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonDateTime(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateDate(columnLabel: String, x: Date): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonDateTime(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateTime(columnIndex: Int, x: Time): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonDateTime(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateTime(columnLabel: String, x: Time): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonDateTime(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateTimestamp(columnIndex: Int, x: Timestamp): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonDateTime(x))
+    updateObject(columnIndex, x)
   }
 
   override def updateTimestamp(columnLabel: String, x: Timestamp): Unit = {
-    checkClosed()
-    currentRow.updated(columnLabel, BsonDateTime(x))
+    updateObject(columnLabel, x)
   }
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream, length: Int): Unit = sqlFeatureNotSupported()
@@ -542,23 +516,21 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   override def updateCharacterStream(columnLabel: String, reader: Reader, length: Int): Unit = sqlFeatureNotSupported()
 
   override def updateObject(columnIndex: Int, x: Any, scaleOrLength: Int): Unit = {
-    checkClosed()
     updateObject(columnIndex, x)
   }
 
   override def updateObject(columnLabel: String, x: Any, scaleOrLength: Int): Unit = {
-    checkClosed()
     updateObject(columnLabel, x)
   }
 
   override def updateObject(columnIndex: Int, x: Any): Unit = {
-    checkClosed()
-    currentRow.updated(metaData.getColumnName(columnIndex), BsonConverter.toBson(x))
+    updateObject(metaData.getColumnName(columnIndex), x)
   }
 
   override def updateObject(columnLabel: String, x: Any): Unit = {
     checkClosed()
-    currentRow.updated(columnLabel, BsonConverter.toBson(x))
+    currentRow = currentRow.updated(columnLabel, BsonConverter.toBson(x))
+    data.updated(index, currentRow)
   }
 
   override def insertRow(): Unit = {
@@ -719,49 +691,41 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   override def updateNCharacterStream(columnLabel: String, reader: Reader, length: Long): Unit = sqlFeatureNotSupported()
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
 
   override def updateAsciiStream(columnLabel: String, x: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
 
   override def updateAsciiStream(columnLabel: String, x: InputStream): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
 
   override def updateBinaryStream(columnIndex: Int, x: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
 
   override def updateBinaryStream(columnLabel: String, x: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
 
   override def updateBinaryStream(columnIndex: Int, x: InputStream): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
 
   override def updateBinaryStream(columnLabel: String, x: InputStream): Unit = {
-    checkClosed()
     val text = new String(x.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
@@ -775,52 +739,43 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   override def updateNCharacterStream(columnLabel: String, reader: Reader): Unit = sqlFeatureNotSupported()
 
   override def updateBlob(columnIndex: Int, inputStream: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(inputStream.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
   override def updateBlob(columnLabel: String, inputStream: InputStream, length: Long): Unit = {
-    checkClosed()
     val text = new String(inputStream.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
   override def updateBlob(columnIndex: Int, inputStream: InputStream): Unit = {
-    checkClosed()
     val text = new String(inputStream.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
   override def updateBlob(columnLabel: String, inputStream: InputStream): Unit = {
-    checkClosed()
     val text = new String(inputStream.readAllBytes, StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }
 
   override def updateClob(columnIndex: Int, reader: Reader, length: Long): Unit = {
-    checkClosed()
     val text = convertReaderToString(reader)
     updateString(columnIndex, text)
   }
 
   override def updateNClob(columnIndex: Int, reader: Reader, length: Long): Unit = {
-    checkClosed()
     val text = convertReaderToString(reader)
     updateString(columnIndex, text)
   }
 
   override def updateNClob(columnLabel: String, reader: Reader, length: Long): Unit = {
-    checkClosed()
     val text = convertReaderToString(reader)
     updateString(columnLabel, text)
   }
 
   override def updateNClob(columnIndex: Int, reader: Reader): Unit = {
-    checkClosed()
     val text = convertReaderToString(reader)
     updateString(columnIndex, text)
   }
 
   override def updateNClob(columnLabel: String, reader: Reader): Unit = {
-    checkClosed()
     val text = convertReaderToString(reader)
     updateString(columnLabel, text)
   }
@@ -834,13 +789,11 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   }
 
   override def updateBlob(columnIndex: Int, x: Blob): Unit = {
-    checkClosed()
     val text = new String(x.getBinaryStream.readAllBytes(), StandardCharsets.UTF_8)
     updateString(columnIndex, text)
   }
 
   override def updateBlob(columnLabel: String, x: Blob): Unit = {
-    checkClosed()
     val text = new String(x.getBinaryStream.readAllBytes(), StandardCharsets.UTF_8)
     updateString(columnLabel, text)
   }

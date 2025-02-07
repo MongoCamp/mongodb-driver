@@ -2,20 +2,32 @@ package dev.mongocamp.driver.mongodb.sync
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
-import org.bson.codecs.configuration.CodecRegistries.fromProviders
-import org.mongodb.scala.bson.codecs.Macros._
+import dev.mongocamp.driver.mongodb.json._
+import io.circe.HCursor
+import io.circe.generic.auto._
 
 import scala.collection.mutable
-
 case class MongoSyncer(
     sourceConfig: MongoConfig,
     targetConfig: MongoConfig,
     syncOperations: List[MongoSyncOperation] = List()
 ) {
-  private val registry     = fromProviders(classOf[MongoSyncResult])
+
+  implicit private lazy val ThrowableFormat: io.circe.Decoder[Throwable] = { (c: HCursor) =>
+    // not really needed only for decoder must exists
+    ???
+  }
+
+  implicit private lazy val ExceptionFormat: io.circe.Decoder[Exception] = { (c: HCursor) =>
+    // not really needed only for decoder must exists
+    ???
+  }
+
+  // todo: check if this is correct
+//  private val registry     = fromProviders(classOf[MongoSyncResult])
   private val operationMap = new mutable.HashMap[String, MongoSyncOperation]()
 
-  val source: DatabaseProvider = DatabaseProvider(sourceConfig, registry)
+  val source: DatabaseProvider = DatabaseProvider(sourceConfig)
   val target: DatabaseProvider = DatabaseProvider(targetConfig)
 
   object MongoSyncResultDAO extends MongoDAO[MongoSyncResult](source, MongoSyncOperation.SyncLogTableName)

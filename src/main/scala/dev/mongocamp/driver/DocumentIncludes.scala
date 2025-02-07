@@ -6,21 +6,20 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
 import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
-import org.mongodb.scala.Document
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.{ documentToUntypedDocument, Document }
 
 import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
+
 trait DocumentIncludes {
   implicit def mapToBson(value: Map[_, _]): Bson = Converter.toDocument(value)
 
   implicit def luceneQueryBson(query: Query): Bson = LuceneQueryConverter.toDocument(query)
 
-  implicit def documentFromJavaMap(map: java.util.Map[String, Any]): Document =
-    documentFromScalaMap(map.asScala.toMap)
+  implicit def documentFromJavaMap(map: java.util.Map[String, Any]): Document = documentFromScalaMap(map.asScala.toMap)
 
-  implicit def documentFromMutableMap(map: collection.mutable.Map[String, Any]): Document =
-    documentFromScalaMap(map.toMap)
+  implicit def documentFromMutableMap(map: collection.mutable.Map[String, Any]): Document = documentFromScalaMap(map.toMap)
 
   implicit def documentFromScalaMap(map: Map[String, Any]): Document = {
     var result = Document()
@@ -43,15 +42,15 @@ trait DocumentIncludes {
     result
   }
 
-  implicit def mapFromDocument(document: Document): Map[String, Any] =
-    BsonConverter.asMap(document)
+  implicit def mapFromDocument(document: Document): Map[String, Any] = BsonConverter.asMap(document)
 
-  implicit def mapListFromDocuments(documents: List[Document]): List[Map[String, Any]] =
-    BsonConverter.asMapList(documents)
+  implicit def mapListFromDocuments(documents: List[Document]): List[Map[String, Any]] = BsonConverter.asMapList(documents)
 
   // ObjectId
   implicit def stringToObjectId(str: String): ObjectId = new ObjectId(str)
 
-  implicit def documentToObjectId(doc: Document): ObjectId =
+  implicit def documentToObjectId(doc: Document): ObjectId = {
     doc.getObjectId(DatabaseProvider.ObjectIdKey)
+  }
+  
 }

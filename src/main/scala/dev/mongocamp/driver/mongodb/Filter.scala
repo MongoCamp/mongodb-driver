@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb
 
-import java.util.Date
-
 import org.bson.conversions.Bson
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Filters._
+
+import java.util.Date
 
 object Filter extends Filter
 
