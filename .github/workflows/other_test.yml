@@ -23,7 +23,7 @@ jobs:
           jvm: corretto:${{ matrix.Java }}
           apps: sbt scala scalac
       - name: Setup TimeZone
-        uses: MathRobin/timezone-action@v1.1
+        uses: szenius/set-timezone@master
         with:
           timezoneLinux: "Europe/Berlin"
           timezoneMacos: "Europe/Berlin"
