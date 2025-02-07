@@ -43,7 +43,7 @@ licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html
 //crossScalaVersions := Seq("2.13.16")
 crossScalaVersions := Seq("3.6.0", "2.13.16")
 
-scalaVersion := crossScalaVersions.value.head
+scalaVersion := crossScalaVersions.value.last
 
 scalacOptions += "-deprecation"
 

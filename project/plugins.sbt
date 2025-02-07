@@ -21,8 +21,6 @@ addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
 
 addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.7.1")
 
-addSbtPlugin("ch.epfl.scala" % "sbt-scala3-migrate" % "0.7.2")
-
 
 addDependencyTreePlugin
 

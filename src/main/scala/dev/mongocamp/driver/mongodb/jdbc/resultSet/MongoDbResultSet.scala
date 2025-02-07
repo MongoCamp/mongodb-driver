@@ -1,6 +1,6 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
-import dev.mongocamp.driver.mongodb.*
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 import org.mongodb.scala.bson.collection.immutable.Document
