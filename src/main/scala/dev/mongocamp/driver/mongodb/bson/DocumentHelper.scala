@@ -1,6 +1,6 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import better.files.{ Scanner, StringSplitter, stringSource }
+import better.files.{ stringSource, Scanner, StringSplitter }
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Document
 

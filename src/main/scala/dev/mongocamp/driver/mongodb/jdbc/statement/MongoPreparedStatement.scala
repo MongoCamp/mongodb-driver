@@ -3,17 +3,33 @@ package dev.mongocamp.driver.mongodb.jdbc.statement
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
-import dev.mongocamp.driver.mongodb.jdbc.{MongoJdbcCloseable, MongoJdbcConnection}
+import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
-import dev.mongocamp.driver.mongodb.{Converter, GenericObservable}
+import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
 import org.joda.time.DateTime
 
-import java.io.{InputStream, Reader}
+import java.io.{ InputStream, Reader }
 import java.net.URL
-import java.sql.{Blob, CallableStatement, Clob, Connection, Date, NClob, ParameterMetaData, Ref, ResultSet, ResultSetMetaData, RowId, SQLWarning, SQLXML, Time, Timestamp}
+import java.sql.{
+  Blob,
+  CallableStatement,
+  Clob,
+  Connection,
+  Date,
+  NClob,
+  ParameterMetaData,
+  Ref,
+  ResultSet,
+  ResultSetMetaData,
+  RowId,
+  SQLWarning,
+  SQLXML,
+  Time,
+  Timestamp
+}
 import java.util.Calendar
-import java.{sql, util}
+import java.{ sql, util }
 import scala.collection.mutable
 import scala.util.Try
 
@@ -679,10 +695,12 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getURL(parameterIndex: Int): URL = {
     checkClosed()
-    Option(getString(parameterIndex)).flatMap(v => {
-      val urlParser = Try(new java.net.URI(v).toURL)
-      urlParser.toOption
-    }).orNull
+    Option(getString(parameterIndex))
+      .flatMap(v => {
+        val urlParser = Try(new java.net.URI(v).toURL)
+        urlParser.toOption
+      })
+      .orNull
   }
 
   override def getString(parameterName: String): String = {

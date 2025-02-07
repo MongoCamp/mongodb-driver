@@ -48,7 +48,7 @@ class MongoSqlQueryHolder {
   private var indexOptions: Option[IndexOptions]             = None
   private var callFunction: Option[String]                   = None
   private var keepOneDocument: Boolean                       = false
-  private val keysFromSelect: mutable.ListBuffer[String]            = mutable.ListBuffer.empty
+  private val keysFromSelect: mutable.ListBuffer[String]     = mutable.ListBuffer.empty
 
   def this(statement: net.sf.jsqlparser.statement.Statement) = {
     this()
@@ -346,7 +346,7 @@ class MongoSqlQueryHolder {
           sI match {
             case se: SelectItem[Expression] =>
               val expressionName = se.getExpression.toString
-              val keyFromSelect = Option(se.getAlias).map(_.getName).getOrElse(expressionName)
+              val keyFromSelect  = Option(se.getAlias).map(_.getName).getOrElse(expressionName)
               if (keyFromSelect != "*") {
                 keysFromSelect += keyFromSelect
               }
