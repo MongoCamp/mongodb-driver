@@ -1,3 +1,11 @@
+## [v3.0.1] - 2025-03-21
+### :bug: Bug Fixes
+- [`fe480df`](https://github.com/MongoCamp/mongodb-driver/commit/fe480df58cd74d17e8591a023244ed90390bf083) - jdbc access to functional named fields *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`20f1a47`](https://github.com/MongoCamp/mongodb-driver/commit/20f1a4742b70fd28fccea4c04ee40c094e21bab4) - added `OR` and `AND` with negation test for lucene query *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.0] - 2025-02-07
 ### :sparkles: New Features
 - [`968c4b5`](https://github.com/MongoCamp/mongodb-driver/commit/968c4b5dfb93dd562bef51987bce278ab6eea4cd) - try to implement conversion from document to object with circe *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -295,3 +303,4 @@
 [v2.8.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.7.0...v2.8.0
 [v2.8.1]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.0...v2.8.1
 [v3.0.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.1...v3.0.0
+[v3.0.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.0...v3.0.1
