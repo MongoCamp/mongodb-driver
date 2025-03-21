@@ -1,7 +1,6 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala.Document
 import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
 
@@ -56,7 +55,16 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnLabel(column: Int): String = {
     val keys: Iterable[String] = if (keySet.nonEmpty) {
-      keySet
+      keySet.map(s => {
+        var key = s
+        if (key.startsWith("(")) {
+          key = key.substring(1, key.length - 1)
+        }
+        if (key.endsWith("(")) {
+          key = key.substring(0, key.length - 1)
+        }
+        key
+      })
     }
     else {
       document.keys

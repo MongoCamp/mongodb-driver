@@ -11,11 +11,11 @@ class SelectJDBCSuite extends BaseJdbcSuite {
     var i           = 0
     val arrayBuffer = ArrayBuffer[ResultSet]()
     while (result.next()) {
-      assertEquals(result.getLong(1),result.getLong("id"))
-      assertEquals(result.getString(2),result.getString("guid"))
-      assertEquals(result.getString(3),result.getString("name"))
-      assertEquals(result.getInt(4),result.getInt("age"))
-      assertEquals(result.getDouble(5),result.getDouble("balance"))
+      assertEquals(result.getLong(1), result.getLong("id"))
+      assertEquals(result.getString(2), result.getString("guid"))
+      assertEquals(result.getString(3), result.getString("name"))
+      assertEquals(result.getInt(4), result.getInt("age"))
+      assertEquals(result.getDouble(5), result.getDouble("balance"))
       i += 1
       arrayBuffer += result
     }
@@ -47,6 +47,16 @@ class SelectJDBCSuite extends BaseJdbcSuite {
       i += 1
     }
     assertEquals(i, 1)
+  }
+
+  test("select distinct") {
+    val stmt   = connection.createStatement()
+    val result = stmt.executeQuery("select distinct(favoriteFruit), count(*) from `mongocamp-unit-test`.people order by count(*) desc;")
+    result.next()
+    assertEquals(result.getString("favoriteFruit"), "strawberry")
+    assertEquals(result.getInt("count(*)"), 71)
+    assertEquals(result.getString(1), "strawberry")
+    assertEquals(result.getInt(2), 71)
   }
 
 }

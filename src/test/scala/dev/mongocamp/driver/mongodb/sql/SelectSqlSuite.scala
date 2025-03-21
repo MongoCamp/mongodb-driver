@@ -168,7 +168,7 @@ class SelectSqlSuite extends BasePersonSuite {
     assertEquals(document.getInteger("sum(age)").toInt, 324)
   }
 
-  test("destinct") {
+  test("distinct query") {
     val queryConverter = MongoSqlQueryHolder("select distinct favoriteFruit, count(*) from people order by count(*) desc;")
     val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
     assertEquals(selectResponse.size, 3)
