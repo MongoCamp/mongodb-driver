@@ -145,4 +145,18 @@ class LuceneSearchSuite extends BasePersonSuite {
     assertEquals("{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}", document2.asInstanceOf[Document].toJson())
   }
 
+  test("search for values with or") {
+    val luceneQueryNegateWithAnd = LuceneQueryConverter.parse("-name:\"Latasha Mcmillan\" AND -name:\"Diaz Jacobs\"", "ube")
+    val searchNegateWithAnd = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithAnd), sortByBalance).resultList()
+    assertEquals(searchNegateWithAnd.size, 198)
+
+    val luceneQueryNegateWithOr = LuceneQueryConverter.parse("-name:(\"Latasha Mcmillan\" OR \"Diaz Jacobs\")", "ube")
+    val searchNegateWithOr = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithOr), sortByBalance).resultList()
+    assertEquals(searchNegateWithOr.size, 198)
+
+    val luceneQueryWithOr = LuceneQueryConverter.parse("name:(\"Latasha Mcmillan\" OR \"Diaz Jacobs\")", "ube")
+    val searchWithOr = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryWithOr), sortByBalance).resultList()
+    assertEquals(searchWithOr.size, 2)
+  }
+
 }
