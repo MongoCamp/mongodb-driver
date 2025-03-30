@@ -1,3 +1,8 @@
+## [v3.0.2] - 2025-03-30
+### :wrench: Chores
+- [`76dcbff`](https://github.com/MongoCamp/mongodb-driver/commit/76dcbffb58ae8cb3333a59628860f4e26c392850) - 8 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.1] - 2025-03-21
 ### :bug: Bug Fixes
 - [`fe480df`](https://github.com/MongoCamp/mongodb-driver/commit/fe480df58cd74d17e8591a023244ed90390bf083) - jdbc access to functional named fields *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -304,3 +309,4 @@
 [v2.8.1]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.0...v2.8.1
 [v3.0.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.1...v3.0.0
 [v3.0.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.0...v3.0.1
+[v3.0.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.1...v3.0.2
