@@ -1,9 +1,10 @@
 package dev.mongocamp.driver.mongodb.sql
 
-import dev.mongocamp.driver.mongodb.GenericObservable
-import dev.mongocamp.driver.mongodb.model.{ Grade, Score }
+import dev.mongocamp.driver.mongodb.model.Grade
+import dev.mongocamp.driver.mongodb.model.Score
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
+import dev.mongocamp.driver.mongodb.GenericObservable
 import org.bson.types.ObjectId
 
 class DeleteSqlSuite extends munit.FunSuite {

@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.pagination
-import dev.mongocamp.driver.MongoImplicits
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.Sort._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import dev.mongocamp.driver.mongodb.Sort._
+import dev.mongocamp.driver.MongoImplicits
 
 class PaginationFilterSuite extends BasePersonSuite with MongoImplicits {
 

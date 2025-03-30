@@ -1,17 +1,11 @@
 package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
+import java.util.Date
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.documentToUntypedDocument
 
-import java.util.Date
-
-case class CollectionInfo(
-    name: String,
-    collectionType: String,
-    fetched: Date,
-    map: Map[String, Any]
-)
+case class CollectionInfo(name: String, collectionType: String, fetched: Date, map: Map[String, Any])
 
 object CollectionInfo {
 

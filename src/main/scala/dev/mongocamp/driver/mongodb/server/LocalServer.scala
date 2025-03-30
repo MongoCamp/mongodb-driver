@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.server
 
 import better.files.File
-import de.bwaldvogel.mongo.MongoServer
 import de.bwaldvogel.mongo.backend.h2.H2Backend
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend
+import de.bwaldvogel.mongo.MongoServer
 import dev.mongocamp.driver.mongodb.server.ServerConfig.DefaultServerConfigPathPrefix
 
 case class LocalServer(serverConfig: ServerConfig = ServerConfig()) {
@@ -46,8 +46,6 @@ case class LocalServer(serverConfig: ServerConfig = ServerConfig()) {
 
 object LocalServer {
 
-  def fromPath(configPath: String = DefaultServerConfigPathPrefix): LocalServer = LocalServer(
-    ServerConfig.fromPath(configPath)
-  )
+  def fromPath(configPath: String = DefaultServerConfigPathPrefix): LocalServer = LocalServer(ServerConfig.fromPath(configPath))
 
 }

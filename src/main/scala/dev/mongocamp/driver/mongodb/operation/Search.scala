@@ -5,24 +5,20 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import io.circe.Decoder
 import org.bson.BsonValue
-import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{ DistinctObservable, Document, MongoCollection, Observable }
-
+import org.mongodb.scala.DistinctObservable
+import org.mongodb.scala.Document
+import org.mongodb.scala.MongoCollection
+import org.mongodb.scala.Observable
 import scala.reflect.ClassTag
 
 abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Base[A] {
 
   protected def coll: MongoCollection[Document]
 
-  def find(
-      filter: Bson = Document(),
-      sort: Bson = Document(),
-      projection: Bson = Document(),
-      limit: Int = 0,
-      skip: Int = 0
-  ): Observable[A] = {
+  def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document(), limit: Int = 0, skip: Int = 0): Observable[A] = {
     val findObservable = {
       if (limit > 0) {
         coll.find(filter).sort(sort).projection(projection).limit(limit).skip(skip)
@@ -31,7 +27,9 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
         coll.find(filter).sort(sort).projection(projection).skip(skip)
       }
     }
-    findObservable.map(doc => documentToObject[A](doc, decoder))
+    findObservable.map(
+      doc => documentToObject[A](doc, decoder)
+    )
   }
 
   def findById(oid: ObjectId): Observable[A] = {
@@ -47,7 +45,11 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
   }
 
   def distinctResult[S <: Any](fieldName: String, filter: Bson = Document()): Seq[S] = {
-    distinct(fieldName, filter).resultList().map(v => fromBson(v).asInstanceOf[S])
+    distinct(fieldName, filter)
+      .resultList()
+      .map(
+        v => fromBson(v).asInstanceOf[S]
+      )
   }
 
   def findAggregated(pipeline: Seq[Bson], allowDiskUse: Boolean = false): Observable[A] = {

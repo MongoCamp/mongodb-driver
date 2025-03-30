@@ -3,8 +3,8 @@ package dev.mongocamp.driver.mongodb.schema
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.relation.RelationDemoDatabase._
-import dev.mongocamp.driver.mongodb.test.TestDatabase.{ PersonDAO, PersonDocumentDAO }
-
+import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDAO
+import dev.mongocamp.driver.mongodb.test.TestDatabase.PersonDocumentDAO
 import scala.util.Try
 
 class SchemaSuite extends BasePersonSuite {
@@ -17,12 +17,14 @@ class SchemaSuite extends BasePersonSuite {
       SimplePersonDAO.drop().result()
     }
     val personList = PersonDAO.find().resultList()
-    personList.foreach { person =>
-      UserDAO.insertOne(User(person.id, person.name, person.guid)).result()
-      LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).result()
-      person.friends.foreach { f =>
-        SimplePersonDAO.insertOne(SimplePerson((person.id + 11) * (f.id + 3), f.name, person.id)).result()
-      }
+    personList.foreach {
+      person =>
+        UserDAO.insertOne(User(person.id, person.name, person.guid)).result()
+        LoginDAO.insertOne(Login(person.guid, person.email, person.email.reverse)).result()
+        person.friends.foreach {
+          f =>
+            SimplePersonDAO.insertOne(SimplePerson((person.id + 11) * (f.id + 3), f.name, person.id)).result()
+        }
     }
   }
 

@@ -1,20 +1,27 @@
 package dev.mongocamp.driver.mongodb
 
 import better.files.File
-import dev.mongocamp.driver.mongodb.bson.{ BsonConverter, DocumentHelper }
-import dev.mongocamp.driver.mongodb.database.{ ChangeObserver, CollectionStatus, CompactResult, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
+import dev.mongocamp.driver.mongodb.bson.DocumentHelper
+import dev.mongocamp.driver.mongodb.database.ChangeObserver
+import dev.mongocamp.driver.mongodb.database.CollectionStatus
+import dev.mongocamp.driver.mongodb.database.CompactResult
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import io.circe.Decoder
+import java.nio.charset.Charset
+import java.util.Date
 import org.bson.json.JsonParseException
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
-import org.mongodb.scala.{ BulkWriteResult, Document, MongoCollection, Observable, SingleObservable }
-
-import java.nio.charset.Charset
-import java.util.Date
+import org.mongodb.scala.BulkWriteResult
+import org.mongodb.scala.Document
+import org.mongodb.scala.MongoCollection
+import org.mongodb.scala.Observable
+import org.mongodb.scala.SingleObservable
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
@@ -34,14 +41,20 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
   }
 
   def collectionStatus: Observable[CollectionStatus] = {
-    provider.runCommand(Map("collStats" -> collectionName)).map(document => CollectionStatus(document))
+    provider
+      .runCommand(Map("collStats" -> collectionName))
+      .map(
+        document => CollectionStatus(document)
+      )
   }
 
   def compact: Observable[Option[CompactResult]] = {
     val startDate = new Date()
     provider
       .runCommand(Map("compact" -> collectionName))
-      .map(document => CompactResult(s"$databaseName${DatabaseProvider.CollectionSeparator}$collectionName", document, startDate))
+      .map(
+        document => CompactResult(s"$databaseName${DatabaseProvider.CollectionSeparator}$collectionName", document, startDate)
+      )
   }
 
   /** @param sampleSize
@@ -76,7 +89,9 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     try {
       if (file.exists) {
         val iterator = file.lineIterator(Charset.forName("UTF-8"))
-        iterator.foreach(line => docs.+=(DocumentHelper.documentFromJsonString(line).get))
+        iterator.foreach(
+          line => docs.+=(DocumentHelper.documentFromJsonString(line).get)
+        )
       }
     }
     catch {

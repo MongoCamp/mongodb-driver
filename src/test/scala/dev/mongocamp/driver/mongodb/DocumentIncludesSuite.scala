@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb
 
-import dev.mongocamp.driver.DocumentIncludes
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.DocumentIncludes
 import munit.FunSuite
-import org.mongodb.scala.Document
-import org.bson.types.ObjectId
 import org.apache.lucene.search.MatchAllDocsQuery
+import org.bson.types.ObjectId
+import org.mongodb.scala.Document
 
 class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
 

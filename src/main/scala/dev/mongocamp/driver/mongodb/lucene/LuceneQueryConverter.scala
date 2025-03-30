@@ -3,14 +3,13 @@ package dev.mongocamp.driver.mongodb.lucene
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.NotSupportedException
+import java.text.SimpleDateFormat
+import java.util.Date
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.search.BooleanClause.Occur
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.conversions.Bson
-
-import java.text.SimpleDateFormat
-import java.util.Date
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
@@ -42,7 +41,9 @@ object LuceneQueryConverter extends LazyLogging {
       case query: WildcardQuery           => appendWildCardQueryToSearchMap(negated, searchMapResponse, query)
       case query: PhraseQuery             => appendPhraseQueryToSearchMap(negated, searchMapResponse, query)
       case a: Any =>
-        val simpleNameOption = Option(a.getClass.getSimpleName).filterNot(s => s.trim.equalsIgnoreCase(""))
+        val simpleNameOption = Option(a.getClass.getSimpleName).filterNot(
+          s => s.trim.equalsIgnoreCase("")
+        )
         if (simpleNameOption.isDefined) {
           logger.error(s"Unexpected QueryType <${a.getClass.getSimpleName}>")
         }
@@ -51,43 +52,45 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendBooleanQueryToSearchMap(
-      searchMapResponse: mutable.Map[String, Any],
-      booleanQuery: BooleanQuery,
-      searchWithValueAndString: Boolean,
-      negate: Boolean
+    searchMapResponse: mutable.Map[String, Any],
+    booleanQuery: BooleanQuery,
+    searchWithValueAndString: Boolean,
+    negate: Boolean
   ): Unit = {
     val subQueries  = booleanQuery.clauses().asScala
     val listOfAnd   = ArrayBuffer[Map[String, Any]]()
     val listOfOr    = ArrayBuffer[Map[String, Any]]()
     val listOfNOr   = ArrayBuffer[Map[String, Any]]()
     var nextTypeAnd = true
-    subQueries.foreach(c => {
-      val negateSubquery = (c.occur() == Occur.MUST_NOT)
-      val queryMap       = getMongoDbSearchMap(c.query(), negateSubquery, searchWithValueAndString)
-      var thisTypeAnd    = true
+    subQueries.foreach(
+      c => {
+        val negateSubquery = (c.occur() == Occur.MUST_NOT)
+        val queryMap       = getMongoDbSearchMap(c.query(), negateSubquery, searchWithValueAndString)
+        var thisTypeAnd    = true
 
-      if (c.occur == Occur.MUST) {
-        thisTypeAnd = true
-      }
-      else if (c.occur == Occur.SHOULD) {
-        thisTypeAnd = false
-      }
-      else if (c.occur == Occur.MUST_NOT) {
-        //                searchMapResponse ++= queryMap
-      }
-      else {
-        logger.error(s"Unexpected Occur <${c.occur.name()}>")
-        throw new NotSupportedException(s"${c.occur.name()} currently not supported")
-      }
+        if (c.occur == Occur.MUST) {
+          thisTypeAnd = true
+        }
+        else if (c.occur == Occur.SHOULD) {
+          thisTypeAnd = false
+        }
+        else if (c.occur == Occur.MUST_NOT) {
+          //                searchMapResponse ++= queryMap
+        }
+        else {
+          logger.error(s"Unexpected Occur <${c.occur.name()}>")
+          throw new NotSupportedException(s"${c.occur.name()} currently not supported")
+        }
 
-      if (nextTypeAnd && thisTypeAnd) {
-        listOfAnd += queryMap
+        if (nextTypeAnd && thisTypeAnd) {
+          listOfAnd += queryMap
+        }
+        else {
+          listOfOr += queryMap
+        }
+        nextTypeAnd = thisTypeAnd
       }
-      else {
-        listOfOr += queryMap
-      }
-      nextTypeAnd = thisTypeAnd
-    })
+    )
 
     if (listOfAnd.nonEmpty) {
       if (negate) {
@@ -108,10 +111,10 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendTermRangeQueryToSearchMap(
-      negated: Boolean,
-      searchMapResponse: mutable.Map[String, Any],
-      termRangeQuery: TermRangeQuery,
-      searchWithValueAndString: Boolean
+    negated: Boolean,
+    searchMapResponse: mutable.Map[String, Any],
+    termRangeQuery: TermRangeQuery,
+    searchWithValueAndString: Boolean
   ): Unit = {
     val lowerBoundString = new String(termRangeQuery.getLowerTerm.bytes)
     val lowerBound       = checkAndConvertValue(lowerBoundString)
@@ -135,10 +138,7 @@ object LuceneQueryConverter extends LazyLogging {
     }
     else {
       if (searchWithStringValue) {
-        searchMapResponse.put(
-          "$or",
-          List(Map(termRangeQuery.getField -> inRangeSearch), Map(termRangeQuery.getField -> inRangeStringSearch))
-        )
+        searchMapResponse.put("$or", List(Map(termRangeQuery.getField -> inRangeSearch), Map(termRangeQuery.getField -> inRangeStringSearch)))
       }
       else {
         searchMapResponse.put(termRangeQuery.getField, inRangeSearch)
@@ -147,10 +147,10 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendTermQueryToSearchMap(
-      negated: Boolean,
-      searchMapResponse: mutable.Map[String, Any],
-      termQuery: TermQuery,
-      searchWithValueAndString: Boolean
+    negated: Boolean,
+    searchMapResponse: mutable.Map[String, Any],
+    termQuery: TermQuery,
+    searchWithValueAndString: Boolean
   ): Unit = {
     val convertedValue = checkAndConvertValue(termQuery.getTerm.text())
     if (negated) {
@@ -200,15 +200,17 @@ object LuceneQueryConverter extends LazyLogging {
 
   private def appendPhraseQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PhraseQuery): Unit = {
     val listOfSearches = query.getTerms
-      .map(term => {
-        val convertedValue = checkAndConvertValue(term.text())
-        if (convertedValue.isInstanceOf[String]) {
-          Map(term.field() -> generateRegexQuery(s"(.*?)$convertedValue(.*?)", "i"))
+      .map(
+        term => {
+          val convertedValue = checkAndConvertValue(term.text())
+          if (convertedValue.isInstanceOf[String]) {
+            Map(term.field() -> generateRegexQuery(s"(.*?)$convertedValue(.*?)", "i"))
+          }
+          else {
+            Map(term.field() -> Map("$eq" -> convertedValue))
+          }
         }
-        else {
-          Map(term.field() -> Map("$eq" -> convertedValue))
-        }
-      })
+      )
       .toList
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
@@ -241,24 +243,32 @@ object LuceneQueryConverter extends LazyLogging {
 
     try {
       val convertedValue: Option[Any] =
-        (List() ++ checkOrReturn(() => s.toDouble) ++ checkOrReturn(() => s.toLong) ++ checkOrReturn(() => s.toBoolean)).headOption
-      val response = convertedValue.getOrElse({
+        (List() ++ checkOrReturn(
+          () => s.toDouble
+        ) ++ checkOrReturn(
+          () => s.toLong
+        ) ++ checkOrReturn(
+          () => s.toBoolean
+        )).headOption
+      val response = convertedValue.getOrElse {
         val parsedOptions: List[Date] = Try(new DateTime(s).toDate).toOption.toList ++ datePatters
-          .flatMap(pattern => {
-            try {
-              val formatter = new SimpleDateFormat(pattern)
-              val r         = Option(formatter.parse(s))
-              logger.info(s"parsed date $s with pattern $pattern to $r")
-              r
+          .flatMap(
+            pattern => {
+              try {
+                val formatter = new SimpleDateFormat(pattern)
+                val r         = Option(formatter.parse(s))
+                logger.info(s"parsed date $s with pattern $pattern to $r")
+                r
+              }
+              catch {
+                case e: Exception =>
+                  None
+              }
             }
-            catch {
-              case e: Exception =>
-                None
-            }
-          })
+          )
           .distinct
         parsedOptions.headOption.getOrElse(s)
-      })
+      }
       response
     }
     catch {

@@ -1,16 +1,17 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
-import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb.MongoDAO
 import org.bson.types.ObjectId
-import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.bson.BsonValue
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.result.UpdateResult
-import org.mongodb.scala.{ Document, Observable }
+import org.mongodb.scala.Document
+import org.mongodb.scala.Observable
 
 abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends Crud {
 
@@ -31,7 +32,9 @@ abstract class Metadata(provider: DatabaseProvider, bucketName: String) extends 
 
   def updateMetadataElements(filter: Bson, elements: Map[String, Any]): Observable[UpdateResult] = {
     val list = elements
-      .map(entry => set("metadata.%s".format(entry._1), BsonConverter.toBson(entry._2)))
+      .map(
+        entry => set("metadata.%s".format(entry._1), BsonConverter.toBson(entry._2))
+      )
       .toList
     updateMetadataElements(filter, list: _*)
   }

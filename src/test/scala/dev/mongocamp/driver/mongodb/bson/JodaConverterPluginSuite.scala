@@ -1,7 +1,6 @@
 package dev.mongocamp.driver.mongodb.bson
 
 import org.joda.time.DateTime
-
 import scala.concurrent.duration.Duration
 
 class JodaConverterPluginSuite extends munit.FunSuite {

@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.json
 
 import better.files.Resource
-import io.circe.Decoder
 import io.circe.jawn.decode
 import io.circe.syntax._
+import io.circe.Decoder
 
 class JsonConverter extends CirceSchema {
 

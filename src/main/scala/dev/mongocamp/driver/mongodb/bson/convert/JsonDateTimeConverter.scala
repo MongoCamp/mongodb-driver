@@ -1,10 +1,11 @@
 package dev.mongocamp.driver.mongodb.bson.convert
 
 import com.typesafe.scalalogging.LazyLogging
-import org.bson.json.{ Converter, StrictJsonWriter }
-
-import java.text.{ DateFormat, SimpleDateFormat }
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.TimeZone
+import org.bson.json.Converter
+import org.bson.json.StrictJsonWriter
 
 object JsonDateTimeConverter {
   val Converter = new JsonDateTimeConverter

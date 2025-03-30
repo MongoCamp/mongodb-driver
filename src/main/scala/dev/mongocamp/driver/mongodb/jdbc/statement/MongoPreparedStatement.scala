@@ -3,33 +3,34 @@ package dev.mongocamp.driver.mongodb.jdbc.statement
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
-import dev.mongocamp.driver.mongodb.jdbc.{ MongoJdbcCloseable, MongoJdbcConnection }
+import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
+import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcConnection
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
-import dev.mongocamp.driver.mongodb.{ Converter, GenericObservable }
-import org.joda.time.DateTime
-
-import java.io.{ InputStream, Reader }
+import dev.mongocamp.driver.mongodb.Converter
+import dev.mongocamp.driver.mongodb.GenericObservable
+import java.io.InputStream
+import java.io.Reader
 import java.net.URL
-import java.sql.{
-  Blob,
-  CallableStatement,
-  Clob,
-  Connection,
-  Date,
-  NClob,
-  ParameterMetaData,
-  Ref,
-  ResultSet,
-  ResultSetMetaData,
-  RowId,
-  SQLWarning,
-  SQLXML,
-  Time,
-  Timestamp
-}
+import java.sql
+import java.sql.Blob
+import java.sql.CallableStatement
+import java.sql.Clob
+import java.sql.Connection
+import java.sql.Date
+import java.sql.NClob
+import java.sql.ParameterMetaData
+import java.sql.Ref
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+import java.sql.RowId
+import java.sql.SQLWarning
+import java.sql.SQLXML
+import java.sql.Time
+import java.sql.Timestamp
+import java.util
 import java.util.Calendar
-import java.{ sql, util }
+import org.joda.time.DateTime
 import scala.collection.mutable
 import scala.util.Try
 
@@ -82,16 +83,22 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       var response = queryHolder.run(connection.getDatabaseProvider).results(getQueryTimeout)
       if (response.isEmpty && queryHolder.hasFunctionCallInSelect) {
         val emptyDocument = mutable.Map[String, Any]()
-        queryHolder.getKeysFromSelect.foreach(key => emptyDocument.put(key, null))
+        queryHolder.getKeysFromSelect.foreach(
+          key => emptyDocument.put(key, null)
+        )
         val doc = Converter.toDocument(emptyDocument.toMap)
         response = Seq(doc)
       }
-      val collectionName = Option(queryHolder.getCollection).map(c => connection.getDatabaseProvider.dao(c))
+      val collectionName = Option(queryHolder.getCollection).map(
+        c => connection.getDatabaseProvider.dao(c)
+      )
       if (!sql.toLowerCase().contains("_id")) {
-        response = response.map(doc => {
-          val newDoc = doc - "_id"
-          newDoc
-        })
+        response = response.map(
+          doc => {
+            val newDoc = doc - "_id"
+            newDoc
+          }
+        )
       }
       val resultSet = new MongoDbResultSet(collectionName.orNull, response.toList, getQueryTimeout, queryHolder.getKeysFromSelect)
       _lastResultSet = resultSet
@@ -201,19 +208,21 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
   private def replaceParameters(sql: String): String = {
     var newSql     = ""
     var paramCount = 1
-    sql.foreach(c => {
-      var replace = false
-      if (c == '?') {
-        if (parameters.contains(paramCount)) {
-          newSql += parameters(paramCount)
-          replace = true
+    sql.foreach(
+      c => {
+        var replace = false
+        if (c == '?') {
+          if (parameters.contains(paramCount)) {
+            newSql += parameters(paramCount)
+            replace = true
+          }
+          paramCount += 1
         }
-        paramCount += 1
+        if (!replace) {
+          newSql += c
+        }
       }
-      if (!replace) {
-        newSql += c
-      }
-    })
+    )
     newSql
   }
 
@@ -567,59 +576,103 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getBoolean(parameterIndex: Int): Boolean = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toBoolean).toOption).getOrElse(false)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toBoolean).toOption
+      )
+      .getOrElse(false)
   }
 
   override def getByte(parameterIndex: Int): Byte = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toByte).toOption).getOrElse(Byte.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toByte).toOption
+      )
+      .getOrElse(Byte.MinValue)
   }
 
   override def getShort(parameterIndex: Int): Short = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toShort).toOption).getOrElse(Short.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toShort).toOption
+      )
+      .getOrElse(Short.MinValue)
   }
 
   override def getInt(parameterIndex: Int): Int = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toInt).toOption).getOrElse(Int.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toInt).toOption
+      )
+      .getOrElse(Int.MinValue)
   }
 
   override def getLong(parameterIndex: Int): Long = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toLong).toOption).getOrElse(Long.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toLong).toOption
+      )
+      .getOrElse(Long.MinValue)
   }
 
   override def getFloat(parameterIndex: Int): Float = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toFloat).toOption).getOrElse(Float.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toFloat).toOption
+      )
+      .getOrElse(Float.MinValue)
   }
 
   override def getDouble(parameterIndex: Int): Double = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(v.toDouble).toOption).getOrElse(Double.MinValue)
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(v.toDouble).toOption
+      )
+      .getOrElse(Double.MinValue)
   }
 
   override def getBigDecimal(parameterIndex: Int, scale: Int): java.math.BigDecimal = getBigDecimal(parameterIndex)
 
   override def getBytes(parameterIndex: Int): Array[Byte] = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(new JsonConverter().toObject[Array[Byte]](v)).toOption).orNull
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(new JsonConverter().toObject[Array[Byte]](v)).toOption
+      )
+      .orNull
   }
 
   override def getDate(parameterIndex: Int): Date = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(new Date(DateTime.parse(v).getMillis)).toOption).orNull
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(new Date(DateTime.parse(v).getMillis)).toOption
+      )
+      .orNull
   }
 
   override def getTime(parameterIndex: Int): Time = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(new Time(DateTime.parse(v).getMillis)).toOption).orNull
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(new Time(DateTime.parse(v).getMillis)).toOption
+      )
+      .orNull
   }
 
   override def getTimestamp(parameterIndex: Int): Timestamp = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(new Timestamp(DateTime.parse(v).getMillis)).toOption).orNull
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(new Timestamp(DateTime.parse(v).getMillis)).toOption
+      )
+      .orNull
   }
 
   override def getObject(parameterIndex: Int): AnyRef = {
@@ -629,7 +682,11 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def getBigDecimal(parameterIndex: Int): java.math.BigDecimal = {
     checkClosed()
-    getStringOption(parameterIndex).flatMap(v => Try(new java.math.BigDecimal(v.toDouble)).toOption).orNull
+    getStringOption(parameterIndex)
+      .flatMap(
+        v => Try(new java.math.BigDecimal(v.toDouble)).toOption
+      )
+      .orNull
   }
 
   override def getObject(parameterIndex: Int, map: util.Map[String, Class[_]]): AnyRef = {
@@ -696,10 +753,12 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
   override def getURL(parameterIndex: Int): URL = {
     checkClosed()
     Option(getString(parameterIndex))
-      .flatMap(v => {
-        val urlParser = Try(new java.net.URI(v).toURL)
-        urlParser.toOption
-      })
+      .flatMap(
+        v => {
+          val urlParser = Try(new java.net.URI(v).toURL)
+          urlParser.toOption
+        }
+      )
       .orNull
   }
 

@@ -1,8 +1,7 @@
 package dev.mongocamp.driver.mongodb.lucene
+import java.io.Reader
 import org.apache.lucene.analysis._
 import org.apache.lucene.analysis.standard.StandardTokenizer
-
-import java.io.Reader
 
 class MongoCampLuceneAnalyzer(stopWords: CharArraySet = CharArraySet.EMPTY_SET, maxTokenLength: Int = MongoCampLuceneAnalyzer.defaultMaxTokenLength)
     extends StopwordAnalyzerBase {

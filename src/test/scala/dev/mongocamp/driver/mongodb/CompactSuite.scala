@@ -1,13 +1,13 @@
 package dev.mongocamp.driver.mongodb
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb.database.CompactResult
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.TestDatabase.BookDAO
-import munit.FunSuite
-
 import java.text.SimpleDateFormat
 import java.util.Date
+import munit.FunSuite
 
 class CompactSuite extends FunSuite {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")

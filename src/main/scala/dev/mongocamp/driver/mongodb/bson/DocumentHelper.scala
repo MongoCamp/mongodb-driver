@@ -1,6 +1,8 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import better.files.{ stringSource, Scanner, StringSplitter }
+import better.files.stringSource
+import better.files.Scanner
+import better.files.StringSplitter
 import com.typesafe.scalalogging.LazyLogging
 import org.mongodb.scala.Document
 
@@ -21,21 +23,22 @@ object DocumentHelper extends LazyLogging {
         var datePosition = 0
         val resultBuffer = new StringBuffer()
 
-        scanner.foreach { s =>
-          i = i + 1
-          if ("\"$date\"".equals(s))
-            datePosition = i + 2
-          if (i == datePosition)
-            if (s.length == 30 && (s.charAt(24) == '+' || s.charAt(24) == '-')) {
-              resultBuffer.append(s.substring(0, 27))
-              resultBuffer.append(":")
-              resultBuffer.append(s.substring(27))
-            }
+        scanner.foreach {
+          s =>
+            i = i + 1
+            if ("\"$date\"".equals(s))
+              datePosition = i + 2
+            if (i == datePosition)
+              if (s.length == 30 && (s.charAt(24) == '+' || s.charAt(24) == '-')) {
+                resultBuffer.append(s.substring(0, 27))
+                resultBuffer.append(":")
+                resultBuffer.append(s.substring(27))
+              }
+              else
+                resultBuffer.append(s)
             else
               resultBuffer.append(s)
-          else
-            resultBuffer.append(s)
-          resultBuffer.append(SplitterDelimeter)
+            resultBuffer.append(SplitterDelimeter)
         }
         result = Some(Document(resultBuffer.toString))
     }

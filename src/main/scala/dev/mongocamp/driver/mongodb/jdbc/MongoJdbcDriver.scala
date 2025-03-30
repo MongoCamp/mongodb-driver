@@ -1,13 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import com.vdurmont.semver4j.Semver
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database.MongoConfig
 import dev.mongocamp.driver.mongodb.BuildInfo
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
-import org.mongodb.scala.{ ConnectionString, ServerAddress }
-
-import java.sql.{ Connection, DriverPropertyInfo }
-import java.util.Properties
+import java.sql.Connection
+import java.sql.DriverPropertyInfo
 import java.util.logging.Logger
+import java.util.Properties
+import org.mongodb.scala.ConnectionString
+import org.mongodb.scala.ServerAddress
 import scala.jdk.CollectionConverters._
 
 class MongoJdbcDriver extends java.sql.Driver {
@@ -39,7 +41,9 @@ class MongoJdbcDriver extends java.sql.Driver {
         username,
         password,
         authDb,
-        serverAddressList = string.getHosts.asScala.toList.map(h => new ServerAddress(h))
+        serverAddressList = string.getHosts.asScala.toList.map(
+          h => new ServerAddress(h)
+        )
       )
     )
     new MongoJdbcConnection(provider)

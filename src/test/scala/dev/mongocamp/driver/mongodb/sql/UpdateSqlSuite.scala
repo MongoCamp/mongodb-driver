@@ -1,7 +1,8 @@
 package dev.mongocamp.driver.mongodb.sql
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.model.{ Grade, Score }
+import dev.mongocamp.driver.mongodb.model.Grade
+import dev.mongocamp.driver.mongodb.model.Score
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import munit.FunSuite

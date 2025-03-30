@@ -1,17 +1,23 @@
 package dev.mongocamp.driver.mongodb.operation
 
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.sync.MongoSyncOperation
-import dev.mongocamp.driver.mongodb.{ Converter, _ }
+import dev.mongocamp.driver.mongodb.Converter
 import io.circe.Decoder
+import java.util.Date
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
-import org.mongodb.scala.{ BulkWriteResult, Document, Observable, SingleObservable }
-
-import java.util.Date
+import org.mongodb.scala.result.DeleteResult
+import org.mongodb.scala.result.InsertManyResult
+import org.mongodb.scala.result.InsertOneResult
+import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.BulkWriteResult
+import org.mongodb.scala.Document
+import org.mongodb.scala.Observable
+import org.mongodb.scala.SingleObservable
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
@@ -37,7 +43,12 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
   // bulk write
 
   def bulkWrite(requests: List[WriteModel[Document]], options: BulkWriteOptions): SingleObservable[BulkWriteResult] = {
-    coll.bulkWrite(requests.map(wM => wM), options)
+    coll.bulkWrite(
+      requests.map(
+        wM => wM
+      ),
+      options
+    )
   }
 
   def bulkWrite(requests: List[WriteModel[Document]], ordered: Boolean = true): SingleObservable[BulkWriteResult] = {
@@ -46,13 +57,17 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
 
   def bulkWriteMany(values: Seq[A], options: BulkWriteOptions): SingleObservable[BulkWriteResult] = {
     val requests: ArrayBuffer[WriteModel[Document]] = ArrayBuffer()
-    values.foreach(value => requests.append(InsertOneModel(Converter.toDocument(value))))
+    values.foreach(
+      value => requests.append(InsertOneModel(Converter.toDocument(value)))
+    )
     bulkWrite(requests.toList, options)
   }
 
   def bulkWriteMany(values: Seq[A], ordered: Boolean = true): SingleObservable[BulkWriteResult] = {
     val requests: ArrayBuffer[WriteModel[Document]] = ArrayBuffer()
-    values.foreach(value => requests.append(InsertOneModel(Converter.toDocument(value))))
+    values.foreach(
+      value => requests.append(InsertOneModel(Converter.toDocument(value)))
+    )
     bulkWrite(requests.toList, ordered)
   }
 

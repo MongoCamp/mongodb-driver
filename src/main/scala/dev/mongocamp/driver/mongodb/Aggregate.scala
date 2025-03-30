@@ -17,14 +17,18 @@ trait Aggregate extends Field with Filter with Sort {
   def compositeProjection(resultFieldName: String, keys: List[String]): Bson =
     computed(
       resultFieldName,
-      Map[String, Any]("$concat" -> keys.map(key => Map[String, Any]("$substr" -> List("$" + key, 0, 99999))))
+      Map[String, Any](
+        "$concat" -> keys.map(
+          key => Map[String, Any]("$substr" -> List("$" + key, 0, 99999))
+        )
+      )
     )
 
   def divideProjection(
-      resultFieldName: String,
-      dividendFieldName: String,
-      divisorFieldName: String,
-      zeroDividendStrategy: ZeroDividendStrategy = ZeroDividendStrategy.None
+    resultFieldName: String,
+    dividendFieldName: String,
+    divisorFieldName: String,
+    zeroDividendStrategy: ZeroDividendStrategy = ZeroDividendStrategy.None
   ): Bson =
     if (ZeroDividendStrategy.None == zeroDividendStrategy)
       computed(resultFieldName, Map[String, Any]("$divide" -> List("$" + dividendFieldName, "$" + divisorFieldName)))
@@ -42,25 +46,28 @@ trait Aggregate extends Field with Filter with Sort {
       computed(
         resultFieldName,
         Map[String, Any](
-          "$cond" -> List(
-            Map("$eq" -> List("$" + divisorFieldName, 0)),
-            outcome,
-            Map("$divide" -> List("$" + dividendFieldName, "$" + divisorFieldName))
-          )
+          "$cond" -> List(Map("$eq" -> List("$" + divisorFieldName, 0)), outcome, Map("$divide" -> List("$" + dividendFieldName, "$" + divisorFieldName)))
         )
       )
     }
 
   def multiplyProjection(resultFieldName: String, productFieldNames: List[String]): Bson =
-    computed(resultFieldName, Map[String, Any]("$multiply" -> productFieldNames.map(fieldname => "$" + fieldname)))
+    computed(
+      resultFieldName,
+      Map[String, Any](
+        "$multiply" -> productFieldNames.map(
+          fieldname => "$" + fieldname
+        )
+      )
+    )
 
   def geoNearStage(
-      lat: Double,
-      long: Double,
-      minDistanceInMeters: Option[Double] = None,
-      maxDistanceInMeters: Option[Double] = None,
-      distanceFieldName: String = "distance",
-      spherical: Boolean = true
+    lat: Double,
+    long: Double,
+    minDistanceInMeters: Option[Double] = None,
+    maxDistanceInMeters: Option[Double] = None,
+    distanceFieldName: String = "distance",
+    spherical: Boolean = true
   ): Bson = {
     var additionalParameters: Map[String, Any] = Map.empty
     if (minDistanceInMeters.isDefined)

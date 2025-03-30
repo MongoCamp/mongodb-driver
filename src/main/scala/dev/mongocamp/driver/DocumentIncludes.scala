@@ -1,14 +1,14 @@
 package dev.mongocamp.driver
 
-import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.lucene.LuceneQueryConverter
+import dev.mongocamp.driver.mongodb.Converter
 import org.apache.lucene.search.Query
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.{ documentToUntypedDocument, Document }
-
+import org.mongodb.scala.documentToUntypedDocument
+import org.mongodb.scala.Document
 import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
 
@@ -23,9 +23,10 @@ trait DocumentIncludes {
 
   implicit def documentFromScalaMap(map: Map[String, Any]): Document = {
     var result = Document()
-    map.keys.foreach { key =>
-      val v = map.getOrElse(key, null)
-      result.+=(key -> BsonConverter.toBson(v))
+    map.keys.foreach {
+      key =>
+        val v = map.getOrElse(key, null)
+        result.+=(key -> BsonConverter.toBson(v))
     }
     result
   }
@@ -35,9 +36,10 @@ trait DocumentIncludes {
     doc
       .keySet()
       .asScala
-      .foreach { key =>
-        val v = doc.get(key)
-        result.+=(key -> BsonConverter.toBson(v))
+      .foreach {
+        key =>
+          val v = doc.get(key)
+          result.+=(key -> BsonConverter.toBson(v))
       }
     result
   }

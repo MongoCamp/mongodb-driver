@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.sync
 import dev.mongocamp.driver.mongodb._
-import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.ObjectId
 
 object TestSync {
 
@@ -16,19 +16,21 @@ object TestSync {
   reset()
 
   def insertIntoSource(count: Int = 1, collectionName: String): Unit =
-    (1 to count).foreach { _ =>
-      mongoSyncer.source
-        .collection(collectionName)
-        .insertOne(Document("_id" -> new ObjectId(), "string" -> "Hallo", "long" -> 1))
-        .result()
+    (1 to count).foreach {
+      _ =>
+        mongoSyncer.source
+          .collection(collectionName)
+          .insertOne(Document("_id" -> new ObjectId(), "string" -> "Hallo", "long" -> 1))
+          .result()
     }
 
   def insertIntoTarget(count: Int = 1, collectionName: String): Unit =
-    (1 to count).foreach { _ =>
-      mongoSyncer.target
-        .collection(collectionName)
-        .insertOne(Document("_id" -> new ObjectId(), "string" -> "Hallo", "long" -> 1))
-        .result()
+    (1 to count).foreach {
+      _ =>
+        mongoSyncer.target
+          .collection(collectionName)
+          .insertOne(Document("_id" -> new ObjectId(), "string" -> "Hallo", "long" -> 1))
+          .result()
     }
 
   def sourceCount(collectionName: String): Long =

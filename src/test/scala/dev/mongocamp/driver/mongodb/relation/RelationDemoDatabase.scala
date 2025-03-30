@@ -41,7 +41,7 @@ object RelationDemoDatabase {
 
   // #region user_dao
   object UserDAO extends MongoDAO[User](provider, "user") {
-    lazy val loginRelation: OneToOneRelationship[Login]   = OneToOneRelationship(LoginDAO, "id")
+    lazy val loginRelation: OneToOneRelationship[Login]           = OneToOneRelationship(LoginDAO, "id")
     lazy val friendsRelation: OneToManyRelationship[SimplePerson] = OneToManyRelationship(SimplePersonDAO, "userId")
   }
   // #endregion user_dao
@@ -53,7 +53,7 @@ object RelationDemoDatabase {
   val provider: DatabaseProvider = DatabaseProvider.fromPath("unit.test.mongo")
 
   object NodeDAO extends MongoDAO[Node](provider, "nodes") {
-    lazy val parentRelation: OneToOneRelationship[Node]   = OneToOneRelationship(this, "id")
+    lazy val parentRelation: OneToOneRelationship[Node]    = OneToOneRelationship(this, "id")
     lazy val childrenRelation: OneToManyRelationship[Node] = OneToManyRelationship(this, "parentId")
   }
 

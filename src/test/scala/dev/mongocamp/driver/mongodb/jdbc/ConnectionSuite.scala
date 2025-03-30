@@ -2,16 +2,18 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
-
-import java.sql.{ Connection, SQLFeatureNotSupportedException, Savepoint }
-import java.util.Properties
+import java.sql.Connection
+import java.sql.SQLFeatureNotSupportedException
+import java.sql.Savepoint
 import java.util.concurrent.Executor
+import java.util.Properties
 
 class ConnectionSuite extends BaseJdbcSuite {
 
   test("getDatabaseProvider should return the database provider") {
     val driver = new MongoJdbcDriver()
-    val connectionUrl = "jdbc:mongodb://localhost:27017/mongocamp-unit-test?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000"
+    val connectionUrl =
+      "jdbc:mongodb://localhost:27017/mongocamp-unit-test?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000"
     val propertiesInfo = driver.getPropertyInfo(connectionUrl, new Properties())
     assertEquals(propertiesInfo.length, 5)
   }

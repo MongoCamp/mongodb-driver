@@ -1,11 +1,12 @@
 package dev.mongocamp.driver
 
 import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
-import org.bson.BsonValue
 import org.bson.types.ObjectId
-import org.mongodb.scala.gridfs.{ GridFSFile, GridFSFindObservable }
-import org.mongodb.scala.{ Observable, ObservableImplicits }
-
+import org.bson.BsonValue
+import org.mongodb.scala.gridfs.GridFSFile
+import org.mongodb.scala.gridfs.GridFSFindObservable
+import org.mongodb.scala.Observable
+import org.mongodb.scala.ObservableImplicits
 import scala.language.implicitConversions
 trait MongoImplicits extends ObservableIncludes with ObservableImplicits {
 

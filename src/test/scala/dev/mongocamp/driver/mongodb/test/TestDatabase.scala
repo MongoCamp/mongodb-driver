@@ -6,10 +6,11 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.model._
-import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
+import dev.mongocamp.driver.mongodb.GridFSDAO
+import dev.mongocamp.driver.mongodb.MongoDAO
 import io.circe.generic.auto._
-import org.mongodb.scala.Document
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
+import org.mongodb.scala.Document
 
 object TestDatabase extends LazyLogging {
   val ImageDAOSourcePath = "src/test/resources/images/"
@@ -17,17 +18,12 @@ object TestDatabase extends LazyLogging {
 
   File(ImageDAOTargetPath).createIfNotExists()
 
-
   val provider: DatabaseProvider = DatabaseProvider.fromPath(configPath = "unit.test.mongo")
 
   def consumeDatabaseChanges(changeStreamDocument: ChangeStreamDocument[Document]): Unit = {
     if (changeStreamDocument.getOperationType != OperationType.INSERT) {
       logger.info(
-        "changed %s:%s with ID: %s".format(
-          changeStreamDocument.getNamespace,
-          changeStreamDocument.getOperationType,
-          changeStreamDocument.getDocumentKey
-        )
+        "changed %s:%s with ID: %s".format(changeStreamDocument.getNamespace, changeStreamDocument.getOperationType, changeStreamDocument.getDocumentKey)
       )
     }
   }
