@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
-
-import java.sql.{ Connection, DriverManager }
+import java.sql.Connection
+import java.sql.DriverManager
 import java.util.Properties
 
 class BaseJdbcSuite extends BasePersonSuite {

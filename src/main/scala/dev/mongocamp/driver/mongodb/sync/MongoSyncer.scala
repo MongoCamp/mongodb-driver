@@ -1,26 +1,24 @@
 package dev.mongocamp.driver.mongodb.sync
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoConfig }
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database.MongoConfig
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.HCursor
 import io.circe.generic.auto._
-
+import io.circe.HCursor
 import scala.collection.mutable
-case class MongoSyncer(
-    sourceConfig: MongoConfig,
-    targetConfig: MongoConfig,
-    syncOperations: List[MongoSyncOperation] = List()
-) {
+case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig, syncOperations: List[MongoSyncOperation] = List()) {
 
-  implicit private lazy val ThrowableFormat: io.circe.Decoder[Throwable] = { (c: HCursor) =>
-    // not really needed only for decoder must exists
-    ???
+  implicit private lazy val ThrowableFormat: io.circe.Decoder[Throwable] = {
+    (c: HCursor) =>
+      // not really needed only for decoder must exists
+      ???
   }
 
-  implicit private lazy val ExceptionFormat: io.circe.Decoder[Exception] = { (c: HCursor) =>
-    // not really needed only for decoder must exists
-    ???
+  implicit private lazy val ExceptionFormat: io.circe.Decoder[Exception] = {
+    (c: HCursor) =>
+      // not really needed only for decoder must exists
+      ???
   }
 
   // todo: check if this is correct
@@ -34,7 +32,9 @@ case class MongoSyncer(
 
   var terminated = false
 
-  syncOperations.foreach(operation => addOperation(operation))
+  syncOperations.foreach(
+    operation => addOperation(operation)
+  )
 
   def addOperation(operation: MongoSyncOperation): Option[MongoSyncOperation] =
     operationMap.put(operation.collectionName, operation)
@@ -45,7 +45,9 @@ case class MongoSyncer(
 
     val result = operationMap
       .get(collectionName)
-      .map(op => op.excecute(source, target))
+      .map(
+        op => op.excecute(source, target)
+      )
       .getOrElse(List(MongoSyncResult(collectionName)))
 
     if (MongoSyncOperation.WriteSyncLogOnMaster)
@@ -53,7 +55,11 @@ case class MongoSyncer(
     result
   }
 
-  def syncAll(): List[MongoSyncResult] = operationMap.keys.flatMap(key => sync(key)).toList
+  def syncAll(): List[MongoSyncResult] = operationMap.keys
+    .flatMap(
+      key => sync(key)
+    )
+    .toList
 
   def terminate(): Unit = {
     source.closeClient()

@@ -1,18 +1,20 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.Filter._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.test.TestDatabase.BookDAO
+import dev.mongocamp.driver.mongodb.Filter._
+import java.text.SimpleDateFormat
+import java.util.Date
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{ filter, group, project }
+import org.mongodb.scala.model.Aggregates.filter
+import org.mongodb.scala.model.Aggregates.group
+import org.mongodb.scala.model.Aggregates.project
 import org.mongodb.scala.model.Filters.and
 import org.mongodb.scala.model.Projections
 import org.mongodb.scala.model.Updates._
-
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class BookDAOSuite extends munit.FunSuite {
   val DateFormat = new SimpleDateFormat("yyyy-MM-dd")
@@ -55,7 +57,12 @@ class BookDAOSuite extends munit.FunSuite {
 
     val pipeline = List(groupStage)
 
-    val list = BookDAO.Raw.findAggregated(pipeline).resultList().map(doc => doc.asPlainMap)
+    val list = BookDAO.Raw
+      .findAggregated(pipeline)
+      .resultList()
+      .map(
+        doc => doc.asPlainMap
+      )
     assertEquals(list.size, 58)
   }
 

@@ -1,12 +1,11 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.MongoDAO
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSetMetaData
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
+import dev.mongocamp.driver.mongodb.MongoDAO
+import java.sql.ResultSetMetaData
 import munit.FunSuite
 import org.mongodb.scala.Document
-
-import java.sql.ResultSetMetaData
 
 class MongoDbResultSetMetaDataSuite extends BaseJdbcSuite {
 

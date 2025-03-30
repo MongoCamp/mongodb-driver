@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
 import better.files.File
-import dev.mongocamp.driver.MongoImplicits
 import dev.mongocamp.driver.mongodb.test.TestDatabase.ImageFilesDAO
+import dev.mongocamp.driver.MongoImplicits
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSFile

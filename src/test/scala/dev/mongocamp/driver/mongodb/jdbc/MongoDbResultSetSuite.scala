@@ -2,11 +2,10 @@ package dev.mongocamp.driver.mongodb.jdbc
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
+import java.sql._
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Updates
-
-import java.sql._
 
 class MongoDbResultSetSuite extends BaseJdbcSuite {
 
@@ -348,13 +347,13 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
 
   test("getConcurrency should throw SQLFeatureNotSupportedException") {
     val resultSet = initializeResultSet()
-    intercept[SQLFeatureNotSupportedException] (resultSet.getConcurrency)
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateAsciiStream(99, null, 1))
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateAsciiStream("updateAsciiStream", null, 1))
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateBinaryStream(99, null, 1))
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateBinaryStream("updateBinaryStream", null, 1))
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateCharacterStream(99, null, 1))
-    intercept[SQLFeatureNotSupportedException] (resultSet.updateCharacterStream("updateCharacterStream", null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.getConcurrency)
+    intercept[SQLFeatureNotSupportedException](resultSet.updateAsciiStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.updateAsciiStream("updateAsciiStream", null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.updateBinaryStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.updateBinaryStream("updateBinaryStream", null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.updateCharacterStream(99, null, 1))
+    intercept[SQLFeatureNotSupportedException](resultSet.updateCharacterStream("updateCharacterStream", null, 1))
 
   }
 

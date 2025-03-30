@@ -4,12 +4,18 @@ import com.vdurmont.semver4j.Semver
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.schema.SchemaExplorer
-import dev.mongocamp.driver.mongodb.{ BuildInfo, Converter, GenericObservable }
+import dev.mongocamp.driver.mongodb.BuildInfo
+import dev.mongocamp.driver.mongodb.Converter
+import dev.mongocamp.driver.mongodb.GenericObservable
+import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.ResultSet
+import java.sql.RowIdLifetime
+import java.sql.Types
 import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.bson.{ BsonNull, BsonString }
+import org.mongodb.scala.bson.BsonNull
+import org.mongodb.scala.bson.BsonString
 import org.mongodb.scala.documentToUntypedDocument
-
-import java.sql.{ Connection, DatabaseMetaData, ResultSet, RowIdLifetime, Types }
 import scala.collection.mutable.ArrayBuffer
 
 class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMetaData {
@@ -40,7 +46,12 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
   override def getDatabaseProductName: String = DatabaseNameKey
 
   override def getDatabaseProductVersion: String = {
-    connection.getDatabaseProvider.runCommand(Document("buildInfo" -> 1)).map(doc => doc.getString("version")).result(10)
+    connection.getDatabaseProvider
+      .runCommand(Document("buildInfo" -> 1))
+      .map(
+        doc => doc.getString("version")
+      )
+      .result(10)
   }
 
   override def getDriverName: String = BuildInfo.name
@@ -267,47 +278,47 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
     val internalSchemaPattern    = Option(schemaPattern).getOrElse("(.*?)")
     val internalTableNamePattern = Option(tableNamePattern).getOrElse("(.*?)")
     val documents: List[Document] = connection.getDatabaseProvider.databaseNames
-      .filter(s => internalSchemaPattern.r.findFirstMatchIn(s).nonEmpty)
-      .flatMap(dbName => {
-        val collDocuments: List[Document] = connection.getDatabaseProvider
-          .collectionNames(dbName)
-          .filter(s => internalTableNamePattern.r.findFirstMatchIn(s).nonEmpty)
-          .map(collName => {
-            Document(
-              "TABLE_CAT"                 -> BsonString(DatabaseNameKey),
-              "TABLE_SCHEM"               -> BsonString(dbName),
-              "TABLE_NAME"                -> BsonString(collName),
-              "TABLE_TYPE"                -> BsonString("TABLE"),
-              "REMARKS"                   -> BsonString("COLLECTION"),
-              "TYPE_CAT"                  -> BsonString(DatabaseNameKey),
-              "TYPE_SCHEM"                -> BsonString(dbName),
-              "TYPE_NAME"                 -> BsonString("COLLECTION"),
-              "SELF_REFERENCING_COL_NAME" -> BsonNull(),
-              "REF_GENERATION"            -> BsonNull()
+      .filter(
+        s => internalSchemaPattern.r.findFirstMatchIn(s).nonEmpty
+      )
+      .flatMap(
+        dbName => {
+          val collDocuments: List[Document] = connection.getDatabaseProvider
+            .collectionNames(dbName)
+            .filter(
+              s => internalTableNamePattern.r.findFirstMatchIn(s).nonEmpty
             )
-          })
-        collDocuments
-      })
+            .map(
+              collName => {
+                Document(
+                  "TABLE_CAT"                 -> BsonString(DatabaseNameKey),
+                  "TABLE_SCHEM"               -> BsonString(dbName),
+                  "TABLE_NAME"                -> BsonString(collName),
+                  "TABLE_TYPE"                -> BsonString("TABLE"),
+                  "REMARKS"                   -> BsonString("COLLECTION"),
+                  "TYPE_CAT"                  -> BsonString(DatabaseNameKey),
+                  "TYPE_SCHEM"                -> BsonString(dbName),
+                  "TYPE_NAME"                 -> BsonString("COLLECTION"),
+                  "SELF_REFERENCING_COL_NAME" -> BsonNull(),
+                  "REF_GENERATION"            -> BsonNull()
+                )
+              }
+            )
+          collDocuments
+        }
+      )
     new MongoDbResultSet(null, documents, 10)
   }
 
   override def getSchemas: ResultSet = getSchemas("", "(.*?)")
 
   override def getCatalogs: ResultSet = {
-    val documents = List(
-      Document(
-        "TABLE_CAT" -> DatabaseNameKey
-      )
-    )
+    val documents = List(Document("TABLE_CAT" -> DatabaseNameKey))
     new MongoDbResultSet(null, documents, 10)
   }
 
   override def getTableTypes: ResultSet = {
-    val documents = List(
-      Document(
-        "TABLE_TYPE" -> "COLLECTION"
-      )
-    )
+    val documents = List(Document("TABLE_TYPE" -> "COLLECTION"))
     new MongoDbResultSet(null, documents, 10)
   }
 
@@ -315,74 +326,86 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
     val schemaRegex     = schemaPattern.replace("%", "(.*?)").r
     val tableNameRegex  = tableNamePattern.replace("%", "(.*?)").r
     val columnNameRegex = columnNamePattern.replace("%", "(.*?)").r
-    val databaseNames   = connection.getDatabaseProvider.databaseNames.filter(s => schemaRegex.findFirstMatchIn(s).nonEmpty)
-    val documents       = ArrayBuffer[Document]()
-    val schemaExplorer  = new SchemaExplorer()
-    var i               = 0
-    databaseNames.map(dbName => {
-      val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
-      val filtered       = allCollections.filter(tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty)
-      filtered.map(table => {
-        val dao             = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
-        val schemaAnalysis  = schemaExplorer.analyzeSchema(dao)
-        val relevantColumns = schemaAnalysis.fields.filter(field => columnNameRegex.findFirstMatchIn(field.name).nonEmpty)
-        relevantColumns.foreach(schemaAnalysis => {
-          val fieldTypeName              = schemaAnalysis.fieldTypes.head.fieldType
-          var decimalDigits: Option[Int] = None
-          val fieldType = fieldTypeName match {
-            case "string"   => Types.LONGVARCHAR
-            case "null"     => Types.VARCHAR
-            case "objectId" => Types.VARCHAR
-            case "date"     => Types.DATE
-            case "int" =>
-              decimalDigits = Some(0)
-              Types.INTEGER
-            case "long" =>
-              decimalDigits = Some(0)
-              Types.BIGINT
-            case "number" =>
-              decimalDigits = Some(Int.MaxValue)
-              Types.DOUBLE
-            case "double" =>
-              decimalDigits = Some(Int.MaxValue)
-              Types.DOUBLE
-            case "array"  => Types.ARRAY
-            case "bool"   => Types.BOOLEAN
-            case "object" => Types.JAVA_OBJECT
-            case _ =>
-              Types.VARCHAR
-          }
-          documents += Converter.toDocument(
-            Map(
-              "TABLE_CAT"         -> DatabaseNameKey,
-              "TABLE_SCHEM"       -> dbName,
-              "TABLE_NAME"        -> table,
-              "COLUMN_NAME"       -> schemaAnalysis.name,
-              "DATA_TYPE"         -> fieldType,
-              "TYPE_NAME"         -> fieldTypeName,
-              "COLUMN_SIZE"       -> null,
-              "BUFFER_LENGTH"     -> null,
-              "DECIMAL_DIGITS"    -> decimalDigits.getOrElse(null),
-              "NUM_PREC_RADIX"    -> null,
-              "NULLABLE"          -> DatabaseMetaData.columnNullable, // how to check
-              "REMARKS"           -> null,
-              "COLUMN_DEF"        -> null,
-              "SQL_DATA_TYPE"     -> null,
-              "SQL_DATETIME_SUB"  -> null,
-              "CHAR_OCTET_LENGTH" -> null,
-              "ORDINAL_POSITION"  -> i,
-              "IS_NULLABLE"       -> "YES",
-              "SCOPE_CATLOG"      -> null,
-              "SCOPE_SCHEMA"      -> null,
-              "SCOPE_TABLE"       -> null,
-              "SOURCE_DATA_TYPE"  -> null,
-              "IS_AUTOINCREMENT"  -> "NO"
+    val databaseNames = connection.getDatabaseProvider.databaseNames.filter(
+      s => schemaRegex.findFirstMatchIn(s).nonEmpty
+    )
+    val documents      = ArrayBuffer[Document]()
+    val schemaExplorer = new SchemaExplorer()
+    var i              = 0
+    databaseNames.map(
+      dbName => {
+        val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
+        val filtered = allCollections.filter(
+          tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty
+        )
+        filtered.map(
+          table => {
+            val dao            = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
+            val schemaAnalysis = schemaExplorer.analyzeSchema(dao)
+            val relevantColumns = schemaAnalysis.fields.filter(
+              field => columnNameRegex.findFirstMatchIn(field.name).nonEmpty
             )
-          )
-          i = i + 1
-        })
-      })
-    })
+            relevantColumns.foreach(
+              schemaAnalysis => {
+                val fieldTypeName              = schemaAnalysis.fieldTypes.head.fieldType
+                var decimalDigits: Option[Int] = None
+                val fieldType = fieldTypeName match {
+                  case "string"   => Types.LONGVARCHAR
+                  case "null"     => Types.VARCHAR
+                  case "objectId" => Types.VARCHAR
+                  case "date"     => Types.DATE
+                  case "int" =>
+                    decimalDigits = Some(0)
+                    Types.INTEGER
+                  case "long" =>
+                    decimalDigits = Some(0)
+                    Types.BIGINT
+                  case "number" =>
+                    decimalDigits = Some(Int.MaxValue)
+                    Types.DOUBLE
+                  case "double" =>
+                    decimalDigits = Some(Int.MaxValue)
+                    Types.DOUBLE
+                  case "array"  => Types.ARRAY
+                  case "bool"   => Types.BOOLEAN
+                  case "object" => Types.JAVA_OBJECT
+                  case _ =>
+                    Types.VARCHAR
+                }
+                documents += Converter.toDocument(
+                  Map(
+                    "TABLE_CAT"         -> DatabaseNameKey,
+                    "TABLE_SCHEM"       -> dbName,
+                    "TABLE_NAME"        -> table,
+                    "COLUMN_NAME"       -> schemaAnalysis.name,
+                    "DATA_TYPE"         -> fieldType,
+                    "TYPE_NAME"         -> fieldTypeName,
+                    "COLUMN_SIZE"       -> null,
+                    "BUFFER_LENGTH"     -> null,
+                    "DECIMAL_DIGITS"    -> decimalDigits.getOrElse(null),
+                    "NUM_PREC_RADIX"    -> null,
+                    "NULLABLE"          -> DatabaseMetaData.columnNullable, // how to check
+                    "REMARKS"           -> null,
+                    "COLUMN_DEF"        -> null,
+                    "SQL_DATA_TYPE"     -> null,
+                    "SQL_DATETIME_SUB"  -> null,
+                    "CHAR_OCTET_LENGTH" -> null,
+                    "ORDINAL_POSITION"  -> i,
+                    "IS_NULLABLE"       -> "YES",
+                    "SCOPE_CATLOG"      -> null,
+                    "SCOPE_SCHEMA"      -> null,
+                    "SCOPE_TABLE"       -> null,
+                    "SOURCE_DATA_TYPE"  -> null,
+                    "IS_AUTOINCREMENT"  -> "NO"
+                  )
+                )
+                i = i + 1
+              }
+            )
+          }
+        )
+      }
+    )
     new MongoDbResultSet(null, documents.toList, 10)
   }
 
@@ -405,17 +428,17 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
   override def getPrimaryKeys(catalog: String, schema: String, table: String): ResultSet = {
     val dao           = connection.getDatabaseProvider.dao(s"$schema$CollectionSeparator$table")
     val uniqueIndices = dao.indexList().filter(_.unique)
-    val pkDocuments = uniqueIndices.map(i =>
-      Map(
-        "TABLE_CAT"   -> DatabaseNameKey,
-        "TABLE_SCHEM" -> schema,
-        "TABLE_NAME"  -> table,
-        "COLUMN_NAME" -> i.fields.head,
-        "KEY_SEQ"     -> 0,
-        "PK_NAME"     -> i.name
-      )
+    val pkDocuments = uniqueIndices.map(
+      i =>
+        Map("TABLE_CAT" -> DatabaseNameKey, "TABLE_SCHEM" -> schema, "TABLE_NAME" -> table, "COLUMN_NAME" -> i.fields.head, "KEY_SEQ" -> 0, "PK_NAME" -> i.name)
     )
-    new MongoDbResultSet(null, pkDocuments.map(i => Converter.toDocument(i)), 10)
+    new MongoDbResultSet(
+      null,
+      pkDocuments.map(
+        i => Converter.toDocument(i)
+      ),
+      10
+    )
 
   }
 
@@ -428,12 +451,12 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
   }
 
   override def getCrossReference(
-      parentCatalog: String,
-      parentSchema: String,
-      parentTable: String,
-      foreignCatalog: String,
-      foreignSchema: String,
-      foreignTable: String
+    parentCatalog: String,
+    parentSchema: String,
+    parentTable: String,
+    foreignCatalog: String,
+    foreignSchema: String,
+    foreignTable: String
   ): ResultSet = {
     null
   }
@@ -483,46 +506,63 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
         "NUM_PREC_RADIX"     -> 10
       )
     )
-    new MongoDbResultSet(null, types.map(i => Converter.toDocument(i)), 10)
+    new MongoDbResultSet(
+      null,
+      types.map(
+        i => Converter.toDocument(i)
+      ),
+      10
+    )
   }
 
   override def getIndexInfo(catalog: String, schema: String, table: String, unique: Boolean, approximate: Boolean): ResultSet = {
     val schemaRegex    = schema.r
     val tableNameRegex = table.r
-    val databaseNames  = connection.getDatabaseProvider.databaseNames.filter(s => schemaRegex.findFirstMatchIn(s).nonEmpty)
-    val documents      = ArrayBuffer[Document]()
-    databaseNames.map(dbName => {
-      val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
-      allCollections
-        .filter(tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty)
-        .map(table => {
-          val dao = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
-          dao
-            .indexList()
-            .map(index => {
-              val fields = index.fields
-              fields.zipWithIndex.foreach { case (field, i) =>
-                documents += Converter.toDocument(
-                  Map(
-                    "TABLE_CAT"        -> DatabaseNameKey,
-                    "TABLE_SCHEM"      -> dbName,
-                    "TABLE_NAME"       -> table,
-                    "NON_UNIQUE"       -> (if (!index.unique) "YES" else "NO"),
-                    "INDEX_QUALIFIER"  -> dbName,
-                    "INDEX_NAME"       -> index.name,
-                    "TYPE"             -> 0,
-                    "ORDINAL_POSITION" -> i,
-                    "COLUMN_NAME"      -> field,
-                    "ASC_OR_DESC"      -> "A",
-                    "CARDINALITY"      -> "0",
-                    "PAGES"            -> "0",
-                    "FILTER_CONDITION" -> ""
-                  )
+    val databaseNames = connection.getDatabaseProvider.databaseNames.filter(
+      s => schemaRegex.findFirstMatchIn(s).nonEmpty
+    )
+    val documents = ArrayBuffer[Document]()
+    databaseNames.map(
+      dbName => {
+        val allCollections = connection.getDatabaseProvider.collectionNames(dbName)
+        allCollections
+          .filter(
+            tbl => tableNameRegex.findFirstMatchIn(tbl).nonEmpty
+          )
+          .map(
+            table => {
+              val dao = connection.getDatabaseProvider.dao(s"$dbName$CollectionSeparator$table")
+              dao
+                .indexList()
+                .map(
+                  index => {
+                    val fields = index.fields
+                    fields.zipWithIndex.foreach {
+                      case (field, i) =>
+                        documents += Converter.toDocument(
+                          Map(
+                            "TABLE_CAT"        -> DatabaseNameKey,
+                            "TABLE_SCHEM"      -> dbName,
+                            "TABLE_NAME"       -> table,
+                            "NON_UNIQUE"       -> (if (!index.unique) "YES" else "NO"),
+                            "INDEX_QUALIFIER"  -> dbName,
+                            "INDEX_NAME"       -> index.name,
+                            "TYPE"             -> 0,
+                            "ORDINAL_POSITION" -> i,
+                            "COLUMN_NAME"      -> field,
+                            "ASC_OR_DESC"      -> "A",
+                            "CARDINALITY"      -> "0",
+                            "PAGES"            -> "0",
+                            "FILTER_CONDITION" -> ""
+                          )
+                        )
+                    }
+                  }
                 )
-              }
-            })
-        })
-    })
+            }
+          )
+      }
+    )
     new MongoDbResultSet(null, documents.toList, 10)
   }
 
@@ -596,13 +636,14 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
 
   override def getSchemas(catalog: String, schemaPattern: String): ResultSet = {
     val documents = connection.getDatabaseProvider.databaseNames
-      .filter(s => schemaPattern.r.findFirstMatchIn(s).nonEmpty)
-      .map(dbName => {
-        Document(
-          "TABLE_SCHEM"   -> dbName,
-          "TABLE_CATALOG" -> DatabaseNameKey
-        )
-      })
+      .filter(
+        s => schemaPattern.r.findFirstMatchIn(s).nonEmpty
+      )
+      .map(
+        dbName => {
+          Document("TABLE_SCHEM" -> dbName, "TABLE_CATALOG" -> DatabaseNameKey)
+        }
+      )
     new MongoDbResultSet(null, documents, 10)
   }
 

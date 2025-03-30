@@ -2,9 +2,9 @@ package dev.mongocamp.driver.mongodb.operation
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
-import dev.mongocamp.driver.mongodb.database.{ DatabaseProvider, MongoIndex }
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 

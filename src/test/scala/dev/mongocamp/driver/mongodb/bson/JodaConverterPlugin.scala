@@ -1,8 +1,11 @@
 package dev.mongocamp.driver.mongodb.bson
 
 import org.bson.BsonValue
-import org.joda.time.{ DateTime, Duration }
-import org.mongodb.scala.bson.{ BsonDateTime, BsonNull, BsonString }
+import org.joda.time.DateTime
+import org.joda.time.Duration
+import org.mongodb.scala.bson.BsonDateTime
+import org.mongodb.scala.bson.BsonNull
+import org.mongodb.scala.bson.BsonString
 
 class JodaConverterPlugin extends AbstractConverterPlugin {
   override def customClassList: List[Class[_]] = List(classOf[DateTime], classOf[Duration])

@@ -1,14 +1,15 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.test.TestDatabase
+import dev.mongocamp.driver.mongodb.GenericObservable
 import liquibase.database.jvm.JdbcConnection
 import liquibase.exception.LiquibaseException
 import liquibase.resource.ClassLoaderResourceAccessor
-import liquibase.{ Contexts, LabelExpression, Liquibase }
-
+import liquibase.Contexts
+import liquibase.LabelExpression
+import liquibase.Liquibase
 import scala.concurrent.Future
 import scala.jdk.CollectionConverters._
 import scala.language.implicitConversions
@@ -28,9 +29,8 @@ class LiquibaseJdbcSuite extends BaseJdbcSuite with LazyLogging {
     val changes              = unrunChangesets.asScala.toList
     assert(changes.nonEmpty)
     logger.info("liquibase - %s changesets to update".format(changes))
-    try {
+    try
       liquibase.update(contexts)
-    }
     catch {
       case e: LiquibaseException =>
         logger.error(e.getMessage, e)

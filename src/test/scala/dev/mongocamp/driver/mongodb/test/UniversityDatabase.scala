@@ -4,9 +4,9 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.server.LocalServer
-import dev.mongocamp.driver.mongodb.{ GridFSDAO, MongoDAO }
+import dev.mongocamp.driver.mongodb.GridFSDAO
+import dev.mongocamp.driver.mongodb.MongoDAO
 import io.circe.generic.auto._
-
 
 object UniversityDatabase {
   // create local test server (mongodb-java-server)

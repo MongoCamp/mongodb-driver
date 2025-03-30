@@ -1,10 +1,9 @@
 package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
+import java.util.Date
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.documentToUntypedDocument
-
-import java.util.Date
 
 case class DatabaseInfo(name: String, sizeOnDisk: Double, empty: Boolean, fetched: Date, map: Map[String, Any])
 

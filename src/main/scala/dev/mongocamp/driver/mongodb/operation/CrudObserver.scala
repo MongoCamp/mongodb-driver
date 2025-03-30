@@ -1,12 +1,15 @@
 package dev.mongocamp.driver.mongodb.operation
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.Converter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import org.mongodb.scala.Observer
+import dev.mongocamp.driver.mongodb.Converter
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
-import org.mongodb.scala.result.{ DeleteResult, InsertManyResult, InsertOneResult, UpdateResult }
+import org.mongodb.scala.result.DeleteResult
+import org.mongodb.scala.result.InsertManyResult
+import org.mongodb.scala.result.InsertOneResult
+import org.mongodb.scala.result.UpdateResult
+import org.mongodb.scala.Observer
 
 trait CrudObserver[A] extends Crud[A] {
 

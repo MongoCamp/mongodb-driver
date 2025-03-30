@@ -1,6 +1,7 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
 

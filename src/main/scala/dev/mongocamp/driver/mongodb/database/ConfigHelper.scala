@@ -1,6 +1,7 @@
 package dev.mongocamp.driver.mongodb.database
 
-import com.typesafe.config.{ Config, ConfigFactory }
+import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
 
 trait ConfigHelper {
   val conf: Config = ConfigFactory.load()

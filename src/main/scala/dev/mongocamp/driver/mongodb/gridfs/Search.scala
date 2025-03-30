@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import org.mongodb.scala.Document
-import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.gridfs.GridFSFindObservable
 import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.Document
 
 abstract class Search extends Base {
 

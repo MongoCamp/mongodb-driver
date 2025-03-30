@@ -4,14 +4,21 @@ import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.Decoder
 import io.circe.syntax._
+import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.model.CountOptions
+import org.mongodb.scala.model.DropIndexOptions
+import org.mongodb.scala.model.IndexOptions
+import org.mongodb.scala.model.Indexes
 import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.model.{ CountOptions, DropIndexOptions, IndexOptions, Indexes }
-import org.mongodb.scala.{ Document, ListIndexesObservable, MongoCollection, Observable, SingleObservable }
-
-import scala.concurrent.duration.{ durationToPair, Duration }
+import org.mongodb.scala.Document
+import org.mongodb.scala.ListIndexesObservable
+import org.mongodb.scala.MongoCollection
+import org.mongodb.scala.Observable
+import org.mongodb.scala.SingleObservable
+import scala.concurrent.duration.durationToPair
+import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 
 abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
@@ -64,10 +71,10 @@ abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with 
   }
 
   def createExpiringIndexForField(
-      fieldName: String,
-      duration: Duration,
-      sortAscending: Boolean = true,
-      name: Option[String] = None
+    fieldName: String,
+    duration: Duration,
+    sortAscending: Boolean = true,
+    name: Option[String] = None
   ): SingleObservable[String] = {
     createIndexForField(fieldName, sortAscending, MongoIndex.indexOptionsWithName(name).expireAfter(duration._1, duration._2))
   }
@@ -88,6 +95,8 @@ abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with 
 
   def indexForName(name: String): Option[MongoIndex] = indexList().find(_.name.equals(name))
 
-  def hasIndexForField(fieldName: String): Boolean = indexList().exists(index => index.fields.contains(fieldName))
+  def hasIndexForField(fieldName: String): Boolean = indexList().exists(
+    index => index.fields.contains(fieldName)
+  )
 
 }

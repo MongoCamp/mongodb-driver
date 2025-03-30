@@ -1,12 +1,14 @@
 package dev.mongocamp.driver.mongodb.bson
 
-import org.mongodb.scala.Document
-import org.mongodb.scala.bson.BsonArray.fromIterable
-import org.mongodb.scala.bson.{ ObjectId, _ }
-
 import java.math.BigInteger
-import java.time.{ LocalDate, LocalDateTime, ZoneId }
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Date
+import org.mongodb.scala.bson._
+import org.mongodb.scala.bson.BsonArray.fromIterable
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.Document
 import scala.collection.mutable
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
@@ -56,10 +58,10 @@ object BsonConverter {
   }
 
   private def updateDocumentValueInternal(
-      document: org.mongodb.scala.bson.collection.mutable.Document,
-      key: String,
-      value: Any,
-      root: Option[org.mongodb.scala.bson.collection.mutable.Document] = None
+    document: org.mongodb.scala.bson.collection.mutable.Document,
+    key: String,
+    value: Any,
+    root: Option[org.mongodb.scala.bson.collection.mutable.Document] = None
   ): org.mongodb.scala.bson.collection.mutable.Document =
     if (hasRelation(key)) {
       val newKey   = newKeyFromRelation(key)
@@ -132,9 +134,10 @@ object BsonConverter {
       case doc: Document            => BsonDocument(doc)
       case map: scala.collection.Map[_, _] =>
         var doc = Document()
-        map.keys.foreach { key =>
-          val v = map(key)
-          doc.+=(key.toString -> toBson(v))
+        map.keys.foreach {
+          key =>
+            val v = map(key)
+            doc.+=(key.toString -> toBson(v))
         }
         BsonDocument(doc)
       case map: java.util.Map[_, _] =>
@@ -142,15 +145,24 @@ object BsonConverter {
         map
           .keySet()
           .asScala
-          .foreach { key =>
-            val v = map.get(key)
-            doc.+=(key.toString -> toBson(v))
+          .foreach {
+            key =>
+              val v = map.get(key)
+              doc.+=(key.toString -> toBson(v))
           }
         BsonDocument(doc)
       case it: Iterable[Any] =>
-        fromIterable(it.map(v => toBson(v)))
+        fromIterable(
+          it.map(
+            v => toBson(v)
+          )
+        )
       case list: java.util.List[_] =>
-        fromIterable(list.asScala.map(v => toBson(v)))
+        fromIterable(
+          list.asScala.map(
+            v => toBson(v)
+          )
+        )
       case v: AnyRef => converterPlugin.objectToBson(v)
       case _ =>
         BsonNull()
@@ -171,7 +183,9 @@ object BsonConverter {
       case d: BsonDecimal128        => new scala.math.BigDecimal(d.getValue.bigDecimalValue())
       case doc: BsonDocument        => Document(doc)
       case array: BsonArray =>
-        array.getValues.asScala.toList.map(v => fromBson(v))
+        array.getValues.asScala.toList.map(
+          v => fromBson(v)
+        )
       case n: BsonNull => null
       case _           => value
     }
@@ -179,31 +193,38 @@ object BsonConverter {
 
   def asMap(document: Document): Map[String, Any] = {
     val result = new mutable.HashMap[String, Any]()
-    document.keySet.foreach { key =>
-      val value = fromBson(document(key))
+    document.keySet.foreach {
+      key =>
+        val value = fromBson(document(key))
 
-      value match {
-        case d: Document =>
-          result.+=(key -> asMap(d))
-        case ld: List[Any] =>
-          result.+=(key -> ld.map(d => {
-            if (d.isInstanceOf[Document]) {
-              asMap(d.asInstanceOf[Document])
-            }
-            else {
-              d
-            }
-          }))
-        case _ =>
-          result.+=(key -> value)
-      }
+        value match {
+          case d: Document =>
+            result.+=(key -> asMap(d))
+          case ld: List[Any] =>
+            result.+=(
+              key -> ld.map(
+                d => {
+                  if (d.isInstanceOf[Document]) {
+                    asMap(d.asInstanceOf[Document])
+                  }
+                  else {
+                    d
+                  }
+                }
+              )
+            )
+          case _ =>
+            result.+=(key -> value)
+        }
     }
     result.toMap
   }
 
   def asMapList(documents: List[Document]): List[Map[String, Any]] = {
     val result = new mutable.ArrayBuffer[Map[String, Any]]()
-    documents.foreach(document => result.+=(asMap(document)))
+    documents.foreach(
+      document => result.+=(asMap(document))
+    )
     result.toList
   }
 

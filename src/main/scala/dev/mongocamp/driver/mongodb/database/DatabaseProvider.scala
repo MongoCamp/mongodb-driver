@@ -4,7 +4,6 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala._
 import org.mongodb.scala.gridfs.GridFSBucket
-
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -43,22 +42,35 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
 
   def databases: ListDatabasesObservable[Document] = client.listDatabases()
 
-  def databaseInfos: List[DatabaseInfo] = databases.resultList().map(doc => DatabaseInfo(doc)).sortBy(_.name)
+  def databaseInfos: List[DatabaseInfo] = databases
+    .resultList()
+    .map(
+      doc => DatabaseInfo(doc)
+    )
+    .sortBy(_.name)
 
-  def databaseNames: List[String] = databaseInfos.map(info => info.name)
+  def databaseNames: List[String] = databaseInfos.map(
+    info => info.name
+  )
 
   def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Unit] = database(databaseName).drop()
 
   def compactDatabase(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
-    collectionNames(databaseName).flatMap(collectionName => dao(collectionName).compact.result(maxWaitPerCollection))
+    collectionNames(databaseName).flatMap(
+      collectionName => dao(collectionName).compact.result(maxWaitPerCollection)
+    )
   }
 
   def compact(maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
-    databaseNames.flatMap(database =>
-      try collectionNames(database).flatMap(collectionName => dao(collectionName).compact.result(maxWaitPerCollection))
-      catch {
-        case e: MongoCommandException => List()
-      }
+    databaseNames.flatMap(
+      database =>
+        try
+          collectionNames(database).flatMap(
+            collectionName => dao(collectionName).compact.result(maxWaitPerCollection)
+          )
+        catch {
+          case e: MongoCommandException => List()
+        }
     )
   }
 
@@ -79,11 +91,18 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
   }
 
   def collectionInfos(databaseName: String = DefaultDatabaseName): List[CollectionInfo] = {
-    collections(databaseName).resultList().map(doc => CollectionInfo(doc)).sortBy(_.name)
+    collections(databaseName)
+      .resultList()
+      .map(
+        doc => CollectionInfo(doc)
+      )
+      .sortBy(_.name)
   }
 
   def collectionNames(databaseName: String = DefaultDatabaseName): List[String] = {
-    collectionInfos(databaseName).map(info => info.name)
+    collectionInfos(databaseName).map(
+      info => info.name
+    )
   }
 
   def runCommand(document: Document, databaseName: String = DefaultDatabaseName): SingleObservable[Document] = {
@@ -91,7 +110,9 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
   }
 
   def collectionStatus(collectionName: String, databaseName: String = DefaultDatabaseName): Observable[CollectionStatus] = {
-    runCommand(Map("collStats" -> collectionName), databaseName).map(document => CollectionStatus(document))
+    runCommand(Map("collStats" -> collectionName), databaseName).map(
+      document => CollectionStatus(document)
+    )
   }
 
   def collection(collectionName: String): MongoCollection[Document] =

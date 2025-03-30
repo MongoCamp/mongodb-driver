@@ -1,16 +1,17 @@
 package dev.mongocamp.driver.mongodb.pagination
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.MongoImplicits
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.model.Person
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import dev.mongocamp.driver.mongodb.Aggregate._
+import dev.mongocamp.driver.MongoImplicits
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{ filter, sort }
-import org.mongodb.scala.model.Filters.{ and, equal }
-
+import org.mongodb.scala.model.Aggregates.filter
+import org.mongodb.scala.model.Aggregates.sort
+import org.mongodb.scala.model.Filters.and
+import org.mongodb.scala.model.Filters.equal
 import scala.collection.mutable.ArrayBuffer
 
 class PaginationIterationSuite extends BasePersonSuite with MongoImplicits with LazyLogging {
@@ -25,12 +26,13 @@ class PaginationIterationSuite extends BasePersonSuite with MongoImplicits with 
     var i           = 0
     val personArray = new ArrayBuffer[Person]()
     // #region foreach-with-rows
-    paginationFemale.foreach(5) { person =>
-      {
-        logger.trace(person.toString)
-        personArray += person
-        i = i + 1
-      }
+    paginationFemale.foreach(5) {
+      person =>
+        {
+          logger.trace(person.toString)
+          personArray += person
+          i = i + 1
+        }
     }
     assertEquals(i, 98)
     // #endregion foreach-with-rows
@@ -51,11 +53,12 @@ class PaginationIterationSuite extends BasePersonSuite with MongoImplicits with 
 
     // #region foreach-default-rows
     var i = 0
-    pagination.foreach { element =>
-      {
-        logger.trace(element.toJson())
-        i = i + 1
-      }
+    pagination.foreach {
+      element =>
+        {
+          logger.trace(element.toJson())
+          i = i + 1
+        }
     }
     assertEquals(i, 98)
     // #endregion foreach-default-rows

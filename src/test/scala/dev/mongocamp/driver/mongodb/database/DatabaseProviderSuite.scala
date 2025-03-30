@@ -1,6 +1,7 @@
 package dev.mongocamp.driver.mongodb.database
 
-import better.files.{ File, Resource }
+import better.files.File
+import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
@@ -40,7 +41,7 @@ class DatabaseProviderSuite extends BasePersonSuite {
 
   test("must evaluate buildInfo") {
     val result: Document = provider.runCommand(Map("buildInfo" -> 1)).result()
-    val double : Double = result.getDouble("ok")
+    val double: Double   = result.getDouble("ok")
     assertEquals(double, 1.0)
   }
 

@@ -1,24 +1,23 @@
 package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
+import java.util.Date
 import org.mongodb.scala.bson.Document
 
-import java.util.Date
-
 case class CollectionStatus(
-    ns: String,
-    collectionType: String,
-    scaleFactor: Int,
-    size: Double,
-    count: Int,
-    storageSize: Double,
-    avgObjSize: Int,
-    nindexes: Int,
-    indexSizes: Map[String, Int],
-    totalIndexSize: Int,
-    ok: Int,
-    fetched: Date,
-    map: Map[String, Any]
+  ns: String,
+  collectionType: String,
+  scaleFactor: Int,
+  size: Double,
+  count: Int,
+  storageSize: Double,
+  avgObjSize: Int,
+  nindexes: Int,
+  indexSizes: Map[String, Int],
+  totalIndexSize: Int,
+  ok: Int,
+  fetched: Date,
+  map: Map[String, Any]
 )
 
 object CollectionStatus {

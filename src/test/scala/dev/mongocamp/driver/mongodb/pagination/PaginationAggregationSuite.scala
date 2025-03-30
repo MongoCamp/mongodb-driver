@@ -1,12 +1,15 @@
 package dev.mongocamp.driver.mongodb.pagination
 
-import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import dev.mongocamp.driver.mongodb.Aggregate._
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{ filter, group, sort }
-import org.mongodb.scala.model.Filters.{ and, equal }
+import org.mongodb.scala.model.Aggregates.filter
+import org.mongodb.scala.model.Aggregates.group
+import org.mongodb.scala.model.Aggregates.sort
+import org.mongodb.scala.model.Filters.and
+import org.mongodb.scala.model.Filters.equal
 
 class PaginationAggregationSuite extends BasePersonSuite {
 
@@ -52,9 +55,13 @@ class PaginationAggregationSuite extends BasePersonSuite {
     assertEquals(page.databaseObjects.size, 10)
 
     // #agg_convert
-    val list: List[Map[String, Any]] = page.databaseObjects.map(d => BsonConverter.asMap(d))
+    val list: List[Map[String, Any]] = page.databaseObjects.map(
+      d => BsonConverter.asMap(d)
+    )
     // #agg_convert
-    list.foreach(m => println(m("age").toString + " -> " + m("balance")))
+    list.foreach(
+      m => println(m("age").toString + " -> " + m("balance"))
+    )
 
     assertEquals(list.head("age"), 20)
     assertEquals(list.head("balance"), 8333.0)

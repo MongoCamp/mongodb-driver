@@ -10,7 +10,9 @@ abstract class AbstractConverterPlugin {
   }
 
   def hasCustomClass(v: Any): Boolean = {
-    customClassList.exists(c => c.isAssignableFrom(v.getClass))
+    customClassList.exists(
+      c => c.isAssignableFrom(v.getClass)
+    )
   }
 
   def objectToBson(value: AnyRef): BsonValue = {

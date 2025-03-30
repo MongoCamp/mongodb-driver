@@ -1,11 +1,11 @@
 package dev.mongocamp.driver.mongodb.operation
 
 import com.typesafe.scalalogging.LazyLogging
-import org.mongodb.scala._
-
 import java.util.concurrent.TimeUnit
+import org.mongodb.scala._
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.Await
+import scala.concurrent.Future
 
 object ObservableIncludes extends ObservableIncludes
 

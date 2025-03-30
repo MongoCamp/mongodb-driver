@@ -3,9 +3,8 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import org.mongodb.scala.Document
-
 import java.util.TimeZone
+import org.mongodb.scala.Document
 
 class LuceneSearchSuite extends BasePersonSuite {
   lazy val sortByBalance: Map[String, Int] = Map("balance" -> -1)
@@ -138,24 +137,30 @@ class LuceneSearchSuite extends BasePersonSuite {
 
   test("negate query with values in braces") {
     val luceneQuery = LuceneQueryConverter.parse("NOT fieldName:('value1' OR 'value2' OR 'value2')", "ube")
-    val document      = LuceneQueryConverter.toDocument(luceneQuery)
-    assertEquals("{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}", document.asInstanceOf[Document].toJson())
+    val document    = LuceneQueryConverter.toDocument(luceneQuery)
+    assertEquals(
+      "{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}",
+      document.asInstanceOf[Document].toJson()
+    )
     val luceneQuery2 = LuceneQueryConverter.parse("NOT fieldName:('value1' AND 'value2' AND 'value2')", "ube")
-    val document2      = LuceneQueryConverter.toDocument(luceneQuery2)
-    assertEquals("{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}", document2.asInstanceOf[Document].toJson())
+    val document2    = LuceneQueryConverter.toDocument(luceneQuery2)
+    assertEquals(
+      "{\"$and\": [{\"$nor\": [{\"fieldName\": {\"$eq\": \"value1\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}, {\"fieldName\": {\"$eq\": \"value2\"}}]}]}",
+      document2.asInstanceOf[Document].toJson()
+    )
   }
 
   test("search for values with or") {
     val luceneQueryNegateWithAnd = LuceneQueryConverter.parse("-name:\"Latasha Mcmillan\" AND -name:\"Diaz Jacobs\"", "ube")
-    val searchNegateWithAnd = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithAnd), sortByBalance).resultList()
+    val searchNegateWithAnd      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithAnd), sortByBalance).resultList()
     assertEquals(searchNegateWithAnd.size, 198)
 
     val luceneQueryNegateWithOr = LuceneQueryConverter.parse("-name:(\"Latasha Mcmillan\" OR \"Diaz Jacobs\")", "ube")
-    val searchNegateWithOr = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithOr), sortByBalance).resultList()
+    val searchNegateWithOr      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryNegateWithOr), sortByBalance).resultList()
     assertEquals(searchNegateWithOr.size, 198)
 
     val luceneQueryWithOr = LuceneQueryConverter.parse("name:(\"Latasha Mcmillan\" OR \"Diaz Jacobs\")", "ube")
-    val searchWithOr = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryWithOr), sortByBalance).resultList()
+    val searchWithOr      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQueryWithOr), sortByBalance).resultList()
     assertEquals(searchWithOr.size, 2)
   }
 

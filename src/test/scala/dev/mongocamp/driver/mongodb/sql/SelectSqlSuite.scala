@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.sql
 
-import dev.mongocamp.driver.mongodb.GenericObservable
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase
+import dev.mongocamp.driver.mongodb.GenericObservable
 import org.mongodb.scala.bson.BsonDocument
 
 class SelectSqlSuite extends BasePersonSuite {

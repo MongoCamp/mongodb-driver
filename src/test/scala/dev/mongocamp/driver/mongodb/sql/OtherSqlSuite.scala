@@ -3,13 +3,13 @@ package dev.mongocamp.driver.mongodb.sql
 import com.mongodb.client.model.IndexOptions
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
-import dev.mongocamp.driver.mongodb.model.{ Grade, Score }
+import dev.mongocamp.driver.mongodb.model.Grade
+import dev.mongocamp.driver.mongodb.model.Score
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
+import java.sql.SQLException
 import org.bson.types.ObjectId
 import org.mongodb.scala.model.Sorts.ascending
-
-import java.sql.SQLException
 
 class OtherSqlSuite extends BasePersonSuite {
 
@@ -107,7 +107,9 @@ class OtherSqlSuite extends BasePersonSuite {
     val queryConverter = MongoSqlQueryHolder("show tables;")
     val selectResponse = queryConverter.run(TestDatabase.provider).resultList()
     assertEquals(selectResponse.nonEmpty, true)
-    val filteredDocuments = selectResponse.filter(d => d.getStringValue("name").equalsIgnoreCase("people"))
+    val filteredDocuments = selectResponse.filter(
+      d => d.getStringValue("name").equalsIgnoreCase("people")
+    )
     assertEquals(filteredDocuments.head.getStringValue("name"), "people")
   }
 

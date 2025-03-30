@@ -4,17 +4,16 @@ import com.mongodb.client.model.Facet
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
 import dev.mongocamp.driver.mongodb.json._
-import org.mongodb.scala.bson.Document
 import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.bson.Document
 import org.mongodb.scala.model.Aggregates
-
 import scala.jdk.CollectionConverters._
 
 case class MongoPaginatedAggregation[A <: Any](
-    dao: MongoDAO[A],
-    aggregationPipeline: List[Bson] = List(),
-    allowDiskUse: Boolean = false,
-    maxWait: Int = DefaultMaxWait
+  dao: MongoDAO[A],
+  aggregationPipeline: List[Bson] = List(),
+  allowDiskUse: Boolean = false,
+  maxWait: Int = DefaultMaxWait
 ) extends MongoPagination[Document] {
 
   private val AggregationKeyMetaData      = "metadata"
@@ -47,11 +46,21 @@ case class MongoPaginatedAggregation[A <: Any](
       .asArray()
       .asScala
       .headOption
-      .map(v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue())
+      .map(
+        v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
+      )
       .getOrElse(0)
 
     val allPages = Math.ceil(count.toDouble / rows).toInt
-    val list     = dbResponse.get("data").get.asArray().asScala.map(_.asDocument()).map(bdoc => Document(bdoc))
+    val list = dbResponse
+      .get("data")
+      .get
+      .asArray()
+      .asScala
+      .map(_.asDocument())
+      .map(
+        bdoc => Document(bdoc)
+      )
     PaginationResult(list.toList, PaginationInfo(count, rows, page, allPages))
   }
 
@@ -69,7 +78,9 @@ case class MongoPaginatedAggregation[A <: Any](
       .asArray()
       .asScala
       .headOption
-      .map(v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue())
+      .map(
+        v => v.asDocument().get(AggregationKeyMetaDataTotal).asNumber().longValue()
+      )
       .getOrElse(0)
 
     count

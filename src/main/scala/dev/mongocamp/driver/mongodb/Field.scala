@@ -26,29 +26,54 @@ trait Field {
   def groupField(fieldName: String): BsonValue = groupFields(List(fieldName))
 
   def firstFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => firstField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => firstField(fieldname)
+      )
+      .toSet
 
   def minFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => minField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => minField(fieldname)
+      )
+      .toSet
 
   def maxFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => maxField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => maxField(fieldname)
+      )
+      .toSet
 
   def lastFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => lastField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => lastField(fieldname)
+      )
+      .toSet
 
   def sumFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => sumField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => sumField(fieldname)
+      )
+      .toSet
 
   def avgFields(fieldnames: Iterable[String]): Set[BsonField] =
-    fieldnames.map(fieldname => avgField(fieldname)).toSet
+    fieldnames
+      .map(
+        fieldname => avgField(fieldname)
+      )
+      .toSet
 
   def groupFields(fieldnames: Iterable[String]): BsonValue = {
-    val list = fieldnames.map { name =>
-      if (name.startsWith("$"))
-        name
-      else
-        "$" + name
+    val list = fieldnames.map {
+      name =>
+        if (name.startsWith("$"))
+          name
+        else
+          "$" + name
     }.toList
     BsonConverter.toBson(Map(ObjectIdKey -> list))
   }

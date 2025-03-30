@@ -4,11 +4,11 @@ import dev.mongocamp.driver.mongodb.database.ConfigHelper
 import dev.mongocamp.driver.mongodb.server.ServerBackend.ServerBackend
 
 case class ServerConfig(
-    serverName: String = ServerConfig.DefaultServerName,
-    host: String = ServerConfig.DefaultHost,
-    port: Int = ServerConfig.DefaultPort,
-    backend: ServerBackend = ServerBackend.Memory,
-    h2BackendConfig: Option[H2BackendConfig] = None
+  serverName: String = ServerConfig.DefaultServerName,
+  host: String = ServerConfig.DefaultHost,
+  port: Int = ServerConfig.DefaultPort,
+  backend: ServerBackend = ServerBackend.Memory,
+  h2BackendConfig: Option[H2BackendConfig] = None
 )
 
 object ServerConfig extends ConfigHelper {

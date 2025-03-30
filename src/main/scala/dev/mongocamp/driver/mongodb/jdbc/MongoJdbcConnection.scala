@@ -4,26 +4,24 @@ import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
 import dev.mongocamp.driver.mongodb.json.JsonConverter
-import org.mongodb.scala.bson.collection.immutable.Document
-
-import java.sql.{
-  Blob,
-  CallableStatement,
-  Clob,
-  Connection,
-  DatabaseMetaData,
-  NClob,
-  PreparedStatement,
-  SQLException,
-  SQLWarning,
-  SQLXML,
-  Savepoint,
-  Statement,
-  Struct
-}
-import java.util.Properties
+import java.sql
+import java.sql.Blob
+import java.sql.CallableStatement
+import java.sql.Clob
+import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.NClob
+import java.sql.PreparedStatement
+import java.sql.SQLException
+import java.sql.SQLWarning
+import java.sql.SQLXML
+import java.sql.Savepoint
+import java.sql.Statement
+import java.sql.Struct
+import java.util
 import java.util.concurrent.Executor
-import java.{ sql, util }
+import java.util.Properties
+import org.mongodb.scala.bson.collection.immutable.Document
 import scala.jdk.CollectionConverters._
 
 class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection with MongoJdbcCloseable {
@@ -218,7 +216,9 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
   }
 
   override def setClientInfo(properties: Properties): Unit = {
-    properties.asScala.foreach(entry => setClientInfo(entry._1, entry._2))
+    properties.asScala.foreach(
+      entry => setClientInfo(entry._1, entry._2)
+    )
   }
 
   override def getClientInfo(name: String): String = {
@@ -235,7 +235,11 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
     val properties = new Properties()
     properties.setProperty("ApplicationName", databaseProvider.config.applicationName)
     val document = Document(new JsonConverter().toJson(databaseProvider.config))
-    BsonConverter.asMap(document).foreach(entry => properties.setProperty(entry._1, entry._2.toString))
+    BsonConverter
+      .asMap(document)
+      .foreach(
+        entry => properties.setProperty(entry._1, entry._2.toString)
+      )
     properties
   }
 

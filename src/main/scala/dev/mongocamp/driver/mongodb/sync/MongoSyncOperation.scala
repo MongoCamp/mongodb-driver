@@ -2,20 +2,21 @@ package dev.mongocamp.driver.mongodb.sync
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.database.{ ConfigHelper, DatabaseProvider }
+import dev.mongocamp.driver.mongodb.database.ConfigHelper
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.sync.SyncDirection.SyncDirection
 import dev.mongocamp.driver.mongodb.sync.SyncStrategy.SyncStrategy
-import org.mongodb.scala.bson.ObjectId
-import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.{ documentToUntypedDocument, Document }
-
 import java.util.Date
+import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.documentToUntypedDocument
+import org.mongodb.scala.model.Updates._
+import org.mongodb.scala.Document
 
 case class MongoSyncOperation(
-    collectionName: String,
-    syncDirection: SyncDirection = SyncDirection.SourceToTarget,
-    syncStrategy: SyncStrategy = SyncStrategy.SyncAll,
-    idColumnName: String = DatabaseProvider.ObjectIdKey
+  collectionName: String,
+  syncDirection: SyncDirection = SyncDirection.SourceToTarget,
+  syncStrategy: SyncStrategy = SyncStrategy.SyncAll,
+  idColumnName: String = DatabaseProvider.ObjectIdKey
 ) extends LazyLogging
     with Filter {
 
@@ -49,36 +50,29 @@ case class MongoSyncOperation(
     }
 
   private def syncInternal(
-      left: DatabaseProvider,
-      right: DatabaseProvider,
-      countBefore: Int,
-      documentsToSync: Seq[Document],
-      maxWait: Int = DefaultMaxWait
+    left: DatabaseProvider,
+    right: DatabaseProvider,
+    countBefore: Int,
+    documentsToSync: Seq[Document],
+    maxWait: Int = DefaultMaxWait
   ): MongoSyncResult = {
     val start                   = System.currentTimeMillis()
     val syncDate                = new Date()
     var filteredDocumentsToSync = Seq[Document]()
     if (documentsToSync.nonEmpty) {
-      val idSet: Set[ObjectId] = documentsToSync.map(doc => doc.getObjectId(idColumnName)).toSet
+      val idSet: Set[ObjectId] = documentsToSync
+        .map(
+          doc => doc.getObjectId(idColumnName)
+        )
+        .toSet
       filteredDocumentsToSync = left.dao(collectionName).find(valueFilter(idColumnName, idSet)).results(maxWait)
       right.dao(collectionName).bulkWriteMany(filteredDocumentsToSync).result(maxWait)
-      val update = combine(
-        set(MongoSyncOperation.SyncColumnLastSync, syncDate),
-        set(MongoSyncOperation.SyncColumnLastUpdate, syncDate)
-      )
+      val update = combine(set(MongoSyncOperation.SyncColumnLastSync, syncDate), set(MongoSyncOperation.SyncColumnLastUpdate, syncDate))
       left.dao(collectionName).updateMany(Map(), update).result(maxWait)
       right.dao(collectionName).updateMany(Map(), update).result(maxWait)
     }
     val countAfter: Int = right.dao(collectionName).count().result(maxWait).toInt
-    MongoSyncResult(
-      collectionName,
-      syncDate,
-      acknowleged = true,
-      filteredDocumentsToSync.size,
-      countBefore,
-      countAfter,
-      (System.currentTimeMillis() - start)
-    )
+    MongoSyncResult(collectionName, syncDate, acknowleged = true, filteredDocumentsToSync.size, countBefore, countAfter, (System.currentTimeMillis() - start))
   }
 }
 

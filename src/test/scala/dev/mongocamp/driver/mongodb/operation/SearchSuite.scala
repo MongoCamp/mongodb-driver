@@ -1,10 +1,10 @@
 package dev.mongocamp.driver.mongodb.operation
-import dev.mongocamp.driver.MongoImplicits
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.Sort._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.model.Person
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import dev.mongocamp.driver.mongodb.Sort._
+import dev.mongocamp.driver.MongoImplicits
 
 class SearchSuite extends BasePersonSuite with MongoImplicits {
 

@@ -3,17 +3,36 @@ package dev.mongocamp.driver.mongodb.jdbc.resultSet
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
-import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.bson.{ BsonDouble, BsonInt32, BsonInt64, BsonObjectId, BsonString }
-import org.mongodb.scala.documentToUntypedDocument
-
-import java.io.{ InputStream, Reader }
-import java.net.{ URI, URL }
+import java.io.InputStream
+import java.io.Reader
+import java.net.URI
+import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.sql.{ Blob, Clob, Date, NClob, Ref, ResultSet, ResultSetMetaData, RowId, SQLException, SQLWarning, SQLXML, Statement, Time, Timestamp }
+import java.sql
+import java.sql.Blob
+import java.sql.Clob
+import java.sql.Date
+import java.sql.NClob
+import java.sql.Ref
+import java.sql.ResultSet
+import java.sql.ResultSetMetaData
+import java.sql.RowId
+import java.sql.SQLException
+import java.sql.SQLWarning
+import java.sql.SQLXML
+import java.sql.Statement
+import java.sql.Time
+import java.sql.Timestamp
+import java.util
 import java.util.Calendar
-import java.{ sql, util }
 import javax.sql.rowset.serial.SerialBlob
+import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.BsonDouble
+import org.mongodb.scala.bson.BsonInt32
+import org.mongodb.scala.bson.BsonInt64
+import org.mongodb.scala.bson.BsonObjectId
+import org.mongodb.scala.bson.BsonString
+import org.mongodb.scala.documentToUntypedDocument
 import scala.util.Try
 
 class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], queryTimeOut: Int, keySet: List[String] = List.empty)
@@ -91,7 +110,12 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       case b: BsonInt32  => b.doubleValue()
       case b: BsonInt64  => b.doubleValue()
       case b: BsonDouble => b.doubleValue()
-      case _             => Option(value).flatMap(v => Try(v.toString.toDouble).toOption).getOrElse(0)
+      case _ =>
+        Option(value)
+          .flatMap(
+            v => Try(v.toString.toDouble).toOption
+          )
+          .getOrElse(0)
     }
   }
 
@@ -102,7 +126,14 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getBytes(columnIndex: Int): Array[Byte] = {
     checkClosed()
-    getString(columnIndex).replace("[", "").replace("]", "").split(",").filterNot(s => s.trim.isEmpty).map(_.trim.toByte)
+    getString(columnIndex)
+      .replace("[", "")
+      .replace("]", "")
+      .split(",")
+      .filterNot(
+        s => s.trim.isEmpty
+      )
+      .map(_.trim.toByte)
   }
 
   override def getDate(columnIndex: Int): Date = {
@@ -188,7 +219,12 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       case b: BsonInt32  => b.doubleValue()
       case b: BsonInt64  => b.doubleValue()
       case b: BsonDouble => b.doubleValue()
-      case _             => Option(value).flatMap(v => Try(v.toString.toDouble).toOption).getOrElse(0)
+      case _ =>
+        Option(value)
+          .flatMap(
+            v => Try(v.toString.toDouble).toOption
+          )
+          .getOrElse(0)
     }
   }
 
@@ -199,7 +235,14 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def getBytes(columnLabel: String): Array[Byte] = {
     checkClosed()
-    getString(columnLabel).replace("[", "").replace("]", "").split(",").filterNot(s => s.trim.isEmpty).map(_.trim.toByte)
+    getString(columnLabel)
+      .replace("[", "")
+      .replace("]", "")
+      .split(",")
+      .filterNot(
+        s => s.trim.isEmpty
+      )
+      .map(_.trim.toByte)
   }
 
   override def getDate(columnLabel: String): Date = {

@@ -1,10 +1,14 @@
 package dev.mongocamp.driver.mongodb.jdbc.resultSet
 
 import dev.mongocamp.driver.mongodb._
+import java.sql.ResultSetMetaData
+import java.sql.SQLException
+import org.mongodb.scala.bson.BsonBoolean
+import org.mongodb.scala.bson.BsonInt32
+import org.mongodb.scala.bson.BsonInt64
+import org.mongodb.scala.bson.BsonNumber
+import org.mongodb.scala.bson.BsonString
 import org.mongodb.scala.Document
-import org.mongodb.scala.bson.{ BsonBoolean, BsonInt32, BsonInt64, BsonNumber, BsonString }
-
-import java.sql.{ ResultSetMetaData, SQLException }
 
 class MongoDbResultSetMetaData extends ResultSetMetaData {
   private var document: Document                = _
@@ -43,11 +47,15 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
     var row          = data.headOption.getOrElse(throw new SQLException("No data in ResultSet")).copy()
     val distinctKeys = data.flatMap(_.keys).distinct
     val missingKeys  = distinctKeys.diff(row.keys.toSeq)
-    missingKeys.foreach(key => {
-      data
-        .find(_.get(key).nonEmpty)
-        .map(doc => row = row.updated(key, doc.get(key).get))
-    })
+    missingKeys.foreach(
+      key => {
+        data
+          .find(_.get(key).nonEmpty)
+          .map(
+            doc => row = row.updated(key, doc.get(key).get)
+          )
+      }
+    )
     row
   }
 
@@ -55,16 +63,18 @@ class MongoDbResultSetMetaData extends ResultSetMetaData {
 
   override def getColumnLabel(column: Int): String = {
     val keys: Iterable[String] = if (keySet.nonEmpty) {
-      keySet.map(s => {
-        var key = s
-        if (key.startsWith("(")) {
-          key = key.substring(1, key.length - 1)
+      keySet.map(
+        s => {
+          var key = s
+          if (key.startsWith("(")) {
+            key = key.substring(1, key.length - 1)
+          }
+          if (key.endsWith("(")) {
+            key = key.substring(0, key.length - 1)
+          }
+          key
         }
-        if (key.endsWith("(")) {
-          key = key.substring(0, key.length - 1)
-        }
-        key
-      })
+      )
     }
     else {
       document.keys

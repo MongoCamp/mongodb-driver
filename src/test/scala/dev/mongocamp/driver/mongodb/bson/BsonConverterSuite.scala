@@ -2,9 +2,9 @@ package dev.mongocamp.driver.mongodb.bson
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
+import org.mongodb.scala.bson._
 import org.mongodb.scala.bson.collection.mutable
-import org.mongodb.scala.bson.{ ObjectId, _ }
-
+import org.mongodb.scala.bson.ObjectId
 import scala.collection.mutable.ArrayBuffer
 
 class BsonConverterSuite extends munit.FunSuite {

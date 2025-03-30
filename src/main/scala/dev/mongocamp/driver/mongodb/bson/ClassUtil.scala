@@ -17,21 +17,23 @@ object ClassUtil {
 
       val fieldMap = new mutable.HashMap[String, Field]()
 
-      fields.foreach { field =>
-        val name = field.getName
-        val real = clazz.getDeclaredField(name)
-        fieldMap.+=(name -> real)
-        real.setAccessible(true)
-        val value = real.get(v)
-        result.+=(name -> value)
+      fields.foreach {
+        field =>
+          val name = field.getName
+          val real = clazz.getDeclaredField(name)
+          fieldMap.+=(name -> real)
+          real.setAccessible(true)
+          val value = real.get(v)
+          result.+=(name -> value)
       }
 
     }
     else {
       val fields = classRegistry(clazz)
-      fields.keys.foreach { name =>
-        val value = fields(name).get(v)
-        result.+=(name -> value)
+      fields.keys.foreach {
+        name =>
+          val value = fields(name).get(v)
+          result.+=(name -> value)
       }
     }
 

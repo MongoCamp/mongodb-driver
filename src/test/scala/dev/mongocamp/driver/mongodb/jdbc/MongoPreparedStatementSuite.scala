@@ -1,10 +1,12 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
-
-import java.io.{InputStream, Reader}
+import java.io.InputStream
+import java.io.Reader
 import java.net.URL
-import java.sql.{Date, Time, Timestamp}
+import java.sql.Date
+import java.sql.Time
+import java.sql.Timestamp
 import java.util.Calendar
 
 class MongoPreparedStatementSuite extends BaseJdbcSuite {

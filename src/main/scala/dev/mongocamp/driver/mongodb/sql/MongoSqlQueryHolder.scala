@@ -6,12 +6,21 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparator
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
+import java.sql.SQLException
+import java.util.concurrent.TimeUnit
+import java.util.Date
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat
-import net.sf.jsqlparser.expression.operators.conditional.{ AndExpression, OrExpression }
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression
 import net.sf.jsqlparser.expression.operators.relational._
-import net.sf.jsqlparser.expression.{ ArrayConstructor, Expression, NotExpression, SignedExpression }
-import net.sf.jsqlparser.parser.{ CCJSqlParser, StreamProvider }
-import net.sf.jsqlparser.schema.{ Column, Table }
+import net.sf.jsqlparser.expression.ArrayConstructor
+import net.sf.jsqlparser.expression.Expression
+import net.sf.jsqlparser.expression.NotExpression
+import net.sf.jsqlparser.expression.SignedExpression
+import net.sf.jsqlparser.parser.CCJSqlParser
+import net.sf.jsqlparser.parser.StreamProvider
+import net.sf.jsqlparser.schema.Column
+import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.alter.Alter
 import net.sf.jsqlparser.statement.create.index.CreateIndex
 import net.sf.jsqlparser.statement.create.table.CreateTable
@@ -19,19 +28,21 @@ import net.sf.jsqlparser.statement.delete.Delete
 import net.sf.jsqlparser.statement.drop.Drop
 import net.sf.jsqlparser.statement.execute.Execute
 import net.sf.jsqlparser.statement.insert.Insert
-import net.sf.jsqlparser.statement.select.{ FromItem, PlainSelect, Select, SelectItem }
+import net.sf.jsqlparser.statement.select.FromItem
+import net.sf.jsqlparser.statement.select.PlainSelect
+import net.sf.jsqlparser.statement.select.Select
+import net.sf.jsqlparser.statement.select.SelectItem
 import net.sf.jsqlparser.statement.show.ShowTablesStatement
 import net.sf.jsqlparser.statement.truncate.Truncate
 import net.sf.jsqlparser.statement.update.Update
-import net.sf.jsqlparser.statement.{ ShowStatement, Statement }
+import net.sf.jsqlparser.statement.ShowStatement
+import net.sf.jsqlparser.statement.Statement
 import org.bson.conversions.Bson
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.model.Sorts.ascending
-import org.mongodb.scala.{ Document, Observable, SingleObservable }
-
-import java.sql.SQLException
-import java.util.Date
-import java.util.concurrent.TimeUnit
+import org.mongodb.scala.Document
+import org.mongodb.scala.Observable
+import org.mongodb.scala.SingleObservable
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
@@ -138,11 +149,17 @@ class MongoSqlQueryHolder {
         provider
           .dao(getCollection)
           .insertMany(documentsToInsert.toList)
-          .map(e => {
-            val map      = e.getInsertedIds.asScala.map(d => d._1.toString -> d._2).toMap
-            val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map), "insertedCount" -> map.size)
-            document
-          })
+          .map(
+            e => {
+              val map = e.getInsertedIds.asScala
+                .map(
+                  d => d._1.toString -> d._2
+                )
+                .toMap
+              val document = org.mongodb.scala.Document("wasAcknowledged" -> e.wasAcknowledged(), "insertedIds" -> Document(map), "insertedCount" -> map.size)
+              document
+            }
+          )
 
       case SQLCommandType.Select =>
         val originalObservable = provider.dao(getCollection).findAggregated(aggregatePipeline.toList, allowDiskUsage)
@@ -153,22 +170,26 @@ class MongoSqlQueryHolder {
         provider
           .dao(getCollection)
           .updateMany(getUpdateOrDeleteFilter, Map("$set" -> updateSet))
-          .map(e =>
-            org.mongodb.scala.Document(
-              "modifiedCount"   -> e.getModifiedCount,
-              "matchedCount"    -> e.getMatchedCount,
-              "wasAcknowledged" -> e.wasAcknowledged()
-            )
+          .map(
+            e =>
+              org.mongodb.scala.Document("modifiedCount" -> e.getModifiedCount, "matchedCount" -> e.getMatchedCount, "wasAcknowledged" -> e.wasAcknowledged())
           )
 
       case SQLCommandType.Delete =>
         provider
           .dao(getCollection)
           .deleteMany(getUpdateOrDeleteFilter)
-          .map(e => org.mongodb.scala.Document("deletedCount" -> e.getDeletedCount, "wasAcknowledged" -> e.wasAcknowledged()))
+          .map(
+            e => org.mongodb.scala.Document("deletedCount" -> e.getDeletedCount, "wasAcknowledged" -> e.wasAcknowledged())
+          )
 
       case SQLCommandType.CreateIndex =>
-        provider.dao(getCollection).createIndex(setElement.get, indexOptions.get).map(e => org.mongodb.scala.Document("indexName" -> e))
+        provider
+          .dao(getCollection)
+          .createIndex(setElement.get, indexOptions.get)
+          .map(
+            e => org.mongodb.scala.Document("indexName" -> e)
+          )
 
       case SQLCommandType.DropIndex =>
         val collectionName = sqlTable.getSchemaName
@@ -176,7 +197,9 @@ class MongoSqlQueryHolder {
         provider
           .dao(collectionName)
           .dropIndexForName(indexName, new DropIndexOptions().maxTime(1, TimeUnit.MINUTES))
-          .map(_ => org.mongodb.scala.Document("indexName" -> indexName))
+          .map(
+            _ => org.mongodb.scala.Document("indexName" -> indexName)
+          )
 
       case SQLCommandType.ShowTables =>
         provider.collections()
@@ -185,10 +208,20 @@ class MongoSqlQueryHolder {
         provider.databases
 
       case SQLCommandType.DropTable =>
-        provider.dao(getCollection).drop().map(_ => org.mongodb.scala.Document("wasAcknowledged" -> true))
+        provider
+          .dao(getCollection)
+          .drop()
+          .map(
+            _ => org.mongodb.scala.Document("wasAcknowledged" -> true)
+          )
 
       case SQLCommandType.CreateTable =>
-        provider.dao(getCollection).createIndex(Map("_id" -> 1)).map(_ => org.mongodb.scala.Document("created" -> true))
+        provider
+          .dao(getCollection)
+          .createIndex(Map("_id" -> 1))
+          .map(
+            _ => org.mongodb.scala.Document("created" -> true)
+          )
 
       case SQLCommandType.AlterTable =>
         SingleObservable(org.mongodb.scala.Document("changed" -> "true"))
@@ -196,14 +229,16 @@ class MongoSqlQueryHolder {
       case SQLCommandType.Execute =>
         SingleObservable(
           callFunction
-            .map(function => {
-              if (function.equalsIgnoreCase("current_schema")) {
-                org.mongodb.scala.Document("currentSchema" -> provider.DefaultDatabaseName)
+            .map(
+              function => {
+                if (function.equalsIgnoreCase("current_schema")) {
+                  org.mongodb.scala.Document("currentSchema" -> provider.DefaultDatabaseName)
+                }
+                else {
+                  throw new SqlCommandNotSupportedException("not supported function")
+                }
               }
-              else {
-                throw new SqlCommandNotSupportedException("not supported function")
-              }
-            })
+            )
             .getOrElse(Document())
         )
       case _ =>
@@ -296,7 +331,9 @@ class MongoSqlQueryHolder {
         case e: NotExpression =>
           val right = mutable.Map[String, Any]()
           parseWhere(e.getExpression, right, statementToIgnore)
-          right.keys.foreach(k => queryMap.put(k, Map("$not" -> right(k))))
+          right.keys.foreach(
+            k => queryMap.put(k, Map("$not" -> right(k)))
+          )
         case e: AndExpression =>
           val left  = mutable.Map[String, Any]()
           val right = mutable.Map[String, Any]()
@@ -304,7 +341,9 @@ class MongoSqlQueryHolder {
           parseWhere(e.getRightExpression, right, statementToIgnore)
           queryMap.put("$and", List(left, right))
         case e: ParenthesedExpressionList[Expression] =>
-          e.asScala.foreach(ex => parseWhere(ex, queryMap, statementToIgnore))
+          e.asScala.foreach(
+            ex => parseWhere(ex, queryMap, statementToIgnore)
+          )
         case e: InExpression =>
           val value = e.getRightExpression match {
             case l: ParenthesedExpressionList[Expression] => l.asScala.map(convertValue)
@@ -339,189 +378,237 @@ class MongoSqlQueryHolder {
         val selectItems   = Option(plainSelect.getSelectItems).map(_.asScala).getOrElse(List.empty)
         val maybeDistinct = Option(plainSelect.getDistinct)
 
-        selectItems.foreach(sI => {
-          if (classOf[net.sf.jsqlparser.expression.Function].isAssignableFrom(sI.getExpression.getClass)) {
-            keepOneDocument = maybeDistinct.isEmpty
+        selectItems.foreach(
+          sI => {
+            if (classOf[net.sf.jsqlparser.expression.Function].isAssignableFrom(sI.getExpression.getClass)) {
+              keepOneDocument = maybeDistinct.isEmpty
+            }
+            sI match {
+              case se: SelectItem[Expression] =>
+                val expressionName = se.getExpression.toString
+                val keyFromSelect  = Option(se.getAlias).map(_.getName).getOrElse(expressionName)
+                if (keyFromSelect != "*") {
+                  keysFromSelect += keyFromSelect
+                }
+            }
           }
-          sI match {
-            case se: SelectItem[Expression] =>
-              val expressionName = se.getExpression.toString
-              val keyFromSelect  = Option(se.getAlias).map(_.getName).getOrElse(expressionName)
-              if (keyFromSelect != "*") {
-                keysFromSelect += keyFromSelect
-              }
-          }
-        })
+        )
         val aliasList = ArrayBuffer[String]()
         sqlCommandType = SQLCommandType.Select
         def convertFromItemToTable(fromItem: FromItem): Table = {
-          val tableName = Option(fromItem.getAlias).map(a => fromItem.toString.replace(a.toString, "")).getOrElse(fromItem).toString
+          val tableName = Option(fromItem.getAlias)
+            .map(
+              a => fromItem.toString.replace(a.toString, "")
+            )
+            .getOrElse(fromItem)
+            .toString
           new Table(tableName)
         }
         sqlTable = convertFromItemToTable(plainSelect.getFromItem)
-        alias = Option(plainSelect.getFromItem.getAlias).map(alias => {
-          val aliasName = alias.getName
-          aliasList += aliasName
-          aggregatePipeline += Map(
-            "$project" -> Map(
-              "_id"     -> 0,
-              aliasName -> "$$ROOT"
-            )
-          )
-          aliasName
-        })
+        alias = Option(plainSelect.getFromItem.getAlias).map(
+          alias => {
+            val aliasName = alias.getName
+            aliasList += aliasName
+            aggregatePipeline += Map("$project" -> Map("_id" -> 0, aliasName -> "$$ROOT"))
+            aliasName
+          }
+        )
         var matchedJoinStatement: List[Expression] = List.empty
         Option(plainSelect.getJoins)
           .map(_.asScala)
           .getOrElse(List.empty)
-          .foreach(join => {
-            var lookupMap = Map[String, Any]()
-            join.getRightItem.getAlias match {
-              case null =>
-                lookupMap += "from" -> join.getRightItem.toString
-                lookupMap += "as"   -> join.getRightItem.toString
-              case _ =>
-                lookupMap += "from" -> join.getRightItem.toString.replace(join.getRightItem.getAlias.toString, "")
-                lookupMap += "as"   -> join.getRightItem.getAlias.getName
-            }
-            val joinCollectionPrefix = s"${lookupMap("as")}."
+          .foreach(
+            join => {
+              var lookupMap = Map[String, Any]()
+              join.getRightItem.getAlias match {
+                case null =>
+                  lookupMap += "from" -> join.getRightItem.toString
+                  lookupMap += "as"   -> join.getRightItem.toString
+                case _ =>
+                  lookupMap += "from" -> join.getRightItem.toString.replace(join.getRightItem.getAlias.toString, "")
+                  lookupMap += "as"   -> join.getRightItem.getAlias.getName
+              }
+              val joinCollectionPrefix = s"${lookupMap("as")}."
 
-            if (join.getOnExpressions != null && !join.getOnExpressions.isEmpty) {
-              join.getOnExpressions.asScala.foreach(e => {
-                val equalsTo = e.asInstanceOf[EqualsTo]
-                aliasList += lookupMap("as").toString
-                val primaryCollectionPrefix = s"${alias.getOrElse(sqlTable)}."
-                val expressionList = List(equalsTo.getLeftExpression.toString, equalsTo.getRightExpression.toString)
-                  .filter(e => e.contains(joinCollectionPrefix) || e.contains(primaryCollectionPrefix))
-                if (expressionList.size == 2) {
-                  expressionList.foreach { exp =>
-                    if (exp.contains(primaryCollectionPrefix)) {
-                      lookupMap += "localField" -> exp
+              if (join.getOnExpressions != null && !join.getOnExpressions.isEmpty) {
+                join.getOnExpressions.asScala.foreach(
+                  e => {
+                    val equalsTo = e.asInstanceOf[EqualsTo]
+                    aliasList += lookupMap("as").toString
+                    val primaryCollectionPrefix = s"${alias.getOrElse(sqlTable)}."
+                    val expressionList = List(equalsTo.getLeftExpression.toString, equalsTo.getRightExpression.toString)
+                      .filter(
+                        e => e.contains(joinCollectionPrefix) || e.contains(primaryCollectionPrefix)
+                      )
+                    if (expressionList.size == 2) {
+                      expressionList.foreach {
+                        exp =>
+                          if (exp.contains(primaryCollectionPrefix)) {
+                            lookupMap += "localField" -> exp
+                          }
+                          if (exp.contains(joinCollectionPrefix)) {
+                            lookupMap += "foreignField" -> exp.replace(joinCollectionPrefix, "")
+                          }
+                      }
                     }
-                    if (exp.contains(joinCollectionPrefix)) {
-                      lookupMap += "foreignField" -> exp.replace(joinCollectionPrefix, "")
+                    else {
+                      throw new IllegalArgumentException("join on expression must contain collection and lookup collection")
+                    }
+                  }
+                )
+              }
+              else {
+                val joinStatemt = findEqualStatements(plainSelect.getWhere)
+                  .filter(
+                    stmt => stmt.getLeftExpression.isInstanceOf[Column] && stmt.getRightExpression.isInstanceOf[Column]
+                  )
+                  .filter(
+                    stmt => {
+                      val tableName = Option(plainSelect.getFromItem.getAlias)
+                        .map(_.getName)
+                        .getOrElse(join.getFromItem.toString.replace(plainSelect.getFromItem.getAlias.toString, ""))
+                      val joinTableName =
+                        Option(join.getFromItem.getAlias).map(_.getName).getOrElse(join.getFromItem.toString.replace(join.getFromItem.getAlias.toString, ""))
+                      val leftMatch = stmt.getLeftExpression
+                        .asInstanceOf[Column]
+                        .getTable
+                        .getName
+                        .equalsIgnoreCase(joinTableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(tableName)
+                      val rightMatch = stmt.getLeftExpression
+                        .asInstanceOf[Column]
+                        .getTable
+                        .getName
+                        .equalsIgnoreCase(tableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(joinTableName)
+                      leftMatch || rightMatch
+                    }
+                  )
+                val letFields   = mutable.Map[String, Any]()
+                val matchFields = ArrayBuffer[List[String]]()
+                var i           = 0
+                joinStatemt.foreach(
+                  stmt => {
+                    val variableName = s"localVariable$i"
+                    letFields += variableName -> ("$" + stmt.getLeftExpression.toString.replace(joinCollectionPrefix, ""))
+                    matchFields += List(variableName, stmt.getRightExpression.toString.replace(joinCollectionPrefix, ""))
+                    matchedJoinStatement = List(stmt)
+                    i += 1
+                  }
+                )
+                lookupMap += "let" -> letFields
+                lookupMap += "pipeline" -> List(
+                  Map(
+                    "$match" -> Map(
+                      "$expr" ->
+                        Map(
+                          "$and" -> matchFields
+                            .map(
+                              f => Map("$eq" -> List(("$$" + f.head), ("$" + f.last)))
+                            )
+                            .toList
+                        )
+                    )
+                  )
+                )
+              }
+
+              aggregatePipeline += Map("$lookup" -> lookupMap)
+              aggregatePipeline += Map("$unwind" -> Map("path" -> s"$$${lookupMap("as")}", "preserveNullAndEmptyArrays" -> false))
+            }
+          )
+        Option(plainSelect.getWhere).foreach {
+          where =>
+            val filterQuery = mutable.Map[String, Any]()
+            parseWhere(where, filterQuery, matchedJoinStatement)
+            aggregatePipeline += Map("$match" -> filterQuery)
+        }
+        val maybeGroupByElement = Option(plainSelect.getGroupBy)
+        maybeGroupByElement.foreach(
+          gbEl => {
+            val groupBy = gbEl.getGroupByExpressionList.getExpressions.asScala.map(_.toString).toList
+            val groupId = mutable.Map[String, Any]()
+            val group   = mutable.Map[String, Any]()
+            groupBy.foreach(
+              g => groupId += g -> ("$" + g)
+            )
+            selectItems.foreach {
+              case e: SelectItem[Expression] =>
+                val expressionName = e.getExpression.toString
+                if (expressionName.toLowerCase().contains("count")) {
+                  group += expressionName -> Map("$sum" -> 1)
+                }
+                else {
+                  if (!groupBy.contains(expressionName)) {
+                    val espr = expressionName
+                      .split('(')
+                      .map(_.trim.replace(")", ""))
+                      .map(
+                        s => ("$" + s)
+                      )
+                    if (espr.head.equalsIgnoreCase("max")) {
+                      group += expressionName -> Map(espr.head -> espr.last)
+                    }
+                    else {
+                      group += expressionName -> Map(espr.head -> espr.last)
                     }
                   }
                 }
-                else {
-                  throw new IllegalArgumentException("join on expression must contain collection and lookup collection")
-                }
-              })
             }
-            else {
-              val joinStatemt = findEqualStatements(plainSelect.getWhere)
-                .filter(stmt => stmt.getLeftExpression.isInstanceOf[Column] && stmt.getRightExpression.isInstanceOf[Column])
-                .filter(stmt => {
-                  val tableName = Option(plainSelect.getFromItem.getAlias)
-                    .map(_.getName)
-                    .getOrElse(join.getFromItem.toString.replace(plainSelect.getFromItem.getAlias.toString, ""))
-                  val joinTableName =
-                    Option(join.getFromItem.getAlias).map(_.getName).getOrElse(join.getFromItem.toString.replace(join.getFromItem.getAlias.toString, ""))
-                  val leftMatch = stmt.getLeftExpression
-                    .asInstanceOf[Column]
-                    .getTable
-                    .getName
-                    .equalsIgnoreCase(joinTableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(tableName)
-                  val rightMatch = stmt.getLeftExpression
-                    .asInstanceOf[Column]
-                    .getTable
-                    .getName
-                    .equalsIgnoreCase(tableName) || stmt.getRightExpression.asInstanceOf[Column].getTable.getName.equalsIgnoreCase(joinTableName)
-                  leftMatch || rightMatch
-                })
-              val letFields   = mutable.Map[String, Any]()
-              val matchFields = ArrayBuffer[List[String]]()
-              var i           = 0
-              joinStatemt.foreach(stmt => {
-                val variableName = s"localVariable$i"
-                letFields += variableName -> ("$" + stmt.getLeftExpression.toString.replace(joinCollectionPrefix, ""))
-                matchFields += List(variableName, stmt.getRightExpression.toString.replace(joinCollectionPrefix, ""))
-                matchedJoinStatement = List(stmt)
-                i += 1
-              })
-              lookupMap += "let" -> letFields
-              lookupMap += "pipeline" -> List(
-                Map(
-                  "$match" -> Map(
-                    "$expr" ->
-                      Map("$and" -> matchFields.map(f => Map("$eq" -> List(("$$" + f.head), ("$" + f.last)))).toList)
-                  )
-                )
+            val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys
+              .map(
+                s => s -> Map("$first" -> ("$" + s))
               )
-            }
-
-            aggregatePipeline += Map("$lookup" -> lookupMap)
-            aggregatePipeline += Map("$unwind" -> Map("path" -> s"$$${lookupMap("as")}", "preserveNullAndEmptyArrays" -> false))
-          })
-        Option(plainSelect.getWhere).foreach { where =>
-          val filterQuery = mutable.Map[String, Any]()
-          parseWhere(where, filterQuery, matchedJoinStatement)
-          aggregatePipeline += Map(
-            "$match" -> filterQuery
-          )
-        }
-        val maybeGroupByElement = Option(plainSelect.getGroupBy)
-        maybeGroupByElement.foreach(gbEl => {
-          val groupBy = gbEl.getGroupByExpressionList.getExpressions.asScala.map(_.toString).toList
-          val groupId = mutable.Map[String, Any]()
-          val group   = mutable.Map[String, Any]()
-          groupBy.foreach(g => groupId += g -> ("$" + g))
-          selectItems.foreach { case e: SelectItem[Expression] =>
-            val expressionName = e.getExpression.toString
-            if (expressionName.toLowerCase().contains("count")) {
-              group += expressionName -> Map("$sum" -> 1)
-            }
-            else {
-              if (!groupBy.contains(expressionName)) {
-                val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-                if (espr.head.equalsIgnoreCase("max")) {
-                  group += expressionName -> Map(espr.head -> espr.last)
-                }
-                else {
-                  group += expressionName -> Map(espr.head -> espr.last)
-                }
-              }
-            }
+              .toMap
+            aggregatePipeline += Map("$group" -> groupMap)
           }
-          val groupMap = Map("_id" -> groupId) ++ group.toMap ++ groupId.keys.map(s => s -> Map("$first" -> ("$" + s))).toMap
-          aggregatePipeline += Map("$group" -> groupMap)
-        })
+        )
         if (maybeGroupByElement.isEmpty && keepOneDocument) {
           val group      = mutable.Map[String, Any]()
           val idGroupMap = mutable.Map()
-          selectItems.foreach { case se: SelectItem[Expression] =>
-            val expressionName = se.getExpression.toString
-            if (expressionName.toLowerCase().contains("count")) {
-              group += expressionName -> Map("$sum" -> 1)
-            }
-            else {
-              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-              val functionName: String = espr.head.toLowerCase match {
-                case "$max" => "$last"
-                case "$min" => "$first"
-                case _      => espr.head
+          selectItems.foreach {
+            case se: SelectItem[Expression] =>
+              val expressionName = se.getExpression.toString
+              if (expressionName.toLowerCase().contains("count")) {
+                group += expressionName -> Map("$sum" -> 1)
               }
-              val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
-              group += expressionName -> expression
-            }
+              else {
+                val espr = expressionName
+                  .split('(')
+                  .map(_.trim.replace(")", ""))
+                  .map(
+                    s => ("$" + s)
+                  )
+                val functionName: String = espr.head.toLowerCase match {
+                  case "$max" => "$last"
+                  case "$min" => "$first"
+                  case _      => espr.head
+                }
+                val expression = if (functionName.equalsIgnoreCase(espr.last)) Map("$first" -> espr.last) else Map(functionName -> espr.last)
+                group += expressionName -> expression
+              }
           }
 
           val groupMap = Map("_id" -> idGroupMap) ++ group.toMap
           aggregatePipeline += Map("$group" -> groupMap)
         }
-        Option(plainSelect.getOrderByElements).foreach { orderBy =>
-          aggregatePipeline += Map(
-            "$sort" -> orderBy.asScala.map(e => e.getExpression.toString -> (if (e.isAsc) 1 else -1)).toMap
-          )
+        Option(plainSelect.getOrderByElements).foreach {
+          orderBy =>
+            aggregatePipeline += Map(
+              "$sort" -> orderBy.asScala
+                .map(
+                  e => e.getExpression.toString -> (if (e.isAsc) 1 else -1)
+                )
+                .toMap
+            )
         }
-        Option(plainSelect.getHaving()).foreach { having =>
-          val filterQuery = mutable.Map[String, Any]()
-          parseWhere(having, filterQuery, matchedJoinStatement)
-          aggregatePipeline += Map(
-            "$match" -> filterQuery
-          )
+        Option(plainSelect.getHaving()).foreach {
+          having =>
+            val filterQuery = mutable.Map[String, Any]()
+            parseWhere(having, filterQuery, matchedJoinStatement)
+            aggregatePipeline += Map("$match" -> filterQuery)
         }
-        val hasAllColumns = selectItems.exists(i => i.toString.equalsIgnoreCase("*"))
+        val hasAllColumns = selectItems.exists(
+          i => i.toString.equalsIgnoreCase("*")
+        )
         if (selectItems.nonEmpty && !hasAllColumns) {
           val addFields = selectItems.filter {
             case e: SelectItem[Expression] =>
@@ -534,7 +621,9 @@ class MongoSqlQueryHolder {
           }
           val fields: Map[String, Any] = addFields
             .map(_.asInstanceOf[SelectItem[Expression]])
-            .map(e => e.getAlias.getName -> ("$" + e.getExpression.toString))
+            .map(
+              e => e.getAlias.getName -> ("$" + e.getExpression.toString)
+            )
             .toMap
 
           if (fields.nonEmpty) {
@@ -542,7 +631,9 @@ class MongoSqlQueryHolder {
           }
           aggregatePipeline += Map(
             "$project" -> selectItems
-              .filterNot(s => s.toString.equalsIgnoreCase("*"))
+              .filterNot(
+                s => s.toString.equalsIgnoreCase("*")
+              )
               .map {
                 case e: SelectItem[Expression] =>
                   e.getAlias match {
@@ -570,48 +661,74 @@ class MongoSqlQueryHolder {
         if (aliasList.nonEmpty) {
           aliasList += "$$ROOT"
           aggregatePipeline += Map(
-            "$replaceWith" -> Map("$mergeObjects" -> aliasList.map(string => if (string.startsWith("$")) string else "$" + string).toList)
+            "$replaceWith" -> Map(
+              "$mergeObjects" -> aliasList
+                .map(
+                  string => if (string.startsWith("$")) string else "$" + string
+                )
+                .toList
+            )
           )
         }
-        maybeDistinct.foreach { _ =>
-          val groupMap: mutable.Map[String, Any] = mutable.Map()
-          selectItems.foreach { case e: SelectItem[Expression] =>
-            var expressionName = e.getExpression.toString
-            var prefixRemoved  = false
-            if (expressionName.startsWith("(")) {
-              expressionName = expressionName.substring(1)
-              prefixRemoved = true
+        maybeDistinct.foreach {
+          _ =>
+            val groupMap: mutable.Map[String, Any] = mutable.Map()
+            selectItems.foreach {
+              case e: SelectItem[Expression] =>
+                var expressionName = e.getExpression.toString
+                var prefixRemoved  = false
+                if (expressionName.startsWith("(")) {
+                  expressionName = expressionName.substring(1)
+                  prefixRemoved = true
+                }
+                if (prefixRemoved && expressionName.endsWith(")")) {
+                  expressionName = expressionName.substring(0, expressionName.length - 1)
+                }
+                expressionName = expressionName.trim
+                if (expressionName.contains("count")) {
+                  groupMap += expressionName -> Map("$sum" -> 1)
+                }
+                else {
+                  val espr = expressionName
+                    .split('(')
+                    .map(_.trim.replace(")", ""))
+                    .map(
+                      s => ("$" + s)
+                    )
+                  if (espr.head.equalsIgnoreCase(espr.last)) {
+                    groupMap += expressionName -> Map("$first" -> espr.last)
+                  }
+                  else {
+                    groupMap += expressionName -> Map(espr.head -> espr.last)
+                  }
+                }
             }
-            if (prefixRemoved && expressionName.endsWith(")")) {
-              expressionName = expressionName.substring(0, expressionName.length - 1)
-            }
-            expressionName = expressionName.trim
-            if (expressionName.contains("count")) {
-              groupMap += expressionName -> Map("$sum" -> 1)
-            }
-            else {
-              val espr = expressionName.split('(').map(_.trim.replace(")", "")).map(s => ("$" + s))
-              if (espr.head.equalsIgnoreCase(espr.last)) {
-                groupMap += expressionName -> Map("$first" -> espr.last)
-              }
-              else {
-                groupMap += expressionName -> Map(espr.head -> espr.last)
-              }
-            }
-          }
-          groupMap.put("_id", groupMap.keys.map(s => s -> ("$" + s)).toMap)
-          aggregatePipeline += Map("$group" -> groupMap.toMap)
-          if (plainSelect.getOrderByElements != null) {
-            aggregatePipeline += Map(
-              "$sort" -> plainSelect.getOrderByElements.asScala.map(e => e.getExpression.toString -> (if (e.isAsc) 1 else -1)).toMap
+            groupMap.put(
+              "_id",
+              groupMap.keys
+                .map(
+                  s => s -> ("$" + s)
+                )
+                .toMap
             )
-          }
+            aggregatePipeline += Map("$group" -> groupMap.toMap)
+            if (plainSelect.getOrderByElements != null) {
+              aggregatePipeline += Map(
+                "$sort" -> plainSelect.getOrderByElements.asScala
+                  .map(
+                    e => e.getExpression.toString -> (if (e.isAsc) 1 else -1)
+                  )
+                  .toMap
+              )
+            }
         }
-        Option(plainSelect.getOffset).foreach { offset =>
-          aggregatePipeline += Map("$skip" -> convertValue(offset.getOffset))
+        Option(plainSelect.getOffset).foreach {
+          offset =>
+            aggregatePipeline += Map("$skip" -> convertValue(offset.getOffset))
         }
-        Option(plainSelect.getLimit).foreach { limit =>
-          aggregatePipeline += Map("$limit" -> convertValue(limit.getRowCount))
+        Option(plainSelect.getLimit).foreach {
+          limit =>
+            aggregatePipeline += Map("$limit" -> convertValue(limit.getRowCount))
         }
       case _ => throw new IllegalArgumentException("not supported sql command type")
     }
@@ -647,13 +764,17 @@ class MongoSqlQueryHolder {
     baseExpressionList.asScala.foreach {
       case e: ParenthesedExpressionList[Expression] =>
         val document = mutable.Map[String, Any]()
-        columns.foreach(colName => document += colName -> convertValue(e.get(columns.indexOf(colName))))
+        columns.foreach(
+          colName => document += colName -> convertValue(e.get(columns.indexOf(colName)))
+        )
         documentsToInsert += document.toMap
       case _ =>
         try {
           if (!singleDocumentCreated) {
             val document = mutable.Map[String, Any]()
-            columns.foreach(colName => document += colName -> convertValue(baseExpressionList.get(columns.indexOf(colName)).asInstanceOf[Expression]))
+            columns.foreach(
+              colName => document += colName -> convertValue(baseExpressionList.get(columns.indexOf(colName)).asInstanceOf[Expression])
+            )
             documentsToInsert += document.toMap
           }
           singleDocumentCreated = true
@@ -670,10 +791,11 @@ class MongoSqlQueryHolder {
 
   private def convertUpdateStatement(update: Update): Unit = {
     val filter = Option(update.getWhere)
-      .map { where =>
-        val filterQuery = mutable.Map[String, Any]()
-        parseWhere(where, filterQuery, List.empty)
-        filterQuery.toMap
+      .map {
+        where =>
+          val filterQuery = mutable.Map[String, Any]()
+          parseWhere(where, filterQuery, List.empty)
+          filterQuery.toMap
       }
       .getOrElse(Map.empty)
     updateOrDeleteFilter = Some(filter)
@@ -682,14 +804,18 @@ class MongoSqlQueryHolder {
     Option(update.getUpdateSets)
       .map(_.asScala)
       .getOrElse(List.empty)
-      .foreach(set => {
-        val columns: List[String] = Option(set.getColumns).map(_.asScala).getOrElse(List.empty).map(_.getColumnName).toList
-        if (columns.isEmpty) {
-          throw new IllegalArgumentException("column names must be specified")
+      .foreach(
+        set => {
+          val columns: List[String] = Option(set.getColumns).map(_.asScala).getOrElse(List.empty).map(_.getColumnName).toList
+          if (columns.isEmpty) {
+            throw new IllegalArgumentException("column names must be specified")
+          }
+          columns
+            .foreach(
+              colName => updateSetElement += colName -> convertValue(set.getValue(columns.indexOf(colName)))
+            )
         }
-        columns
-          .foreach(colName => updateSetElement += colName -> convertValue(set.getValue(columns.indexOf(colName))))
-      })
+      )
     if (updateSetElement.nonEmpty) {
       this.setElement = Some(updateSetElement.toMap)
     }
@@ -699,10 +825,11 @@ class MongoSqlQueryHolder {
 
   private def convertDeleteStatement(delete: Delete): Unit = {
     val filter = Option(delete.getWhere)
-      .map { where =>
-        val filterQuery = mutable.Map[String, Any]()
-        parseWhere(where, filterQuery, List.empty)
-        filterQuery.toMap
+      .map {
+        where =>
+          val filterQuery = mutable.Map[String, Any]()
+          parseWhere(where, filterQuery, List.empty)
+          filterQuery.toMap
       }
       .getOrElse(Map.empty)
     updateOrDeleteFilter = Some(filter)

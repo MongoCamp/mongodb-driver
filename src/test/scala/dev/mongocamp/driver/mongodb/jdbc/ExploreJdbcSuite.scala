@@ -1,9 +1,11 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
-import dev.mongocamp.driver.mongodb.BuildInfo
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
-
-import java.sql.{ Connection, DatabaseMetaData, ResultSet, Types }
+import dev.mongocamp.driver.mongodb.BuildInfo
+import java.sql.Connection
+import java.sql.DatabaseMetaData
+import java.sql.ResultSet
+import java.sql.Types
 
 class ExploreJdbcSuite extends BaseJdbcSuite {
 

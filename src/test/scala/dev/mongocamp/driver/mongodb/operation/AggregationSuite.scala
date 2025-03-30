@@ -2,14 +2,15 @@ package dev.mongocamp.driver.mongodb.operation
 
 // #region agg_imports
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.Aggregate._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
-// #endregion agg_imports
-
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import dev.mongocamp.driver.mongodb.Aggregate._
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Aggregates.{ filter, group, sort }
-import org.mongodb.scala.model.Filters.{ and, equal }
+import org.mongodb.scala.model.Aggregates.filter
+import org.mongodb.scala.model.Aggregates.group
+import org.mongodb.scala.model.Aggregates.sort
+import org.mongodb.scala.model.Filters.and
+import org.mongodb.scala.model.Filters.equal
 
 class AggregationSuite extends BasePersonSuite {
 
@@ -43,7 +44,9 @@ class AggregationSuite extends BasePersonSuite {
     // #region agg_convert
     val list: List[Map[String, Any]] = aggregated
     // #endregion agg_convert
-    list.foreach(m => println(m("age").toString + " -> " + m("balance")))
+    list.foreach(
+      m => println(m("age").toString + " -> " + m("balance"))
+    )
 
     assertEquals(list.head("age"), 20)
     assertEquals(list.head("balance"), 8333.0)
