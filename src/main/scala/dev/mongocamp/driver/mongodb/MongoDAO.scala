@@ -1,13 +1,13 @@
 package dev.mongocamp.driver.mongodb
 
 import better.files.File
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.bson.DocumentHelper
 import dev.mongocamp.driver.mongodb.database.ChangeObserver
 import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.CompactResult
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import io.circe.Decoder
 import java.nio.charset.Charset
@@ -25,8 +25,6 @@ import org.mongodb.scala.SingleObservable
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
-/** Created by tom on 20.01.17.
-  */
 abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Crud[A] {
 
   val databaseName: String = provider.guessDatabaseName(collectionName)

@@ -20,7 +20,7 @@ Simple Setup.
 * Friend Collection
 
 ```scala
-import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb._
 
 case class User(id: Long, name: String, loginId: String)
 case class Login(id: String, email: String, password: String)

@@ -3,7 +3,6 @@ package dev.mongocamp.driver.mongodb.sync
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.MongoConfig
-import dev.mongocamp.driver.mongodb.json._
 import io.circe.HCursor
 import scala.collection.mutable
 

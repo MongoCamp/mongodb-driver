@@ -1,7 +1,6 @@
 package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
-import dev.mongocamp.driver.mongodb.json._
 import org.mongodb.scala._
 import org.mongodb.scala.gridfs.GridFSBucket
 import scala.collection.mutable

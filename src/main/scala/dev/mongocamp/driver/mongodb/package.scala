@@ -2,14 +2,16 @@ package dev.mongocamp.driver
 
 import dev.mongocamp.driver.mongodb.bson.convert.JsonDateTimeConverter
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
+import dev.mongocamp.driver.mongodb.json.CirceSchema
 import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
+import io.circe.generic.AutoDerivation
 import java.util.Date
 import org.bson.json.JsonMode
 import org.bson.json.JsonWriterSettings
 import org.mongodb.scala.Document
 import scala.language.implicitConversions
 
-package object mongodb extends ObservableIncludes with DocumentIncludes {
+package object mongodb extends ObservableIncludes with DocumentIncludes with CirceSchema with AutoDerivation {
 
   implicit class DocumentExtensions[A <: Document](val document: A) extends AnyVal {
 

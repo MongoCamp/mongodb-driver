@@ -59,7 +59,7 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import org.bson.codecs.configuration.CodecRegistries._
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.bson.codecs.Macros._
-import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb._
 
 /**
  * import mongodb restaurants sample data

@@ -1,7 +1,7 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.GenericObservable
 import liquibase.database.jvm.JdbcConnection
