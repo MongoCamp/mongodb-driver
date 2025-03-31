@@ -2,7 +2,6 @@ package dev.mongocamp.driver.mongodb.schema
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 import org.bson.conversions.Bson
 import org.mongodb.scala.documentToUntypedDocument
 import org.mongodb.scala.Document

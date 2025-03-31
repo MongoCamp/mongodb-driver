@@ -32,7 +32,6 @@ A Type Parameter is used for automatic Document to Class conversion.
 
 ```scala
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
 ```
 

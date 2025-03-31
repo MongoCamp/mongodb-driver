@@ -1,3 +1,5 @@
 package dev.mongocamp.driver.mongodb
 
-package object json extends CirceSchema
+import io.circe.generic.AutoDerivation
+
+package object json extends CirceSchema with AutoDerivation
