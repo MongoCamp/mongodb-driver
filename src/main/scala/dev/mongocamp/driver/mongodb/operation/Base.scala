@@ -1,9 +1,9 @@
 package dev.mongocamp.driver.mongodb.operation
 
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
-import dev.mongocamp.driver.mongodb._
 import io.circe.syntax._
 import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson

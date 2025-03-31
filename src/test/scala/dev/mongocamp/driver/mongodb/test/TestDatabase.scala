@@ -3,8 +3,8 @@ package dev.mongocamp.driver.mongodb.test
 import better.files.File
 import com.mongodb.client.model.changestream.OperationType
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb._
+import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.GridFSDAO
 import dev.mongocamp.driver.mongodb.MongoDAO
