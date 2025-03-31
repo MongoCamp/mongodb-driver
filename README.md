@@ -1,5 +1,7 @@
 # Mongocamp MongoDB Driver
 
+![Maven Central](https://img.shields.io/maven-central/v/dev.mongocamp/mongodb-driver_2.13)
+
 A library for easy usage of the mongo-scala-driver (5.1.xa). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
