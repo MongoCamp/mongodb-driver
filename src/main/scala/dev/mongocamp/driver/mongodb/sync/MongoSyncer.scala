@@ -4,9 +4,9 @@ import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.database.MongoConfig
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 import io.circe.HCursor
 import scala.collection.mutable
+
 case class MongoSyncer(sourceConfig: MongoConfig, targetConfig: MongoConfig, syncOperations: List[MongoSyncOperation] = List()) {
 
   implicit private lazy val ThrowableFormat: io.circe.Decoder[Throwable] = {

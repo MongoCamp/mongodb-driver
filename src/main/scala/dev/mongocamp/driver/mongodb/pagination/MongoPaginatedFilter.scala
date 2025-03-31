@@ -2,9 +2,6 @@ package dev.mongocamp.driver.mongodb.pagination
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
-import dev.mongocamp.driver.mongodb.MongoDAO
-import io.circe.generic.auto._
-import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson
 
 case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map(), maxWait: Int = DefaultMaxWait)

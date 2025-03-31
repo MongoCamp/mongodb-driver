@@ -8,7 +8,6 @@ import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.model._
 import dev.mongocamp.driver.mongodb.GridFSDAO
 import dev.mongocamp.driver.mongodb.MongoDAO
-import io.circe.generic.auto._
 import org.mongodb.scala.model.changestream.ChangeStreamDocument
 import org.mongodb.scala.Document
 
