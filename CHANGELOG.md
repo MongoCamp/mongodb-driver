@@ -1,3 +1,9 @@
+## [v3.0.3] - 2025-03-31
+### :recycle: Refactors
+- [`28dc13e`](https://github.com/MongoCamp/mongodb-driver/commit/28dc13e220e344aa258f31ac131bc323916404e9) - package object json extends AutoDerivation to not need double import *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`271d212`](https://github.com/MongoCamp/mongodb-driver/commit/271d21281195c39b1f32075d57c5debc94a1683b) - package object json extends AutoDerivation to not need double import *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.2] - 2025-03-30
 ### :wrench: Chores
 - [`76dcbff`](https://github.com/MongoCamp/mongodb-driver/commit/76dcbffb58ae8cb3333a59628860f4e26c392850) - 8 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -310,3 +316,4 @@
 [v3.0.0]: https://github.com/MongoCamp/mongodb-driver/compare/v2.8.1...v3.0.0
 [v3.0.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.0...v3.0.1
 [v3.0.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.1...v3.0.2
+[v3.0.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.2...v3.0.3
