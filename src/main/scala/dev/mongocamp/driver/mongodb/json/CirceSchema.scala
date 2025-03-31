@@ -1,27 +1,60 @@
 package dev.mongocamp.driver.mongodb.json
 
-import io.circe.Decoder
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import io.circe.Decoder.Result
-import io.circe.Encoder
-import io.circe.HCursor
-import io.circe.Json
-import java.util.Date
+import io.circe.{Decoder, Encoder, HCursor, Json}
+import io.circe.generic.AutoDerivation
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
+import scala.jdk.CollectionConverters._
+
+import java.util.Date
 
 trait CirceSchema extends CirceProductSchema {
 
-  implicit lazy val DocumentOneFormat: io.circe.Decoder[org.mongodb.scala.Document] = {
-    (c: HCursor) =>
-      // not really needed only for decoder must exists
-      ???
-  }
+  implicit lazy val DocumentOneFormat: Encoder[org.mongodb.scala.Document] with io.circe.Decoder[org.mongodb.scala.Document] =
+    new io.circe.Encoder[org.mongodb.scala.Document] with io.circe.Decoder[org.mongodb.scala.Document] {
+      override def apply(a: org.mongodb.scala.Document): Json = {
+        encodeMapStringAny(BsonConverter.asMap(a))
+      }
 
-  implicit lazy val DocumentTowFormat: io.circe.Decoder[org.bson.Document] = {
-    (c: HCursor) =>
-      // not really needed only for decoder must exists
-      ???
+      override def apply(c: HCursor): Result[org.mongodb.scala.Document] = {
+        Decoder.decodeString
+          .map(
+            s => {
+              val document = new org.mongodb.scala.Document(org.mongodb.scala.bson.BsonDocument(s))
+              document
+            }
+          )
+          .apply(c)
+      }
+    }
+
+  implicit lazy val DocumentTowFormat: Encoder[org.bson.Document] with io.circe.Decoder[org.bson.Document] = new io.circe.Encoder[org.bson.Document]
+    with io.circe.Decoder[org.bson.Document] {
+    override def apply(a: org.bson.Document): Json = {
+      val map = a.keySet().asScala
+        .map(
+          key => {
+            val value = a.get(key)
+            (key, encodeAnyToJson(value))
+          }
+        ).toMap
+      encodeMapStringAny(map)
+    }
+
+    override def apply(c: HCursor): Result[org.bson.Document] = {
+      Decoder
+        .decodeMap[String, Any]
+        .map(
+          m => {
+            val document = new org.bson.Document(m.asJava)
+            document
+          }
+        )
+        .apply(c)
+    }
   }
 
   implicit val DateFormat: Encoder[Date] with io.circe.Decoder[Date] = new io.circe.Encoder[Date] with io.circe.Decoder[Date] {

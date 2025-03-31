@@ -35,7 +35,6 @@ With implicit conversion you can use for OID Parameter:
 import dev.mongocamp.driver.mongodb._
 // case class conversion only needed in the DAO Holder Class
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 
 ImageFilesDAO.deleteOne(oid)
 ```

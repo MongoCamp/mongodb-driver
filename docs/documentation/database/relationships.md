@@ -21,7 +21,6 @@ Simple Setup.
 
 ```scala
 import dev.mongocamp.driver.mongodb.json._
-import io.circe.generic.auto._
 
 case class User(id: Long, name: String, loginId: String)
 case class Login(id: String, email: String, password: String)
