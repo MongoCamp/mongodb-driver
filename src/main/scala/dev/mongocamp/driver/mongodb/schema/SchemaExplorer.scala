@@ -5,7 +5,6 @@ import dev.mongocamp.driver.mongodb.json.JsonConverter
 import org.bson.conversions.Bson
 import org.mongodb.scala.documentToUntypedDocument
 import org.mongodb.scala.Document
-
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.DurationInt

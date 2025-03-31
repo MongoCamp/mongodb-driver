@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.gridfs
 
+import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.MongoDAO
 import org.bson.types.ObjectId
 import org.mongodb.scala.bson.conversions.Bson

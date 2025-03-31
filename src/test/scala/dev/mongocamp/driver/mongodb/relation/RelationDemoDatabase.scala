@@ -2,7 +2,6 @@ package dev.mongocamp.driver.mongodb.relation
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
-import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.result.UpdateResult
 

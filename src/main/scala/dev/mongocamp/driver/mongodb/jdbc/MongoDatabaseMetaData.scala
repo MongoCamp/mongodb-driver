@@ -640,9 +640,7 @@ class MongoDatabaseMetaData(connection: MongoJdbcConnection) extends DatabaseMet
         s => schemaPattern.r.findFirstMatchIn(s).nonEmpty
       )
       .map(
-        dbName => {
-          Document("TABLE_SCHEM" -> dbName, "TABLE_CATALOG" -> DatabaseNameKey)
-        }
+        dbName => Document("TABLE_SCHEM" -> dbName, "TABLE_CATALOG" -> DatabaseNameKey)
       )
     new MongoDbResultSet(null, documents, 10)
   }
