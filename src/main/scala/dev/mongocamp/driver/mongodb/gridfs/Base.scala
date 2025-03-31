@@ -3,7 +3,6 @@ package dev.mongocamp.driver.mongodb.gridfs
 import better.files.File
 import com.mongodb.client.gridfs.model.GridFSUploadOptions
 import com.typesafe.scalalogging.LazyLogging
-import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.Converter
 import java.io.OutputStream
 import java.nio.ByteBuffer

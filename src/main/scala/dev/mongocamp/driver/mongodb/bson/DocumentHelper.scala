@@ -8,9 +8,7 @@ import org.mongodb.scala.Document
 
 object DocumentHelper extends LazyLogging {
   val SplitterDelimeter = ' '
-  /*
-   iso date bugffix
-   */
+
   def documentFromJsonString(json: String): Option[Document] = {
     var result: Option[Document] = None
 

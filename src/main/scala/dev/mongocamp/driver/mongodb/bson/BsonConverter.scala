@@ -7,7 +7,6 @@ import java.time.ZoneId
 import java.util.Date
 import org.mongodb.scala.bson._
 import org.mongodb.scala.bson.BsonArray.fromIterable
-import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.Document
 import scala.collection.mutable
 import scala.concurrent.duration.Duration

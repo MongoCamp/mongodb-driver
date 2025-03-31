@@ -3,7 +3,7 @@ package dev.mongocamp.driver.mongodb.operation
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.MongoIndex
-import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb._
 import io.circe.syntax._
 import io.circe.Decoder
 import org.mongodb.scala.bson.conversions.Bson
@@ -21,7 +21,7 @@ import scala.concurrent.duration.durationToPair
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 
-abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging with CirceSchema {
+abstract class Base[A](implicit classTag: ClassTag[A]) extends LazyLogging {
 
   def documentToObject[A](document: Document, decoder: Decoder[A]): A = {
     if (classTag.runtimeClass == classOf[Document]) {

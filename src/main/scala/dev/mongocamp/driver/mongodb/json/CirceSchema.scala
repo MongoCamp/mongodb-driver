@@ -1,15 +1,16 @@
 package dev.mongocamp.driver.mongodb.json
 
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
+import io.circe.Decoder
 import io.circe.Decoder.Result
-import io.circe.{Decoder, Encoder, HCursor, Json}
-import io.circe.generic.AutoDerivation
+import io.circe.Encoder
+import io.circe.HCursor
+import io.circe.Json
+import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
 import scala.jdk.CollectionConverters._
-
-import java.util.Date
 
 trait CirceSchema extends CirceProductSchema {
 
@@ -34,13 +35,16 @@ trait CirceSchema extends CirceProductSchema {
   implicit lazy val DocumentTowFormat: Encoder[org.bson.Document] with io.circe.Decoder[org.bson.Document] = new io.circe.Encoder[org.bson.Document]
     with io.circe.Decoder[org.bson.Document] {
     override def apply(a: org.bson.Document): Json = {
-      val map = a.keySet().asScala
+      val map = a
+        .keySet()
+        .asScala
         .map(
           key => {
             val value = a.get(key)
             (key, encodeAnyToJson(value))
           }
-        ).toMap
+        )
+        .toMap
       encodeMapStringAny(map)
     }
 

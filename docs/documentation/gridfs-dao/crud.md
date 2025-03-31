@@ -31,10 +31,7 @@ With implicit conversion you can use for OID Parameter:
 * String
 
 ```scala
-// for implicit conversion usage
 import dev.mongocamp.driver.mongodb._
-// case class conversion only needed in the DAO Holder Class
-import dev.mongocamp.driver.mongodb.json._
 
 ImageFilesDAO.deleteOne(oid)
 ```

@@ -31,7 +31,7 @@ In the most cases, you can use the generic auto import. More Information about C
 A Type Parameter is used for automatic Document to Class conversion. 
 
 ```scala
-import dev.mongocamp.driver.mongodb.json._
+import dev.mongocamp.driver.mongodb._
 object RestaurantDAO extends MongoDAO[Restaurant](provider, "restaurants")
 ```
 
