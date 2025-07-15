@@ -7,6 +7,7 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import munit.FunSuite
 import org.bson.types.ObjectId
+import org.mongodb.scala.documentToUntypedDocument
 
 class UpdateSqlSuite extends FunSuite {
 

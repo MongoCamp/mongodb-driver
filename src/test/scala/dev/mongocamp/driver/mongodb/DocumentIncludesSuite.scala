@@ -6,6 +6,7 @@ import munit.FunSuite
 import org.apache.lucene.search.MatchAllDocsQuery
 import org.bson.types.ObjectId
 import org.mongodb.scala.Document
+import org.mongodb.scala.documentToUntypedDocument
 
 class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
 

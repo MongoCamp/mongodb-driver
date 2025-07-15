@@ -2,6 +2,7 @@ package dev.mongocamp.driver.mongodb.bson
 
 import dev.mongocamp.driver.mongodb.model.Base
 import dev.mongocamp.driver.mongodb.Converter
+import org.mongodb.scala.documentToUntypedDocument
 
 class ConverterSuite extends munit.FunSuite {
 
