@@ -6,6 +6,7 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import dev.mongocamp.driver.mongodb.GenericObservable
 import org.bson.types.ObjectId
+import org.mongodb.scala.documentToUntypedDocument
 
 class DeleteSqlSuite extends munit.FunSuite {
 
