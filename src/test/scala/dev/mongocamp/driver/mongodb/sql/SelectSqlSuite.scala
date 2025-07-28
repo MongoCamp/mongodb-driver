@@ -4,6 +4,7 @@ import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.GenericObservable
 import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.documentToUntypedDocument
 
 class SelectSqlSuite extends BasePersonSuite {
 
