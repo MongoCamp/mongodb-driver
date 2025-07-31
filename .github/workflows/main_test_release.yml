@@ -37,7 +37,7 @@ jobs:
 #          timedatectl
 #          sbt +test
   release:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
