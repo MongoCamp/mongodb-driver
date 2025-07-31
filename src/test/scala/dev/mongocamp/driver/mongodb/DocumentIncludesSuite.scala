@@ -5,8 +5,8 @@ import dev.mongocamp.driver.DocumentIncludes
 import munit.FunSuite
 import org.apache.lucene.search.MatchAllDocsQuery
 import org.bson.types.ObjectId
-import org.mongodb.scala.Document
 import org.mongodb.scala.documentToUntypedDocument
+import org.mongodb.scala.Document
 
 class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
 
