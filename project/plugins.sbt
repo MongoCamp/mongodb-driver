@@ -12,9 +12,6 @@ addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
 
 addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
 
-// Release
-addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.5.12")
-
 addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
 
 addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
