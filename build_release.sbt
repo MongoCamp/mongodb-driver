@@ -3,7 +3,6 @@ import dev.quadstingray.sbt.json.JsonFile
 import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.runtimeVersion
-
 import scala.sys.process._
 
 releaseVersionBump := sbtrelease.Version.Bump.NextStable
@@ -25,8 +24,8 @@ val setToMyReleaseVersion = ReleaseStep(action = st => {
 
 def setMyVersion(version: String, state: State): Unit = {
   state.log.warn(s"Set Version in package.json  to $version")
-  val json = JsonFile(file("package.json"))
-  val newVersion         = version.replace("-SNAPSHOT", ".snapshot")
+  val json       = JsonFile(file("package.json"))
+  val newVersion = version.replace("-SNAPSHOT", ".snapshot")
   json.updateValue("version", newVersion)
   json.write()
 }
@@ -34,15 +33,17 @@ def setMyVersion(version: String, state: State): Unit = {
 releaseNextCommitMessage := s"ci: update version after release"
 releaseCommitMessage     := s"ci: prepare release of version ${runtimeVersion.value}"
 
-commands += Command.command("ci-release")((state: State) => {
-  val semVersion = new Semver(version.value)
-  if (semVersion.isStable) {
-    Command.process("release with-defaults", state)
+commands += Command.command("ci-release")(
+  (state: State) => {
+    val semVersion = new Semver(version.value)
+    if (semVersion.isStable) {
+      Command.process("release with-defaults", state)
+    }
+    else {
+      state
+    }
   }
-  else {
-    state
-  }
-})
+)
 
 releaseProcess := {
   Seq[ReleaseStep](
