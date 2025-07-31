@@ -5,8 +5,8 @@ import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import org.mongodb.scala.Document
 import org.mongodb.scala.documentToUntypedDocument
+import org.mongodb.scala.Document
 
 class DatabaseProviderSuite extends BasePersonSuite {
 

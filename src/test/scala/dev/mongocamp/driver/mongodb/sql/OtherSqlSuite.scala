@@ -9,8 +9,8 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.test.UniversityDatabase.GradeDAO
 import java.sql.SQLException
 import org.bson.types.ObjectId
-import org.mongodb.scala.model.Sorts.ascending
 import org.mongodb.scala.documentToUntypedDocument
+import org.mongodb.scala.model.Sorts.ascending
 
 class OtherSqlSuite extends BasePersonSuite {
 
