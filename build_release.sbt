@@ -4,6 +4,7 @@ import sbtrelease.ReleasePlugin.autoImport.ReleaseKeys.versions
 import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
 import sbtrelease.ReleasePlugin.runtimeVersion
 import scala.sys.process._
+import xerial.sbt.Sonatype.sonatypeCentralHost
 
 releaseVersionBump := sbtrelease.Version.Bump.NextStable
 
@@ -54,7 +55,7 @@ releaseProcess := {
     commitReleaseVersion,
     tagRelease,
     releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
+    releaseStepCommand("ci-release"),
     releaseStepCommand("ci-deploy-docs"),
     setToMyNextVersion,
     releaseStepCommand("scalafmtAll"),
@@ -75,6 +76,7 @@ credentials += Credentials("New Sonatype Nexus Repository Manager", "s01.oss.son
 Global / useGpgPinentry := true
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+sonatypeRepository                 := "https://s01.oss.sonatype.org/service/local"
 
 packageOptions += {
   Package.ManifestAttributes(
