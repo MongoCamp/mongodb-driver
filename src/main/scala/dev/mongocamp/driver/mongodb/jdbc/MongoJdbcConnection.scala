@@ -1,8 +1,16 @@
 package dev.mongocamp.driver.mongodb.jdbc
 
+import com.mongodb.event.CommandListener
+import com.mongodb.event.ConnectionPoolListener
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database.MongoConfig.DefaultApplicationName
+import dev.mongocamp.driver.mongodb.database.MongoConfig.DefaultAuthenticationDatabaseName
+import dev.mongocamp.driver.mongodb.database.MongoConfig.DefaultHost
+import dev.mongocamp.driver.mongodb.database.MongoConfig.DefaultPort
+import dev.mongocamp.driver.mongodb.database.MongoPoolOptions
 import dev.mongocamp.driver.mongodb.jdbc.statement.MongoPreparedStatement
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import java.sql
 import java.sql.Blob
@@ -22,6 +30,8 @@ import java.util
 import java.util.concurrent.Executor
 import java.util.Properties
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.MongoClientSettings
+import org.mongodb.scala.ServerAddress
 import scala.jdk.CollectionConverters._
 
 class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection with MongoJdbcCloseable {
@@ -234,11 +244,50 @@ class MongoJdbcConnection(databaseProvider: DatabaseProvider) extends Connection
   override def getClientInfo: Properties = {
     val properties = new Properties()
     properties.setProperty("ApplicationName", databaseProvider.config.applicationName)
-    val document = Document(new JsonConverter().toJson(databaseProvider.config))
+    case class MongoConfigHelper(
+      database: String,
+      host: String = DefaultHost,
+      port: Int = DefaultPort,
+      var applicationName: String = DefaultApplicationName,
+      userName: Option[String] = None,
+      password: Option[String] = None,
+      authDatabase: String = DefaultAuthenticationDatabaseName,
+      poolOptions: MongoPoolOptions = MongoPoolOptions(),
+      compressors: List[String] = List.empty,
+      connectionPoolListener: List[String] = List.empty,
+      commandListener: List[String] = List.empty,
+      customClientSettings: Option[String] = None,
+      serverAddressList: List[String] = List.empty
+    )
+    val logConfig = Option(databaseProvider.config)
+      .map(
+        c =>
+          MongoConfigHelper(
+            c.database,
+            c.host,
+            c.port,
+            c.applicationName,
+            c.userName,
+            c.password,
+            c.authDatabase,
+            c.poolOptions,
+            c.compressors,
+            c.connectionPoolListener.map(_.toString),
+            c.commandListener.map(_.toString),
+            c.customClientSettings.map(_.toString),
+            c.serverAddressList.map(_.toString)
+          )
+      )
+      .get
+    val document = Document(new JsonConverter().toJson(logConfig))
     BsonConverter
       .asMap(document)
       .foreach(
-        entry => properties.setProperty(entry._1, entry._2.toString)
+        entry => {
+          if (entry._2 != null) {
+            properties.setProperty(entry._1, entry._2.toString)
+          }
+        }
       )
     properties
   }

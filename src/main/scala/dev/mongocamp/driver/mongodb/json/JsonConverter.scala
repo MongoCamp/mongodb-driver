@@ -1,14 +1,21 @@
 package dev.mongocamp.driver.mongodb.json
 
 import better.files.Resource
+import com.typesafe.scalalogging.LazyLogging
 import io.circe.jawn.decode
 import io.circe.syntax._
 import io.circe.Decoder
+import io.circe.Encoder
 
-class JsonConverter extends CirceSchema {
+class JsonConverter(dropNullValues: Boolean = false) extends CirceSchema with LazyLogging {
 
-  def toJson(s: Any): String = {
-    s.asJson.noSpaces
+  def toJson[A <: Any](s: A)(implicit encoder: Encoder[A]): String = {
+    if (dropNullValues) {
+      s.asJson.deepDropNullValues.noSpaces
+    }
+    else {
+      s.asJson.noSpaces
+    }
   }
 
   def readJsonMap(fileContent: String): Map[String, Any] = {
@@ -22,7 +29,11 @@ class JsonConverter extends CirceSchema {
   }
 
   def toObject[A](jsonString: String)(implicit decoder: Decoder[A]): A = {
-    decode[A](jsonString).getOrElse(null.asInstanceOf[A])
+    val decodeResponse = decode[A](jsonString)
+    if (decodeResponse.isLeft) {
+      logger.warn(s"Error while decoding json: ${decodeResponse.left.get}")
+    }
+    decodeResponse.getOrElse(null.asInstanceOf[A])
   }
 
 }

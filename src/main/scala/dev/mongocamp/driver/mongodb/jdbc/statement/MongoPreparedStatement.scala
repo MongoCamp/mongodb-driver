@@ -5,6 +5,7 @@ import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcConnection
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
 import dev.mongocamp.driver.mongodb.Converter
@@ -249,7 +250,8 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
         parameters.put(parameterIndex, s"'${t.toInstant.toString}'")
       case a: Array[Byte] =>
         parameters.put(parameterIndex, new JsonConverter().toJson(a))
-      case a: Iterable[_] =>
+      case a: Iterable[Any] =>
+        import dev.mongocamp.driver.mongodb.json._
         parameters.put(parameterIndex, new JsonConverter().toJson(a))
       case _ =>
         parameters.put(parameterIndex, x.toString)

@@ -1,5 +1,6 @@
 package dev.mongocamp.driver.mongodb.schema
 
+import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 
 case class JsonSchema(`$schema`: String, `$ref`: String, definitions: Map[String, JsonSchemaDefinition]) {
