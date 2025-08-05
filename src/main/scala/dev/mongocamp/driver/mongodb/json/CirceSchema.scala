@@ -62,8 +62,12 @@ trait CirceSchema extends CirceProductSchema {
   }
 
   implicit val DateFormat: Encoder[Date] with io.circe.Decoder[Date] = new io.circe.Encoder[Date] with io.circe.Decoder[Date] {
-    override def apply(a: Date): Json = {
-      Encoder.encodeString.apply(a.toInstant.toString)
+    override def apply(d: Date): Json = {
+      Option(d)
+        .map(
+          date => Encoder.encodeString.apply(date.toInstant.toString)
+        )
+        .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[Date] = {
@@ -76,8 +80,12 @@ trait CirceSchema extends CirceProductSchema {
   }
 
   implicit val DateTimeFormat: Encoder[DateTime] with io.circe.Decoder[DateTime] = new io.circe.Encoder[DateTime] with io.circe.Decoder[DateTime] {
-    override def apply(a: DateTime): Json = {
-      Encoder.encodeString.apply(a.toInstant.toString)
+    override def apply(d: DateTime): Json = {
+      Option(d)
+        .map(
+          date => Encoder.encodeString.apply(date.toInstant.toString)
+        )
+        .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[DateTime] = {
@@ -90,8 +98,12 @@ trait CirceSchema extends CirceProductSchema {
   }
 
   implicit val ObjectIdFormat: Encoder[ObjectId] with io.circe.Decoder[ObjectId] = new io.circe.Encoder[ObjectId] with io.circe.Decoder[ObjectId] {
-    override def apply(a: ObjectId): Json = {
-      Encoder.encodeString.apply(a.toHexString)
+    override def apply(o: ObjectId): Json = {
+      Option(o)
+        .map(
+          o => Encoder.encodeString.apply(o.toHexString)
+        )
+        .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[ObjectId] = {
