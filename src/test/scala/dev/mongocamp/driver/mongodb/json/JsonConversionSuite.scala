@@ -1,4 +1,8 @@
 package dev.mongocamp.driver.mongodb.json
+import io.circe.ACursor
+import io.circe.DecodingFailure
+import io.circe.ParsingFailure
+import org.typelevel.jawn.IncompleteParseException
 
 case class HelloWorld(greetings: String, name: String)
 case class HelloWorld2(greetings: String, name: String, option: Option[HelloWorld], subClass: List[Long])
@@ -30,6 +34,16 @@ class JsonConversionSuite extends munit.FunSuite {
     assertEquals(jsonConverter.toObject[List[Int]]("[1,2]"), List(1, 2))
     assertEquals(jsonConverter.toObject[Array[String]]("[\"hallo\",\"Welt\"]").last, Array("hallo", "Welt").last)
     assertEquals(jsonConverter.toObject[Array[Int]]("[1,2]").last, Array(1, 2).last)
+  }
+
+  test("Try to convert invalid strings") {
+    assertEquals(jsonConverter.toObjectOption[List[String]](""), None)
+    assertEquals(jsonConverter.toObjectOption[List[String]]("{}"), None)
+    assertEquals(
+      jsonConverter.toObjectRaw[List[String]](""),
+      Left(value = ParsingFailure(message = "exhausted input", underlying = IncompleteParseException(msg = "exhausted input")))
+    )
+    assertEquals(jsonConverter.toObjectRaw[List[String]]("{}").left.get.getMessage, "DecodingFailure at : Got value '{}' with wrong type, expecting array")
   }
 
   test("Convert Json to Case Class") {

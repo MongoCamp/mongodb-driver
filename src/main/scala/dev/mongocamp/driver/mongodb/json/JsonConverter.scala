@@ -7,7 +7,7 @@ import io.circe.syntax._
 import io.circe.Decoder
 import io.circe.Encoder
 
-class JsonConverter(dropNullValues: Boolean = false) extends CirceSchema with LazyLogging {
+class JsonConverter(dropNullValues: Boolean = false, shouldLogAsError: Boolean = false) extends CirceSchema with LazyLogging {
 
   def toJson[A <: Any](s: A)(implicit encoder: Encoder[A]): String = {
     if (dropNullValues) {
@@ -28,12 +28,25 @@ class JsonConverter(dropNullValues: Boolean = false) extends CirceSchema with La
     readJsonMap(fileContent)
   }
 
-  def toObject[A](jsonString: String)(implicit decoder: Decoder[A]): A = {
+  def toObjectRaw[A](jsonString: String)(implicit decoder: Decoder[A]): Either[io.circe.Error, A] = {
     val decodeResponse = decode[A](jsonString)
     if (decodeResponse.isLeft) {
-      logger.warn(s"Error while decoding json: ${decodeResponse.left.get}")
+      if (shouldLogAsError) {
+        logger.error(s"Error while decoding json: ${decodeResponse.left}")
+      }
+      else {
+        logger.debug(s"Error while decoding json: ${decodeResponse.left}")
+      }
     }
-    decodeResponse.getOrElse(null.asInstanceOf[A])
+    decodeResponse
+  }
+
+  def toObject[A](jsonString: String)(implicit decoder: Decoder[A]): A = {
+    toObjectRaw[A](jsonString).getOrElse(null.asInstanceOf[A])
+  }
+
+  def toObjectOption[A](jsonString: String)(implicit decoder: Decoder[A]): Option[A] = {
+    toObjectRaw[A](jsonString).toOption
   }
 
 }
