@@ -1,7 +1,7 @@
 {
   "name" : "mongodb-driver",
   "organization" : "dev.mongocamp",
-  "version" : "3.0.6.snapshot",
+  "version" : "3.0.6",
   "author" : "info@mongocamp.dev",
   "license" : "Apache-2.0",
   "type" : "module",
