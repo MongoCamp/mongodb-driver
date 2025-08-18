@@ -33,6 +33,10 @@ class JsonConverter(dropNullValues: Boolean = false, defaultShouldLogAsError: Bo
     decodeResponse
   }
 
+  def toObject[A](jsonString: String)(implicit decoder: Decoder[A]): A = {
+    toObjectOption[A](jsonString, defaultShouldLogAsError).getOrElse(null.asInstanceOf[A])
+  }
+
   def toObject[A](jsonString: String, shouldLogError: Boolean = defaultShouldLogAsError)(implicit decoder: Decoder[A]): A = {
     toObjectOption[A](jsonString, shouldLogError).getOrElse(null.asInstanceOf[A])
   }
