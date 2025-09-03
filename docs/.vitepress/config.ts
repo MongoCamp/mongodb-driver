@@ -142,8 +142,16 @@ function sidebarDocumentation() {
             collapsed: true,
         },
         {
+            text: 'Known Issues',
+            link: '/documentation/known-issues', items: [
+                {text: 'Json Converter', link: '/documentation/known-issues/json-converter'},
+            ],
+            collapsible: true,
+            collapsed: true,
+        },
+        {
             text: 'LocalServer',
             link: '/documentation/local-server'
-        }
+        },
     ]
 }

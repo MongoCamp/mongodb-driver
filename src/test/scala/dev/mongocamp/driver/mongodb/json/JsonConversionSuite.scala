@@ -20,6 +20,7 @@ class JsonConversionSuite extends munit.FunSuite {
   }
 
   test("Convert Case Class with Any to Json") {
+    // #region known-issue-any-format
     val isScala3 = scala.util.Properties.versionNumberString.startsWith("3.")
     val jString3: String = if (isScala3) {
       jsonConverter.toJson(HelloWorld3("servus", "welt"))
@@ -28,6 +29,7 @@ class JsonConversionSuite extends munit.FunSuite {
       jsonConverter.toJson(HelloWorld3("servus", "welt").asInstanceOf[Any])
     }
     assertEquals(jString3, "{\"greetings\":\"servus\",\"name\":\"welt\"}")
+    // #endregion known-issue-any-format
   }
 
   test("Convert Json to Case Class with Option using anyFormat") {
