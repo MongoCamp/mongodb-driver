@@ -1,14 +1,14 @@
 package dev.mongocamp.driver.mongodb.json
-import io.circe.ACursor
-import io.circe.DecodingFailure
+import dev.mongocamp.driver.mongodb.json.model.FooBar
+import dev.mongocamp.driver.mongodb.json.model.HelloWorld
+import dev.mongocamp.driver.mongodb.json.model.HelloWorld2
+import dev.mongocamp.driver.mongodb.json.model.HelloWorld3
 import io.circe.ParsingFailure
 import org.typelevel.jawn.IncompleteParseException
 
-case class HelloWorld(greetings: String, name: String)
-case class HelloWorld2(greetings: String, name: String, option: Option[HelloWorld], subClass: List[Long])
-
 class JsonConversionSuite extends munit.FunSuite {
-  protected lazy val jsonConverter = new JsonConverter()
+  protected lazy val jsonConverter     = new JsonConverter()
+  protected lazy val dropNullConverter = new JsonConverter(dropNullValues = true)
 
   test("Convert to List to Json") {
     assertEquals(jsonConverter.toJson(Array(1, 2)), "[1,2]")
@@ -17,6 +17,22 @@ class JsonConversionSuite extends munit.FunSuite {
     assertEquals(jsonConverter.toJson(List(1, 2)), "[1,2]")
     assertEquals(jsonConverter.toJson(Array.empty[String]), "[]")
     assertEquals(jsonConverter.toJson(Array("hallo", "Welt")), "[\"hallo\",\"Welt\"]")
+  }
+
+  test("Convert Case Class with Any to Json") {
+    val isScala3 = scala.util.Properties.versionNumberString.startsWith("3.")
+    val jString3: String = if (isScala3) {
+      jsonConverter.toJson(HelloWorld3("servus", "welt"))
+    }
+    else {
+      jsonConverter.toJson(HelloWorld3("servus", "welt").asInstanceOf[Any])
+    }
+    assertEquals(jString3, "{\"greetings\":\"servus\",\"name\":\"welt\"}")
+  }
+
+  test("Convert Json to Case Class with Option using anyFormat") {
+    assertEquals(jsonConverter.toJson(FooBar()), "{\"foo\":null,\"bar\":null}")
+    assertEquals(dropNullConverter.toJson(FooBar()), "{}")
   }
 
   test("Convert Case Class to Json") {

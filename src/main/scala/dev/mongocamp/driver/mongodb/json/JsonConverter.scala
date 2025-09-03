@@ -3,18 +3,18 @@ package dev.mongocamp.driver.mongodb.json
 import better.files.Resource
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.jawn.decode
-import io.circe.syntax._
 import io.circe.Decoder
 import io.circe.Encoder
 
 class JsonConverter(dropNullValues: Boolean = false, defaultShouldLogAsError: Boolean = false) extends CirceSchema with LazyLogging {
 
-  def toJson[A <: Any](s: A)(implicit encoder: Encoder[A]): String = {
+  def toJson[A <: Any](a: A)(implicit encoder: Encoder[A]): String = {
+    import io.circe.syntax._
     if (dropNullValues) {
-      s.asJson.deepDropNullValues.noSpaces
+      a.asJson.deepDropNullValues.noSpaces
     }
     else {
-      s.asJson.noSpaces
+      a.asJson.noSpaces
     }
   }
 
@@ -37,14 +37,14 @@ class JsonConverter(dropNullValues: Boolean = false, defaultShouldLogAsError: Bo
     toObjectOption[A](jsonString, defaultShouldLogAsError).getOrElse(null.asInstanceOf[A])
   }
 
-  def toObject[A](jsonString: String, shouldLogError: Boolean = defaultShouldLogAsError)(implicit decoder: Decoder[A]): A = {
-    toObjectOption[A](jsonString, shouldLogError).getOrElse(null.asInstanceOf[A])
+  def toObject[A](jsonString: String, shouldLogAsError: Boolean = defaultShouldLogAsError)(implicit decoder: Decoder[A]): A = {
+    toObjectOption[A](jsonString, shouldLogAsError).getOrElse(null.asInstanceOf[A])
   }
 
-  def toObjectOption[A](jsonString: String, shouldLogError: Boolean = defaultShouldLogAsError)(implicit decoder: Decoder[A]): Option[A] = {
+  def toObjectOption[A](jsonString: String, shouldLogAsError: Boolean = defaultShouldLogAsError)(implicit decoder: Decoder[A]): Option[A] = {
     val decodeResponse = toObjectRaw[A](jsonString)
     if (decodeResponse.isLeft) {
-      if (shouldLogError) {
+      if (shouldLogAsError) {
         logger.error(s"Error while decoding json: ${decodeResponse.left}")
       }
       else {

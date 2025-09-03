@@ -127,7 +127,10 @@ trait CirceSchema extends CirceProductSchema {
   }
 
   implicit val AnyFormat: Encoder[Any] with io.circe.Decoder[Any] = new io.circe.Encoder[Any] with io.circe.Decoder[Any] {
-    override def apply(a: Any): Json = encodeAnyToJson(a)
+
+    override def apply(a: Any): Json = {
+      encodeAnyToJson(a)
+    }
 
     override def apply(c: HCursor): Result[Any] = {
       Decoder.decodeJson
@@ -136,6 +139,7 @@ trait CirceSchema extends CirceProductSchema {
         )
         .apply(c)
     }
+
   }
 
   def encodeMapStringAny(a: Map[String, Any]): Json = {
@@ -189,14 +193,20 @@ trait CirceSchema extends CirceProductSchema {
 
   def encodeAnyToJson(a: Any, deepth: Int = 0): Json = {
     a match {
-      case s: String         => Json.fromString(s)
-      case b: Boolean        => Json.fromBoolean(b)
-      case l: Long           => Json.fromLong(l)
-      case i: Int            => Json.fromInt(i)
-      case bi: BigInt        => Json.fromBigInt(bi)
-      case bd: BigDecimal    => Json.fromBigDecimal(bd)
-      case d: Double         => Json.fromDoubleOrNull(d)
-      case f: Float          => Json.fromFloatOrNull(f)
+      case s: String      => Json.fromString(s)
+      case b: Boolean     => Json.fromBoolean(b)
+      case l: Long        => Json.fromLong(l)
+      case i: Int         => Json.fromInt(i)
+      case bi: BigInt     => Json.fromBigInt(bi)
+      case bd: BigDecimal => Json.fromBigDecimal(bd)
+      case d: Double      => Json.fromDoubleOrNull(d)
+      case f: Float       => Json.fromFloatOrNull(f)
+      case option: Option[_] =>
+        option
+          .map(
+            e => encodeAnyToJson(e, deepth)
+          )
+          .getOrElse(Json.Null)
       case d: Date           => Encoder.encodeString.apply(d.toInstant.toString)
       case d: DateTime       => Encoder.encodeString.apply(d.toInstant.toString)
       case o: ObjectId       => Encoder.encodeString.apply(o.toHexString)
