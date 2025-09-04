@@ -65,3 +65,17 @@ jobs:
           git config --global user.email "ci@mongocamp.dev"
           git config --global user.name "MongoCamp CI"
           sbt ci-release
+
+      - name: Update CHANGELOG
+        id: changelog
+        uses: requarks/changelog-action@main
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+
+      - name: Commit CHANGELOG.md
+        uses: stefanzweifel/git-auto-commit-action@master
+        with:
+          branch: main
+          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+          file_pattern: CHANGELOG.md

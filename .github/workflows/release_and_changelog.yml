@@ -13,13 +13,6 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Update CHANGELOG
-        id: changelog
-        uses: requarks/changelog-action@main
-        with:
-          token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
-
       - name: Create Release
         uses: ncipollo/release-action@main
         with:
