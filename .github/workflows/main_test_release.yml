@@ -66,11 +66,19 @@ jobs:
           git config --global user.name "MongoCamp CI"
           sbt ci-release
 
+      - name: Get previous tag
+        id: previousTag
+        run: |
+          name=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | tail -2 | head -1)
+          echo "previousTag: $name"
+          echo "previousTag=$name" >> $GITHUB_ENV
+
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@main
         with:
           token: ${{ github.token }}
+          tag: ${{ env.previousTag }}
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@master
