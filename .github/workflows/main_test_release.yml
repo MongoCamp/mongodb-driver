@@ -73,16 +73,24 @@ jobs:
           echo "previousTag: $name"
           echo "previousTag=$name" >> $GITHUB_ENV
 
+      - name: Get from tag
+        id: fromTag
+        run: |
+          name=$(git --no-pager tag --sort=creatordate --merged ${{ github.ref_name }} | tail -99 | head -1)
+          echo "fromTag: $name"
+          echo "fromTag=$name" >> $GITHUB_ENV
+
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@main
         with:
           token: ${{ github.token }}
-          tag: ${{ env.previousTag }}
+          toTag: ${{ env.previousTag }}
+          fromTag: ${{ env.fromTag }}
 
       - name: Commit CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@master
         with:
           branch: main
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'
           file_pattern: CHANGELOG.md
