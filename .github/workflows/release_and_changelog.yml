@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Update CHANGELOG
         id: changelog
@@ -32,13 +34,6 @@ jobs:
         run: |
           echo "{\"mongocamp\": \"${{ github.ref_name }}\"}" > ./docs/versions.json;
           git add ./docs/versions.json
-
-      - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@master
-        with:
-          branch: main
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'
-          file_pattern: CHANGELOG.md
 
       - name: Set up JDK
         uses: coursier/setup-action@main
