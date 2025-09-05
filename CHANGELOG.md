@@ -1,3 +1,9 @@
+## [v3.0.7] - 2025-09-05
+### :recycle: Refactors
+- [`0b657ae`](https://github.com/MongoCamp/mongodb-driver/commit/0b657aef3efc26981991c0ee951859448fca97d9) - add customizable error logging in JSON conversion *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`33503ab`](https://github.com/MongoCamp/mongodb-driver/commit/33503abd3cccb1d4ff96e7e9fcc80b23e0a46063) - add overload for `toObject` method in `JsonConverter` to binary compatible *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.8] - 2025-09-04
 ### :recycle: Refactors
 - [`ff4b750`](https://github.com/MongoCamp/mongodb-driver/commit/ff4b75048a65cf43b41ab31b9283d6cfda5b5c04) - improve `JsonConverter` and `CirceSchema` methods *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -323,3 +329,4 @@
 [v3.0.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.1...v3.0.2
 [v3.0.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.2...v3.0.3
 [v3.0.8]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.7...v3.0.8
+[v3.0.7]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.6...v3.0.7
