@@ -7,6 +7,14 @@ import dev.mongocamp.driver.MongoImplicits
 
 class PaginationFilterSuite extends BasePersonSuite with MongoImplicits {
 
+  test("search with rows Long MaxValue") {
+    val personCollectionCount = PersonDAO.count().result().toInt
+    val pagination            = MongoPaginatedFilter(PersonDAO)
+    val page                  = pagination.paginate(1, Long.MaxValue)
+    assertEquals(page.paginationInfo.allCount, personCollectionCount.toLong)
+    assertEquals(page.databaseObjects.size, personCollectionCount)
+  }
+
   test("support findAll") {
 
     val pagination = MongoPaginatedFilter(PersonDAO)
