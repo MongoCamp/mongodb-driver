@@ -1,3 +1,8 @@
+## [v3.0.11] - 2025-09-24
+### :zap: Performance Improvements
+- [`eade27a`](https://github.com/MongoCamp/mongodb-driver/commit/eade27a70abf5d416245e0d9cf23ade45db82a1d) - for Int.Max value in search do not use any limit *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.10] - 2025-09-24
 ### :recycle: Refactors
 - [`97f5062`](https://github.com/MongoCamp/mongodb-driver/commit/97f50624b673af446959c9037801b1c72f16da0f) - limit for pagination is an int in official mongodb driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -346,3 +351,4 @@
 [v3.0.7]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.6...v3.0.7
 [v3.0.9]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.8...v3.0.9
 [v3.0.10]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.9...v3.0.10
+[v3.0.11]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.10...v3.0.11
