@@ -20,8 +20,9 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
 
   def find(filter: Bson = Document(), sort: Bson = Document(), projection: Bson = Document(), limit: Int = 0, skip: Int = 0): Observable[A] = {
     val findObservable = {
+      val internalLimit = if (limit == Int.MaxValue) limit - 1 else limit
       if (limit > 0) {
-        coll.find(filter).sort(sort).projection(projection).limit(limit).skip(skip)
+        coll.find(filter).sort(sort).projection(projection).limit(internalLimit).skip(skip)
       }
       else {
         coll.find(filter).sort(sort).projection(projection).skip(skip)

@@ -7,7 +7,7 @@ import org.mongodb.scala.bson.conversions.Bson
 case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map(), maxWait: Int = DefaultMaxWait)
     extends MongoPagination[A] {
 
-  def paginate(page: Long, rows: Long): PaginationResult[A] = {
+  def paginate(page: Int, rows: Int): PaginationResult[A] = {
     val count = countResult
     if (rows <= 0) {
       throw MongoCampPaginationException("rows per page must be greater then 0.")
@@ -17,7 +17,7 @@ case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map()
     }
     val allPages     = Math.ceil(count.toDouble / rows).toInt
     val skip         = (page - 1) * rows
-    val responseList = dao.find(filter, sort, projection, rows.toInt, skip.toInt).resultList(maxWait)
+    val responseList = dao.find(filter, sort, projection, rows, skip).resultList(maxWait)
     PaginationResult(responseList, PaginationInfo(count, rows, page, allPages))
   }
 

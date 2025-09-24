@@ -10,7 +10,7 @@ class PaginationFilterSuite extends BasePersonSuite with MongoImplicits {
   test("search with rows Long MaxValue") {
     val personCollectionCount = PersonDAO.count().result().toInt
     val pagination            = MongoPaginatedFilter(PersonDAO)
-    val page                  = pagination.paginate(1, Long.MaxValue)
+    val page                  = pagination.paginate(1, Int.MaxValue)
     assertEquals(page.paginationInfo.allCount, personCollectionCount.toLong)
     assertEquals(page.databaseObjects.size, personCollectionCount)
   }
