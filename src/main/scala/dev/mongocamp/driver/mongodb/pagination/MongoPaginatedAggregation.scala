@@ -19,7 +19,7 @@ case class MongoPaginatedAggregation[A <: Any](
   private val AggregationKeyData          = "data"
   private val AggregationKeyMetaDataTotal = "total"
 
-  def paginate(page: Long, rows: Long): PaginationResult[Document] = {
+  def paginate(page: Int, rows: Int): PaginationResult[Document] = {
     if (rows <= 0) {
       throw MongoCampPaginationException("rows per page must be greater then 0.")
     }
