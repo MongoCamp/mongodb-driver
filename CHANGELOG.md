@@ -1,3 +1,12 @@
+## [v3.0.10] - 2025-09-24
+### :recycle: Refactors
+- [`97f5062`](https://github.com/MongoCamp/mongodb-driver/commit/97f50624b673af446959c9037801b1c72f16da0f) - limit for pagination is an int in official mongodb driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`76fb36d`](https://github.com/MongoCamp/mongodb-driver/commit/76fb36d23d25d6a09f914b17cd47eb98c881b15f) - limit for pagination is an int in official mongodb driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`b785ceb`](https://github.com/MongoCamp/mongodb-driver/commit/b785ceb0784aa5e805c0df73584a8abd9fc0258e) - replaced java 23 test with java 25 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.9] - 2025-09-24
 ### :wrench: Chores
 - [`e6d7da6`](https://github.com/MongoCamp/mongodb-driver/commit/e6d7da634dde8fa86f43867fd7f93c6c5215ceef) - update library dependencies to latest versions *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -336,3 +345,4 @@
 [v3.0.8]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.7...v3.0.8
 [v3.0.7]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.6...v3.0.7
 [v3.0.9]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.8...v3.0.9
+[v3.0.10]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.9...v3.0.10
