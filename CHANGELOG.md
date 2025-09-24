@@ -1,3 +1,8 @@
+## [v3.0.9] - 2025-09-24
+### :wrench: Chores
+- [`e6d7da6`](https://github.com/MongoCamp/mongodb-driver/commit/e6d7da634dde8fa86f43867fd7f93c6c5215ceef) - update library dependencies to latest versions *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.7] - 2025-09-05
 ### :recycle: Refactors
 - [`0b657ae`](https://github.com/MongoCamp/mongodb-driver/commit/0b657aef3efc26981991c0ee951859448fca97d9) - add customizable error logging in JSON conversion *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -330,3 +335,4 @@
 [v3.0.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.2...v3.0.3
 [v3.0.8]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.7...v3.0.8
 [v3.0.7]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.6...v3.0.7
+[v3.0.9]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.8...v3.0.9
