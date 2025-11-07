@@ -5,7 +5,7 @@
 A library for easy usage of the mongo-scala-driver (5.1.xa). Full MongoDB Functionality in Scala with a few lines of code.
 
 ## MongoDB Support
-We currently testing with '4.4', '5.0', '6.0', '7.0' and '8.0'.
+We currently testing with '4.4', '5.0', '6.0', '7.0' '8.0' and '8.2'.
 
 ## Features
 
