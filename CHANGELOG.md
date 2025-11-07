@@ -1,3 +1,11 @@
+## [v3.0.12] - 2025-11-07
+### :white_check_mark: Tests
+- [`1315bf3`](https://github.com/MongoCamp/mongodb-driver/commit/1315bf3464cbdefdb9cd32d3c600a0bfeac1e603) - added test on mongodb 8.2 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`5265ba3`](https://github.com/MongoCamp/mongodb-driver/commit/5265ba35911c4b89556609ffd54a780fa61693be) - 10 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.11] - 2025-09-24
 ### :zap: Performance Improvements
 - [`eade27a`](https://github.com/MongoCamp/mongodb-driver/commit/eade27a70abf5d416245e0d9cf23ade45db82a1d) - for Int.Max value in search do not use any limit *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -352,3 +360,4 @@
 [v3.0.9]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.8...v3.0.9
 [v3.0.10]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.9...v3.0.10
 [v3.0.11]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.10...v3.0.11
+[v3.0.12]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.11...v3.0.12
