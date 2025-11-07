@@ -1,9 +1,9 @@
 Test / parallelExecution := false
 
-libraryDependencies += "org.liquibase" % "liquibase-core" % "4.33.0" % Test
+libraryDependencies += "org.liquibase" % "liquibase-core" % "5.0.1" % Test
 
 // Test
 
-libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.18" % Test
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.5.20" % Test
 
-libraryDependencies += "org.scalameta" %% "munit" % "1.2.0"
+libraryDependencies += "org.scalameta" %% "munit" % "1.2.1"
