@@ -3,6 +3,9 @@ package dev.mongocamp.driver.mongodb.database
 import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala._
 import org.mongodb.scala.gridfs.GridFSBucket
+import org.mongodb.scala.model.CreateCollectionOptions
+import org.mongodb.scala.model.TimeSeriesOptions
+import com.mongodb.client.model.TimeSeriesGranularity
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -102,6 +105,31 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
     finally {
       session.close()
     }
+  }
+
+  def createCappedCollection(
+    collectionName: String,
+    maxSizeBytes: Long,
+    maxDocuments: Option[Long] = None,
+    databaseName: String = DefaultDatabaseName
+  ): SingleObservable[Unit] = {
+    val options = CreateCollectionOptions().capped(true).sizeInBytes(maxSizeBytes)
+    maxDocuments.foreach(max => options.maxDocuments(max))
+    database(databaseName).createCollection(collectionName, options)
+  }
+
+  def createTimeSeriesCollection(
+    collectionName: String,
+    timeField: String,
+    metaField: Option[String] = None,
+    granularity: Option[TimeSeriesGranularity] = None,
+    databaseName: String = DefaultDatabaseName
+  ): SingleObservable[Unit] = {
+    val tsOptions = TimeSeriesOptions(timeField)
+    metaField.foreach(f => tsOptions.metaField(f))
+    granularity.foreach(g => tsOptions.granularity(g))
+    val options = CreateCollectionOptions().timeSeriesOptions(tsOptions)
+    database(databaseName).createCollection(collectionName, options)
   }
 
   def addChangeObserver(observer: ChangeObserver[Document], databaseName: String = DefaultDatabaseName): ChangeObserver[Document] = {
