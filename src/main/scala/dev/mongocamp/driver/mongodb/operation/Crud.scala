@@ -144,4 +144,41 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
     deleteMany(Map(), options)
   }
 
+
+  def findOneAndUpdate(filter: Bson, update: Bson): SingleObservable[A] =
+    {
+      coll.findOneAndUpdate(filter, update).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def findOneAndUpdate(filter: Bson, update: Bson, options: FindOneAndUpdateOptions): SingleObservable[A] =
+    {
+      coll.findOneAndUpdate(filter, update, options).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def findOneAndDelete(filter: Bson): SingleObservable[A] =
+    {
+      coll.findOneAndDelete(filter).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def findOneAndDelete(filter: Bson, options: FindOneAndDeleteOptions): SingleObservable[A] =
+    {
+      coll.findOneAndDelete(filter, options).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def findOneAndReplace(filter: Bson, replacement: A): SingleObservable[A] =
+    {
+      coll.findOneAndReplace(filter, Converter.toDocument(replacement)).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def findOneAndReplace(filter: Bson, replacement: A, options: FindOneAndReplaceOptions): SingleObservable[A] =
+
+    {
+      coll.findOneAndReplace(filter, Converter.toDocument(replacement), options).map(doc => documentToObject[A](doc, decoder))
+    }
+
+  def upsertOne(filter: Bson, value: A): Observable[UpdateResult] =
+    {
+      replaceOne(filter, value, ReplaceOptions().upsert(true))
+    }
+
 }
