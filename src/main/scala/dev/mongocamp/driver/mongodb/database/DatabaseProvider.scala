@@ -3,7 +3,13 @@ package dev.mongocamp.driver.mongodb.database
 import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala._
 import org.mongodb.scala.gridfs.GridFSBucket
+import org.reactivestreams.Publisher
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import scala.collection.mutable
+import scala.concurrent.Await
+import scala.concurrent.Promise
+import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class DatabaseProvider(val config: MongoConfig) extends Serializable {
@@ -78,6 +84,24 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
       cachedDatabaseMap.put(databaseName, client.getDatabase(databaseName))
     }
     cachedDatabaseMap(databaseName)
+  }
+
+  def withTransaction[T](block: ClientSession => T): T = {
+    val session = client.startSession().result()
+    session.startTransaction()
+    try {
+      val result = block(session)
+      awaitVoidPublisher(session.commitTransaction())
+      result
+    }
+    catch {
+      case ex: Exception =>
+        awaitVoidPublisher(session.abortTransaction())
+        throw ex
+    }
+    finally {
+      session.close()
+    }
   }
 
   def addChangeObserver(observer: ChangeObserver[Document], databaseName: String = DefaultDatabaseName): ChangeObserver[Document] = {
@@ -165,6 +189,17 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
   def cachedCollectionNames(): List[String] = cachedMongoDAOMap.keys.toList
 
   case class DocumentDao(provider: DatabaseProvider, collectionName: String) extends MongoDAO[Document](this, collectionName)
+
+  private def awaitVoidPublisher[T](publisher: Publisher[T]): Unit = {
+    val promise = Promise[Unit]()
+    publisher.subscribe(new Subscriber[T] {
+      override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+      override def onNext(t: T): Unit                 = {}
+      override def onError(t: Throwable): Unit        = promise.failure(t)
+      override def onComplete(): Unit                 = promise.success(())
+    })
+    Await.result(promise.future, DefaultMaxWait.seconds)
+  }
 
 }
 

@@ -15,6 +15,7 @@ import org.mongodb.scala.result.InsertManyResult
 import org.mongodb.scala.result.InsertOneResult
 import org.mongodb.scala.result.UpdateResult
 import org.mongodb.scala.BulkWriteResult
+import org.mongodb.scala.ClientSession
 import org.mongodb.scala.Document
 import org.mongodb.scala.Observable
 import org.mongodb.scala.SingleObservable
@@ -144,7 +145,6 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
     deleteMany(Map(), options)
   }
 
-
   def findOneAndUpdate(filter: Bson, update: Bson): SingleObservable[A] =
     {
       coll.findOneAndUpdate(filter, update).map(doc => documentToObject[A](doc, decoder))
@@ -179,6 +179,41 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
   def upsertOne(filter: Bson, value: A): Observable[UpdateResult] =
     {
       replaceOne(filter, value, ReplaceOptions().upsert(true))
+    }
+
+  def insertOne(value: A, session: ClientSession): Observable[InsertOneResult] =
+    {
+      coll.insertOne(session, Converter.toDocument(value))
+    }
+
+  def insertMany(values: Seq[A], session: ClientSession): Observable[InsertManyResult] =
+    {
+      coll.insertMany(session, values.map(Converter.toDocument))
+    }
+
+  def replaceOne(filter: Bson, value: A, session: ClientSession): Observable[UpdateResult] =
+    {
+      coll.replaceOne(session, filter, Converter.toDocument(value))
+    }
+
+  def updateOne(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] =
+    {
+      coll.updateOne(session, filter, update)
+    }
+
+  def updateMany(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] =
+    {
+      coll.updateMany(session, filter, update)
+    }
+
+  def deleteOne(filter: Bson, session: ClientSession): Observable[DeleteResult] =
+    {
+      coll.deleteOne(session, filter)
+    }
+
+  def deleteMany(filter: Bson, session: ClientSession): Observable[DeleteResult] =
+    {
+      coll.deleteMany(session, filter)
     }
 
 }
