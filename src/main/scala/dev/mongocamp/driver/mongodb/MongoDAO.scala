@@ -13,6 +13,7 @@ import io.circe.Decoder
 import java.nio.charset.Charset
 import java.util.Date
 import org.bson.BsonDocument
+import org.mongodb.scala.bsonDocumentToDocument
 import org.bson.json.JsonParseException
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Accumulators._

@@ -34,7 +34,7 @@ class DocumentIncludesSuite extends FunSuite with DocumentIncludes {
   }
 
   test("documentFromMutableMap should convert mutable.Map to Document") {
-    val mutableMap: collection.mutable.Map[String, Any] = collection.mutable.Map("key" -> "value")
+    val mutableMap: scala.collection.mutable.Map[String, Any] = scala.collection.mutable.Map("key" -> "value")
     val document                                        = documentFromMutableMap(mutableMap)
     assert(document.isInstanceOf[Document])
     assertEquals(document.toBsonDocument.toJson(), "{\"key\": \"value\"}")

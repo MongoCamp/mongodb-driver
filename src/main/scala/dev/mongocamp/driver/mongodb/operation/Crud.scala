@@ -19,6 +19,7 @@ import org.mongodb.scala.ClientSession
 import org.mongodb.scala.Document
 import org.mongodb.scala.Observable
 import org.mongodb.scala.SingleObservable
+import org.mongodb.scala.ToSingleObservablePublisher
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
