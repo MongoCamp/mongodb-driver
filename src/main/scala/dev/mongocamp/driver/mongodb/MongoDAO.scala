@@ -12,11 +12,14 @@ import dev.mongocamp.driver.mongodb.operation.Crud
 import io.circe.Decoder
 import java.nio.charset.Charset
 import java.util.Date
+import org.bson.BsonDocument
 import org.bson.json.JsonParseException
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections
+import org.mongodb.scala.model.changestream.FullDocument
 import org.mongodb.scala.BulkWriteResult
 import org.mongodb.scala.Document
 import org.mongodb.scala.MongoCollection
@@ -34,7 +37,44 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
   val collection: MongoCollection[Document] = provider.collection(collectionName)
 
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
-    coll.watch[A]().subscribe(observer)
+    import org.mongodb.scala.Observer
+    import org.mongodb.scala.Subscription
+    import org.mongodb.scala.model.changestream.ChangeStreamDocument
+    coll.watch[Document]().subscribe(new Observer[ChangeStreamDocument[Document]] {
+      override def onSubscribe(s: Subscription): Unit                             = observer.onSubscribe(s)
+      override def onError(e: Throwable): Unit                                    = observer.onError(e)
+      override def onComplete(): Unit                                             = observer.onComplete()
+      override def onNext(event: ChangeStreamDocument[Document]): Unit            =
+        observer.onNext(event.asInstanceOf[ChangeStreamDocument[A]])
+    })
+    observer
+  }
+
+  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument): ChangeObserver[A] =
+    addChangeObserver(observer, fullDocument, Seq.empty, None)
+
+  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument, pipeline: Seq[Bson]): ChangeObserver[A] =
+    addChangeObserver(observer, fullDocument, pipeline, None)
+
+  def addChangeObserver(
+    observer: ChangeObserver[A],
+    fullDocument: FullDocument,
+    pipeline: Seq[Bson],
+    resumeAfter: Option[BsonDocument]
+  ): ChangeObserver[A] = {
+    import org.mongodb.scala.Observer
+    import org.mongodb.scala.Subscription
+    import org.mongodb.scala.model.changestream.ChangeStreamDocument
+    val baseStream  = if (pipeline.nonEmpty) coll.watch[Document](pipeline) else coll.watch[Document]()
+    val withFullDoc = baseStream.fullDocument(fullDocument)
+    val finalStream = resumeAfter.fold(withFullDoc)(token => withFullDoc.resumeAfter(token))
+    finalStream.subscribe(new Observer[ChangeStreamDocument[Document]] {
+      override def onSubscribe(s: Subscription): Unit                  = observer.onSubscribe(s)
+      override def onError(e: Throwable): Unit                         = observer.onError(e)
+      override def onComplete(): Unit                                  = observer.onComplete()
+      override def onNext(event: ChangeStreamDocument[Document]): Unit =
+        observer.onNext(event.asInstanceOf[ChangeStreamDocument[A]])
+    })
     observer
   }
 

@@ -2,10 +2,13 @@ package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala._
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSBucket
 import org.mongodb.scala.model.CreateCollectionOptions
 import org.mongodb.scala.model.TimeSeriesOptions
 import com.mongodb.client.model.TimeSeriesGranularity
+import org.mongodb.scala.model.changestream.FullDocument
+import org.bson.BsonDocument
 import org.reactivestreams.Publisher
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
@@ -134,6 +137,35 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
 
   def addChangeObserver(observer: ChangeObserver[Document], databaseName: String = DefaultDatabaseName): ChangeObserver[Document] = {
     database(databaseName).watch().subscribe(observer)
+    observer
+  }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, Seq.empty, None, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument, pipeline: Seq[Bson]): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, pipeline, None, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument, pipeline: Seq[Bson], resumeAfter: Option[BsonDocument]): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, pipeline, resumeAfter, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(
+    observer: ChangeObserver[Document],
+    fullDocument: FullDocument,
+    pipeline: Seq[Bson],
+    resumeAfter: Option[BsonDocument],
+    databaseName: String
+  ): ChangeObserver[Document] = {
+    val baseStream  = if (pipeline.nonEmpty) database(databaseName).watch(pipeline) else database(databaseName).watch()
+    val withFullDoc = baseStream.fullDocument(fullDocument)
+    val finalStream = resumeAfter.fold(withFullDoc)(token => withFullDoc.resumeAfter(token))
+    finalStream.subscribe(observer)
     observer
   }
 
