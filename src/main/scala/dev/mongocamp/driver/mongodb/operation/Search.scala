@@ -8,6 +8,7 @@ import org.bson.BsonValue
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.ClientSession
 import org.mongodb.scala.DistinctObservable
 import org.mongodb.scala.Document
 import org.mongodb.scala.MongoCollection
@@ -61,5 +62,23 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
         documentToObject[A](doc, decoder)
     }
   }
+
+  def find(session: ClientSession, filter: Bson, sort: Bson, projection: Bson, limit: Int, skip: Int): Observable[A] = {
+    val findObservable = {
+      if (limit > 0 && limit != Int.MaxValue) {
+        coll.find(session, filter).sort(sort).projection(projection).limit(limit).skip(skip)
+      }
+      else {
+        coll.find(session, filter).sort(sort).projection(projection).skip(skip)
+      }
+    }
+    findObservable.map(doc => documentToObject[A](doc, decoder))
+  }
+
+  def find(session: ClientSession, filter: Bson): Observable[A] =
+    find(session, filter, Document(), Document(), 0, 0)
+
+  def find(session: ClientSession): Observable[A] =
+    find(session, Document(), Document(), Document(), 0, 0)
 
 }
