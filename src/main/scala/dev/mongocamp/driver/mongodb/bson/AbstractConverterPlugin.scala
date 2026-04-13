@@ -16,8 +16,16 @@ abstract class AbstractConverterPlugin {
   }
 
   def objectToBson(value: AnyRef): BsonValue = {
-    val map: Map[String, Any] = ClassUtil.membersToMap(value)
-    BsonConverter.toBson(map)
+    val rawMap: Map[String, Any] = ClassUtil.membersToMap(value)
+    val map = rawMap.filter {
+      case (k, v) => k != "MODULE$" && (v == null || !(v.asInstanceOf[AnyRef] eq value))
+    }
+    if (map.isEmpty && value.isInstanceOf[Product]) {
+      org.mongodb.scala.bson.BsonString(value.asInstanceOf[Product].productPrefix)
+    }
+    else {
+      BsonConverter.toBson(map)
+    }
   }
 
   def toBson(value: Any): BsonValue =
