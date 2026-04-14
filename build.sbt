@@ -20,7 +20,7 @@ developers := List(
 
 licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("3.7.2", "2.13.17")
+crossScalaVersions := Seq("3.8.3", "2.13.18")
 
 scalaVersion := crossScalaVersions.value.last
 
@@ -37,13 +37,13 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
-libraryDependencies += "joda-time" % "joda-time" % "2.14.0"
+libraryDependencies += "joda-time" % "joda-time" % "2.14.1"
 
 val circeVersion = "0.14.15"
 
 libraryDependencies ++= Seq("io.circe" %% "circe-core", "io.circe" %% "circe-generic", "io.circe" %% "circe-parser").map(_ % circeVersion)
 
-libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.6.1").cross(CrossVersion.for3Use2_13)
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.6.5").cross(CrossVersion.for3Use2_13)
 
 val MongoJavaServerVersion = "1.47.0"
 
@@ -53,13 +53,13 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJ
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.8" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-6" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-7" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.3.1"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.4.0"
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2"
 
-libraryDependencies += "com.typesafe" % "config" % "1.4.5"
+libraryDependencies += "com.typesafe" % "config" % "1.4.6"
 
 libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.6"
 

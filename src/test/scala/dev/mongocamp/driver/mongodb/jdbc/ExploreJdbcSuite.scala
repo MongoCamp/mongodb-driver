@@ -732,7 +732,7 @@ class ExploreJdbcSuite extends BaseJdbcSuite {
   }
 
   test("getDatabaseMinorVersion should return the minor version") {
-    assertEquals(connection.getMetaData.getDatabaseMinorVersion, 0) // Replace with the actual minor version
+    assertEquals(connection.getMetaData.getDatabaseMinorVersion, 1) // Replace with the actual minor version
   }
 
   test("getJDBCMajorVersion should return the JDBC major version") {

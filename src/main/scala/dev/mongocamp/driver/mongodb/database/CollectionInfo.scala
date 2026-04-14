@@ -5,7 +5,20 @@ import java.util.Date
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.documentToUntypedDocument
 
-case class CollectionInfo(name: String, collectionType: String, fetched: Date, map: Map[String, Any])
+case class CollectionInfo(name: String, collectionType: String, fetched: Date, map: Map[String, Any]) {
+
+  def isCapped: Boolean = {
+    map.get("options").exists {
+      case opts: Map[_, _] => opts.asInstanceOf[Map[String, Any]].get("capped").contains(true)
+      case _               => false
+    }
+  }
+
+  def isTimeSeries: Boolean = {
+    collectionType == "timeseries"
+  }
+
+}
 
 object CollectionInfo {
 

@@ -2,8 +2,20 @@ package dev.mongocamp.driver.mongodb.database
 
 import dev.mongocamp.driver.mongodb._
 import org.mongodb.scala._
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSBucket
+import org.mongodb.scala.model.CreateCollectionOptions
+import org.mongodb.scala.model.TimeSeriesOptions
+import com.mongodb.client.model.TimeSeriesGranularity
+import org.mongodb.scala.model.changestream.FullDocument
+import org.bson.BsonDocument
+import org.reactivestreams.Publisher
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import scala.collection.mutable
+import scala.concurrent.Await
+import scala.concurrent.Promise
+import scala.concurrent.duration._
 import scala.reflect.ClassTag
 
 class DatabaseProvider(val config: MongoConfig) extends Serializable {
@@ -80,8 +92,80 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
     cachedDatabaseMap(databaseName)
   }
 
+  def withTransaction[T](block: ClientSession => T): T = {
+    val session = client.startSession().result()
+    session.startTransaction()
+    try {
+      val result = block(session)
+      awaitVoidPublisher(session.commitTransaction())
+      result
+    }
+    catch {
+      case ex: Exception =>
+        awaitVoidPublisher(session.abortTransaction())
+        throw ex
+    }
+    finally {
+      session.close()
+    }
+  }
+
+  def createCappedCollection(
+    collectionName: String,
+    maxSizeBytes: Long,
+    maxDocuments: Option[Long] = None,
+    databaseName: String = DefaultDatabaseName
+  ): SingleObservable[Unit] = {
+    val options = CreateCollectionOptions().capped(true).sizeInBytes(maxSizeBytes)
+    maxDocuments.foreach(max => options.maxDocuments(max))
+    database(databaseName).createCollection(collectionName, options)
+  }
+
+  def createTimeSeriesCollection(
+    collectionName: String,
+    timeField: String,
+    metaField: Option[String] = None,
+    granularity: Option[TimeSeriesGranularity] = None,
+    databaseName: String = DefaultDatabaseName
+  ): SingleObservable[Unit] = {
+    val tsOptions = TimeSeriesOptions(timeField)
+    metaField.foreach(f => tsOptions.metaField(f))
+    granularity.foreach(g => tsOptions.granularity(g))
+    val options = CreateCollectionOptions().timeSeriesOptions(tsOptions)
+    database(databaseName).createCollection(collectionName, options)
+  }
+
   def addChangeObserver(observer: ChangeObserver[Document], databaseName: String = DefaultDatabaseName): ChangeObserver[Document] = {
     database(databaseName).watch().subscribe(observer)
+    observer
+  }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, Seq.empty, None, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument, pipeline: Seq[Bson]): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, pipeline, None, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(observer: ChangeObserver[Document], fullDocument: FullDocument, pipeline: Seq[Bson], resumeAfter: Option[BsonDocument]): ChangeObserver[Document] =
+    {
+      addChangeObserver(observer, fullDocument, pipeline, resumeAfter, DefaultDatabaseName)
+    }
+
+  def addChangeObserver(
+    observer: ChangeObserver[Document],
+    fullDocument: FullDocument,
+    pipeline: Seq[Bson],
+    resumeAfter: Option[BsonDocument],
+    databaseName: String
+  ): ChangeObserver[Document] = {
+    val baseStream  = if (pipeline.nonEmpty) database(databaseName).watch(pipeline) else database(databaseName).watch()
+    val withFullDoc = baseStream.fullDocument(fullDocument)
+    val finalStream = resumeAfter.fold(withFullDoc)(token => withFullDoc.resumeAfter(token))
+    finalStream.subscribe(observer)
     observer
   }
 
@@ -165,6 +249,17 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
   def cachedCollectionNames(): List[String] = cachedMongoDAOMap.keys.toList
 
   case class DocumentDao(provider: DatabaseProvider, collectionName: String) extends MongoDAO[Document](this, collectionName)
+
+  private def awaitVoidPublisher[T](publisher: Publisher[T]): Unit = {
+    val promise = Promise[Unit]()
+    publisher.subscribe(new Subscriber[T] {
+      override def onSubscribe(s: Subscription): Unit = s.request(Long.MaxValue)
+      override def onNext(t: T): Unit                 = {}
+      override def onError(t: Throwable): Unit        = promise.failure(t)
+      override def onComplete(): Unit                 = promise.success(())
+    })
+    Await.result(promise.future, DefaultMaxWait.seconds)
+  }
 
 }
 
