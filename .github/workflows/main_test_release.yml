@@ -6,14 +6,14 @@ on:
       - 'main'
       - 'master'
   repository_dispatch:
-    types: [build]
+    types: [ build ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mongodb-version: ['4.4', '5.0', '6.0', '7.0', '8.0']
+        mongodb-version: [ '4.4', '5.0', '6.0', '7.0', '8.0', '8.2' ]
         java: [ '21', '25' ]
     steps:
       - uses: actions/checkout@main
