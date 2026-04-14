@@ -41,7 +41,7 @@ export default defineConfig({
     vite: {
         plugins: [
             Unocss({
-                configFile: '../../unocss.config.ts',
+                configFile: 'docs/uno.config.ts',
             }),
         ],
     },
@@ -92,6 +92,8 @@ function sidebarDocumentation() {
                 {text: 'Introduction', link: '/documentation/database/'},
                 {text: 'Mongo Config', link: 'documentation/database/config'},
                 {text: 'DatabaseProvider', link: 'documentation/database/provider'},
+                {text: 'Transactions', link: '/documentation/database/transactions'},
+                {text: 'Collection Management', link: '/documentation/database/collections'},
                 {text: 'Reactive Streams', link: 'documentation/database/reactive-streams'},
                 {text: 'Bson', link: 'documentation/database/bson'},
                 {text: 'Relationships', link: 'documentation/database/relationships'},
@@ -107,7 +109,9 @@ function sidebarDocumentation() {
                 {text: 'Introduction', link: '/documentation/mongo-dao/'},
                 {text: 'MongoDAO Base', link: '/documentation/mongo-dao/base'},
                 {text: 'CRUD Functions', link: '/documentation/mongo-dao/crud'},
-                {text: 'Search Functions', link: '/documentation/mongo-dao/search'}
+                {text: 'Search Functions', link: '/documentation/mongo-dao/search'},
+                {text: 'Find-and-Modify', link: '/documentation/mongo-dao/find-and-modify'},
+                {text: 'Change Streams', link: '/documentation/mongo-dao/change-streams'}
             ]
         },
         {

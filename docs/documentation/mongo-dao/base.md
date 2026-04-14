@@ -10,7 +10,7 @@ Base Functions like
 
 are implemented.
 
-[Search Functions](search.md) and [CRUD Functions](crud.md) are available.
+[Search Functions](search.md), [CRUD Functions](crud.md), [Find-and-Modify](find-and-modify.md), and [Change Streams](change-streams.md) are available.
 
 ## Additional Features
 
@@ -18,7 +18,7 @@ are implemented.
 
 All functions support synchronous result handling.
 
-Use pacckage import
+Use package import
 
 ```scala
 import dev.mongocamp.driver.mongodb._
@@ -50,7 +50,7 @@ Simply call Raw on your DAO Object.
 Drop Collection.
 
 ```scala
-def drop(): Observable[Void]
+def drop(): SingleObservable[Unit]
 ```
 
 ### Count
@@ -69,8 +69,26 @@ def createIndex(key: Bson, options: IndexOptions = IndexOptions()): SingleObserv
 // Simple Index creation
 def createIndexForField(field: String, sortAscending: Boolean = true): SingleObservable[String]
 
-def dropIndex(keys: Bson): SingleObservable[Void]
+def dropIndex(keys: Bson): SingleObservable[Unit]
 
 // Simple Index delete
-def dropIndexForName(name: String): SingleObservable[Void]
+def dropIndexForName(name: String): SingleObservable[Unit]
+```
+
+### Column Names
+
+Detect the field names present in a collection (uses an aggregation pipeline internally):
+
+```scala
+def columnNames(sampleSize: Int = 0, maxWait: Int = DefaultMaxWait): List[String]
+```
+
+Pass `sampleSize > 0` to scan only a random sample for better performance on large collections.
+
+### Import JSON
+
+Bulk-import a newline-delimited JSON file (one document per line):
+
+```scala
+def importJsonFile(file: better.files.File): SingleObservable[BulkWriteResult]
 ```
