@@ -3,6 +3,7 @@ import dev.mongocamp.driver.mongodb.json.model.FooBar
 import dev.mongocamp.driver.mongodb.json.model.HelloWorld
 import dev.mongocamp.driver.mongodb.json.model.HelloWorld2
 import dev.mongocamp.driver.mongodb.json.model.HelloWorld3
+import dev.mongocamp.driver.mongodb.json.model.HelloWorld4
 import io.circe.ParsingFailure
 import org.typelevel.jawn.IncompleteParseException
 
@@ -66,5 +67,12 @@ class JsonConversionSuite extends munit.FunSuite {
 
   test("Convert Json to Case Class") {
     assertEquals(jsonConverter.toObject[HelloWorld]("{\"name\":\"world\", \"greetings\":\"hello\"}"), HelloWorld("hello", "world"))
+  }
+
+  test("Convert Json with Strange String List") {
+    assertEquals(
+      jsonConverter.toObject[HelloWorld4]("{\"name\": [\"world\", null], \"greetings\":\"hello\"}"),
+      HelloWorld4("hello", List(Option("world"), None))
+    )
   }
 }
