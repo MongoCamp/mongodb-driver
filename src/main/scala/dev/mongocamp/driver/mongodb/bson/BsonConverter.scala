@@ -131,9 +131,8 @@ object BsonConverter {
       case bd: BigDecimal           => BsonDecimal128(bd)
       case bd: java.math.BigDecimal => BsonDecimal128(bd)
       case doc: Document            => BsonDocument(doc)
-      case e: java.lang.Enum[_] => BsonString(e.name())
-      case v: AnyRef
-          if Option(v.getClass.getSuperclass).map(_.getName).contains("scala.Enumeration$Value") =>
+      case e: java.lang.Enum[_]     => BsonString(e.name())
+      case v: AnyRef if Option(v.getClass.getSuperclass).map(_.getName).contains("scala.Enumeration$Value") =>
         BsonString(v.toString)
       case map: scala.collection.Map[_, _] =>
         var doc = Document()

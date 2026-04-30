@@ -8,19 +8,16 @@ import dev.mongocamp.driver.mongodb.test.TestDatabase._
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Filters.exists
-import org.mongodb.scala.model.Updates.set
-import org.mongodb.scala.model.FindOneAndUpdateOptions
 import org.mongodb.scala.model.FindOneAndReplaceOptions
+import org.mongodb.scala.model.FindOneAndUpdateOptions
 import org.mongodb.scala.model.ReturnDocument
+import org.mongodb.scala.model.Updates.set
 
 class FindAndModifySuite extends BasePersonSuite with LazyLogging {
 
   test("findOneAndUpdate returns document BEFORE update by default") {
     val original = PersonDAO.find().resultList().head
-    val before   = PersonDAO.findOneAndUpdate(
-      equal("guid", original.guid),
-      set("favoriteFruit", "find-and-update-banana")
-    ).resultOption()
+    val before   = PersonDAO.findOneAndUpdate(equal("guid", original.guid), set("favoriteFruit", "find-and-update-banana")).resultOption()
 
     assert(before.isDefined, "Should return the document that was found")
     assertEquals(before.get.favoriteFruit, original.favoriteFruit, "Default: document BEFORE update is returned")
@@ -33,11 +30,9 @@ class FindAndModifySuite extends BasePersonSuite with LazyLogging {
 
   test("findOneAndUpdate with ReturnDocument.AFTER returns updated document") {
     val original = PersonDAO.find().resultList().head
-    val after = PersonDAO.findOneAndUpdate(
-      equal("guid", original.guid),
-      set("favoriteFruit", "after-peach"),
-      FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-    ).resultOption()
+    val after = PersonDAO
+      .findOneAndUpdate(equal("guid", original.guid), set("favoriteFruit", "after-peach"), FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER))
+      .resultOption()
 
     assert(after.isDefined, "Should return the modified document")
     assertEquals(after.get.favoriteFruit, "after-peach", "AFTER mode: document AFTER update is returned")
@@ -46,10 +41,7 @@ class FindAndModifySuite extends BasePersonSuite with LazyLogging {
   }
 
   test("findOneAndUpdate returns None when no document matches") {
-    val result = PersonDAO.findOneAndUpdate(
-      equal("guid", "non-existent-guid-xyz"),
-      set("favoriteFruit", "mango")
-    ).resultOption()
+    val result = PersonDAO.findOneAndUpdate(equal("guid", "non-existent-guid-xyz"), set("favoriteFruit", "mango")).resultOption()
 
     assertEquals(result, None, "Should return None when no document matched")
   }
@@ -78,10 +70,7 @@ class FindAndModifySuite extends BasePersonSuite with LazyLogging {
     val original    = PersonDAO.find().resultList().head
     val replacement = original.copy(favoriteFruit = "replace-kiwi")
 
-    val before = PersonDAO.findOneAndReplace(
-      equal("guid", original.guid),
-      replacement
-    ).resultOption()
+    val before = PersonDAO.findOneAndReplace(equal("guid", original.guid), replacement).resultOption()
 
     assert(before.isDefined, "Should return the original document")
     assertEquals(before.get.favoriteFruit, original.favoriteFruit, "Default: document BEFORE replace returned")
@@ -97,11 +86,8 @@ class FindAndModifySuite extends BasePersonSuite with LazyLogging {
     val original    = PersonDAO.find().resultList().head
     val replacement = original.copy(favoriteFruit = "replace-after-grape")
 
-    val after = PersonDAO.findOneAndReplace(
-      equal("guid", original.guid),
-      replacement,
-      FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)
-    ).resultOption()
+    val after =
+      PersonDAO.findOneAndReplace(equal("guid", original.guid), replacement, FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)).resultOption()
 
     assert(after.isDefined)
     assertEquals(after.get.favoriteFruit, "replace-after-grape", "AFTER mode: new document returned")
@@ -116,7 +102,7 @@ class FindAndModifySuite extends BasePersonSuite with LazyLogging {
   }
 
   test("upsertOne inserts when no document matches the filter") {
-    val newPerson = PersonDAO.find().resultList().head.copy(guid = "upsert-new-person", _id = new ObjectId())
+    val newPerson   = PersonDAO.find().resultList().head.copy(guid = "upsert-new-person", _id = new ObjectId())
     val countBefore = PersonDAO.count(equal("guid", "upsert-new-person")).result()
     assertEquals(countBefore, 0L)
 

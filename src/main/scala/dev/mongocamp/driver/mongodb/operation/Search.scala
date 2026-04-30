@@ -72,7 +72,9 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
         coll.find(session, filter).sort(sort).projection(projection).skip(skip)
       }
     }
-    findObservable.map(doc => documentToObject[A](doc, decoder))
+    findObservable.map(
+      doc => documentToObject[A](doc, decoder)
+    )
   }
 
   def find(session: ClientSession, filter: Bson): Observable[A] =
