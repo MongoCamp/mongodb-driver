@@ -1,3 +1,23 @@
+## [v3.1.0] - 2026-04-30
+### :sparkles: New Features
+- [`8762e24`](https://github.com/MongoCamp/mongodb-driver/commit/8762e246a77c80ab7b6f4b94e875917a3c66c055) - add atomic find-and-modify operations *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`db2b727`](https://github.com/MongoCamp/mongodb-driver/commit/db2b7273ca9351843184b8197a6aaf2b1c5ca53e) - add multi-document ACID transaction support *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`45dba93`](https://github.com/MongoCamp/mongodb-driver/commit/45dba93167a4606c6946e07d1104baef199e1d23) - add capped and time-series collection support *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`9b3f6f9`](https://github.com/MongoCamp/mongodb-driver/commit/9b3f6f9923995630425c56dff550c76f4dd044e7) - add enhanced change stream API *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`24087c7`](https://github.com/MongoCamp/mongodb-driver/commit/24087c7b36a5d8d7ccf5042079612355dee74f26) - add enum/enumeration round-trip tests and fix serialisation *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`8e7a461`](https://github.com/MongoCamp/mongodb-driver/commit/8e7a46164bd7970fa8f511db3fa8771cb5c9c96f) - simplify `compact` logic and improve code formatting in `DatabaseProvider` *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`ac01aa3`](https://github.com/MongoCamp/mongodb-driver/commit/ac01aa3752662224f2d4a6556af2ff0a36cf18d8) - update minor version assertion in ExploreJdbcSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`bc1638e`](https://github.com/MongoCamp/mongodb-driver/commit/bc1638e4abc9a67a9f4bb34a61f4df9454fe5812) - add test for Json conversion with null values in string list *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`edfe598`](https://github.com/MongoCamp/mongodb-driver/commit/edfe598c51bdaeb9d7ef1b16ba7c9ca415a8c02b) - 9 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d7d9b8f`](https://github.com/MongoCamp/mongodb-driver/commit/d7d9b8f934aa4022bab3bf41abbfe9d71120d264) - update 2 plugins *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.0.12] - 2025-11-07
 ### :white_check_mark: Tests
 - [`1315bf3`](https://github.com/MongoCamp/mongodb-driver/commit/1315bf3464cbdefdb9cd32d3c600a0bfeac1e603) - added test on mongodb 8.2 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -361,3 +381,4 @@
 [v3.0.10]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.9...v3.0.10
 [v3.0.11]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.10...v3.0.11
 [v3.0.12]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.11...v3.0.12
+[v3.1.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.12...v3.1.0
