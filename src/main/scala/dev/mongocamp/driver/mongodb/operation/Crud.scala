@@ -146,75 +146,84 @@ abstract class Crud[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extends 
     deleteMany(Map(), options)
   }
 
-  def findOneAndUpdate(filter: Bson, update: Bson): SingleObservable[A] =
-    {
-      coll.findOneAndUpdate(filter, update).map(doc => documentToObject[A](doc, decoder))
-    }
+  def findOneAndUpdate(filter: Bson, update: Bson): SingleObservable[A] = {
+    coll
+      .findOneAndUpdate(filter, update)
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-  def findOneAndUpdate(filter: Bson, update: Bson, options: FindOneAndUpdateOptions): SingleObservable[A] =
-    {
-      coll.findOneAndUpdate(filter, update, options).map(doc => documentToObject[A](doc, decoder))
-    }
+  def findOneAndUpdate(filter: Bson, update: Bson, options: FindOneAndUpdateOptions): SingleObservable[A] = {
+    coll
+      .findOneAndUpdate(filter, update, options)
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-  def findOneAndDelete(filter: Bson): SingleObservable[A] =
-    {
-      coll.findOneAndDelete(filter).map(doc => documentToObject[A](doc, decoder))
-    }
+  def findOneAndDelete(filter: Bson): SingleObservable[A] = {
+    coll
+      .findOneAndDelete(filter)
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-  def findOneAndDelete(filter: Bson, options: FindOneAndDeleteOptions): SingleObservable[A] =
-    {
-      coll.findOneAndDelete(filter, options).map(doc => documentToObject[A](doc, decoder))
-    }
+  def findOneAndDelete(filter: Bson, options: FindOneAndDeleteOptions): SingleObservable[A] = {
+    coll
+      .findOneAndDelete(filter, options)
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-  def findOneAndReplace(filter: Bson, replacement: A): SingleObservable[A] =
-    {
-      coll.findOneAndReplace(filter, Converter.toDocument(replacement)).map(doc => documentToObject[A](doc, decoder))
-    }
+  def findOneAndReplace(filter: Bson, replacement: A): SingleObservable[A] = {
+    coll
+      .findOneAndReplace(filter, Converter.toDocument(replacement))
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-  def findOneAndReplace(filter: Bson, replacement: A, options: FindOneAndReplaceOptions): SingleObservable[A] =
+  def findOneAndReplace(filter: Bson, replacement: A, options: FindOneAndReplaceOptions): SingleObservable[A] = {
+    coll
+      .findOneAndReplace(filter, Converter.toDocument(replacement), options)
+      .map(
+        doc => documentToObject[A](doc, decoder)
+      )
+  }
 
-    {
-      coll.findOneAndReplace(filter, Converter.toDocument(replacement), options).map(doc => documentToObject[A](doc, decoder))
-    }
+  def upsertOne(filter: Bson, value: A): Observable[UpdateResult] = {
+    replaceOne(filter, value, ReplaceOptions().upsert(true))
+  }
 
-  def upsertOne(filter: Bson, value: A): Observable[UpdateResult] =
-    {
-      replaceOne(filter, value, ReplaceOptions().upsert(true))
-    }
+  def insertOne(value: A, session: ClientSession): Observable[InsertOneResult] = {
+    coll.insertOne(session, Converter.toDocument(value))
+  }
 
-  def insertOne(value: A, session: ClientSession): Observable[InsertOneResult] =
-    {
-      coll.insertOne(session, Converter.toDocument(value))
-    }
+  def insertMany(values: Seq[A], session: ClientSession): Observable[InsertManyResult] = {
+    coll.insertMany(session, values.map(Converter.toDocument))
+  }
 
-  def insertMany(values: Seq[A], session: ClientSession): Observable[InsertManyResult] =
-    {
-      coll.insertMany(session, values.map(Converter.toDocument))
-    }
+  def replaceOne(filter: Bson, value: A, session: ClientSession): Observable[UpdateResult] = {
+    coll.replaceOne(session, filter, Converter.toDocument(value))
+  }
 
-  def replaceOne(filter: Bson, value: A, session: ClientSession): Observable[UpdateResult] =
-    {
-      coll.replaceOne(session, filter, Converter.toDocument(value))
-    }
+  def updateOne(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] = {
+    coll.updateOne(session, filter, update)
+  }
 
-  def updateOne(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] =
-    {
-      coll.updateOne(session, filter, update)
-    }
+  def updateMany(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] = {
+    coll.updateMany(session, filter, update)
+  }
 
-  def updateMany(filter: Bson, update: Bson, session: ClientSession): Observable[UpdateResult] =
-    {
-      coll.updateMany(session, filter, update)
-    }
+  def deleteOne(filter: Bson, session: ClientSession): Observable[DeleteResult] = {
+    coll.deleteOne(session, filter)
+  }
 
-  def deleteOne(filter: Bson, session: ClientSession): Observable[DeleteResult] =
-    {
-      coll.deleteOne(session, filter)
-    }
-
-  def deleteMany(filter: Bson, session: ClientSession): Observable[DeleteResult] =
-    {
-      coll.deleteMany(session, filter)
-    }
+  def deleteMany(filter: Bson, session: ClientSession): Observable[DeleteResult] = {
+    coll.deleteMany(session, filter)
+  }
 
 }

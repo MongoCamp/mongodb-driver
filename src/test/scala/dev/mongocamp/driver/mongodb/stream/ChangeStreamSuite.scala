@@ -6,15 +6,14 @@ import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.database.ChangeObserver
 import dev.mongocamp.driver.mongodb.model.Person
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import org.bson.BsonDocument
 import org.mongodb.scala.bson.ObjectId
+import org.mongodb.scala.model.changestream.FullDocument
 import org.mongodb.scala.model.Aggregates
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates.set
-import org.mongodb.scala.model.changestream.FullDocument
-
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
 
 class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
 
@@ -44,7 +43,9 @@ class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
   test("addChangeObserver(observer) subscribes to collection changes") {
     withChangeStreamSupport {
       val receivedCount = new AtomicInteger(0)
-      val observer      = ChangeObserver[Person](_ => receivedCount.incrementAndGet())
+      val observer = ChangeObserver[Person](
+        _ => receivedCount.incrementAndGet()
+      )
 
       PersonDAO.addChangeObserver(observer)
 
@@ -61,7 +62,9 @@ class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
   test("addChangeObserver with FullDocument.UPDATE_LOOKUP delivers full document on update") {
     withChangeStreamSupport {
       val receivedCount = new AtomicInteger(0)
-      val observer = ChangeObserver[Person] { _ => receivedCount.incrementAndGet() }
+      val observer = ChangeObserver[Person] {
+        _ => receivedCount.incrementAndGet()
+      }
 
       PersonDAO.addChangeObserver(observer, FullDocument.UPDATE_LOOKUP)
 
@@ -81,12 +84,13 @@ class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
       val receivedUpdates = new AtomicInteger(0)
 
       val insertOnlyPipeline = Seq(Aggregates.`match`(equal("operationType", "insert")))
-      val observer = ChangeObserver[Person] { event =>
-        event.getOperationType.getValue match {
-          case "insert" => receivedInserts.incrementAndGet()
-          case "update" => receivedUpdates.incrementAndGet()
-          case _        => ()
-        }
+      val observer = ChangeObserver[Person] {
+        event =>
+          event.getOperationType.getValue match {
+            case "insert" => receivedInserts.incrementAndGet()
+            case "update" => receivedUpdates.incrementAndGet()
+            case _        => ()
+          }
       }
 
       PersonDAO.addChangeObserver(observer, FullDocument.DEFAULT, insertOnlyPipeline)
@@ -110,8 +114,9 @@ class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
   test("addChangeObserver with resumeAfter accepts a BsonDocument token") {
     withChangeStreamSupport {
       val capturedToken = new AtomicReference[Option[BsonDocument]](None)
-      val firstObserver = ChangeObserver[Person] { event =>
-        if (capturedToken.get().isEmpty) capturedToken.set(Option(event.getResumeToken))
+      val firstObserver = ChangeObserver[Person] {
+        event =>
+          if (capturedToken.get().isEmpty) capturedToken.set(Option(event.getResumeToken))
       }
 
       PersonDAO.addChangeObserver(firstObserver)
@@ -127,8 +132,10 @@ class ChangeStreamSuite extends BasePersonSuite with LazyLogging {
         logger.warn("Skipping resume-token test: no events received (requires replica set)")
       }
       else {
-        val secondCount    = new AtomicInteger(0)
-        val secondObserver = ChangeObserver[Person](_ => secondCount.incrementAndGet())
+        val secondCount = new AtomicInteger(0)
+        val secondObserver = ChangeObserver[Person](
+          _ => secondCount.incrementAndGet()
+        )
         PersonDAO.addChangeObserver(secondObserver, FullDocument.DEFAULT, Seq.empty, token)
 
         PersonDAO.updateOne(equal("guid", target.guid), set("favoriteFruit", "resumed-cherry")).result()

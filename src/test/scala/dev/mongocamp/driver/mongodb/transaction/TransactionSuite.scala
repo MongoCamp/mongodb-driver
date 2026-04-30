@@ -1,12 +1,12 @@
 package dev.mongocamp.driver.mongodb.transaction
 
+import com.mongodb.MongoClientException
 import com.mongodb.MongoCommandException
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.model.Person
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import com.mongodb.MongoClientException
 import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates.set
@@ -31,11 +31,12 @@ class TransactionSuite extends BasePersonSuite with LazyLogging {
     assumeTransactionSupport {
       val countBefore = PersonDAO.count().result()
 
-      provider.withTransaction { session =>
-        val newPerson1 = PersonDAO.find().resultList().head.copy(guid = "tx-person-1", _id = new ObjectId())
-        val newPerson2 = PersonDAO.find().resultList().head.copy(guid = "tx-person-2", _id = new ObjectId())
-        PersonDAO.insertOne(newPerson1, session).result()
-        PersonDAO.insertOne(newPerson2, session).result()
+      provider.withTransaction {
+        session =>
+          val newPerson1 = PersonDAO.find().resultList().head.copy(guid = "tx-person-1", _id = new ObjectId())
+          val newPerson2 = PersonDAO.find().resultList().head.copy(guid = "tx-person-2", _id = new ObjectId())
+          PersonDAO.insertOne(newPerson1, session).result()
+          PersonDAO.insertOne(newPerson2, session).result()
       }
 
       val countAfter = PersonDAO.count().result()
@@ -51,10 +52,11 @@ class TransactionSuite extends BasePersonSuite with LazyLogging {
       val countBefore = PersonDAO.count().result()
 
       intercept[RuntimeException] {
-        provider.withTransaction { session =>
-          val newPerson = PersonDAO.find().resultList().head.copy(guid = "tx-rollback-person", _id = new ObjectId())
-          PersonDAO.insertOne(newPerson, session).result()
-          throw new RuntimeException("intentional failure to trigger rollback")
+        provider.withTransaction {
+          session =>
+            val newPerson = PersonDAO.find().resultList().head.copy(guid = "tx-rollback-person", _id = new ObjectId())
+            PersonDAO.insertOne(newPerson, session).result()
+            throw new RuntimeException("intentional failure to trigger rollback")
         }
       }
 
@@ -67,12 +69,9 @@ class TransactionSuite extends BasePersonSuite with LazyLogging {
     assumeTransactionSupport {
       val original = PersonDAO.find().resultList().head
 
-      provider.withTransaction { session =>
-        PersonDAO.updateOne(
-          equal("guid", original.guid),
-          set("favoriteFruit", "transaction-mango"),
-          session
-        ).result()
+      provider.withTransaction {
+        session =>
+          PersonDAO.updateOne(equal("guid", original.guid), set("favoriteFruit", "transaction-mango"), session).result()
       }
 
       val updated = PersonDAO.find(equal("guid", original.guid)).result()
@@ -89,8 +88,9 @@ class TransactionSuite extends BasePersonSuite with LazyLogging {
       val countBefore = PersonDAO.count(equal("guid", "tx-delete-target")).result()
       assertEquals(countBefore, 1L)
 
-      provider.withTransaction { session =>
-        PersonDAO.deleteOne(equal("guid", "tx-delete-target"), session).result()
+      provider.withTransaction {
+        session =>
+          PersonDAO.deleteOne(equal("guid", "tx-delete-target"), session).result()
       }
 
       val countAfter = PersonDAO.count(equal("guid", "tx-delete-target")).result()
@@ -100,9 +100,10 @@ class TransactionSuite extends BasePersonSuite with LazyLogging {
 
   test("find with session returns documents inside transaction") {
     assumeTransactionSupport {
-      provider.withTransaction { session =>
-        val results = PersonDAO.find(session).resultList()
-        assert(results.nonEmpty, "Expected documents visible inside transaction")
+      provider.withTransaction {
+        session =>
+          val results = PersonDAO.find(session).resultList()
+          assert(results.nonEmpty, "Expected documents visible inside transaction")
       }
     }
   }

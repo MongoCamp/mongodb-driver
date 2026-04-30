@@ -1,36 +1,40 @@
 package dev.mongocamp.driver.mongodb.collection
 
+import com.mongodb.client.model.TimeSeriesGranularity
 import com.mongodb.MongoCommandException
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import com.mongodb.client.model.TimeSeriesGranularity
 
 class CollectionManagementSuite extends munit.FunSuite with LazyLogging {
 
-  private val CappedCollName      = "test_capped_col"
-  private val TimeSeriesCollName  = "test_timeseries_col"
+  private val CappedCollName     = "test_capped_col"
+  private val TimeSeriesCollName = "test_timeseries_col"
 
   override def beforeAll(): Unit = {
     // Clean up from previous runs
-    Seq(CappedCollName, TimeSeriesCollName).foreach { name =>
-      try provider.dao(name).drop().result()
-      catch { case _: Exception => () }
+    Seq(CappedCollName, TimeSeriesCollName).foreach {
+      name =>
+        try provider.dao(name).drop().result()
+        catch { case _: Exception => () }
     }
   }
 
   override def afterAll(): Unit = {
-    Seq(CappedCollName, TimeSeriesCollName).foreach { name =>
-      try provider.dao(name).drop().result()
-      catch { case _: Exception => () }
+    Seq(CappedCollName, TimeSeriesCollName).foreach {
+      name =>
+        try provider.dao(name).drop().result()
+        catch { case _: Exception => () }
     }
   }
 
   test("createCappedCollection creates a capped collection") {
-    provider.createCappedCollection(
-      collectionName = CappedCollName,
-      maxSizeBytes   = 1024 * 1024 // 1 MB
-    ).result()
+    provider
+      .createCappedCollection(
+        collectionName = CappedCollName,
+        maxSizeBytes = 1024 * 1024 // 1 MB
+      )
+      .result()
 
     val info = provider.collectionInfos().find(_.name == CappedCollName)
     assert(info.isDefined, s"Collection '$CappedCollName' should exist after creation")
@@ -42,11 +46,7 @@ class CollectionManagementSuite extends munit.FunSuite with LazyLogging {
     try provider.dao(CappedCollName).drop().result()
     catch { case _: Exception => () }
 
-    provider.createCappedCollection(
-      collectionName = CappedCollName,
-      maxSizeBytes   = 1024 * 1024,
-      maxDocuments   = Some(100L)
-    ).result()
+    provider.createCappedCollection(collectionName = CappedCollName, maxSizeBytes = 1024 * 1024, maxDocuments = Some(100L)).result()
 
     val info = provider.collectionInfos().find(_.name == CappedCollName)
     assert(info.isDefined)
@@ -54,7 +54,9 @@ class CollectionManagementSuite extends munit.FunSuite with LazyLogging {
     // The max documents value is stored in options.max
     val maxDocs = info.get.map
       .get("options")
-      .flatMap { case m: Map[_, _] => m.asInstanceOf[Map[String, Any]].get("max") }
+      .flatMap {
+        case m: Map[_, _] => m.asInstanceOf[Map[String, Any]].get("max")
+      }
     assert(maxDocs.isDefined, "maxDocuments should be stored in collection options")
   }
 
@@ -77,12 +79,14 @@ class CollectionManagementSuite extends munit.FunSuite with LazyLogging {
 
   test("createTimeSeriesCollection creates a time-series collection") {
     try {
-      provider.createTimeSeriesCollection(
-        collectionName = TimeSeriesCollName,
-        timeField      = "timestamp",
-        metaField      = Some("sensorId"),
-        granularity    = Some(TimeSeriesGranularity.SECONDS)
-      ).result()
+      provider
+        .createTimeSeriesCollection(
+          collectionName = TimeSeriesCollName,
+          timeField = "timestamp",
+          metaField = Some("sensorId"),
+          granularity = Some(TimeSeriesGranularity.SECONDS)
+        )
+        .result()
 
       val info = provider.collectionInfos().find(_.name == TimeSeriesCollName)
       assert(info.isDefined, s"Collection '$TimeSeriesCollName' should exist after creation")
