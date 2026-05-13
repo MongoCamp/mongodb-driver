@@ -4,7 +4,9 @@ import java.math.BigInteger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 import java.util.Date
+import org.joda.time.DateTime
 import org.mongodb.scala.bson._
 import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.Document
@@ -12,8 +14,6 @@ import scala.collection.mutable
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
-import org.joda.time.DateTime
-import java.util.concurrent.TimeUnit
 
 object BsonConverter {
   val DocumentKeyDivider = "."
@@ -112,15 +112,15 @@ object BsonConverter {
         }
       case v: Any if converterPlugin.hasCustomClass(v) =>
         converterPlugin.toBson(v)
-      case b: Boolean         => BsonBoolean(b)
-      case s: String          => BsonString(s)
-      case c: Char            => BsonString(c.toString)
-      case bytes: Array[Byte] => BsonBinary(bytes)
-      case r: Regex           => BsonRegularExpression(r)
-      case d: Date            => BsonDateTime(d)
-      case d: DateTime        => BsonDateTime(d.toDate)
+      case b: Boolean                 => BsonBoolean(b)
+      case s: String                  => BsonString(s)
+      case c: Char                    => BsonString(c.toString)
+      case bytes: Array[Byte]         => BsonBinary(bytes)
+      case r: Regex                   => BsonRegularExpression(r)
+      case d: Date                    => BsonDateTime(d)
+      case d: DateTime                => BsonDateTime(d.toDate)
       case dt: org.joda.time.Duration => BsonString(scala.concurrent.duration.Duration(dt.getMillis, TimeUnit.MILLISECONDS).toString)
-      case d: Duration        => BsonString(d.toString)
+      case d: Duration                => BsonString(d.toString)
       case ld: LocalDate =>
         BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
       case ldt: LocalDateTime =>
