@@ -1,3 +1,12 @@
+## [v3.1.1] - 2026-05-13
+### :sparkles: New Features
+- [`b4c8898`](https://github.com/MongoCamp/mongodb-driver/commit/b4c88981d62fd2e174111ac808e2b5561d3e3d01) - add conversion for joda date time
+- [`68dad45`](https://github.com/MongoCamp/mongodb-driver/commit/68dad45fb9c2771ecfeffed8cf9ce822488d41ed) - add conversion for scala duration
+
+### :wrench: Chores
+- [`733a2c6`](https://github.com/MongoCamp/mongodb-driver/commit/733a2c6a59d6a652ba0d245af6447f8b7c3e618d) - 5 dependency updates for mongodb-driver
+
+
 ## [v3.1.0] - 2026-04-30
 ### :sparkles: New Features
 - [`8762e24`](https://github.com/MongoCamp/mongodb-driver/commit/8762e246a77c80ab7b6f4b94e875917a3c66c055) - add atomic find-and-modify operations *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -382,3 +391,4 @@
 [v3.0.11]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.10...v3.0.11
 [v3.0.12]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.11...v3.0.12
 [v3.1.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.12...v3.1.0
+[v3.1.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.0...v3.1.1
