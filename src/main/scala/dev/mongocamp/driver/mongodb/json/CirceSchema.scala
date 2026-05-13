@@ -1,8 +1,8 @@
 package dev.mongocamp.driver.mongodb.json
 
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
-import io.circe.Decoder.Result
 import io.circe._
+import io.circe.Decoder.Result
 import java.util.Date
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
@@ -20,10 +20,12 @@ trait CirceSchema extends CirceProductSchema {
 
       override def apply(c: HCursor): Result[org.mongodb.scala.Document] = {
         Decoder.decodeString
-          .map(s => {
-            val document = new org.mongodb.scala.Document(org.mongodb.scala.bson.BsonDocument(s))
-            document
-          })
+          .map(
+            s => {
+              val document = new org.mongodb.scala.Document(org.mongodb.scala.bson.BsonDocument(s))
+              document
+            }
+          )
           .apply(c)
       }
     }
@@ -34,10 +36,12 @@ trait CirceSchema extends CirceProductSchema {
         val map = a
           .keySet()
           .asScala
-          .map(key => {
-            val value = a.get(key)
-            (key, encodeAnyToJson(value))
-          })
+          .map(
+            key => {
+              val value = a.get(key)
+              (key, encodeAnyToJson(value))
+            }
+          )
           .toMap
         encodeMapStringAny(map)
       }
@@ -45,10 +49,12 @@ trait CirceSchema extends CirceProductSchema {
       override def apply(c: HCursor): Result[org.bson.Document] = {
         Decoder
           .decodeMap[String, Any]
-          .map(m => {
-            val document = new org.bson.Document(m.asJava)
-            document
-          })
+          .map(
+            m => {
+              val document = new org.bson.Document(m.asJava)
+              document
+            }
+          )
           .apply(c)
       }
     }
@@ -56,13 +62,17 @@ trait CirceSchema extends CirceProductSchema {
   implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
     override def apply(d: Date): Json = {
       Option(d)
-        .map(date => Encoder.encodeString.apply(date.toInstant.toString))
+        .map(
+          date => Encoder.encodeString.apply(date.toInstant.toString)
+        )
         .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[Date] = {
       Decoder.decodeString
-        .map(s => new DateTime(s).toDate)
+        .map(
+          s => new DateTime(s).toDate
+        )
         .apply(c)
     }
   }
@@ -70,13 +80,17 @@ trait CirceSchema extends CirceProductSchema {
   implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
     override def apply(d: DateTime): Json = {
       Option(d)
-        .map(date => Encoder.encodeString.apply(date.toInstant.toString))
+        .map(
+          date => Encoder.encodeString.apply(date.toInstant.toString)
+        )
         .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[DateTime] = {
       Decoder.decodeString
-        .map(s => new DateTime(s))
+        .map(
+          s => new DateTime(s)
+        )
         .apply(c)
     }
   }
@@ -84,13 +98,17 @@ trait CirceSchema extends CirceProductSchema {
   implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
     override def apply(o: ObjectId): Json = {
       Option(o)
-        .map(o => Encoder.encodeString.apply(o.toHexString))
+        .map(
+          o => Encoder.encodeString.apply(o.toHexString)
+        )
         .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[ObjectId] = {
       Decoder.decodeString
-        .map(s => new ObjectId(s))
+        .map(
+          s => new ObjectId(s)
+        )
         .apply(c)
     }
   }
@@ -98,14 +116,18 @@ trait CirceSchema extends CirceProductSchema {
   implicit val DurationFormat: Encoder[Duration] with Decoder[Duration] = new Encoder[Duration] with Decoder[Duration] {
     override def apply(d: Duration): Json = {
       Option(d)
-        .map(duration => Json.fromString(duration.toString))
+        .map(
+          duration => Json.fromString(duration.toString)
+        )
         .getOrElse(Json.Null)
     }
 
     override def apply(c: HCursor): Result[Duration] = {
-      Decoder.decodeString.emap(s =>
-        scala.util.Try(Duration(s)).toEither.left.map(_.getMessage)
-      ).apply(c)
+      Decoder.decodeString
+        .emap(
+          s => scala.util.Try(Duration(s)).toEither.left.map(_.getMessage)
+        )
+        .apply(c)
     }
   }
 
@@ -127,7 +149,9 @@ trait CirceSchema extends CirceProductSchema {
 
     override def apply(c: HCursor): Result[Any] = {
       Decoder.decodeJson
-        .map(a => decodeFromJson(a))
+        .map(
+          a => decodeFromJson(a)
+        )
         .apply(c)
     }
   }
@@ -135,7 +159,9 @@ trait CirceSchema extends CirceProductSchema {
   def encodeMapStringAny(a: Map[String, Any]): Json = {
     Json.obj(
       a.keySet
-        .map(key => (key, encodeAnyToJson(a(key))))
+        .map(
+          key => (key, encodeAnyToJson(a(key)))
+        )
         .toList: _*
     )
   }
@@ -147,7 +173,8 @@ trait CirceSchema extends CirceProductSchema {
         val long  = value.toLong
         if (long.isDefined) {
           long.get
-        } else {
+        }
+        else {
           value.toDouble
         }
       case a if a.isString =>
@@ -156,17 +183,23 @@ trait CirceSchema extends CirceProductSchema {
           try {
             val date = new DateTime(string)
             date
-          } catch {
+          }
+          catch {
             case _: Exception => string
           }
-        } else {
+        }
+        else {
           string
         }
       case a if a.isBoolean => a.asBoolean.getOrElse(false)
       case a if a.isArray =>
-        a.asArray.get.toList.map(e => decodeFromJson(e))
+        a.asArray.get.toList.map(
+          e => decodeFromJson(e)
+        )
       case a if a.isObject =>
-        a.asObject.get.toMap.map(e => (e._1, decodeFromJson(e._2)))
+        a.asObject.get.toMap.map(
+          e => (e._1, decodeFromJson(e._2))
+        )
       case a if a.isNull => null
       case _             => null
     }
@@ -184,7 +217,9 @@ trait CirceSchema extends CirceProductSchema {
       case f: Float       => Json.fromFloatOrNull(f)
       case option: Option[_] =>
         option
-          .map(e => encodeAnyToJson(e, depth))
+          .map(
+            e => encodeAnyToJson(e, depth)
+          )
           .getOrElse(Json.Null)
       case d: Date           => Encoder.encodeString.apply(d.toInstant.toString)
       case d: DateTime       => Encoder.encodeString.apply(d.toInstant.toString)
@@ -193,28 +228,35 @@ trait CirceSchema extends CirceProductSchema {
       case m: Map[String, _] => encodeMapStringAny(m)
       case seq: Seq[_] =>
         Json.arr(
-          seq.map(e => encodeAnyToJson(e, depth)): _*
+          seq.map(
+            e => encodeAnyToJson(e, depth)
+          ): _*
         )
       case set: Set[_] =>
         Json.arr(
           set
-            .map(e => encodeAnyToJson(e, depth))
+            .map(
+              e => encodeAnyToJson(e, depth)
+            )
             .toList: _*
         )
       case product: Product =>
         val productElementKeys = productElementNames(product).toList
         val fieldMap = productElementKeys
-          .map(key => {
-            val index = productElementKeys.indexOf(key)
-            (key, product.productElement(index))
-          })
+          .map(
+            key => {
+              val index = productElementKeys.indexOf(key)
+              (key, product.productElement(index))
+            }
+          )
           .toMap
         encodeAnyToJson(fieldMap)
       case r: Document => encodeAnyToJson(r.toMap)
       case any: Any =>
         if (depth < 256) {
           encodeAnyToJson(any, depth + 1)
-        } else {
+        }
+        else {
           Json.Null
         }
       case _ =>
