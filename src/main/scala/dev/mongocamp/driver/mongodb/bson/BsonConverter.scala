@@ -12,6 +12,8 @@ import scala.collection.mutable
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 import scala.util.matching.Regex
+import org.joda.time.DateTime
+import java.util.concurrent.TimeUnit
 
 object BsonConverter {
   val DocumentKeyDivider = "."
@@ -116,6 +118,8 @@ object BsonConverter {
       case bytes: Array[Byte] => BsonBinary(bytes)
       case r: Regex           => BsonRegularExpression(r)
       case d: Date            => BsonDateTime(d)
+      case d: DateTime        => BsonDateTime(d.toDate)
+      case dt: org.joda.time.Duration => BsonString(scala.concurrent.duration.Duration(dt.getMillis, TimeUnit.MILLISECONDS).toString)
       case d: Duration        => BsonString(d.toString)
       case ld: LocalDate =>
         BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))

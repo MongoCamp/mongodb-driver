@@ -20,6 +20,7 @@ sbt-cache/*
 .gitconfig
 
 pnpm-lock.yaml
+.scalex
 node_modules
 /.pnpm-debug.log
 /node_modules/
