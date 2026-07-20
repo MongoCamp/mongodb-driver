@@ -16,7 +16,6 @@ import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.Promise
-import scala.reflect.ClassTag
 
 class DatabaseProvider(val config: MongoConfig) extends Serializable {
   private val cachedDatabaseMap                 = new mutable.HashMap[String, MongoDatabase]()
@@ -28,7 +27,12 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
   def DefaultDatabaseName: String = defaultDatabaseName
 
   def connectionString: String = {
-    s"mongodb://${config.host}:${config.port}/${config.database}"
+    val hostUrl = config.fullServerAddressList
+      .map(
+        server => s"${server.getHost}:${server.getPort}"
+      )
+      .mkString(",")
+    s"mongodb://${hostUrl}/${config.database}"
   }
 
   def setDefaultDatabaseName(databaseName: String): Unit = {

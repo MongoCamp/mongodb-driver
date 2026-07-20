@@ -1,5 +1,7 @@
 package dev.mongocamp.driver.mongodb.database
 
+import com.mongodb.connection.ClusterSettings
+import com.mongodb.connection.ConnectionPoolSettings
 import com.mongodb.event.CommandListener
 import com.mongodb.event.ConnectionPoolListener
 import com.mongodb.MongoCompressor
@@ -35,13 +37,12 @@ case class MongoConfig(
   serverAddressList: List[ServerAddress] = List.empty
 ) {
 
-  val clientSettings: MongoClientSettings = {
+  lazy val clientSettings: MongoClientSettings = {
     if (customClientSettings.isDefined) {
       customClientSettings.get
     }
     else {
-      val internalServerAddressList        = if (serverAddressList.nonEmpty) serverAddressList else List(new ServerAddress(host, port))
-      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(internalServerAddressList.asJava).build()
+      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(fullServerAddressList.asJava).build()
 
       val connectionPoolSettingsBuilder = ConnectionPoolSettings
         .builder()
@@ -75,10 +76,10 @@ case class MongoConfig(
         .builder()
         .applicationName(applicationName)
         .applyToConnectionPoolSettings(
-          (b: com.mongodb.connection.ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings)
+          (b: ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings)
         )
         .applyToClusterSettings(
-          (b: com.mongodb.connection.ClusterSettings.Builder) => b.applySettings(clusterSettings)
+          (b: ClusterSettings.Builder) => b.applySettings(clusterSettings)
         )
         .compressorList(compressorList.asJava)
 
@@ -94,6 +95,17 @@ case class MongoConfig(
         builder.build()
       }
     }
+  }
+
+  def fullServerAddressList: List[ServerAddress] = {
+    val hostClientBasedList = List(new ServerAddress(host, port))
+    val internalServerAddressList = if (serverAddressList.nonEmpty) {
+      hostClientBasedList ++ serverAddressList
+    }
+    else {
+      hostClientBasedList
+    }
+    internalServerAddressList.distinct
   }
 }
 
@@ -151,7 +163,37 @@ object MongoConfig extends ConfigHelper {
       poolOptionsConfig("maintenanceInitialDelay", DefaultPoolMaintenanceInitialDelay)
     )
 
-    MongoConfig(database, host, port, applicationName, userName, password, authDatabase, poolOptions, compressors)
+    val additionalServerAddresses: List[ServerAddress] = {
+      if (conf.hasPath("%s.additionalServerAddresses".format(configPath))) {
+        conf.getStringList("%s.additionalServerAddresses".format(configPath)).asScala.toList.map(extractServerAddressFromString)
+      }
+      else {
+        List.empty
+      }
+    }
+
+    MongoConfig(
+      database,
+      host,
+      port,
+      applicationName,
+      userName,
+      password,
+      authDatabase,
+      poolOptions,
+      compressors,
+      serverAddressList = additionalServerAddresses
+    )
+  }
+
+  def extractServerAddressFromString(serverString: String): ServerAddress = {
+    val hostParts = serverString.split(":")
+    if (hostParts.length == 2) {
+      ServerAddress(hostParts(0), hostParts(1).toInt)
+    }
+    else {
+      new ServerAddress(hostParts(0))
+    }
   }
 
 }

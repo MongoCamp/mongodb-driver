@@ -8,8 +8,9 @@ object TestSync {
   val TestCollectionSourceTargetName = "sync-test-source-target"
   val TestCollectionTwoWayName       = "sync-test-two-way"
 
-  val mongoSyncer: MongoSyncer =
+  val mongoSyncer: MongoSyncer = {
     MongoSyncer.fromPath(sourceConfigPath = "unit.test.mongo", targetConfigPath = "unit.test.mongo.local")
+  }
 
   mongoSyncer.addOperation(MongoSyncOperation(TestCollectionSourceTargetName, SyncDirection.SourceToTarget))
   mongoSyncer.addOperation(MongoSyncOperation(TestCollectionTwoWayName, SyncDirection.TwoWay))

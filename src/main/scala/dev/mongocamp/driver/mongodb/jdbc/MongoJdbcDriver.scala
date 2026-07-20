@@ -29,21 +29,22 @@ class MongoJdbcDriver extends java.sql.Driver {
     val username      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthUser)).filter(_.trim.nonEmpty)
     val password      = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthPassword)).filter(_.trim.nonEmpty)
 
-    val string   = new ConnectionString(connectionUrl)
-    val database = Option(string.getDatabase).getOrElse(Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.Database)).getOrElse("admin"))
+    val connectionString = new ConnectionString(connectionUrl)
+    val database = Option(connectionString.getDatabase).getOrElse(Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.Database)).getOrElse("admin"))
     val authDb   = Option(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.AuthDatabase)).getOrElse("admin")
+
+    val hostList: List[ServerAddress] = connectionString.getHosts.asScala.toList.map(MongoConfig.extractServerAddressFromString)
+
     val provider = DatabaseProvider(
       MongoConfig(
         database,
-        MongoConfig.DefaultHost,
-        MongoConfig.DefaultPort,
-        Option(string.getApplicationName).filter(_.trim.nonEmpty).getOrElse(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.ApplicationName)),
+        hostList.headOption.map(_.getHost).getOrElse(MongoConfig.DefaultHost),
+        hostList.headOption.map(_.getPort).getOrElse(MongoConfig.DefaultPort),
+        Option(connectionString.getApplicationName).filter(_.trim.nonEmpty).getOrElse(info.getProperty(MongodbJdbcDriverPropertyInfoHelper.ApplicationName)),
         username,
         password,
         authDb,
-        serverAddressList = string.getHosts.asScala.toList.map(
-          h => new ServerAddress(h)
-        )
+        serverAddressList = hostList
       )
     )
     new MongoJdbcConnection(provider)

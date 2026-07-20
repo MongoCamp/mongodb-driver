@@ -10,7 +10,7 @@ import java.util.Properties
 
 class ConnectionSuite extends BaseJdbcSuite {
 
-  test("getDatabaseProvider should return the database provider") {
+  test("new MongoJdbcDriver should return the database provider") {
     val driver = new MongoJdbcDriver()
     val connectionUrl =
       "jdbc:mongodb://localhost:27017/mongocamp-unit-test?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000"
