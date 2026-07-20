@@ -73,7 +73,7 @@ class ExploreJdbcSuite extends BaseJdbcSuite {
   }
 
   test("getURL should return connection string") {
-    assertEquals(connection.getMetaData.getURL, "mongodb://127.0.0.1:27017/mongocamp-unit-test")
+    assertEquals(connection.getMetaData.getURL, "mongodb://localhost:27017/mongocamp-unit-test")
   }
 
   test("getUserName should return user name") {
