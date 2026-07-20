@@ -1,3 +1,14 @@
+## [v3.2.0] - 2026-07-20
+### :sparkles: New Features
+- [`8aee18c`](https://github.com/MongoCamp/mongodb-driver/commit/8aee18c9da33d1f19f0f8041a3d0568d2dca650d) - added default support for additional server addresses *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`9794238`](https://github.com/MongoCamp/mongodb-driver/commit/9794238b9685c6d70b94c95c58991a2cf86b1e3c) - update assertion for database minor version to 2 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`3752bf1`](https://github.com/MongoCamp/mongodb-driver/commit/3752bf1ba1f1e4a7b1b2b718cf636df15e191bd1) - 10 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.1.1] - 2026-05-13
 ### :sparkles: New Features
 - [`b4c8898`](https://github.com/MongoCamp/mongodb-driver/commit/b4c88981d62fd2e174111ac808e2b5561d3e3d01) - add conversion for joda date time
@@ -392,3 +403,4 @@
 [v3.0.12]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.11...v3.0.12
 [v3.1.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.12...v3.1.0
 [v3.1.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.0...v3.1.1
+[v3.2.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.1...v3.2.0
