@@ -1,4 +1,4 @@
-import sbt.url
+import sbt.uri
 
 name := jsonHandler.value.stringValue("package.json", "name")
 
@@ -6,19 +6,19 @@ organization := jsonHandler.value.stringValue("package.json", "organization")
 
 val MongoCampHomepage = "https://www.mongocamp.dev"
 
-organizationHomepage := Some(url(MongoCampHomepage))
+organizationHomepage := Some(uri(MongoCampHomepage))
 
-homepage := Some(url("https://mongodb-driver.mongocamp.dev"))
+homepage := Some(uri("https://mongodb-driver.mongocamp.dev"))
 
-scmInfo := Some(ScmInfo(url("https://github.com/MongoCamp/mongodb-driver"), "scm:https://github.com/MongoCamp/mongodb-driver.git"))
+scmInfo := Some(ScmInfo(uri("https://github.com/MongoCamp/mongodb-driver"), "scm:https://github.com/MongoCamp/mongodb-driver.git"))
 
 developers := List(
-  Developer(id = "mongocamp", name = "MongoCamp-Team", email = "info@mongocamp.dev", url = url(MongoCampHomepage)),
-  Developer(id = "sfxcode", name = "Tom", email = "tom@mongocamp.dev", url = url(MongoCampHomepage)),
-  Developer(id = "quadstingray", name = "QuadStingray", email = "simon@mongocamp.dev", url = url(MongoCampHomepage))
+  Developer(id = "mongocamp", name = "MongoCamp-Team", email = "info@mongocamp.dev", url = uri(MongoCampHomepage)),
+  Developer(id = "sfxcode", name = "Tom", email = "tom@mongocamp.dev", url = uri(MongoCampHomepage)),
+  Developer(id = "quadstingray", name = "QuadStingray", email = "simon@mongocamp.dev", url = uri(MongoCampHomepage))
 )
 
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
 crossScalaVersions := Seq("3.8.4", "2.13.18")
 
@@ -31,7 +31,7 @@ Test / parallelExecution := false
 
 lazy val mongodb = (project in file("."))
   .enablePlugins(BuildInfoPlugin)
-  .settings(buildInfoKeys ++= Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion), buildInfoPackage := "dev.mongocamp")
+  .settings(buildInfoKeys ++= Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion), buildInfoPackage := "dev.mongocamp.driver.mongodb")
 
 buildInfoOptions += BuildInfoOption.BuildTime
 
@@ -68,10 +68,6 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.6"
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
 libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.3"
-
-buildInfoPackage := "dev.mongocamp.driver.mongodb"
-
-buildInfoOptions += BuildInfoOption.BuildTime
 
 scalafmtOnCompile := false
 

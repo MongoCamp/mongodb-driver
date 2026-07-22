@@ -1,26 +1,16 @@
-addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
-
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.4.4")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
 
 // updates
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.7.0")
 
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
+addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.3.1")
 
-addSbtPlugin("com.github.fedragon" % "sbt-todolist" % "0.7")
+addSbtPlugin("com.github.sbt" % "sbt-release" % "1.5.0")
 
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.1.1")
-
-addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
-
-addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.7.1")
-
-addDependencyTreePlugin
-
-// todo remove as soon as possible
-dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
+addSbtPlugin("dev.quadstingray" %% "sbt-json" % "0.8.1")
 
 libraryDependencies += ("com.vdurmont" % "semver4j" % "3.1.0")

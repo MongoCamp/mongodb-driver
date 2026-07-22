@@ -37,7 +37,7 @@ commands += Command.command("ci-release")(
   (state: State) => {
     val semVersion = new Semver(version.value)
     if (semVersion.isStable) {
-      Command.process("release with-defaults", state)
+      Command.process("release with-defaults", state, _ => ())
     }
     else {
       state
