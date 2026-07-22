@@ -113,7 +113,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val DurationFormat: Encoder[Duration] with Decoder[Duration] = new Encoder[Duration] with Decoder[Duration] {
+  implicit lazy val DurationFormat: Encoder[Duration] with Decoder[Duration] = new Encoder[Duration] with Decoder[Duration] {
     override def apply(d: Duration): Json = {
       Option(d)
         .map(
