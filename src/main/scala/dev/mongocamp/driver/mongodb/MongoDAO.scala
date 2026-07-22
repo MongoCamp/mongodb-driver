@@ -9,8 +9,13 @@ import dev.mongocamp.driver.mongodb.database.CollectionStatus
 import dev.mongocamp.driver.mongodb.database.CompactResult
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
 import dev.mongocamp.driver.mongodb.operation.Crud
+import dev.mongocamp.driver.mongodb.utils.FileUtils
 import io.circe.Decoder
+import java.net.URI
+import java.net.URL
 import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.Date
 import org.bson.json.JsonParseException
 import org.bson.BsonDocument
@@ -138,6 +143,17 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     }
     Raw.bulkWriteMany(docs.toSeq)
   }
+
+  def importJsonFile(url: URL): SingleObservable[BulkWriteResult] = {
+    if (url.getProtocol == "file") {
+      importJsonFile(File(url))
+    }
+    else {
+      importJsonFile(FileUtils.getFileByUrl(url))
+    }
+  }
+
+  def importJsonFile(uri: URI): SingleObservable[BulkWriteResult] = importJsonFile(uri.toURL)
 
   override def toString: String = "%s:%s@%s, %s".format(databaseName, collectionName, provider.config, super.toString)
 }

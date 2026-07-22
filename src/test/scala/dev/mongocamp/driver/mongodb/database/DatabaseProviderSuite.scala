@@ -1,6 +1,5 @@
 package dev.mongocamp.driver.mongodb.database
 
-import better.files.File
 import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
@@ -35,7 +34,7 @@ class DatabaseProviderSuite extends BasePersonSuite {
     assertEquals(dao.name, "people")
     provider.dropDatabase(databaseName).result()
 
-    dao.importJsonFile(File(Resource.getUrl("json/people.json"))).result()
+    dao.importJsonFile(Resource.getUrl("json/people.json")).result()
     val count: Long = dao.count().result()
     assertEquals(count, 200L)
   }

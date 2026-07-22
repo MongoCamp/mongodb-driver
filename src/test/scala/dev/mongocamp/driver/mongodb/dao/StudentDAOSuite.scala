@@ -1,6 +1,5 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.File
 import better.files.Resource
 import dev.mongocamp.driver.mongodb.model.Student
 import dev.mongocamp.driver.mongodb.server.LocalServer
@@ -15,9 +14,9 @@ class StudentDAOSuite extends FunSuite with MongoImplicits {
   override def beforeAll(): Unit = {
     UniversityDatabase.LocalTestServer = LocalServer.fromPath("unit.test.local.mongo.server")
     StudentDAO.drop().result()
-    StudentDAO.importJsonFile(File(Resource.getUrl("json/university/students.json"))).result()
+    StudentDAO.importJsonFile(Resource.getUrl("json/university/students.json")).result()
     GradeDAO.drop().result()
-    GradeDAO.importJsonFile(File(Resource.getUrl("json/university/grades.json"))).result()
+    GradeDAO.importJsonFile(Resource.getUrl("json/university/grades.json")).result()
   }
 
   override def afterAll(): Unit =

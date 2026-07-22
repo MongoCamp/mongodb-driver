@@ -37,6 +37,8 @@ object TestDatabase extends LazyLogging {
 
   object PlacesDAO extends MongoDAO[Place](provider, "places")
 
+  object ImportUrlTestDAO extends MongoDAO[Document](provider, "import-url-test")
+
   object ImageFilesDAO extends GridFSDAO(provider, "images")
 
 }

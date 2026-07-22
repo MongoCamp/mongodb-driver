@@ -1,6 +1,5 @@
 package dev.mongocamp.driver.mongodb
 
-import better.files.File
 import better.files.Resource
 import dev.mongocamp.driver.mongodb.database.CompactResult
 import dev.mongocamp.driver.mongodb.test.TestDatabase
@@ -16,7 +15,7 @@ class CompactSuite extends FunSuite {
   override def beforeAll(): Unit = {
     super.beforeAll()
     BookDAO.drop().result()
-    BookDAO.importJsonFile(File(Resource.getUrl("json/books.json"))).result()
+    BookDAO.importJsonFile(Resource.getUrl("json/books.json")).result()
     val stats = BookDAO.collectionStatus.result()
     assertEquals(stats.count, 431)
   }

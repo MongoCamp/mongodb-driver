@@ -1,6 +1,5 @@
 package dev.mongocamp.driver.mongodb.dao
 
-import better.files.File
 import better.files.Resource
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.database.DatabaseProvider
@@ -22,7 +21,7 @@ class BookDAOSuite extends munit.FunSuite {
 
   override def beforeAll(): Unit = {
     BookDAO.drop().result()
-    BookDAO.importJsonFile(File(Resource.getUrl("json/books.json"))).result()
+    BookDAO.importJsonFile(Resource.getUrl("json/books.json")).result()
 
     val stats = BookDAO.collectionStatus.result()
     assertEquals(stats.count, 431)
