@@ -34,15 +34,19 @@ case class MongoConfig(
   connectionPoolListener: List[ConnectionPoolListener] = List.empty,
   commandListener: List[CommandListener] = List.empty,
   customClientSettings: Option[MongoClientSettings] = None,
-  serverAddressList: List[ServerAddress] = List.empty
+  serverAddressList: List[ServerAddress] = List.empty,
+  replicaSetName: Option[String] = None
 ) {
-
   lazy val clientSettings: MongoClientSettings = {
     if (customClientSettings.isDefined) {
       customClientSettings.get
     }
     else {
-      val clusterSettings: ClusterSettings = ClusterSettings.builder().hosts(fullServerAddressList.asJava).build()
+      val clusterSettingsBuilder: ClusterSettings.Builder = ClusterSettings.builder().hosts(fullServerAddressList.asJava)
+
+      replicaSetName.foreach(
+        replicaSetName => clusterSettingsBuilder.requiredReplicaSetName(replicaSetName)
+      )
 
       val connectionPoolSettingsBuilder = ConnectionPoolSettings
         .builder()
@@ -79,7 +83,7 @@ case class MongoConfig(
           (b: ConnectionPoolSettings.Builder) => b.applySettings(connectionPoolSettings)
         )
         .applyToClusterSettings(
-          (b: ClusterSettings.Builder) => b.applySettings(clusterSettings)
+          (b: ClusterSettings.Builder) => b.applySettings(clusterSettingsBuilder.build())
         )
         .compressorList(compressorList.asJava)
 
@@ -118,7 +122,6 @@ object MongoConfig extends ConfigHelper {
   val DefaultPoolMaxConnectionIdleTime   = 60
   val DefaultPoolMaxSize                 = 50
   val DefaultPoolMinSize                 = 0
-  val DefaultPoolMaxWaitQueueSize        = 500
   val DefaultPoolMaintenanceInitialDelay = 0
 
   val CompressionSnappy = "snappy"
@@ -155,6 +158,7 @@ object MongoConfig extends ConfigHelper {
     val password        = stringConfig(configPath, "password")
     val authDatabase    = stringConfig(configPath, "authDatabase", DefaultAuthenticationDatabaseName).get
     val applicationName = stringConfig(configPath, "applicationName", DefaultApplicationName).get
+    val replicaSetName  = stringConfig(configPath, "replicaSetName").map(_.trim).filter(_.nonEmpty)
 
     val poolOptions = MongoPoolOptions(
       poolOptionsConfig("maxConnectionIdleTime", DefaultPoolMaxConnectionIdleTime),
@@ -182,7 +186,8 @@ object MongoConfig extends ConfigHelper {
       authDatabase,
       poolOptions,
       compressors,
-      serverAddressList = additionalServerAddresses
+      serverAddressList = additionalServerAddresses,
+      replicaSetName = replicaSetName
     )
   }
 
