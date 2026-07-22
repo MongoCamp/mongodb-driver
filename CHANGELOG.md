@@ -1,3 +1,15 @@
+## [v3.2.1] - 2026-07-22
+### :sparkles: New Features
+- [`9b488f7`](https://github.com/MongoCamp/mongodb-driver/commit/9b488f77d0fc5d076d263b41001ed2701c8de846) - support importJsonFile from a URL or URI, not just a File (#sbt 2.x fix) *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`357288b`](https://github.com/MongoCamp/mongodb-driver/commit/357288b2714c666e55170d43e3ba28b75c3e0d3e) - added FileUtils to load data from Jar Based Infos *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`f750f85`](https://github.com/MongoCamp/mongodb-driver/commit/f750f8587f91ec6db0083c2f9786e742e42e3c9f) - missing replicaSetName in MongoConfig constructor *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`111647d`](https://github.com/MongoCamp/mongodb-driver/commit/111647d90fff3f340799568c17b282bcfce0219a) - make DurationFormat implicit value lazy *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.2.0] - 2026-07-20
 ### :sparkles: New Features
 - [`8aee18c`](https://github.com/MongoCamp/mongodb-driver/commit/8aee18c9da33d1f19f0f8041a3d0568d2dca650d) - added default support for additional server addresses *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -404,3 +416,4 @@
 [v3.1.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.0.12...v3.1.0
 [v3.1.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.0...v3.1.1
 [v3.2.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.1...v3.2.0
+[v3.2.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.0...v3.2.1
