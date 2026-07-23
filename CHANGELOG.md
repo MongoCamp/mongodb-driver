@@ -1,3 +1,20 @@
+## [v3.2.3] - 2026-07-23
+### :boom: BREAKING CHANGES
+- due to [`2c5144d`](https://github.com/MongoCamp/mongodb-driver/commit/2c5144d1d135670c5a2b6b77b9dbc22b44df8515) - replace `getFileByUrl` calls with `getFile` in MongoDAO and FileUtilsSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*:
+
+  Rename all FileUtils Method names
+
+
+### :sparkles: New Features
+- [`cbbe5e1`](https://github.com/MongoCamp/mongodb-driver/commit/cbbe5e18a1b8170cdad467480a0aa5535d7b08a5) - enhance FileUtils to support multiple input types (URL, URI, Path, and String) and resolve JAR resource paths *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`c6d8936`](https://github.com/MongoCamp/mongodb-driver/commit/c6d893694689b5fdd4e13883d15fd6ffffc0ab75) - delete temporary file after import and bump version to 3.2.3 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`2c5144d`](https://github.com/MongoCamp/mongodb-driver/commit/2c5144d1d135670c5a2b6b77b9dbc22b44df8515) - replace `getFileByUrl` calls with `getFile` in MongoDAO and FileUtilsSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.2.1] - 2026-07-22
 ### :sparkles: New Features
 - [`9b488f7`](https://github.com/MongoCamp/mongodb-driver/commit/9b488f77d0fc5d076d263b41001ed2701c8de846) - support importJsonFile from a URL or URI, not just a File (#sbt 2.x fix) *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -417,3 +434,4 @@
 [v3.1.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.0...v3.1.1
 [v3.2.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.1...v3.2.0
 [v3.2.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.0...v3.2.1
+[v3.2.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.1...v3.2.3
