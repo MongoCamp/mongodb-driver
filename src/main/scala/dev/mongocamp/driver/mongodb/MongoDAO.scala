@@ -149,7 +149,7 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
       importJsonFile(File(url))
     }
     else {
-      importJsonFile(FileUtils.getFileByUrl(url))
+      importJsonFile(FileUtils.getFile(url))
     }
   }
 

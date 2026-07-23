@@ -12,7 +12,7 @@ class FileUtilsSuite extends munit.FunSuite {
     val tempFile = File.newTemporaryFile(prefix = "file-utils-url-file", suffix = ".json")
     try {
       tempFile.appendLine(jsonLine)
-      val resolved = FileUtils.getFileByUrl(tempFile.toJava.toURI.toURL)
+      val resolved = FileUtils.getFile(tempFile.toJava.toURI.toURL)
       assertEquals(resolved.contentAsString.trim, jsonLine)
     }
     finally tempFile.delete(swallowIOExceptions = true)
@@ -22,7 +22,7 @@ class FileUtilsSuite extends munit.FunSuite {
     val tempFile = File.newTemporaryFile(prefix = "file-utils-url-uri", suffix = ".json")
     try {
       tempFile.appendLine(jsonLine)
-      val resolved = FileUtils.getFileByUrl(tempFile.toJava.toURI)
+      val resolved = FileUtils.getFile(tempFile.toJava.toURI)
       assertEquals(resolved.contentAsString.trim, jsonLine)
     }
     finally tempFile.delete(swallowIOExceptions = true)
@@ -40,7 +40,7 @@ class FileUtilsSuite extends munit.FunSuite {
       finally jarOut.close()
 
       val jarUrl   = new java.net.URL(s"jar:${jarFile.toJava.toURI.toURL}!/entry.json")
-      val resolved = FileUtils.getFileByUrl(jarUrl)
+      val resolved = FileUtils.getFile(jarUrl)
       assertEquals(resolved.contentAsString, jsonLine)
     }
     finally jarFile.delete(swallowIOExceptions = true)
