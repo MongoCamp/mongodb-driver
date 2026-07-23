@@ -149,7 +149,10 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
       importJsonFile(File(url))
     }
     else {
-      importJsonFile(FileUtils.getFile(url))
+      val file       = FileUtils.getFile(url)
+      val observable = importJsonFile(file)
+      file.delete()
+      observable
     }
   }
 
