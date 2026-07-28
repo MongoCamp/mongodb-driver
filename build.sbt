@@ -37,13 +37,13 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
-libraryDependencies += "joda-time" % "joda-time" % "2.14.2"
+libraryDependencies += "joda-time" % "joda-time" % "2.14.3"
 
 val circeVersion = "0.14.16"
 
 libraryDependencies ++= Seq("io.circe" %% "circe-core", "io.circe" %% "circe-generic", "io.circe" %% "circe-parser").map(_ % circeVersion)
 
-libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.9.0").cross(CrossVersion.for3Use2_13)
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.9.1").cross(CrossVersion.for3Use2_13)
 
 val MongoJavaServerVersion = "1.47.0"
 
@@ -53,7 +53,7 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJ
 
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.8" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-11" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-12" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.5.0"
 
