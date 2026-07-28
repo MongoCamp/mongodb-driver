@@ -1,3 +1,11 @@
+## [v3.2.4] - 2026-07-28
+### :sparkles: New Features
+- [`5d06166`](https://github.com/MongoCamp/mongodb-driver/commit/5d0616691c65a74ad505f2279e7189a430c8cbf0) - add `topologyType` method to identify MongoDB topology and corresponding test *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`93f3b85`](https://github.com/MongoCamp/mongodb-driver/commit/93f3b85b6b7eee98374f3e183315f497607f1375) - 6 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.2.3] - 2026-07-23
 ### :boom: BREAKING CHANGES
 - due to [`2c5144d`](https://github.com/MongoCamp/mongodb-driver/commit/2c5144d1d135670c5a2b6b77b9dbc22b44df8515) - replace `getFileByUrl` calls with `getFile` in MongoDAO and FileUtilsSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*:
@@ -435,3 +443,4 @@
 [v3.2.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.1.1...v3.2.0
 [v3.2.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.0...v3.2.1
 [v3.2.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.1...v3.2.3
+[v3.2.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.3...v3.2.4
