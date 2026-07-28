@@ -56,4 +56,9 @@ class DatabaseProviderSuite extends BasePersonSuite {
     provider.addChangeObserver(observer)
   }
 
+  test("must evaluate topologyType") {
+    val topologyType: TopologyType.TopologyType = provider.topologyType().result()
+    assertEquals(topologyType, TopologyType.Standalone)
+  }
+
 }

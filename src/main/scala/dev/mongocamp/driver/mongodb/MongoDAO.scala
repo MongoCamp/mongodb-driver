@@ -1,26 +1,21 @@
 package dev.mongocamp.driver.mongodb
 
 import better.files.File
-import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.bson.DocumentHelper
-import dev.mongocamp.driver.mongodb.database.ChangeObserver
-import dev.mongocamp.driver.mongodb.database.CollectionStatus
-import dev.mongocamp.driver.mongodb.database.CompactResult
-import dev.mongocamp.driver.mongodb.database.DatabaseProvider
+import dev.mongocamp.driver.mongodb.database._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import dev.mongocamp.driver.mongodb.utils.FileUtils
 import io.circe.Decoder
 import java.net.URI
 import java.net.URL
 import java.nio.charset.Charset
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.util.Date
 import org.bson.json.JsonParseException
 import org.bson.BsonDocument
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.bsonDocumentToDocument
+import org.mongodb.scala.model.changestream.ChangeStreamDocument
 import org.mongodb.scala.model.changestream.FullDocument
 import org.mongodb.scala.model.Accumulators._
 import org.mongodb.scala.model.Aggregates._
@@ -30,7 +25,9 @@ import org.mongodb.scala.BulkWriteResult
 import org.mongodb.scala.Document
 import org.mongodb.scala.MongoCollection
 import org.mongodb.scala.Observable
+import org.mongodb.scala.Observer
 import org.mongodb.scala.SingleObservable
+import org.mongodb.scala.Subscription
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
 
@@ -42,10 +39,9 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
 
   val collection: MongoCollection[Document] = provider.collection(collectionName)
 
+  def topologyType(): Observable[TopologyType.TopologyType] = provider.topologyType()
+
   def addChangeObserver(observer: ChangeObserver[A]): ChangeObserver[A] = {
-    import org.mongodb.scala.Observer
-    import org.mongodb.scala.Subscription
-    import org.mongodb.scala.model.changestream.ChangeStreamDocument
     coll
       .watch[Document]()
       .subscribe(new Observer[ChangeStreamDocument[Document]] {
@@ -58,16 +54,15 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     observer
   }
 
-  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument): ChangeObserver[A] =
+  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument): ChangeObserver[A] = {
     addChangeObserver(observer, fullDocument, Seq.empty, None)
+  }
 
-  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument, pipeline: Seq[Bson]): ChangeObserver[A] =
+  def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument, pipeline: Seq[Bson]): ChangeObserver[A] = {
     addChangeObserver(observer, fullDocument, pipeline, None)
+  }
 
   def addChangeObserver(observer: ChangeObserver[A], fullDocument: FullDocument, pipeline: Seq[Bson], resumeAfter: Option[BsonDocument]): ChangeObserver[A] = {
-    import org.mongodb.scala.Observer
-    import org.mongodb.scala.Subscription
-    import org.mongodb.scala.model.changestream.ChangeStreamDocument
     val baseStream  = if (pipeline.nonEmpty) coll.watch[Document](pipeline) else coll.watch[Document]()
     val withFullDoc = baseStream.fullDocument(fullDocument)
     val finalStream = resumeAfter.fold(withFullDoc)(

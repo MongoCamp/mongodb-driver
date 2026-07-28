@@ -4,6 +4,7 @@ import com.mongodb.client.model.TimeSeriesGranularity
 import dev.mongocamp.driver.mongodb._
 import org.bson.BsonDocument
 import org.mongodb.scala._
+import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.gridfs.GridFSBucket
 import org.mongodb.scala.model.changestream.FullDocument
@@ -176,6 +177,16 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
     )
     finalStream.subscribe(observer)
     observer
+  }
+
+  def topologyType(): Observable[TopologyType.TopologyType] = {
+    runCommand(Document("hello" -> 1))
+      .map {
+        result =>
+          if (result.get("msg").exists(_.asString().getValue == "isdbgrid")) TopologyType.Sharded
+          else if (result.get("setName").isDefined) TopologyType.ReplicaSet
+          else TopologyType.Standalone
+      }
   }
 
   def collections(databaseName: String = DefaultDatabaseName): ListCollectionsObservable[Document] = {
