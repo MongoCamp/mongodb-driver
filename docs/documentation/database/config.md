@@ -72,6 +72,7 @@ It is used for DatabaseProvider creation.
 | compressors               | List: zlib, snappy, zstd  | List.empty         |
 | customClientSettings      |                           | None               |
 | additionalServerAddresses |                           | List.empty         |
+| serverSelectionTimeoutMS  | how long the driver waits for a suitable server (e.g. a new primary during replica set failover) before giving up. Accepts Typesafe Config duration syntax (`30s`, `"1 minute"`, or a plain number treated as milliseconds) | 30000 ms |
 
 ## MongoConfig Pool Options
 
