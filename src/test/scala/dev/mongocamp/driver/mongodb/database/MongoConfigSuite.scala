@@ -1,6 +1,8 @@
 package dev.mongocamp.driver.mongodb.database
 
 import munit.FunSuite
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.SECONDS
 
 class MongoConfigSuite extends FunSuite {
 
@@ -50,5 +52,18 @@ class MongoConfigSuite extends FunSuite {
     assertEquals(config.clientSettings.getCredential.getUserName, "admin_user")
     assertNotEquals(Option(config.clientSettings.getCredential.getPassword), None)
     assertNotEquals(config.clientSettings.getCredential.getPassword.length, 0)
+  }
+
+  test("MongoConfig should apply a custom serverSelectionTimeoutMS") {
+    val config = MongoConfig("config_test", serverSelectionTimeoutMS = FiniteDuration(5, SECONDS))
+    val shortDescription = "{hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='5000 ms'}"
+    assertEquals(config.clientSettings.getClusterSettings.getShortDescription, shortDescription)
+  }
+
+  test("MongoConfig should read serverSelectionTimeoutMS from config") {
+    val config = MongoConfig.fromPath("config.test.timeout.mongo")
+    assertEquals(config.serverSelectionTimeoutMS, FiniteDuration(5, SECONDS))
+    val shortDescription = "{hosts=[localhost:270007], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='5000 ms'}"
+    assertEquals(config.clientSettings.getClusterSettings.getShortDescription, shortDescription)
   }
 }
