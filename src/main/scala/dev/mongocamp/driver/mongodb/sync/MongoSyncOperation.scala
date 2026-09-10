@@ -11,6 +11,7 @@ import org.mongodb.scala.bson.ObjectId
 import org.mongodb.scala.documentToUntypedDocument
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.Document
+import scala.concurrent.duration.Duration
 
 case class MongoSyncOperation(
   collectionName: String,
@@ -27,16 +28,16 @@ case class MongoSyncOperation(
 
       if (SyncDirection.SourceToTarget == syncDirection) {
         val diff = sourceInfos.diff(targetInfos)
-        List(syncInternal(source, target, targetInfos.size, diff))
+        List(syncInternal(source, target, targetInfos.size, diff, DefaultMaxWaitDuration))
       }
       else if (SyncDirection.TargetToSource == syncDirection) {
         val diff = targetInfos.diff(sourceInfos)
-        List(syncInternal(target, source, sourceInfos.size, diff))
+        List(syncInternal(target, source, sourceInfos.size, diff, DefaultMaxWaitDuration))
       }
       else if (SyncDirection.TwoWay == syncDirection) {
         List(
-          syncInternal(source, target, targetInfos.size, sourceInfos.diff(targetInfos)),
-          syncInternal(target, source, sourceInfos.size, targetInfos.diff(sourceInfos))
+          syncInternal(source, target, targetInfos.size, sourceInfos.diff(targetInfos), DefaultMaxWaitDuration),
+          syncInternal(target, source, sourceInfos.size, targetInfos.diff(sourceInfos), DefaultMaxWaitDuration)
         )
       }
       else {
@@ -54,7 +55,7 @@ case class MongoSyncOperation(
     right: DatabaseProvider,
     countBefore: Int,
     documentsToSync: Seq[Document],
-    maxWait: Int = DefaultMaxWait
+    maxWait: Duration
   ): MongoSyncResult = {
     val start                   = System.currentTimeMillis()
     val syncDate                = new Date()

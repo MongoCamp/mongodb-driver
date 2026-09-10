@@ -6,13 +6,21 @@ import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.model.Aggregates
+
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
+
+object MongoPaginatedAggregation {
+  def apply[A <: Any](dao: MongoDAO[A], aggregationPipeline: List[Bson], allowDiskUse: Boolean, maxWait: Int): MongoPaginatedAggregation[A] =
+    MongoPaginatedAggregation(dao, aggregationPipeline, allowDiskUse, Duration(maxWait, TimeUnit.SECONDS))
+}
 
 case class MongoPaginatedAggregation[A <: Any](
   dao: MongoDAO[A],
   aggregationPipeline: List[Bson] = List(),
   allowDiskUse: Boolean = false,
-  maxWait: Int = DefaultMaxWait
+  maxWait: Duration = DefaultMaxWaitDuration
 ) extends MongoPagination[Document] {
 
   private val AggregationKeyMetaData      = "metadata"

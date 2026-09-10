@@ -7,6 +7,7 @@ import dev.mongocamp.driver.mongodb.database._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import dev.mongocamp.driver.mongodb.utils.FileUtils
 import io.circe.Decoder
+
 import java.net.URI
 import java.net.URL
 import java.nio.charset.Charset
@@ -28,7 +29,10 @@ import org.mongodb.scala.Observable
 import org.mongodb.scala.Observer
 import org.mongodb.scala.SingleObservable
 import org.mongodb.scala.Subscription
+
+import java.util.concurrent.TimeUnit
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag
 
 abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(implicit ct: ClassTag[A], decoder: Decoder[A]) extends Crud[A] {
@@ -100,7 +104,11 @@ abstract class MongoDAO[A](provider: DatabaseProvider, collectionName: String)(i
     * @return
     *   List of column names
     */
-  def columnNames(sampleSize: Int = 0, maxWait: Int = DefaultMaxWait): List[String] = {
+  def columnNames(sampleSize: Int, maxWait: Int): List[String] = {
+    columnNames(sampleSize, Duration(maxWait, TimeUnit.SECONDS))
+  }
+
+  def columnNames(sampleSize: Int = 0, maxWait: Duration = DefaultMaxWaitDuration): List[String] = {
     val projectStage = project(Projections.computed("tempArray", equal("$objectToArray", "$$ROOT")))
     val unwindStage  = unwind("$tempArray")
     val groupStage   = group("_id", addToSet("keySet", "$tempArray.k"))

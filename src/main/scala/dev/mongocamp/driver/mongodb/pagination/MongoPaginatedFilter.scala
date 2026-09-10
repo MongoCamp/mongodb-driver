@@ -2,10 +2,22 @@ package dev.mongocamp.driver.mongodb.pagination
 
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
+import java.util.concurrent.TimeUnit
 import org.mongodb.scala.bson.conversions.Bson
+import scala.concurrent.duration.Duration
 
-case class MongoPaginatedFilter[A <: Any](dao: MongoDAO[A], filter: Bson = Map(), sort: Bson = Map(), projection: Bson = Map(), maxWait: Int = DefaultMaxWait)
-    extends MongoPagination[A] {
+object MongoPaginatedFilter {
+  def apply[A <: Any](dao: MongoDAO[A], filter: Bson, sort: Bson, projection: Bson, maxWait: Int): MongoPaginatedFilter[A] =
+    MongoPaginatedFilter(dao, filter, sort, projection, Duration(maxWait, TimeUnit.SECONDS))
+}
+
+case class MongoPaginatedFilter[A <: Any](
+  dao: MongoDAO[A],
+  filter: Bson = Map(),
+  sort: Bson = Map(),
+  projection: Bson = Map(),
+  maxWait: Duration = DefaultMaxWaitDuration
+) extends MongoPagination[A] {
 
   def paginate(page: Int, rows: Int): PaginationResult[A] = {
     val count = countResult
