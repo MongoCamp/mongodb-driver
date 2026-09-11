@@ -2,6 +2,7 @@ package dev.mongocamp.driver.mongodb.database
 
 import com.mongodb.client.model.TimeSeriesGranularity
 import dev.mongocamp.driver.mongodb._
+import java.util.concurrent.TimeUnit
 import org.bson.BsonDocument
 import org.mongodb.scala._
 import org.mongodb.scala.bson.collection.immutable.Document
@@ -71,7 +72,11 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
 
   def dropDatabase(databaseName: String = DefaultDatabaseName): SingleObservable[Unit] = database(databaseName).drop()
 
-  def compactDatabase(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
+  def compactDatabase(databaseName: String, maxWaitPerCollection: Int): List[CompactResult] = {
+    compactDatabase(databaseName, Duration(maxWaitPerCollection, TimeUnit.SECONDS))
+  }
+
+  def compactDatabase(databaseName: String = DefaultDatabaseName, maxWaitPerCollection: Duration = DefaultMaxWaitDuration): List[CompactResult] = {
     collectionNames(databaseName).flatMap(
       collectionName => {
         try
@@ -83,7 +88,11 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
     )
   }
 
-  def compact(maxWaitPerCollection: Int = DefaultMaxWait): List[CompactResult] = {
+  def compact(maxWaitPerCollection: Int): List[CompactResult] = {
+    compact(Duration(maxWaitPerCollection, TimeUnit.SECONDS))
+  }
+
+  def compact(maxWaitPerCollection: Duration = DefaultMaxWaitDuration): List[CompactResult] = {
     databaseNames.flatMap(compactDatabase(_, maxWaitPerCollection))
   }
 
@@ -278,7 +287,7 @@ class DatabaseProvider(val config: MongoConfig) extends Serializable {
       override def onError(t: Throwable): Unit        = promise.failure(t)
       override def onComplete(): Unit                 = promise.success(())
     })
-    Await.result(promise.future, DefaultMaxWait.seconds)
+    Await.result(promise.future, DefaultMaxWaitDuration)
   }
 
 }

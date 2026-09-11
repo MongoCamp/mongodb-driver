@@ -25,11 +25,21 @@ Conversion is provided in the DAO instances with four Helper function for Observ
 | resultList    | List[C]         | UserDAO.find("name", "User").resultList()      | List[User]     |
 | resultOption  | Option[C]       | PersonDAO.find(Map("id" -> 42)).resultOption() | Option[Person] |
 
-All functions have an optional maxWait parameter (Default maxWait = 10 seconds).
+All functions have an optional maxWait parameter, either as `Int` seconds or as a
+`scala.concurrent.duration.Duration`.
 
 ```scala
-val listWithCustomMaxWait: List[Person] = PersonDAO.find().resultList(maxWait = 15)
+val listWithCustomMaxWait: List[Person]         = PersonDAO.find().resultList(maxWait = 15)
+val listWithCustomDuration: List[Person]        = PersonDAO.find().resultList(Duration(15, TimeUnit.SECONDS))
 ```
+
+The default maxWait (`10 seconds`) can be overridden without touching any code by setting
+`dev.mongocamp.mongodb.operation.maxWait` in your `application.conf` (accepts Typesafe Config
+duration syntax, e.g. `maxWait = 20s`). This is relevant for replica sets: a failover election can
+take longer than the default 10 seconds, so raise this value (and `MongoConfig`'s
+`serverSelectionTimeoutMS`) accordingly, and make sure to catch the resulting
+`TimeoutException`/`MongoTimeoutException` around your `.result()`/`.resultList()` calls, since
+this library does not retry or swallow them.
 
 ### Implicit Result Conversion (Blocking)
 

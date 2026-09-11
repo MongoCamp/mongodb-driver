@@ -19,6 +19,7 @@ import org.mongodb.scala.MongoClientSettings
 import org.mongodb.scala.MongoCredential
 import org.mongodb.scala.ServerAddress
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.duration.FiniteDuration
 import scala.jdk.CollectionConverters._
 
 case class MongoConfig(
@@ -35,14 +36,18 @@ case class MongoConfig(
   commandListener: List[CommandListener] = List.empty,
   customClientSettings: Option[MongoClientSettings] = None,
   serverAddressList: List[ServerAddress] = List.empty,
-  replicaSetName: Option[String] = None
+  replicaSetName: Option[String] = None,
+  serverSelectionTimeoutMS: FiniteDuration = MongoConfig.DefaultServerSelectionTimeout
 ) {
   lazy val clientSettings: MongoClientSettings = {
     if (customClientSettings.isDefined) {
       customClientSettings.get
     }
     else {
-      val clusterSettingsBuilder: ClusterSettings.Builder = ClusterSettings.builder().hosts(fullServerAddressList.asJava)
+      val clusterSettingsBuilder: ClusterSettings.Builder = ClusterSettings
+        .builder()
+        .hosts(fullServerAddressList.asJava)
+        .serverSelectionTimeout(serverSelectionTimeoutMS.toMillis, TimeUnit.MILLISECONDS)
 
       replicaSetName.foreach(
         replicaSetName => clusterSettingsBuilder.requiredReplicaSetName(replicaSetName)
@@ -124,6 +129,11 @@ object MongoConfig extends ConfigHelper {
   val DefaultPoolMinSize                 = 0
   val DefaultPoolMaintenanceInitialDelay = 0
 
+  val DefaultServerSelectionTimeout: FiniteDuration = FiniteDuration(
+    ClusterSettings.builder().build().getServerSelectionTimeout(TimeUnit.MILLISECONDS),
+    TimeUnit.MILLISECONDS
+  )
+
   val CompressionSnappy = "snappy"
   val CompressionZlib   = "zlib"
   val CompressionZstd   = "zstd"
@@ -160,6 +170,8 @@ object MongoConfig extends ConfigHelper {
     val applicationName = stringConfig(configPath, "applicationName", DefaultApplicationName).get
     val replicaSetName  = stringConfig(configPath, "replicaSetName").map(_.trim).filter(_.nonEmpty)
 
+    val serverSelectionTimeoutMS: FiniteDuration = durationConfig(configPath, "serverSelectionTimeoutMS", DefaultServerSelectionTimeout)
+
     val poolOptions = MongoPoolOptions(
       poolOptionsConfig("maxConnectionIdleTime", DefaultPoolMaxConnectionIdleTime),
       poolOptionsConfig("maxSize", DefaultPoolMaxSize),
@@ -187,7 +199,8 @@ object MongoConfig extends ConfigHelper {
       poolOptions,
       compressors,
       serverAddressList = additionalServerAddresses,
-      replicaSetName = replicaSetName
+      replicaSetName = replicaSetName,
+      serverSelectionTimeoutMS = serverSelectionTimeoutMS
     )
   }
 

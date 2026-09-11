@@ -2,9 +2,11 @@ package dev.mongocamp.driver.mongodb.database
 
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb.operation.ObservableIncludes
+import java.util.concurrent.TimeUnit
 import java.util.Date
 import org.mongodb.scala.model.IndexOptions
 import org.mongodb.scala.ListIndexesObservable
+import scala.concurrent.duration.Duration
 
 case class MongoIndex(
   name: String,
@@ -23,18 +25,37 @@ case class MongoIndex(
 
 object MongoIndex extends ObservableIncludes with LazyLogging {
 
-  def indexOptionsWithName(name: Option[String]): IndexOptions =
-    if (name.isDefined)
+  def indexOptionsWithName(name: Option[String]): IndexOptions = {
+    if (name.isDefined) {
       IndexOptions().name(name.get)
-    else
+    }
+    else {
       IndexOptions()
+    }
+  }
 
-  def hasIndexForFieldWithName(listIndexesObservable: ListIndexesObservable[Map[String, Any]], fieldName: String, maxWait: Int = DefaultMaxWait): Boolean =
+  def hasIndexForFieldWithName(listIndexesObservable: ListIndexesObservable[Map[String, Any]], fieldName: String, maxWait: Int): Boolean = {
+    hasIndexForFieldWithName(listIndexesObservable, fieldName, Duration(maxWait, TimeUnit.SECONDS))
+  }
+
+  def hasIndexForFieldWithName(
+    listIndexesObservable: ListIndexesObservable[Map[String, Any]],
+    fieldName: String,
+    maxWait: Duration = DefaultMaxWaitDuration
+  ): Boolean = {
     convertIndexDocumentsToMongoIndexList(listIndexesObservable, maxWait).exists(
       index => index.fields.contains(fieldName)
     )
+  }
 
-  def convertIndexDocumentsToMongoIndexList(listIndexesObservable: ListIndexesObservable[Map[String, Any]], maxWait: Int = DefaultMaxWait): List[MongoIndex] = {
+  def convertIndexDocumentsToMongoIndexList(listIndexesObservable: ListIndexesObservable[Map[String, Any]], maxWait: Int): List[MongoIndex] = {
+    convertIndexDocumentsToMongoIndexList(listIndexesObservable, Duration(maxWait, TimeUnit.SECONDS))
+  }
+
+  def convertIndexDocumentsToMongoIndexList(
+    listIndexesObservable: ListIndexesObservable[Map[String, Any]],
+    maxWait: Duration = DefaultMaxWaitDuration
+  ): List[MongoIndex] = {
     var result = List[MongoIndex]()
     try
       result = listIndexesObservable

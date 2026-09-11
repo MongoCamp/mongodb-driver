@@ -2,6 +2,8 @@ package dev.mongocamp.driver.mongodb.database
 
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
+import java.util.concurrent.TimeUnit
+import scala.concurrent.duration.FiniteDuration
 
 trait ConfigHelper {
   val conf: Config = ConfigFactory.load()
@@ -36,6 +38,16 @@ trait ConfigHelper {
   def booleanConfig(configPath: String, key: String, default: Boolean = false): Boolean = {
     if (conf.hasPath("%s.%s".format(configPath, key))) {
       conf.getBoolean("%s.%s".format(configPath, key))
+    }
+    else {
+      default
+    }
+  }
+
+  def durationConfig(configPath: String, key: String, default: FiniteDuration): FiniteDuration = {
+    if (conf.hasPath("%s.%s".format(configPath, key))) {
+      val javaDuration = conf.getDuration("%s.%s".format(configPath, key))
+      FiniteDuration(javaDuration.toNanos, TimeUnit.NANOSECONDS)
     }
     else {
       default
