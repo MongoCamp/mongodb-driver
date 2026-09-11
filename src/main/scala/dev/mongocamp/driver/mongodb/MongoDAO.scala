@@ -7,10 +7,10 @@ import dev.mongocamp.driver.mongodb.database._
 import dev.mongocamp.driver.mongodb.operation.Crud
 import dev.mongocamp.driver.mongodb.utils.FileUtils
 import io.circe.Decoder
-
 import java.net.URI
 import java.net.URL
 import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
 import java.util.Date
 import org.bson.json.JsonParseException
 import org.bson.BsonDocument
@@ -29,8 +29,6 @@ import org.mongodb.scala.Observable
 import org.mongodb.scala.Observer
 import org.mongodb.scala.SingleObservable
 import org.mongodb.scala.Subscription
-
-import java.util.concurrent.TimeUnit
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
 import scala.reflect.ClassTag

@@ -55,7 +55,7 @@ class MongoConfigSuite extends FunSuite {
   }
 
   test("MongoConfig should apply a custom serverSelectionTimeoutMS") {
-    val config = MongoConfig("config_test", serverSelectionTimeoutMS = FiniteDuration(5, SECONDS))
+    val config           = MongoConfig("config_test", serverSelectionTimeoutMS = FiniteDuration(5, SECONDS))
     val shortDescription = "{hosts=[127.0.0.1:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='5000 ms'}"
     assertEquals(config.clientSettings.getClusterSettings.getShortDescription, shortDescription)
   }

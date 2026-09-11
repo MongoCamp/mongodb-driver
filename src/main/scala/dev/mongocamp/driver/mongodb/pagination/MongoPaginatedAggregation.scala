@@ -3,11 +3,10 @@ package dev.mongocamp.driver.mongodb.pagination
 import com.mongodb.client.model.Facet
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.MongoCampPaginationException
+import java.util.concurrent.TimeUnit
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.bson.Document
 import org.mongodb.scala.model.Aggregates
-
-import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 

@@ -129,10 +129,8 @@ object MongoConfig extends ConfigHelper {
   val DefaultPoolMinSize                 = 0
   val DefaultPoolMaintenanceInitialDelay = 0
 
-  val DefaultServerSelectionTimeout: FiniteDuration = FiniteDuration(
-    ClusterSettings.builder().build().getServerSelectionTimeout(TimeUnit.MILLISECONDS),
-    TimeUnit.MILLISECONDS
-  )
+  val DefaultServerSelectionTimeout: FiniteDuration =
+    FiniteDuration(ClusterSettings.builder().build().getServerSelectionTimeout(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS)
 
   val CompressionSnappy = "snappy"
   val CompressionZlib   = "zlib"
