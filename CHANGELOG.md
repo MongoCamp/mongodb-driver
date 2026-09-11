@@ -1,3 +1,16 @@
+## [v3.3.0] - 2026-09-11
+### :sparkles: New Features
+- [`bfcbe36`](https://github.com/MongoCamp/mongodb-driver/commit/bfcbe361b1d9d055710f2bb5096b9af9b392f20d) - add configurable serverSelectionTimeoutMS to MongoConfig *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`3d5dfb9`](https://github.com/MongoCamp/mongodb-driver/commit/3d5dfb9c7bc2c42c7cc1ce0832bb7dfc849a042c) - make default result wait timeout configurable via Duration *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`e7bc95c`](https://github.com/MongoCamp/mongodb-driver/commit/e7bc95c5d86103bd6437d5944590fc489a8d51cc) - add coverage for configurable timeouts *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`40d2eef`](https://github.com/MongoCamp/mongodb-driver/commit/40d2eef21255f6f8cc4dc8de25b0f605ff820c66) - update assertion for database minor version in ExploreJdbcSuite *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`3d5718a`](https://github.com/MongoCamp/mongodb-driver/commit/3d5718ad5b90e570a0f87abb16b3f2ba0cb3633f) - 6 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.2.4] - 2026-07-28
 ### :sparkles: New Features
 - [`5d06166`](https://github.com/MongoCamp/mongodb-driver/commit/5d0616691c65a74ad505f2279e7189a430c8cbf0) - add `topologyType` method to identify MongoDB topology and corresponding test *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -444,3 +457,4 @@
 [v3.2.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.0...v3.2.1
 [v3.2.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.1...v3.2.3
 [v3.2.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.3...v3.2.4
+[v3.3.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.4...v3.3.0
