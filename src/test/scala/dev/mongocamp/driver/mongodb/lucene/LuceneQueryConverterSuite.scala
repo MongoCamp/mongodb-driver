@@ -28,16 +28,26 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
   }
 
   test("wildcard query escapes regex characters") {
-    assertQuery("email:*@example.com", """{"email": {"$regex": "(.*?)@example\\.com", "$options": "i"}}""")
-    assertQuery("email:*john+tag@example.com", """{"email": {"$regex": "(.*?)john\\+tag@example\\.com", "$options": "i"}}""")
-    assertQuery("email:john?doe@*.com", """{"email": {"$regex": "john.doe@(.*?)\\.com", "$options": "i"}}""")
-    assertQuery("-email:*@example.com", """{"$and": [{"email": {"$not": {"$regex": "(.*?)@example\\.com", "$options": "i"}}}]}""")
+    assertQuery("email:*@example.com", """{"email": {"$regex": "^(.*?)@example\\.com$", "$options": "is"}}""")
+    assertQuery("email:*john+tag@example.com", """{"email": {"$regex": "^(.*?)john\\+tag@example\\.com$", "$options": "is"}}""")
+    assertQuery("email:john?doe@*.com", """{"email": {"$regex": "^john.doe@(.*?)\\.com$", "$options": "is"}}""")
+    assertQuery("-email:*@example.com", """{"$and": [{"email": {"$not": {"$regex": "^(.*?)@example\\.com$", "$options": "is"}}}]}""")
+  }
+
+  test("wildcard query has to match the whole value") {
+    assertQuery("name:John*", """{"$and": [{"name": {"$regex": "^John(.*?)$", "$options": "is"}}]}""")
+    assertQuery("name:*Dowe", """{"name": {"$regex": "^(.*?)Dowe$", "$options": "is"}}""")
+    assertQuery("name:*John*", """{"name": {"$regex": "^(.*?)John(.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"John Dowe*\"", """{"name": {"$regex": "^John Dowe(.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"*John Dowe\"", """{"name": {"$regex": "^(.*?)John Dowe$", "$options": "is"}}""")
+    assertQuery("name:\"*John Dowe*\"", """{"name": {"$regex": "^(.*?)John Dowe(.*?)$", "$options": "is"}}""")
+    assertQuery("name:J?hn", """{"name": {"$regex": "^J.hn$", "$options": "is"}}""")
   }
 
   test("prefix query escapes regex characters") {
-    assertQuery("email:john.doe@*", """{"$and": [{"email": {"$regex": "john\\.doe@(.*?)", "$options": "i"}}]}""")
-    assertQuery("email:john+tag*", """{"$and": [{"email": {"$regex": "john\\+tag(.*?)", "$options": "i"}}]}""")
-    assertQuery("version:1.2*", """{"$and": [{"version": {"$regex": "1\\.2(.*?)", "$options": "i"}}]}""")
+    assertQuery("email:john.doe@*", """{"$and": [{"email": {"$regex": "^john\\.doe@(.*?)$", "$options": "is"}}]}""")
+    assertQuery("email:john+tag*", """{"$and": [{"email": {"$regex": "^john\\+tag(.*?)$", "$options": "is"}}]}""")
+    assertQuery("version:1.2*", """{"$and": [{"version": {"$regex": "^1\\.2(.*?)$", "$options": "is"}}]}""")
   }
 
   test("quoted value is searched as exact value") {
@@ -60,10 +70,11 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
   }
 
   test("quoted value with wildcard is a wildcard query") {
-    assertQuery("name:\"Latasha *millan\"", """{"name": {"$regex": "Latasha (.*?)millan", "$options": "i"}}""")
-    assertQuery("name:\"a.b *\"", """{"name": {"$regex": "a\\.b (.*?)", "$options": "i"}}""")
-    assertQuery("name:\"Latasha*millan\"", """{"name": {"$regex": "Latasha(.*?)millan", "$options": "i"}}""")
-    assertQuery("-name:\"Latasha*millan\"", """{"$and": [{"name": {"$not": {"$regex": "Latasha(.*?)millan", "$options": "i"}}}]}""")
+    assertQuery("name:\"Wie geht's?\"", """{"name": {"$eq": "Wie geht's?"}}""")
+    assertQuery("name:\"Latasha *millan\"", """{"name": {"$regex": "^Latasha (.*?)millan$", "$options": "is"}}""")
+    assertQuery("name:\"a.b *\"", """{"name": {"$regex": "^a\\.b (.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"Latasha*millan\"", """{"name": {"$regex": "^Latasha(.*?)millan$", "$options": "is"}}""")
+    assertQuery("-name:\"Latasha*millan\"", """{"$and": [{"name": {"$not": {"$regex": "^Latasha(.*?)millan$", "$options": "is"}}}]}""")
   }
 
   test("date with time zone offset keeps the offset") {

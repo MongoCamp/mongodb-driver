@@ -108,6 +108,37 @@ class LuceneSearchSuite extends BasePersonSuite {
     assertEquals(PersonDAO.find(LuceneQueryConverter.parse("-name:\"Latasha Mcmillan\"", "unbekannt"), sortByBalance).resultList().size, 199)
   }
 
+  test("wildcard Query has to match the whole value") {
+    val queries = Map(
+      "name:\"*sha Mcmil*\""   -> List("Latasha Mcmillan"),
+      "name:\"*SHA MCMIL*\""   -> List("Latasha Mcmillan"),
+      "name:\"Latasha Mc*\""   -> List("Latasha Mcmillan"),
+      "name:\"*sha Mcmillan\"" -> List("Latasha Mcmillan"),
+      "name:\"sha Mcmil*\""    -> List(),
+      "name:\"*sha Mcmil\""    -> List(),
+      "name:Latash*"           -> List("Latasha Mcmillan"),
+      "name:atasha*"           -> List()
+    )
+    queries.foreach {
+      case (query, expected) =>
+        assertEquals(PersonDAO.find(LuceneQueryConverter.parse(query, "unbekannt"), sortByBalance).resultList().map(_.name), expected, query)
+    }
+  }
+
+  test("wildcard Query matches values with line breaks") {
+    val dao = new MongoDAO[Document](provider, "lucene-line-breaks") {}
+    dao.drop().result()
+    dao.insertOne(Document("text" -> "first line\nsecond line")).result()
+    def count(query: String): Int = dao.find(LuceneQueryConverter.parse(query, "text")).resultList().size
+    List("text:*second*", "text:first*", "text:*line", "text:*line?second*", "text:\"first line*second line\"").foreach(
+      query => assertEquals(count(query), 1, query)
+    )
+    List("text:*third*", "text:\"*line second*\"").foreach(
+      query => assertEquals(count(query), 0, query)
+    )
+    dao.drop().result()
+  }
+
   test("equals Query with email address") {
     List("email:latashamcmillan@ultrimax.com", "email:\"latashamcmillan@ultrimax.com\"", "latashamcmillan@ultrimax.com").foreach(
       query => {

@@ -52,6 +52,19 @@ With the default tokenizer values are split only at whitespace, so values like e
 
 Wildcard and prefix queries are converted to regular expressions. `*` and `?` are used as wildcards, all other regular expression characters like `.` or `+` are escaped.
 
+Like in Lucene the wildcard value has to match the whole value. The search is case-insensitive and `*` matches line breaks too.
+
+| Query               | Search                                 |
+|---------------------|----------------------------------------|
+| `name:John*`        | `name` starts with `John`              |
+| `name:*Dowe`        | `name` ends with `Dowe`                |
+| `name:"*John Dowe*"`| `name` contains `John Dowe`            |
+| `name:J?hn`         | `name` is `J` + one character + `hn`   |
+
+::: tip
+A wildcard at the beginning of the value can not use an index of the field, so the search is slow on large collections.
+:::
+
 Date values are parsed as ISO date (`2014-04-19T22:44:27+02:00`) or in the basic format (`20140419T224427000+0200`). Date values without time zone offset are interpreted as UTC.
 
 ## Read More

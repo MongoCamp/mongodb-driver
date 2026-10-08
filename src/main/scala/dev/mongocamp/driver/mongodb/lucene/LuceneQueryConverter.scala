@@ -179,8 +179,7 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendPrefixQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PrefixQuery): Unit = {
-    val searchValue                = s"${wildcardToRegex(query.getPrefix.text())}(.*?)"
-    val listOfSearches: List[Bson] = List(Map(query.getField -> generateRegexQuery(searchValue, "i")))
+    val listOfSearches: List[Bson] = List(Map(query.getField -> wildcardRegexQuery(s"${query.getPrefix.text()}*")))
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
     }
@@ -190,12 +189,12 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendWildCardQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: WildcardQuery): Unit = {
-    val searchValue = wildcardToRegex(query.getTerm.text())
+    val regexQuery = wildcardRegexQuery(query.getTerm.text())
     if (negated) {
-      searchMapResponse.put(query.getField, Map("$not" -> generateRegexQuery(searchValue, "i")))
+      searchMapResponse.put(query.getField, Map("$not" -> regexQuery))
     }
     else {
-      searchMapResponse.put(query.getField, generateRegexQuery(searchValue, "i"))
+      searchMapResponse.put(query.getField, regexQuery)
     }
   }
 
@@ -215,6 +214,9 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private val regexMetaChars = "\\.[]{}()+-|^$/"
+
+  // the wildcard value has to match the whole value like in lucene, the search is case-insensitive and . matches line breaks
+  private def wildcardRegexQuery(value: String): Map[String, String] = generateRegexQuery(s"^${wildcardToRegex(value)}$$", "is")
 
   private def wildcardToRegex(value: String): String = {
     value.map {
