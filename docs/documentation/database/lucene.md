@@ -67,5 +67,16 @@ A wildcard at the beginning of the value can not use an index of the field, so t
 
 Date values are parsed as ISO date (`2014-04-19T22:44:27+02:00`) or in the basic format (`20140419T224427000+0200`). Date values without time zone offset are interpreted as UTC.
 
+## Search Cases
+The following search cases show the behavior of the lucene queries in MongoDB. Every search case is a test in `LuceneSearchCasesSuite`, so the cases are always up to date.
+
+The search cases search in these documents, the default field of the queries is `nickname`.
+
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneSearchCasesSuite.scala#lucene-search-cases-data
+
+Every search case has the query, the names of the found documents and a description.
+
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneSearchCasesSuite.scala#lucene-search-cases
+
 ## Read More
 [Lucene Cheatsheet](https://www.lucenetutorial.com/lucene-query-syntax.html)
