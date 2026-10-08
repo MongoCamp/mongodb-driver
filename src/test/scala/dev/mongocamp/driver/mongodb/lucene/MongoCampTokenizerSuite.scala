@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-class MongoCampWhitespaceTokenizerSuite extends munit.FunSuite {
+class MongoCampTokenizerSuite extends munit.FunSuite {
 
   private def tokens(text: String, analyzer: MongoCampLuceneAnalyzer = new MongoCampLuceneAnalyzer()): List[(String, Int, Int)] = {
     val stream = analyzer.tokenStream("field", text)
@@ -45,7 +45,7 @@ class MongoCampWhitespaceTokenizerSuite extends munit.FunSuite {
 
   test("split tokens longer than max token length") {
     assertEquals(
-      tokens("abcdefg hi", new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampWhitespaceTokenizer(3))),
+      tokens("abcdefg hi", new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampTokenizer(3))),
       List(("abc", 0, 3), ("def", 3, 6), ("g", 6, 7), ("hi", 8, 10))
     )
   }
@@ -94,7 +94,7 @@ class MongoCampWhitespaceTokenizerSuite extends munit.FunSuite {
   test("analyzer creates a tokenizer for each thread") {
     val createdTokenizers = new java.util.concurrent.CopyOnWriteArrayList[Tokenizer]()
     val analyzer = new MongoCampLuceneAnalyzer(tokenizerFactory = () => {
-      val tokenizer = new MongoCampWhitespaceTokenizer(255)
+      val tokenizer = new MongoCampTokenizer(255)
       createdTokenizers.add(tokenizer)
       tokenizer
     })
@@ -114,7 +114,7 @@ class MongoCampWhitespaceTokenizerSuite extends munit.FunSuite {
   }
 
   test("analyzer rejects a tokenizer factory that returns the same instance") {
-    val sharedTokenizer = new MongoCampWhitespaceTokenizer(255)
+    val sharedTokenizer = new MongoCampTokenizer(255)
     val analyzer        = new MongoCampLuceneAnalyzer(tokenizerFactory = () => sharedTokenizer)
     assertEquals(tokens("a b", analyzer).map(_._1), List("a", "b"))
     var otherThreadResult: Try[List[String]] = null
@@ -158,7 +158,7 @@ class MongoCampWhitespaceTokenizerSuite extends munit.FunSuite {
   test("default tokenizer factory creates a new tokenizer on each call") {
     val first  = MongoCampLuceneAnalyzer.defaultTokenizerFactory()
     val second = MongoCampLuceneAnalyzer.defaultTokenizerFactory()
-    assert(first.isInstanceOf[MongoCampWhitespaceTokenizer])
+    assert(first.isInstanceOf[MongoCampTokenizer])
     assert(!(first eq second))
   }
 

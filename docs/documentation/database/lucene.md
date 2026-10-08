@@ -26,7 +26,7 @@ We have an individual parser to parse an string to Lucene Query, because the def
 | `stopWords`        | `CharArraySet.EMPTY_SET`                                  | Terms that are removed from the query.                            |
 | `tokenizerFactory` | `MongoCampLuceneAnalyzer.defaultTokenizerFactory`         | Creates the Lucene `Tokenizer` that splits the values to terms.   |
 
-The default factory creates a `MongoCampWhitespaceTokenizer` with a `maxTokenLength` of 255. It splits values only at whitespace, tokens longer than `maxTokenLength` are split into chunks of `maxTokenLength` characters.
+The default factory creates a `MongoCampTokenizer` with a `maxTokenLength` of 255. It splits values only at whitespace, tokens longer than `maxTokenLength` are split into chunks of `maxTokenLength` characters.
 
 To use another tokenizer, create the analyzer with a factory for it, parse the query with the `MongoCampLuceneQueryParser` and convert the result with `LuceneQueryConverter.toDocument`. The `MongoCampLuceneQueryParser` is a Lucene `QueryParser` that allows leading wildcards and searches quoted values as exact value.
 

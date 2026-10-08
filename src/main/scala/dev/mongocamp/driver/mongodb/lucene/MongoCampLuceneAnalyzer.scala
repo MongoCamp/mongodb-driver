@@ -11,8 +11,8 @@ import org.apache.lucene.util.WeakIdentityMap
   * @param stopWords
   *   terms that are removed from the query
   * @param tokenizerFactory
-  *   creates a new tokenizer that splits the values to terms, the default MongoCampWhitespaceTokenizer splits only at whitespace. The factory must return a new
-  *   instance on each call, otherwise an IllegalStateException is thrown.
+  *   creates a new tokenizer that splits the values to terms, the default MongoCampTokenizer splits only at whitespace. The factory must return a new instance
+  *   on each call, otherwise an IllegalStateException is thrown.
   */
 class MongoCampLuceneAnalyzer(
   stopWords: CharArraySet = CharArraySet.EMPTY_SET,
@@ -39,5 +39,5 @@ class MongoCampLuceneAnalyzer(
 object MongoCampLuceneAnalyzer {
   private val defaultMaxTokenLength: Int = 255
 
-  val defaultTokenizerFactory: () => Tokenizer = () => new MongoCampWhitespaceTokenizer(defaultMaxTokenLength)
+  val defaultTokenizerFactory: () => Tokenizer = () => new MongoCampTokenizer(defaultMaxTokenLength)
 }

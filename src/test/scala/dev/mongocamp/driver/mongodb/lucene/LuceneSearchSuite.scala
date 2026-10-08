@@ -88,7 +88,7 @@ class LuceneSearchSuite extends BasePersonSuite {
 
   test("search with custom tokenizer") {
     // #region lucene-parser-with-tokenizer
-    val analyzer    = new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampWhitespaceTokenizer(maxTokenLength = 255))
+    val analyzer    = new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampTokenizer(maxTokenLength = 255))
     val queryParser = new MongoCampLuceneQueryParser("name", analyzer)
     val luceneQuery = queryParser.parse("email:latashamcmillan@ultrimax.com")
     analyzer.close()

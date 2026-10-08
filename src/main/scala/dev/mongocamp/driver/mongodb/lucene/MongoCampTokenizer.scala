@@ -4,10 +4,19 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute
 import org.apache.lucene.analysis.Tokenizer
 
-/** Splits the input only at whitespace, so values like email addresses or dates with time zone offset stay one token. Tokens longer than maxTokenLength are
-  * split into chunks of maxTokenLength. Leading and trailing single quotes are removed, so 'value' matches value.
+/** Lucene tokenizer that splits the input only at whitespace, so values like email addresses (`john.doe@example.com`) or dates with time zone offset
+  * (`2014-04-19T22:44:27+02:00`) stay one token. It is the default tokenizer of [[MongoCampLuceneAnalyzer]].
+  *
+  *   - Leading and trailing single quotes are removed, so `'value'` is the token `value`. Single quotes inside a token are kept.
+  *   - Tokens longer than `maxTokenLength` are split into chunks of `maxTokenLength` characters.
+  *   - The offsets of a token point to its position in the input without the removed single quotes.
+  *
+  * Like every Lucene tokenizer an instance can only be used by one token stream at a time, use a new instance for each token stream.
+  *
+  * @param maxTokenLength
+  *   the maximum number of characters of a token, longer tokens are split
   */
-class MongoCampWhitespaceTokenizer(maxTokenLength: Int) extends Tokenizer {
+class MongoCampTokenizer(maxTokenLength: Int) extends Tokenizer {
   private val termAttribute   = addAttribute(classOf[CharTermAttribute])
   private val offsetAttribute = addAttribute(classOf[OffsetAttribute])
 

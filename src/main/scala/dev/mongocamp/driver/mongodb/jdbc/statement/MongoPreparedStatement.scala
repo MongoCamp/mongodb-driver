@@ -295,7 +295,6 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     null
   }
 
-  // the date is stored as midnight in the time zone of the calendar
   override def setDate(parameterIndex: Int, x: Date, cal: Calendar): Unit = {
     checkClosed()
     if (x == null || cal == null) {
@@ -306,7 +305,6 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     }
   }
 
-  // the time is stored on 1970-01-01 in the time zone of the calendar
   override def setTime(parameterIndex: Int, x: Time, cal: Calendar): Unit = {
     checkClosed()
     if (x == null || cal == null) {
@@ -317,7 +315,6 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     }
   }
 
-  // MongoDB stores instants, so the calendar is not needed to set the timestamp
   override def setTimestamp(parameterIndex: Int, x: Timestamp, cal: Calendar): Unit = {
     setTimestamp(parameterIndex, x)
   }

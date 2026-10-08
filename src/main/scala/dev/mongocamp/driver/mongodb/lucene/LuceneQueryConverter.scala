@@ -264,7 +264,6 @@ object LuceneQueryConverter extends LazyLogging {
     }
   }
 
-  // values without time zone offset are interpreted as UTC
   private def parseDate(s: String): Option[Date] = {
     Try(new DateTime(s, DateTimeZone.UTC).toDate).toOption.orElse(
       datePatterns.view
