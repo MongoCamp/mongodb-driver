@@ -1,12 +1,18 @@
 package dev.mongocamp.driver.mongodb.bson
 
 import java.math.BigInteger
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 import java.util.Date
-import org.joda.time.DateTime
+import java.util.UUID
+import org.bson.BsonBinarySubType
+import org.bson.UuidRepresentation
+import org.joda.time.ReadableInstant
 import org.mongodb.scala.bson._
 import org.mongodb.scala.bson.BsonArray.fromIterable
 import org.mongodb.scala.Document
@@ -112,20 +118,32 @@ object BsonConverter {
         }
       case v: Any if converterPlugin.hasCustomClass(v) =>
         converterPlugin.toBson(v)
-      case b: Boolean                 => BsonBoolean(b)
-      case s: String                  => BsonString(s)
-      case c: Char                    => BsonString(c.toString)
-      case bytes: Array[Byte]         => BsonBinary(bytes)
-      case r: Regex                   => BsonRegularExpression(r)
-      case d: Date                    => BsonDateTime(d)
-      case d: DateTime                => BsonDateTime(d.toDate)
-      case dt: org.joda.time.Duration => BsonString(scala.concurrent.duration.Duration(dt.getMillis, TimeUnit.MILLISECONDS).toString)
-      case d: Duration                => BsonString(d.toString)
-      case ld: LocalDate =>
-        BsonDateTime(Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant))
-      case ldt: LocalDateTime =>
-        BsonDateTime(Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant))
+      case b: Boolean                       => BsonBoolean(b)
+      case s: String                        => BsonString(s)
+      case c: Char                          => BsonString(c.toString)
+      case bytes: Array[Byte]               => BsonBinary(bytes)
+      case r: Regex                         => BsonRegularExpression(r)
+      case uuid: UUID                       => BsonString(uuid.toString)
+      case d: Date                          => BsonDateTime(d)
+      case ri: ReadableInstant              => BsonDateTime(ri.getMillis)
+      case ld: org.joda.time.LocalDate      => BsonDateTime(ld.toDateTimeAtStartOfDay.getMillis)
+      case ldt: org.joda.time.LocalDateTime => BsonDateTime(ldt.toDateTime.getMillis)
+      case dt: org.joda.time.Duration       => BsonString(scala.concurrent.duration.Duration(dt.getMillis, TimeUnit.MILLISECONDS).toString)
+      case d: Duration                      => BsonString(d.toString)
+      case ld: LocalDate                    => BsonDateTime(ld.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)
+      case ldt: LocalDateTime               => BsonDateTime(ldt.atZone(ZoneId.systemDefault()).toInstant.toEpochMilli)
+      case instant: Instant                 => BsonDateTime(instant.toEpochMilli)
+      case zdt: ZonedDateTime               => BsonDateTime(zdt.toInstant.toEpochMilli)
+      case odt: OffsetDateTime              => BsonDateTime(odt.toInstant.toEpochMilli)
+      case v @ (_: java.time.LocalTime | _: java.time.OffsetTime | _: java.time.Duration | _: java.time.Period | _: java.time.Year | _: java.time.YearMonth |
+          _: java.time.MonthDay | _: ZoneId) =>
+        BsonString(v.toString)
+      case v @ (_: org.joda.time.LocalTime | _: org.joda.time.Period | _: org.joda.time.DateTimeZone | _: org.joda.time.YearMonth |
+          _: org.joda.time.MonthDay) =>
+        BsonString(v.toString)
       case oid: ObjectId            => BsonObjectId(oid)
+      case b: Byte                  => BsonInt32(b.toInt)
+      case s: Short                 => BsonInt32(s.toInt)
       case i: Int                   => BsonInt32(i)
       case l: Long                  => BsonInt64(l)
       case bi: BigInt               => BsonInt64(bi.toLong)
@@ -176,18 +194,20 @@ object BsonConverter {
 
   def fromBson(value: BsonValue): Any = {
     value match {
-      case b: BsonBoolean           => b.getValue
-      case s: BsonString            => s.getValue
-      case bytes: BsonBinary        => bytes.getData
-      case r: BsonRegularExpression => r.getPattern
-      case d: BsonDateTime          => new Date(d.getValue)
-      case d: BsonTimestamp         => new Date(d.getTime)
-      case oid: BsonObjectId        => oid.getValue
-      case i: BsonInt32             => i.getValue
-      case l: BsonInt64             => l.getValue
-      case d: BsonDouble            => d.doubleValue()
-      case d: BsonDecimal128        => new scala.math.BigDecimal(d.getValue.bigDecimalValue())
-      case doc: BsonDocument        => Document(doc)
+      case b: BsonBoolean                                                               => b.getValue
+      case s: BsonString                                                                => s.getValue
+      case uuid: BsonBinary if uuid.getType == BsonBinarySubType.UUID_STANDARD.getValue => uuid.asUuid()
+      case uuid: BsonBinary if uuid.getType == BsonBinarySubType.UUID_LEGACY.getValue   => uuid.asUuid(UuidRepresentation.JAVA_LEGACY)
+      case bytes: BsonBinary                                                            => bytes.getData
+      case r: BsonRegularExpression                                                     => r.getPattern
+      case d: BsonDateTime                                                              => new Date(d.getValue)
+      case d: BsonTimestamp                                                             => new Date(d.getTime)
+      case oid: BsonObjectId                                                            => oid.getValue
+      case i: BsonInt32                                                                 => i.getValue
+      case l: BsonInt64                                                                 => l.getValue
+      case d: BsonDouble                                                                => d.doubleValue()
+      case d: BsonDecimal128                                                            => new scala.math.BigDecimal(d.getValue.bigDecimalValue())
+      case doc: BsonDocument                                                            => Document(doc)
       case array: BsonArray =>
         array.getValues.asScala.toList.map(
           v => fromBson(v)
