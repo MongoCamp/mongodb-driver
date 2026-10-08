@@ -12,8 +12,8 @@ import scala.jdk.CollectionConverters._
 
 trait CirceSchema extends CirceProductSchema {
 
-  implicit lazy val DocumentOneFormat: Encoder[org.mongodb.scala.Document] with Decoder[org.mongodb.scala.Document] =
-    new Encoder[org.mongodb.scala.Document] with Decoder[org.mongodb.scala.Document] {
+  implicit lazy val DocumentOneFormat: Codec[org.mongodb.scala.Document] =
+    new Codec[org.mongodb.scala.Document] {
       override def apply(a: org.mongodb.scala.Document): Json = {
         encodeMapStringAny(BsonConverter.asMap(a))
       }
@@ -30,8 +30,8 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit lazy val DocumentTowFormat: Encoder[org.bson.Document] with Decoder[org.bson.Document] =
-    new Encoder[org.bson.Document] with Decoder[org.bson.Document] {
+  implicit lazy val DocumentTowFormat: Codec[org.bson.Document] =
+    new Codec[org.bson.Document] {
       override def apply(a: org.bson.Document): Json = {
         val map = a
           .keySet()
@@ -59,7 +59,7 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
+  implicit val DateFormat: Codec[Date] = new Codec[Date] {
     override def apply(d: Date): Json = {
       Option(d)
         .map(
@@ -77,7 +77,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
+  implicit val DateTimeFormat: Codec[DateTime] = new Codec[DateTime] {
     override def apply(d: DateTime): Json = {
       Option(d)
         .map(
@@ -95,7 +95,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
+  implicit val ObjectIdFormat: Codec[ObjectId] = new Codec[ObjectId] {
     override def apply(o: ObjectId): Json = {
       Option(o)
         .map(
@@ -113,7 +113,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit lazy val DurationFormat: Encoder[Duration] with Decoder[Duration] = new Encoder[Duration] with Decoder[Duration] {
+  implicit lazy val DurationFormat: Codec[Duration] = new Codec[Duration] {
     override def apply(d: Duration): Json = {
       Option(d)
         .map(
@@ -131,8 +131,8 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with Decoder[Map[String, Any]] =
-    new Encoder[Map[String, Any]] with Decoder[Map[String, Any]] {
+  implicit val MapStringAnyFormat: Codec[Map[String, Any]] =
+    new Codec[Map[String, Any]] {
       override def apply(a: Map[String, Any]): Json = {
         encodeMapStringAny(a)
       }
@@ -142,7 +142,7 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit val AnyFormat: Encoder[Any] with Decoder[Any] = new Encoder[Any] with Decoder[Any] {
+  implicit val AnyFormat: Codec[Any] = new Codec[Any] {
     override def apply(a: Any): Json = {
       encodeAnyToJson(a)
     }
