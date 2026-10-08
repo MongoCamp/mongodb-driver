@@ -3,12 +3,11 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import java.util.TimeZone
+import org.apache.lucene.queryparser.classic.QueryParser
 import org.mongodb.scala.Document
 
 class LuceneSearchSuite extends BasePersonSuite {
   lazy val sortByBalance: Map[String, Int] = Map("balance" -> -1)
-  TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
   test("search with with number in string") {
     val luceneQuery = LuceneQueryConverter.parse("stringNumber: 123", "id")
@@ -73,12 +72,59 @@ class LuceneSearchSuite extends BasePersonSuite {
   }
 
   test("equals Query with Date") {
-    val luceneQuery = LuceneQueryConverter.parse("registered:20140419T224427000\\+0200", "unbekannt")
-    val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
-    assertEquals(search.size, 1)
-    assertEquals(search.head.age, 31)
-    assertEquals(search.head.name, "Latasha Mcmillan")
-    assertEquals(search.head.balance, 3403.0)
+    List(
+      "registered:20140420T004427000\\+0200",
+      "registered:20140419T224427000Z",
+      "registered:20140419T224427000",
+      "registered:2014-04-19T22\\:44\\:27Z",
+      "registered:\"2014-04-20T00:44:27+02:00\""
+    ).foreach(
+      query => {
+        val luceneQuery = LuceneQueryConverter.parse(query, "unbekannt")
+        val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+        assertEquals(search.map(_.name), List("Latasha Mcmillan"), query)
+      }
+    )
+  }
+
+  test("search with custom tokenizer") {
+    // #region lucene-parser-with-tokenizer
+    val analyzer    = new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampWhitespaceTokenizer(maxTokenLength = 255))
+    val queryParser = new QueryParser("name", analyzer)
+    queryParser.setAllowLeadingWildcard(true)
+    val luceneQuery = queryParser.parse("email:latashamcmillan@ultrimax.com")
+    analyzer.close()
+    val search = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+    // #endregion lucene-parser-with-tokenizer
+    assertEquals(search.map(_.name), List("Latasha Mcmillan"))
+  }
+
+  test("equals Query with email address") {
+    List("email:latashamcmillan@ultrimax.com", "email:\"latashamcmillan@ultrimax.com\"", "latashamcmillan@ultrimax.com").foreach(
+      query => {
+        val search = PersonDAO.find(LuceneQueryConverter.parse(query, "email"), sortByBalance).resultList()
+        assertEquals(search.map(_.name), List("Latasha Mcmillan"), query)
+      }
+    )
+  }
+
+  test("not equals Query with email address") {
+    val search = PersonDAO.find(LuceneQueryConverter.parse("-email:latashamcmillan@ultrimax.com", "ube"), sortByBalance).resultList()
+    assertEquals(search.size, 199)
+  }
+
+  test("wildcard Query with email address") {
+    List("email:*@ultrimax.com", "email:latashamcmillan@*", "email:*mcmillan@ultri*", "email:latashamcmillan@ultrimax?com").foreach(
+      query => {
+        val search = PersonDAO.find(LuceneQueryConverter.parse(query, "ube"), sortByBalance).resultList()
+        assertEquals(search.map(_.name), List("Latasha Mcmillan"), query)
+      }
+    )
+  }
+
+  test("wildcard Query with email address escapes regex characters") {
+    val search = PersonDAO.find(LuceneQueryConverter.parse("email:*@ultrimax.co.", "ube"), sortByBalance).resultList()
+    assertEquals(search.size, 0)
   }
 
   test("wildcard at the end") {

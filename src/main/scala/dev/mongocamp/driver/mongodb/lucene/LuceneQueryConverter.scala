@@ -3,12 +3,15 @@ package dev.mongocamp.driver.mongodb.lucene
 import com.typesafe.scalalogging.LazyLogging
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.exception.NotSupportedException
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.TimeZone
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search._
 import org.apache.lucene.search.BooleanClause.Occur
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.mongodb.scala.bson.conversions.Bson
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -152,34 +155,36 @@ object LuceneQueryConverter extends LazyLogging {
     termQuery: TermQuery,
     searchWithValueAndString: Boolean
   ): Unit = {
-    val convertedValue = checkAndConvertValue(termQuery.getTerm.text())
-    if (negated) {
-      if (!searchWithValueAndString || convertedValue == termQuery.getTerm.text()) {
-        searchMapResponse.put(termQuery.getTerm.field(), Map("$ne" -> convertedValue))
-      }
-      else {
-        searchMapResponse.put(
-          "$and",
-          List(Map(termQuery.getTerm.field() -> Map("$ne" -> convertedValue)), Map(termQuery.getTerm.field() -> Map("$ne" -> termQuery.getTerm.text())))
-        )
-      }
+    val text = termQuery.getTerm.text()
+    if (text.contains("*")) {
+      // wildcards in quoted values are not parsed as WildcardQuery by lucene
+      appendWildCardQueryToSearchMap(negated, searchMapResponse, new WildcardQuery(termQuery.getTerm))
     }
     else {
-      if (!searchWithValueAndString || convertedValue == termQuery.getTerm.text()) {
-        searchMapResponse.put(termQuery.getTerm.field(), Map("$eq" -> convertedValue))
+      val convertedValue = checkAndConvertValue(text)
+      val field          = termQuery.getTerm.field()
+      if (negated) {
+        if (!searchWithValueAndString || convertedValue == text) {
+          searchMapResponse.put(field, Map("$ne" -> convertedValue))
+        }
+        else {
+          searchMapResponse.put("$and", List(Map(field -> Map("$ne" -> convertedValue)), Map(field -> Map("$ne" -> text))))
+        }
       }
       else {
-        searchMapResponse.put(
-          "$or",
-          List(Map(termQuery.getTerm.field() -> Map("$eq" -> convertedValue)), Map(termQuery.getTerm.field() -> Map("$eq" -> termQuery.getTerm.text())))
-        )
+        if (!searchWithValueAndString || convertedValue == text) {
+          searchMapResponse.put(field, Map("$eq" -> convertedValue))
+        }
+        else {
+          searchMapResponse.put("$or", List(Map(field -> Map("$eq" -> convertedValue)), Map(field -> Map("$eq" -> text))))
+        }
       }
     }
   }
 
   private def appendPrefixQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PrefixQuery): Unit = {
-    val searchValue                = s"${checkAndConvertValue(query.getPrefix.text())}(.*?)"
-    val listOfSearches: List[Bson] = List(Map(query.getField -> generateRegexQuery(s"$searchValue", "i")))
+    val searchValue                = s"${wildcardToRegex(query.getPrefix.text())}(.*?)"
+    val listOfSearches: List[Bson] = List(Map(query.getField -> generateRegexQuery(searchValue, "i")))
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
     }
@@ -189,12 +194,12 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendWildCardQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: WildcardQuery): Unit = {
-    val searchValue = checkAndConvertValue(query.getTerm.text().replace("*", "(.*?)"))
+    val searchValue = wildcardToRegex(query.getTerm.text())
     if (negated) {
-      searchMapResponse.put(query.getField, Map("$not" -> generateRegexQuery(s"$searchValue", "i")))
+      searchMapResponse.put(query.getField, Map("$not" -> generateRegexQuery(searchValue, "i")))
     }
     else {
-      searchMapResponse.put(query.getField, generateRegexQuery(s"$searchValue", "i"))
+      searchMapResponse.put(query.getField, generateRegexQuery(searchValue, "i"))
     }
   }
 
@@ -204,7 +209,7 @@ object LuceneQueryConverter extends LazyLogging {
         term => {
           val convertedValue = checkAndConvertValue(term.text())
           if (convertedValue.isInstanceOf[String]) {
-            Map(term.field() -> generateRegexQuery(s"(.*?)$convertedValue(.*?)", "i"))
+            Map(term.field() -> generateRegexQuery(s"(.*?)${wildcardToRegex(term.text())}(.*?)", "i"))
           }
           else {
             Map(term.field() -> Map("$eq" -> convertedValue))
@@ -222,6 +227,17 @@ object LuceneQueryConverter extends LazyLogging {
 
   private def generateRegexQuery(pattern: String, options: String): Map[String, String] = {
     Map("$regex" -> pattern, "$options" -> options)
+  }
+
+  private val regexMetaChars = "\\.[]{}()+-|^$/"
+
+  private def wildcardToRegex(value: String): String = {
+    value.map {
+      case '*'                             => "(.*?)"
+      case '?'                             => "."
+      case c if regexMetaChars.contains(c) => s"\\$c"
+      case c                               => c.toString
+    }.mkString
   }
 
   private def checkAndConvertValue(s: String): Any = {
@@ -251,23 +267,7 @@ object LuceneQueryConverter extends LazyLogging {
           () => s.toBoolean
         )).headOption
       val response = convertedValue.getOrElse {
-        val parsedOptions: List[Date] = Try(new DateTime(s).toDate).toOption.toList ++ datePatters
-          .flatMap(
-            pattern => {
-              try {
-                val formatter = new SimpleDateFormat(pattern)
-                val r         = Option(formatter.parse(s))
-                logger.info(s"parsed date $s with pattern $pattern to $r")
-                r
-              }
-              catch {
-                case e: Exception =>
-                  None
-              }
-            }
-          )
-          .distinct
-        parsedOptions.headOption.getOrElse(s)
+        parseDate(s).getOrElse(s)
       }
       response
     }
@@ -277,10 +277,32 @@ object LuceneQueryConverter extends LazyLogging {
     }
   }
 
-  private lazy val datePatters = List(
+  // values without time zone offset are interpreted as UTC
+  private def parseDate(s: String): Option[Date] = {
+    Try(new DateTime(s, DateTimeZone.UTC).toDate).toOption.orElse(
+      datePatterns.view
+        .flatMap(
+          pattern => {
+            val formatter = new SimpleDateFormat(pattern)
+            formatter.setLenient(false)
+            formatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+            val position = new ParsePosition(0)
+            Option(formatter.parse(s, position)).filter(
+              date => position.getIndex == s.length && formatter.format(date).length == s.length
+            )
+          }
+        )
+        .headOption
+    )
+  }
+
+  private lazy val datePatterns = List(
+    "yyyyMMdd'T'HHmmssSSSZ",
     "yyyyMMdd'T'HHmmssSSS'Z'",
     "yyyyMMdd'T'HHmmssZ",
+    "yyyyMMdd'T'HHmmss'Z'",
     "yyyyMMdd'T'HHmmZ",
+    "yyyyMMdd'T'HHmm'Z'",
     "yyyyMMdd'T'HHmmssSSS",
     "yyyyMMdd'T'HHmmss",
     "yyyyMMdd'T'HHmm",
