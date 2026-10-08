@@ -3,7 +3,6 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
-import org.apache.lucene.queryparser.classic.QueryParser
 import org.mongodb.scala.Document
 
 class LuceneSearchSuite extends BasePersonSuite {
@@ -90,13 +89,23 @@ class LuceneSearchSuite extends BasePersonSuite {
   test("search with custom tokenizer") {
     // #region lucene-parser-with-tokenizer
     val analyzer    = new MongoCampLuceneAnalyzer(tokenizerFactory = () => new MongoCampWhitespaceTokenizer(maxTokenLength = 255))
-    val queryParser = new QueryParser("name", analyzer)
-    queryParser.setAllowLeadingWildcard(true)
+    val queryParser = new MongoCampLuceneQueryParser("name", analyzer)
     val luceneQuery = queryParser.parse("email:latashamcmillan@ultrimax.com")
     analyzer.close()
     val search = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
     // #endregion lucene-parser-with-tokenizer
     assertEquals(search.map(_.name), List("Latasha Mcmillan"))
+  }
+
+  test("quoted value is searched as exact value") {
+    // #region lucene-exact-value
+    val luceneQuery = LuceneQueryConverter.parse("name:\"Latasha Mcmillan\"", "unbekannt")
+    // #endregion lucene-exact-value
+    assertEquals(PersonDAO.find(luceneQuery, sortByBalance).resultList().map(_.name), List("Latasha Mcmillan"))
+    List("name:\"Latasha\"", "name:\"Mcmillan Latasha\"", "name:\"latasha mcmillan\"", "name:\"Latasha  Mcmillan\"").foreach(
+      query => assertEquals(PersonDAO.find(LuceneQueryConverter.parse(query, "unbekannt"), sortByBalance).resultList().size, 0, query)
+    )
+    assertEquals(PersonDAO.find(LuceneQueryConverter.parse("-name:\"Latasha Mcmillan\"", "unbekannt"), sortByBalance).resultList().size, 199)
   }
 
   test("equals Query with email address") {

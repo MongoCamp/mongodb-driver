@@ -40,18 +40,28 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
     assertQuery("version:1.2*", """{"$and": [{"version": {"$regex": "1\\.2(.*?)", "$options": "i"}}]}""")
   }
 
-  test("phrase query escapes regex characters and supports wildcards") {
-    assertQuery(
-      "name:\"Latasha *millan\"",
-      """{"$and": [{"name": {"$regex": "(.*?)Latasha(.*?)", "$options": "i"}}, {"name": {"$regex": "(.*?)(.*?)millan(.*?)", "$options": "i"}}]}"""
-    )
-    assertQuery(
-      "mail:\"a.b c+d\"",
-      """{"$and": [{"mail": {"$regex": "(.*?)a\\.b(.*?)", "$options": "i"}}, {"mail": {"$regex": "(.*?)c\\+d(.*?)", "$options": "i"}}]}"""
-    )
+  test("quoted value is searched as exact value") {
+    assertQuery("name:\"Hallo Welt\"", """{"name": {"$eq": "Hallo Welt"}}""")
+    assertQuery("\"Hallo Welt\"", """{"name": {"$eq": "Hallo Welt"}}""", "name")
+    assertQuery("name:\"Hallo  Welt \"", """{"name": {"$eq": "Hallo  Welt "}}""")
+    assertQuery("name:\"Hallo \\\"Welt\\\"\"", """{"name": {"$eq": "Hallo \"Welt\""}}""")
+    assertQuery("name:\"a.b c+d (e)\"", """{"name": {"$eq": "a.b c+d (e)"}}""")
+    assertQuery("name:\"'Hallo Welt'\"", """{"name": {"$eq": "'Hallo Welt'"}}""")
+    assertQuery("name:\"Hallo Welt\"~2", """{"name": {"$eq": "Hallo Welt"}}""")
+    assertQuery("-name:\"Hallo Welt\"", """{"$and": [{"name": {"$ne": "Hallo Welt"}}]}""")
+    assertQuery("name:(\"Hallo Welt\" OR \"Hello World\")", """{"$or": [{"name": {"$eq": "Hallo Welt"}}, {"name": {"$eq": "Hello World"}}]}""")
+  }
+
+  test("phrase query of other parsers is searched as exact value") {
+    val phraseQuery = new org.apache.lucene.queryparser.classic.QueryParser("name", new MongoCampLuceneAnalyzer()).parse("name:\"Hallo  Welt\"")
+    assert(phraseQuery.isInstanceOf[org.apache.lucene.search.PhraseQuery], phraseQuery.getClass.getName)
+    val bson: Bson = LuceneQueryConverter.toDocument(phraseQuery)
+    assertEquals(bson.toBsonDocument, BsonDocument.parse("""{"name": {"$eq": "Hallo Welt"}}"""))
   }
 
   test("quoted value with wildcard is a wildcard query") {
+    assertQuery("name:\"Latasha *millan\"", """{"name": {"$regex": "Latasha (.*?)millan", "$options": "i"}}""")
+    assertQuery("name:\"a.b *\"", """{"name": {"$regex": "a\\.b (.*?)", "$options": "i"}}""")
     assertQuery("name:\"Latasha*millan\"", """{"name": {"$regex": "Latasha(.*?)millan", "$options": "i"}}""")
     assertQuery("-name:\"Latasha*millan\"", """{"$and": [{"name": {"$not": {"$regex": "Latasha(.*?)millan", "$options": "i"}}}]}""")
   }

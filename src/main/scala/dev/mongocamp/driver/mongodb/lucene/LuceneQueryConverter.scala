@@ -7,7 +7,7 @@ import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
-import org.apache.lucene.queryparser.classic.QueryParser
+import org.apache.lucene.index.Term
 import org.apache.lucene.search._
 import org.apache.lucene.search.BooleanClause.Occur
 import org.joda.time.DateTime
@@ -25,13 +25,9 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   def parse(queryString: String, defaultField: String): Query = {
-    var analyzer    = new MongoCampLuceneAnalyzer()
-    val queryParser = new QueryParser(defaultField, analyzer)
-    queryParser.setAllowLeadingWildcard(true)
-    val query = queryParser.parse(queryString)
-    analyzer.close()
-    analyzer = null
-    query
+    val analyzer = new MongoCampLuceneAnalyzer()
+    try new MongoCampLuceneQueryParser(defaultField, analyzer).parse(queryString)
+    finally analyzer.close()
   }
 
   private def getMongoDbSearchMap(query: Query, negated: Boolean, searchWithValueAndString: Boolean): Map[String, Any] = {
@@ -42,7 +38,7 @@ object LuceneQueryConverter extends LazyLogging {
       case termQuery: TermQuery           => appendTermQueryToSearchMap(negated, searchMapResponse, termQuery, searchWithValueAndString)
       case query: PrefixQuery             => appendPrefixQueryToSearchMap(negated, searchMapResponse, query)
       case query: WildcardQuery           => appendWildCardQueryToSearchMap(negated, searchMapResponse, query)
-      case query: PhraseQuery             => appendPhraseQueryToSearchMap(negated, searchMapResponse, query)
+      case query: PhraseQuery             => appendPhraseQueryToSearchMap(negated, searchMapResponse, query, searchWithValueAndString)
       case a: Any =>
         val simpleNameOption = Option(a.getClass.getSimpleName).filterNot(
           s => s.trim.equalsIgnoreCase("")
@@ -203,26 +199,15 @@ object LuceneQueryConverter extends LazyLogging {
     }
   }
 
-  private def appendPhraseQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PhraseQuery): Unit = {
-    val listOfSearches = query.getTerms
-      .map(
-        term => {
-          val convertedValue = checkAndConvertValue(term.text())
-          if (convertedValue.isInstanceOf[String]) {
-            Map(term.field() -> generateRegexQuery(s"(.*?)${wildcardToRegex(term.text())}(.*?)", "i"))
-          }
-          else {
-            Map(term.field() -> Map("$eq" -> convertedValue))
-          }
-        }
-      )
-      .toList
-    if (negated) {
-      searchMapResponse.put("$nor", listOfSearches)
-    }
-    else {
-      searchMapResponse ++= Map("$and" -> listOfSearches)
-    }
+  // a phrase is searched as exact value, MongoCampLuceneQueryParser creates a TermQuery for quoted values, other parsers a PhraseQuery
+  private def appendPhraseQueryToSearchMap(
+    negated: Boolean,
+    searchMapResponse: mutable.Map[String, Any],
+    query: PhraseQuery,
+    searchWithValueAndString: Boolean
+  ): Unit = {
+    val value = query.getTerms.map(_.text()).mkString(" ")
+    appendTermQueryToSearchMap(negated, searchMapResponse, new TermQuery(new Term(query.getField, value)), searchWithValueAndString)
   }
 
   private def generateRegexQuery(pattern: String, options: String): Map[String, String] = {
