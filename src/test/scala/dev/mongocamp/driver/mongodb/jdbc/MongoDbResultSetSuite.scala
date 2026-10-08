@@ -3,6 +3,9 @@ package dev.mongocamp.driver.mongodb.jdbc
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import java.sql._
+import java.time.ZoneId
+import java.util.Calendar
+import java.util.TimeZone
 import org.joda.time.DateTime
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Updates
@@ -87,16 +90,105 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
     assertEquals(resultSet.getBigDecimal("id", 1), new java.math.BigDecimal(1).setScale(1))
   }
 
+  private val storedInstant = java.time.Instant.parse("2021-01-01T00:00:00Z")
+
+  private def withDefaultTimeZone(zoneId: String)(f: => Unit): Unit = {
+    val defaultTimeZone = TimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
+      f
+    }
+    finally TimeZone.setDefault(defaultTimeZone)
+  }
+
+  private def calendar(zoneId: String): Calendar = Calendar.getInstance(TimeZone.getTimeZone(zoneId))
+
   test("getDate() should return the correct value") {
     val resultSet = initializeResultSet()
     resultSet.next()
-    assertEquals(resultSet.getDate("date").toString, "2021-01-01")
+    assertEquals(resultSet.getDate("date").toString, storedInstant.atZone(ZoneId.systemDefault()).toLocalDate.toString)
+    assertEquals(resultSet.getDate(4), resultSet.getDate("date"))
+  }
+
+  test("getDate() should return the date normalized to midnight") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    val expected = storedInstant.atZone(ZoneId.systemDefault()).toLocalDate
+    assertEquals(resultSet.getDate("date").getTime, expected.atStartOfDay(ZoneId.systemDefault()).toInstant.toEpochMilli)
+  }
+
+  test("getDate() should use the default time zone") {
+    withDefaultTimeZone("America/New_York") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getDate("date").toString, "2020-12-31")
+    }
+    withDefaultTimeZone("Asia/Tokyo") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getDate("date").toString, "2021-01-01")
+    }
+  }
+
+  test("getDate() with calendar should use the time zone of the calendar") {
+    withDefaultTimeZone("America/New_York") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getDate("date", calendar("UTC")).toString, "2021-01-01")
+      assertEquals(resultSet.getDate(4, calendar("UTC")).toString, "2021-01-01")
+      assertEquals(resultSet.getDate("date", calendar("America/Los_Angeles")).toString, "2020-12-31")
+      assertEquals(resultSet.getDate("date", null).toString, "2020-12-31")
+    }
+  }
+
+  test("getTime() with calendar should use the time zone of the calendar") {
+    withDefaultTimeZone("America/New_York") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getTime("date", calendar("UTC")), Time.valueOf("00:00:00"))
+      assertEquals(resultSet.getTime(4, calendar("Asia/Tokyo")), Time.valueOf("09:00:00"))
+      assertEquals(resultSet.getTime("date", null), Time.valueOf("19:00:00"))
+    }
+  }
+
+  test("getTimestamp() with calendar should return the stored instant") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    assertEquals(resultSet.getTimestamp("date", calendar("America/New_York")).toInstant, storedInstant)
+    assertEquals(resultSet.getTimestamp(4, calendar("UTC")).toInstant, storedInstant)
+  }
+
+  test("date getters should return null for missing values") {
+    val resultSet = initializeResultSet()
+    resultSet.next()
+    resultSet.next()
+    assertEquals(resultSet.getDate("date"), null)
+    assertEquals(resultSet.getDate("date", calendar("UTC")), null)
+    assertEquals(resultSet.getTime("date"), null)
+    assertEquals(resultSet.getTime("date", calendar("UTC")), null)
+    assertEquals(resultSet.getTimestamp("date"), null)
+    assertEquals(resultSet.getTimestamp("date", calendar("UTC")), null)
   }
 
   test("getTime() should return the correct value") {
     val resultSet = initializeResultSet()
     resultSet.next()
-    assertEquals(resultSet.getTime("date"), new Time(new DateTime("2021-01-01T00:00:00Z").toDate.getTime))
+    assertEquals(resultSet.getTime("date").toLocalTime, storedInstant.atZone(ZoneId.systemDefault()).toLocalTime)
+    assertEquals(resultSet.getTime(4), resultSet.getTime("date"))
+  }
+
+  test("getTime() should return the time on 1970-01-01 in the default time zone") {
+    withDefaultTimeZone("America/New_York") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getTime("date"), Time.valueOf("19:00:00"))
+      assertEquals(resultSet.getTime("date").toString, "19:00:00")
+    }
+    withDefaultTimeZone("Asia/Tokyo") {
+      val resultSet = initializeResultSet()
+      resultSet.next()
+      assertEquals(resultSet.getTime("date"), Time.valueOf("09:00:00"))
+    }
   }
 
   test("getTimestamp() should return the correct value") {
@@ -302,7 +394,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
   test("updateDate should update the value") {
     val resultSet = initializeResultSet()
     resultSet.next()
-    val newDate = new Date(1622505600000L)
+    val newDate = Date.valueOf("2021-06-01")
     resultSet.updateDate(4, newDate)
     assertEquals(resultSet.getDate(4), newDate)
   }
@@ -310,7 +402,7 @@ class MongoDbResultSetSuite extends BaseJdbcSuite {
   test("updateTime should update the value") {
     val resultSet = initializeResultSet()
     resultSet.next()
-    val newTime = new Time(1622505600000L)
+    val newTime = Time.valueOf("10:15:30")
     resultSet.updateTime(4, newTime)
     assertEquals(resultSet.getTime(4), newTime)
   }

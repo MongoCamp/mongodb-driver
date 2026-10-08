@@ -7,6 +7,10 @@ import dev.mongocamp.driver.mongodb.database.DatabaseProvider.CollectionSeparato
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.sql.SQLCommandType.SQLCommandType
 import java.sql.SQLException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import java.util.Date
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat
@@ -269,8 +273,10 @@ class MongoSqlQueryHolder {
       case e: net.sf.jsqlparser.expression.DateValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimeValue      => e.getValue
       case e: net.sf.jsqlparser.expression.TimestampValue => e.getValue
-      case _: net.sf.jsqlparser.expression.NullValue      => null
-      case e: Concat                                      => Map("$concat" -> List(convertValue(e.getLeftExpression), convertValue(e.getRightExpression)))
+      case e: net.sf.jsqlparser.expression.DateTimeLiteralExpression if e.getType != net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime.TIME =>
+        dateTimeLiteralToDate(e.getValue.stripPrefix("'").stripSuffix("'"))
+      case _: net.sf.jsqlparser.expression.NullValue => null
+      case e: Concat                                 => Map("$concat" -> List(convertValue(e.getLeftExpression), convertValue(e.getRightExpression)))
       case t: net.sf.jsqlparser.expression.TimeKeyExpression =>
         t.getStringValue.toUpperCase match {
           case "CURRENT_TIMESTAMP" => new Date()
@@ -285,6 +291,16 @@ class MongoSqlQueryHolder {
       case _ =>
         throw new IllegalArgumentException("not supported value type")
     }
+  }
+
+  // values without time zone offset are interpreted in the default time zone like SQL TIMESTAMP without time zone in JDBC
+  private def dateTimeLiteralToDate(value: String): Date = {
+    val isoValue = value.trim.replace(' ', 'T')
+    val instant = Try(OffsetDateTime.parse(isoValue).toInstant)
+      .orElse(Try(LocalDateTime.parse(isoValue).atZone(ZoneId.systemDefault()).toInstant))
+      .orElse(Try(LocalDate.parse(isoValue).atStartOfDay(ZoneId.systemDefault()).toInstant))
+      .getOrElse(throw new IllegalArgumentException(s"not supported date value <$value>"))
+    Date.from(instant)
   }
 
   private def parseWhere(ex: Expression, queryMap: mutable.Map[String, Any], statementToIgnore: List[Expression]): Unit = {

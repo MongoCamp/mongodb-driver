@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.sql
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase
 import dev.mongocamp.driver.mongodb.GenericObservable
+import java.util.TimeZone
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.documentToUntypedDocument
 
@@ -177,6 +178,44 @@ class SelectSqlSuite extends BasePersonSuite {
     assertEquals(document.getString("favoriteFruit"), "strawberry")
     assertEquals(document.getInteger("count(*)").toInt, 71)
     assertEquals(selectResponse.map(_.getString("favoriteFruit")), List("strawberry", "apple", "banana"))
+  }
+
+  private def withDefaultTimeZone(zoneId: String)(f: => Unit): Unit = {
+    val defaultTimeZone = TimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
+      f
+    }
+    finally TimeZone.setDefault(defaultTimeZone)
+  }
+
+  private def names(sql: String): List[String] = {
+    MongoSqlQueryHolder(sql).run(TestDatabase.provider).resultList().map(_.getString("name"))
+  }
+
+  test("sql with timestamp literal") {
+    assertEquals(names("select name from people where registered = TIMESTAMP '2014-04-19T22:44:27Z'"), List("Latasha Mcmillan"))
+    assertEquals(names("select name from people where registered = TIMESTAMP '2014-04-19T22:44:27.000Z'"), List("Latasha Mcmillan"))
+    assertEquals(names("select name from people where registered = TIMESTAMP '2014-04-20T00:44:27+02:00'"), List("Latasha Mcmillan"))
+  }
+
+  test("sql with timestamp literal without offset uses the default time zone") {
+    withDefaultTimeZone("UTC") {
+      assertEquals(names("select name from people where registered = TIMESTAMP '2014-04-19 22:44:27'"), List("Latasha Mcmillan"))
+    }
+    withDefaultTimeZone("Asia/Tokyo") {
+      assertEquals(names("select name from people where registered = TIMESTAMP '2014-04-20T07:44:27'"), List("Latasha Mcmillan"))
+    }
+  }
+
+  test("sql with date literal uses the default time zone") {
+    withDefaultTimeZone("UTC") {
+      assertEquals(names("select name from people where registered >= DATE '2014-04-19' and registered < DATE '2014-04-20'").size, 3)
+    }
+  }
+
+  test("sql with invalid timestamp literal") {
+    intercept[Exception](names("select name from people where registered = TIMESTAMP 'no date'"))
   }
 
 }

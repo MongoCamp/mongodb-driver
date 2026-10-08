@@ -8,6 +8,8 @@ import java.sql.Date
 import java.sql.Time
 import java.sql.Timestamp
 import java.util.Calendar
+import java.util.TimeZone
+import java.util.UUID
 
 class MongoPreparedStatementSuite extends BaseJdbcSuite {
   var preparedStatement: MongoPreparedStatement = _
@@ -91,13 +93,173 @@ class MongoPreparedStatementSuite extends BaseJdbcSuite {
   }
 
   test("setDate should set date parameter") {
-    val date = new Date(System.currentTimeMillis())
+    val date = Date.valueOf("2021-01-01")
     preparedStatement.setDate(1, date)
     assertEquals(preparedStatement.getDate(1), date)
   }
 
+  private val storedInstant = java.time.Instant.parse("2021-01-01T00:00:00Z")
+
+  private def withDefaultTimeZone(zoneId: String)(f: => Unit): Unit = {
+    val defaultTimeZone = TimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone(zoneId))
+      f
+    }
+    finally TimeZone.setDefault(defaultTimeZone)
+  }
+
+  private def calendar(zoneId: String): Calendar = Calendar.getInstance(TimeZone.getTimeZone(zoneId))
+
+  test("getDate should return the date normalized to midnight in the default time zone") {
+    withDefaultTimeZone("America/New_York") {
+      preparedStatement.setTimestamp(1, Timestamp.from(storedInstant))
+      assertEquals(preparedStatement.getDate(1).toString, "2020-12-31")
+      assertEquals(preparedStatement.getDate(1), Date.valueOf("2020-12-31"))
+    }
+    withDefaultTimeZone("Asia/Tokyo") {
+      preparedStatement.setTimestamp(1, Timestamp.from(storedInstant))
+      assertEquals(preparedStatement.getDate(1), Date.valueOf("2021-01-01"))
+    }
+  }
+
+  test("getDate with calendar should use the time zone of the calendar") {
+    withDefaultTimeZone("America/New_York") {
+      preparedStatement.setTimestamp(1, Timestamp.from(storedInstant))
+      assertEquals(preparedStatement.getDate(1, calendar("UTC")), Date.valueOf("2021-01-01"))
+      assertEquals(preparedStatement.getDate(1, calendar("America/Los_Angeles")), Date.valueOf("2020-12-31"))
+      assertEquals(preparedStatement.getDate(1, null), Date.valueOf("2020-12-31"))
+    }
+  }
+
+  test("setDate with calendar should store midnight in the time zone of the calendar") {
+    preparedStatement.setDate(1, Date.valueOf("2021-01-01"), calendar("UTC"))
+    assertEquals(preparedStatement.getString(1), "2021-01-01T00:00:00Z")
+    assertEquals(preparedStatement.getDate(1, calendar("UTC")), Date.valueOf("2021-01-01"))
+    preparedStatement.setDate(1, Date.valueOf("2021-01-01"), calendar("Asia/Tokyo"))
+    assertEquals(preparedStatement.getString(1), "2020-12-31T15:00:00Z")
+    assertEquals(preparedStatement.getDate(1, calendar("Asia/Tokyo")), Date.valueOf("2021-01-01"))
+    preparedStatement.setDate(1, Date.valueOf("2021-01-01"), null)
+    assertEquals(preparedStatement.getDate(1), Date.valueOf("2021-01-01"))
+    preparedStatement.setDate(1, null, calendar("UTC"))
+    assertEquals(preparedStatement.getDate(1), null)
+  }
+
+  test("timestamp with calendar should keep the instant") {
+    preparedStatement.setTimestamp(1, Timestamp.from(storedInstant), calendar("Asia/Tokyo"))
+    assertEquals(preparedStatement.getString(1), "2021-01-01T00:00:00Z")
+    assertEquals(preparedStatement.getTimestamp(1, calendar("America/New_York")).toInstant, storedInstant)
+  }
+
+  test("getTime should return the time on 1970-01-01 in the default time zone") {
+    withDefaultTimeZone("America/New_York") {
+      preparedStatement.setTimestamp(1, Timestamp.from(storedInstant))
+      assertEquals(preparedStatement.getTime(1), Time.valueOf("19:00:00"))
+      assertEquals(preparedStatement.getTime(1).toString, "19:00:00")
+    }
+  }
+
+  test("getTime with calendar should use the time zone of the calendar") {
+    withDefaultTimeZone("America/New_York") {
+      preparedStatement.setTimestamp(1, Timestamp.from(storedInstant))
+      assertEquals(preparedStatement.getTime(1, calendar("UTC")), Time.valueOf("00:00:00"))
+      assertEquals(preparedStatement.getTime(1, calendar("Asia/Tokyo")), Time.valueOf("09:00:00"))
+      assertEquals(preparedStatement.getTime(1, null), Time.valueOf("19:00:00"))
+    }
+  }
+
+  test("setTime with calendar should store the time on 1970-01-01 in the time zone of the calendar") {
+    val time = Time.valueOf("10:15:30")
+    preparedStatement.setTime(1, time, calendar("UTC"))
+    assertEquals(preparedStatement.getString(1), "1970-01-01T10:15:30Z")
+    assertEquals(preparedStatement.getTime(1, calendar("UTC")), time)
+    preparedStatement.setTime(1, time, calendar("Asia/Tokyo"))
+    assertEquals(preparedStatement.getString(1), "1970-01-01T01:15:30Z")
+    assertEquals(preparedStatement.getTime(1, calendar("Asia/Tokyo")), time)
+    preparedStatement.setTime(1, time, null)
+    assertEquals(preparedStatement.getTime(1), time)
+    preparedStatement.setTime(1, null, calendar("UTC"))
+    assertEquals(preparedStatement.getTime(1), null)
+  }
+
+  test("date getters should return null for missing or invalid parameters") {
+    preparedStatement.clearParameters()
+    assertEquals(preparedStatement.getDate(1), null)
+    assertEquals(preparedStatement.getDate(1, calendar("UTC")), null)
+    assertEquals(preparedStatement.getTime(1), null)
+    assertEquals(preparedStatement.getTimestamp(1), null)
+    preparedStatement.setString(1, "no date")
+    assertEquals(preparedStatement.getDate(1), null)
+    assertEquals(preparedStatement.getTimestamp(1), null)
+  }
+
+  test("setObject should convert date values to ISO instant") {
+    val millis = storedInstant.toEpochMilli
+    List[Any](
+      new java.util.Date(millis),
+      new Date(millis),
+      new Time(millis),
+      new Timestamp(millis),
+      storedInstant,
+      storedInstant.atZone(java.time.ZoneId.of("Asia/Tokyo")),
+      storedInstant.atOffset(java.time.ZoneOffset.ofHours(-5)),
+      new org.joda.time.DateTime(millis),
+      new org.joda.time.Instant(millis)
+    ).foreach(
+      value => {
+        preparedStatement.setObject(1, value)
+        assertEquals(preparedStatement.getString(1), "2021-01-01T00:00:00Z", value.getClass.getName)
+        assertEquals(preparedStatement.getTimestamp(1).toInstant, storedInstant, value.getClass.getName)
+      }
+    )
+  }
+
+  test("setObject should convert local date values in the default time zone") {
+    val localDate     = java.time.LocalDate.of(2021, 1, 1)
+    val localDateTime = java.time.LocalDateTime.of(2021, 1, 1, 10, 15, 30)
+    val zoneId        = java.time.ZoneId.systemDefault()
+    preparedStatement.setObject(1, localDate)
+    assertEquals(preparedStatement.getString(1), localDate.atStartOfDay(zoneId).toInstant.toString)
+    assertEquals(preparedStatement.getDate(1), Date.valueOf(localDate))
+    preparedStatement.setObject(1, localDateTime)
+    assertEquals(preparedStatement.getString(1), localDateTime.atZone(zoneId).toInstant.toString)
+    preparedStatement.setObject(1, new org.joda.time.LocalDate(2021, 1, 1))
+    assertEquals(preparedStatement.getDate(1), Date.valueOf(localDate))
+    preparedStatement.setObject(1, new org.joda.time.LocalDateTime(2021, 1, 1, 10, 15, 30))
+    assertEquals(preparedStatement.getString(1), localDateTime.atZone(zoneId).toInstant.toString)
+  }
+
+  test("setObject with UUID should find the document") {
+    val statement = connection.prepareStatement("select name from `mongocamp-unit-test`.people where guid = ?")
+    statement.setObject(1, UUID.fromString("38ede9f0-f8f7-4d78-98b9-c983eaeeac3f"))
+    val result = statement.executeQuery()
+    assert(result.next())
+    assertEquals(result.getString("name"), "Latasha Mcmillan")
+    assert(!result.next())
+  }
+
+  test("setDate with calendar should find the documents of the day") {
+    val statement = connection.prepareStatement("select name from `mongocamp-unit-test`.people where registered >= ? and registered < ?")
+    statement.setDate(1, Date.valueOf("2014-04-19"), calendar("UTC"))
+    statement.setDate(2, Date.valueOf("2014-04-20"), calendar("UTC"))
+    val result = statement.executeQuery()
+    var count  = 0
+    while (result.next())
+      count += 1
+    assertEquals(count, 3)
+  }
+
+  test("setTimestamp should find the document") {
+    val statement = connection.prepareStatement("select name from `mongocamp-unit-test`.people where registered = ?")
+    statement.setTimestamp(1, Timestamp.from(java.time.Instant.parse("2014-04-19T22:44:27Z")))
+    val result = statement.executeQuery()
+    assert(result.next())
+    assertEquals(result.getString("name"), "Latasha Mcmillan")
+    assert(!result.next())
+  }
+
   test("setTime should set time parameter") {
-    val time = new Time(System.currentTimeMillis())
+    val time = Time.valueOf("10:15:30")
     preparedStatement.setTime(1, time)
     assertEquals(preparedStatement.getTime(1), time)
   }

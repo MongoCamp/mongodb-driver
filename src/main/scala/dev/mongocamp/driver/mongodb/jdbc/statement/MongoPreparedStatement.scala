@@ -1,10 +1,12 @@
 package dev.mongocamp.driver.mongodb.jdbc.statement
 
 import com.typesafe.scalalogging.LazyLogging
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.exception.SqlCommandNotSupportedException
 import dev.mongocamp.driver.mongodb.jdbc.resultSet.MongoDbResultSet
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcConnection
+import dev.mongocamp.driver.mongodb.jdbc.SqlDateTimeConverter
 import dev.mongocamp.driver.mongodb.json._
 import dev.mongocamp.driver.mongodb.json.JsonConverter
 import dev.mongocamp.driver.mongodb.sql.MongoSqlQueryHolder
@@ -29,9 +31,16 @@ import java.sql.SQLWarning
 import java.sql.SQLXML
 import java.sql.Time
 import java.sql.Timestamp
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 import java.util
 import java.util.Calendar
+import java.util.UUID
 import org.joda.time.DateTime
+import org.joda.time.ReadableInstant
 import scala.collection.mutable
 import scala.util.Try
 
@@ -181,17 +190,17 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   override def setDate(parameterIndex: Int, x: Date): Unit = {
     checkClosed()
-    setObject(parameterIndex, s"'${new DateTime(x).toInstant.toString}'")
+    setObject(parameterIndex, x)
   }
 
   override def setTime(parameterIndex: Int, x: Time): Unit = {
     checkClosed()
-    setObject(parameterIndex, s"'${new DateTime(x).toInstant.toString}'")
+    setObject(parameterIndex, x)
   }
 
   override def setTimestamp(parameterIndex: Int, x: Timestamp): Unit = {
     checkClosed()
-    setObject(parameterIndex, s"'${new DateTime(x).toInstant.toString}'")
+    setObject(parameterIndex, x)
   }
 
   override def setAsciiStream(parameterIndex: Int, x: InputStream, length: Int): Unit = {
@@ -242,12 +251,11 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     x match {
       case null =>
         parameters.put(parameterIndex, "null")
-      case d: Date =>
-        parameters.put(parameterIndex, s"'${d.toInstant.toString}'")
-      case d: DateTime =>
-        parameters.put(parameterIndex, s"'${d.toInstant.toString}'")
-      case t: Time =>
-        parameters.put(parameterIndex, s"'${t.toInstant.toString}'")
+      case v @ (_: java.util.Date | _: ReadableInstant | _: org.joda.time.LocalDate | _: org.joda.time.LocalDateTime | _: Instant | _: LocalDate |
+          _: LocalDateTime | _: ZonedDateTime | _: OffsetDateTime) =>
+        parameters.put(parameterIndex, dateParameter(BsonConverter.toBson(v).asDateTime().getValue))
+      case uuid: UUID =>
+        parameters.put(parameterIndex, s"'$uuid'")
       case a: Array[Byte] =>
         parameters.put(parameterIndex, new JsonConverter().toJson(a))
       case a: Iterable[Any] =>
@@ -287,17 +295,36 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     null
   }
 
+  // the date is stored as midnight in the time zone of the calendar
   override def setDate(parameterIndex: Int, x: Date, cal: Calendar): Unit = {
-    setDate(parameterIndex, x)
+    checkClosed()
+    if (x == null || cal == null) {
+      setDate(parameterIndex, x)
+    }
+    else {
+      parameters.put(parameterIndex, dateParameter(SqlDateTimeConverter.dateToInstant(x, SqlDateTimeConverter.zoneId(cal)).toEpochMilli))
+    }
   }
 
+  // the time is stored on 1970-01-01 in the time zone of the calendar
   override def setTime(parameterIndex: Int, x: Time, cal: Calendar): Unit = {
-    setTime(parameterIndex, x)
+    checkClosed()
+    if (x == null || cal == null) {
+      setTime(parameterIndex, x)
+    }
+    else {
+      parameters.put(parameterIndex, dateParameter(SqlDateTimeConverter.timeToInstant(x, SqlDateTimeConverter.zoneId(cal)).toEpochMilli))
+    }
   }
 
+  // MongoDB stores instants, so the calendar is not needed to set the timestamp
   override def setTimestamp(parameterIndex: Int, x: Timestamp, cal: Calendar): Unit = {
     setTimestamp(parameterIndex, x)
   }
+
+  private val TimestampLiteralPrefix = "TIMESTAMP "
+
+  private def dateParameter(millis: Long): String = s"$TimestampLiteralPrefix'${Instant.ofEpochMilli(millis)}'"
 
   override def setNull(parameterIndex: Int, sqlType: Int, typeName: String): Unit = {
     setNull(parameterIndex, sqlType)
@@ -569,7 +596,7 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
 
   def getStringOption(parameterIndex: Int): Option[String] = {
     checkClosed()
-    parameters.get(parameterIndex).map(_.replace("'", ""))
+    parameters.get(parameterIndex).map(_.stripPrefix(TimestampLiteralPrefix).replace("'", ""))
   }
 
   override def getString(parameterIndex: Int): String = {
@@ -650,31 +677,19 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
       .orNull
   }
 
-  override def getDate(parameterIndex: Int): Date = {
-    checkClosed()
-    getStringOption(parameterIndex)
-      .flatMap(
-        v => Try(new Date(DateTime.parse(v).getMillis)).toOption
-      )
-      .orNull
-  }
+  override def getDate(parameterIndex: Int): Date = getDate(parameterIndex, null.asInstanceOf[Calendar])
 
-  override def getTime(parameterIndex: Int): Time = {
-    checkClosed()
-    getStringOption(parameterIndex)
-      .flatMap(
-        v => Try(new Time(DateTime.parse(v).getMillis)).toOption
-      )
-      .orNull
-  }
+  override def getTime(parameterIndex: Int): Time = getTime(parameterIndex, null.asInstanceOf[Calendar])
 
   override def getTimestamp(parameterIndex: Int): Timestamp = {
     checkClosed()
-    getStringOption(parameterIndex)
-      .flatMap(
-        v => Try(new Timestamp(DateTime.parse(v).getMillis)).toOption
-      )
-      .orNull
+    instantParameterOption(parameterIndex).map(Timestamp.from).orNull
+  }
+
+  private def instantParameterOption(parameterIndex: Int): Option[Instant] = {
+    getStringOption(parameterIndex).flatMap(
+      v => Try(Instant.ofEpochMilli(DateTime.parse(v).getMillis)).toOption
+    )
   }
 
   override def getObject(parameterIndex: Int): AnyRef = {
@@ -716,10 +731,17 @@ case class MongoPreparedStatement(connection: MongoJdbcConnection) extends Calla
     sqlFeatureNotSupported()
   }
 
-  override def getDate(parameterIndex: Int, cal: Calendar): Date = getDate(parameterIndex)
+  override def getDate(parameterIndex: Int, cal: Calendar): Date = {
+    checkClosed()
+    instantParameterOption(parameterIndex).map(SqlDateTimeConverter.toSqlDate(_, SqlDateTimeConverter.zoneId(cal))).orNull
+  }
 
-  override def getTime(parameterIndex: Int, cal: Calendar): Time = getTime(parameterIndex)
+  override def getTime(parameterIndex: Int, cal: Calendar): Time = {
+    checkClosed()
+    instantParameterOption(parameterIndex).map(SqlDateTimeConverter.toSqlTime(_, SqlDateTimeConverter.zoneId(cal))).orNull
+  }
 
+  // MongoDB stores instants, so the calendar is not needed to get the timestamp
   override def getTimestamp(parameterIndex: Int, cal: Calendar): Timestamp = getTimestamp(parameterIndex)
 
   override def registerOutParameter(parameterIndex: Int, sqlType: Int, typeName: String): Unit = {
