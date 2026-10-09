@@ -1,3 +1,8 @@
+## [v3.3.2] - 2026-10-09
+### :bug: Bug Fixes
+- [`67a5c68`](https://github.com/MongoCamp/mongodb-driver/commit/67a5c6881fa2ba76ebbdf1cf4b9f45a36b3db678) - parse lucene dates without time zone offset in the default time zone of the JVM *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.3.1] - 2026-10-09
 ### :sparkles: New Features
 - [`db48868`](https://github.com/MongoCamp/mongodb-driver/commit/db48868d7752902387179e995816371e0ac2c38c) - support UUID, java.time and Joda types in BSON conversion *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -479,3 +484,4 @@
 [v3.2.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.3...v3.2.4
 [v3.3.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.4...v3.3.0
 [v3.3.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.0...v3.3.1
+[v3.3.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.1...v3.3.2
