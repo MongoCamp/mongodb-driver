@@ -38,7 +38,7 @@ abstract class Search[A]()(implicit ct: ClassTag[A], decoder: Decoder[A]) extend
   }
 
   def find(name: String, value: Any): Observable[A] = {
-    find(equal(name, value))
+    find(equal(name, toBson(value)))
   }
 
   def distinct[S <: Any](fieldName: String, filter: Bson = Document()): DistinctObservable[BsonValue] = {

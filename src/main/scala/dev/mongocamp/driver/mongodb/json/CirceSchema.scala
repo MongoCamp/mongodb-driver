@@ -3,17 +3,23 @@ package dev.mongocamp.driver.mongodb.json
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import io.circe._
 import io.circe.Decoder.Result
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Date
+import java.util.UUID
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.mongodb.scala.Document
 import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 trait CirceSchema extends CirceProductSchema {
 
-  implicit lazy val DocumentOneFormat: Encoder[org.mongodb.scala.Document] with Decoder[org.mongodb.scala.Document] =
-    new Encoder[org.mongodb.scala.Document] with Decoder[org.mongodb.scala.Document] {
+  implicit lazy val DocumentOneFormat: Codec[org.mongodb.scala.Document] =
+    new Codec[org.mongodb.scala.Document] {
       override def apply(a: org.mongodb.scala.Document): Json = {
         encodeMapStringAny(BsonConverter.asMap(a))
       }
@@ -30,8 +36,8 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit lazy val DocumentTowFormat: Encoder[org.bson.Document] with Decoder[org.bson.Document] =
-    new Encoder[org.bson.Document] with Decoder[org.bson.Document] {
+  implicit lazy val DocumentTowFormat: Codec[org.bson.Document] =
+    new Codec[org.bson.Document] {
       override def apply(a: org.bson.Document): Json = {
         val map = a
           .keySet()
@@ -59,7 +65,7 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit val DateFormat: Encoder[Date] with Decoder[Date] = new Encoder[Date] with Decoder[Date] {
+  implicit val DateFormat: Codec[Date] = new Codec[Date] {
     override def apply(d: Date): Json = {
       Option(d)
         .map(
@@ -77,7 +83,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val DateTimeFormat: Encoder[DateTime] with Decoder[DateTime] = new Encoder[DateTime] with Decoder[DateTime] {
+  implicit val DateTimeFormat: Codec[DateTime] = new Codec[DateTime] {
     override def apply(d: DateTime): Json = {
       Option(d)
         .map(
@@ -95,7 +101,76 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val ObjectIdFormat: Encoder[ObjectId] with Decoder[ObjectId] = new Encoder[ObjectId] with Decoder[ObjectId] {
+  implicit val JavaLocalDateFormat: Codec[java.time.LocalDate] =
+    stringFormat[java.time.LocalDate](_.toString, s => javaZonedDateTimeFromString(s).toLocalDate)
+
+  implicit val JavaLocalDateTimeFormat: Codec[java.time.LocalDateTime] =
+    stringFormat[java.time.LocalDateTime](_.toString, s => javaZonedDateTimeFromString(s).toLocalDateTime)
+
+  implicit val SqlDateFormat: Codec[java.sql.Date] =
+    stringFormat[java.sql.Date](d => Instant.ofEpochMilli(d.getTime).toString, s => new java.sql.Date(new DateTime(s).getMillis))
+
+  implicit val SqlTimestampFormat: Codec[java.sql.Timestamp] =
+    stringFormat[java.sql.Timestamp](_.toInstant.toString, s => new java.sql.Timestamp(new DateTime(s).getMillis))
+
+  implicit val JodaInstantFormat: Codec[org.joda.time.Instant] =
+    stringFormat[org.joda.time.Instant](_.toString, s => new DateTime(s).toInstant)
+
+  implicit val JodaMutableDateTimeFormat: Codec[org.joda.time.MutableDateTime] =
+    stringFormat[org.joda.time.MutableDateTime](_.toInstant.toString, s => new DateTime(s).toMutableDateTime)
+
+  implicit val JodaLocalDateFormat: Codec[org.joda.time.LocalDate] =
+    stringFormat[org.joda.time.LocalDate](_.toString, s => new DateTime(s).toLocalDate)
+
+  implicit val JodaLocalDateTimeFormat: Codec[org.joda.time.LocalDateTime] =
+    stringFormat[org.joda.time.LocalDateTime](_.toString, s => new DateTime(s).toLocalDateTime)
+
+  implicit val JodaLocalTimeFormat: Codec[org.joda.time.LocalTime] =
+    stringFormat[org.joda.time.LocalTime](_.toString, org.joda.time.LocalTime.parse)
+
+  implicit val JodaDurationFormat: Codec[org.joda.time.Duration] =
+    stringFormat[org.joda.time.Duration](
+      d => Duration(d.getMillis, java.util.concurrent.TimeUnit.MILLISECONDS).toString,
+      s => if (s.startsWith("P")) org.joda.time.Duration.parse(s) else new org.joda.time.Duration(Duration(s).toMillis)
+    )
+
+  implicit val JodaPeriodFormat: Codec[org.joda.time.Period] =
+    stringFormat[org.joda.time.Period](_.toString, org.joda.time.Period.parse)
+
+  implicit val JodaDateTimeZoneFormat: Codec[org.joda.time.DateTimeZone] =
+    stringFormat[org.joda.time.DateTimeZone](_.getID, org.joda.time.DateTimeZone.forID)
+
+  implicit val JodaYearMonthFormat: Codec[org.joda.time.YearMonth] =
+    stringFormat[org.joda.time.YearMonth](_.toString, org.joda.time.YearMonth.parse)
+
+  implicit val JodaMonthDayFormat: Codec[org.joda.time.MonthDay] =
+    stringFormat[org.joda.time.MonthDay](_.toString, org.joda.time.MonthDay.parse)
+
+  private def javaZonedDateTimeFromString(s: String): ZonedDateTime = {
+    Try(OffsetDateTime.parse(s).atZoneSameInstant(ZoneId.systemDefault()))
+      .orElse(Try(java.time.LocalDateTime.parse(s).atZone(ZoneId.systemDefault())))
+      .getOrElse(java.time.LocalDate.parse(s).atStartOfDay(ZoneId.systemDefault()))
+  }
+
+  private def stringFormat[A](encode: A => String, decode: String => A): Codec[A] = new Codec[A] {
+    override def apply(a: A): Json = {
+      Option(a)
+        .map(
+          value => Json.fromString(encode(value))
+        )
+        .getOrElse(Json.Null)
+    }
+
+    override def apply(c: HCursor): Result[A] = {
+      Decoder.decodeString
+        .emap(
+          s => Try(decode(s)).toEither.left.map(_.getMessage)
+        )
+        .apply(c)
+    }
+  }
+
+  implicit val ObjectIdFormat: Codec[ObjectId] = new Codec[ObjectId] {
     override def apply(o: ObjectId): Json = {
       Option(o)
         .map(
@@ -113,7 +188,7 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit lazy val DurationFormat: Encoder[Duration] with Decoder[Duration] = new Encoder[Duration] with Decoder[Duration] {
+  implicit lazy val DurationFormat: Codec[Duration] = new Codec[Duration] {
     override def apply(d: Duration): Json = {
       Option(d)
         .map(
@@ -131,8 +206,8 @@ trait CirceSchema extends CirceProductSchema {
     }
   }
 
-  implicit val MapStringAnyFormat: Encoder[Map[String, Any]] with Decoder[Map[String, Any]] =
-    new Encoder[Map[String, Any]] with Decoder[Map[String, Any]] {
+  implicit val MapStringAnyFormat: Codec[Map[String, Any]] =
+    new Codec[Map[String, Any]] {
       override def apply(a: Map[String, Any]): Json = {
         encodeMapStringAny(a)
       }
@@ -142,7 +217,7 @@ trait CirceSchema extends CirceProductSchema {
       }
     }
 
-  implicit val AnyFormat: Encoder[Any] with Decoder[Any] = new Encoder[Any] with Decoder[Any] {
+  implicit val AnyFormat: Codec[Any] = new Codec[Any] {
     override def apply(a: Any): Json = {
       encodeAnyToJson(a)
     }
@@ -221,10 +296,15 @@ trait CirceSchema extends CirceProductSchema {
             e => encodeAnyToJson(e, depth)
           )
           .getOrElse(Json.Null)
-      case d: Date           => Encoder.encodeString.apply(d.toInstant.toString)
-      case d: DateTime       => Encoder.encodeString.apply(d.toInstant.toString)
-      case d: Duration       => Json.fromString(d.toString)
-      case o: ObjectId       => Encoder.encodeString.apply(o.toHexString)
+      case d: Date     => Encoder.encodeString.apply(Instant.ofEpochMilli(d.getTime).toString)
+      case d: DateTime => Encoder.encodeString.apply(d.toInstant.toString)
+      case d: Duration => Json.fromString(d.toString)
+      case o: ObjectId => Encoder.encodeString.apply(o.toHexString)
+      case u: UUID     => Json.fromString(u.toString)
+      case t @ (_: java.time.temporal.TemporalAccessor | _: java.time.temporal.TemporalAmount | _: ZoneId) => Json.fromString(t.toString)
+      case j @ (_: org.joda.time.ReadableInstant | _: org.joda.time.ReadablePartial | _: org.joda.time.ReadablePeriod | _: org.joda.time.ReadableDuration |
+          _: org.joda.time.DateTimeZone) =>
+        Json.fromString(j.toString)
       case m: Map[String, _] => encodeMapStringAny(m)
       case seq: Seq[_] =>
         Json.arr(

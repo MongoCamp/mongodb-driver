@@ -1,5 +1,6 @@
 package dev.mongocamp.driver.mongodb
 
+import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import java.util.Date
 import org.bson.conversions.Bson
 import org.mongodb.scala.bson.collection.immutable.Document
@@ -14,11 +15,11 @@ trait Filter {
   def valueFilter(key: String, value: Any): Bson =
     value match {
       case list: List[_] =>
-        in(key, list: _*)
+        in(key, list.map(BsonConverter.toBson): _*)
       case set: Set[_] =>
-        in(key, set.toSeq: _*)
+        in(key, set.toSeq.map(BsonConverter.toBson): _*)
       case _: Any =>
-        equal(key, value)
+        equal(key, BsonConverter.toBson(value))
       case _ => DefaultBson
     }
 

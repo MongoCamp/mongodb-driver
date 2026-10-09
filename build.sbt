@@ -20,7 +20,7 @@ developers := List(
 
 licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("3.9.0", "2.13.18")
+crossScalaVersions := Seq("3.10.0", "2.13.18")
 
 scalaVersion := crossScalaVersions.value.last
 
@@ -37,13 +37,13 @@ buildInfoOptions += BuildInfoOption.BuildTime
 
 resolvers += "Sonatype OSS Snapshots".at("https://oss.sonatype.org/content/repositories/snapshots")
 
-libraryDependencies += "joda-time" % "joda-time" % "2.14.3"
+libraryDependencies += "joda-time" % "joda-time" % "2.15.0"
 
-val circeVersion = "0.14.16"
+val circeVersion = "0.14.17"
 
 libraryDependencies ++= Seq("io.circe" %% "circe-core", "io.circe" %% "circe-generic", "io.circe" %% "circe-parser").map(_ % circeVersion)
 
-libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.11.0").cross(CrossVersion.for3Use2_13)
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "5.13.0").cross(CrossVersion.for3Use2_13)
 
 val MongoJavaServerVersion = "1.47.0"
 
@@ -51,11 +51,11 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVe
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.8" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.11" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-16" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-22" % Provided
 
-libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.5.1"
+libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.5.2"
 
 libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2"
 
@@ -67,7 +67,7 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.6"
 
 libraryDependencies += "com.vdurmont" % "semver4j" % "3.1.0"
 
-libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.3"
+libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "5.4"
 
 scalafmtOnCompile := false
 

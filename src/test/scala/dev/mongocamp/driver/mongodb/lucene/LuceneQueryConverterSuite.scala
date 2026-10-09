@@ -1,0 +1,130 @@
+package dev.mongocamp.driver.mongodb.lucene
+
+import dev.mongocamp.driver.mongodb._
+import java.util.TimeZone
+import org.bson.BsonDocument
+import org.mongodb.scala.bson.conversions.Bson
+
+class LuceneQueryConverterSuite extends munit.FunSuite {
+
+  private def toJson(query: String, defaultField: String = "default"): String = {
+    val bson: Bson = LuceneQueryConverter.toDocument(LuceneQueryConverter.parse(query, defaultField))
+    bson.toBsonDocument.toJson
+  }
+
+  private def assertQuery(query: String, expectedJson: String, defaultField: String = "default"): Unit = {
+    assertEquals(BsonDocument.parse(toJson(query, defaultField)), BsonDocument.parse(expectedJson), query)
+  }
+
+  test("email address is one term") {
+    assertQuery("email:john.doe@example.com", """{"email": {"$eq": "john.doe@example.com"}}""")
+    assertQuery("email:\"john.doe@example.com\"", """{"email": {"$eq": "john.doe@example.com"}}""")
+    assertQuery("john.doe@example.com", """{"email": {"$eq": "john.doe@example.com"}}""", "email")
+    assertQuery("email:john+tag@example.com", """{"email": {"$eq": "john+tag@example.com"}}""")
+    assertQuery("email:john\\+tag@example.com", """{"email": {"$eq": "john+tag@example.com"}}""")
+    assertQuery("-email:john.doe@example.com", """{"$and": [{"email": {"$ne": "john.doe@example.com"}}]}""")
+    assertQuery("email:'john.doe@example.com'", """{"email": {"$eq": "john.doe@example.com"}}""")
+    assertQuery("email:o'brien@example.com", """{"email": {"$eq": "o'brien@example.com"}}""")
+  }
+
+  test("wildcard query escapes regex characters") {
+    assertQuery("email:*@example.com", """{"email": {"$regex": "^(.*?)@example\\.com$", "$options": "is"}}""")
+    assertQuery("email:*john+tag@example.com", """{"email": {"$regex": "^(.*?)john\\+tag@example\\.com$", "$options": "is"}}""")
+    assertQuery("email:john?doe@*.com", """{"email": {"$regex": "^john.doe@(.*?)\\.com$", "$options": "is"}}""")
+    assertQuery("-email:*@example.com", """{"$and": [{"email": {"$not": {"$regex": "^(.*?)@example\\.com$", "$options": "is"}}}]}""")
+  }
+
+  test("wildcard query has to match the whole value") {
+    assertQuery("name:John*", """{"$and": [{"name": {"$regex": "^John(.*?)$", "$options": "is"}}]}""")
+    assertQuery("name:*Dowe", """{"name": {"$regex": "^(.*?)Dowe$", "$options": "is"}}""")
+    assertQuery("name:*John*", """{"name": {"$regex": "^(.*?)John(.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"John Dowe*\"", """{"name": {"$regex": "^John Dowe(.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"*John Dowe\"", """{"name": {"$regex": "^(.*?)John Dowe$", "$options": "is"}}""")
+    assertQuery("name:\"*John Dowe*\"", """{"name": {"$regex": "^(.*?)John Dowe(.*?)$", "$options": "is"}}""")
+    assertQuery("name:J?hn", """{"name": {"$regex": "^J.hn$", "$options": "is"}}""")
+  }
+
+  test("prefix query escapes regex characters") {
+    assertQuery("email:john.doe@*", """{"$and": [{"email": {"$regex": "^john\\.doe@(.*?)$", "$options": "is"}}]}""")
+    assertQuery("email:john+tag*", """{"$and": [{"email": {"$regex": "^john\\+tag(.*?)$", "$options": "is"}}]}""")
+    assertQuery("version:1.2*", """{"$and": [{"version": {"$regex": "^1\\.2(.*?)$", "$options": "is"}}]}""")
+  }
+
+  test("quoted value is searched as exact value") {
+    assertQuery("name:\"Hallo Welt\"", """{"name": {"$eq": "Hallo Welt"}}""")
+    assertQuery("\"Hallo Welt\"", """{"name": {"$eq": "Hallo Welt"}}""", "name")
+    assertQuery("name:\"Hallo  Welt \"", """{"name": {"$eq": "Hallo  Welt "}}""")
+    assertQuery("name:\"Hallo \\\"Welt\\\"\"", """{"name": {"$eq": "Hallo \"Welt\""}}""")
+    assertQuery("name:\"a.b c+d (e)\"", """{"name": {"$eq": "a.b c+d (e)"}}""")
+    assertQuery("name:\"'Hallo Welt'\"", """{"name": {"$eq": "'Hallo Welt'"}}""")
+    assertQuery("name:\"Hallo Welt\"~2", """{"name": {"$eq": "Hallo Welt"}}""")
+    assertQuery("-name:\"Hallo Welt\"", """{"$and": [{"name": {"$ne": "Hallo Welt"}}]}""")
+    assertQuery("name:(\"Hallo Welt\" OR \"Hello World\")", """{"$or": [{"name": {"$eq": "Hallo Welt"}}, {"name": {"$eq": "Hello World"}}]}""")
+  }
+
+  test("phrase query of other parsers is searched as exact value") {
+    val phraseQuery = new org.apache.lucene.queryparser.classic.QueryParser("name", new MongoCampLuceneAnalyzer()).parse("name:\"Hallo  Welt\"")
+    assert(phraseQuery.isInstanceOf[org.apache.lucene.search.PhraseQuery], phraseQuery.getClass.getName)
+    val bson: Bson = LuceneQueryConverter.toDocument(phraseQuery)
+    assertEquals(bson.toBsonDocument, BsonDocument.parse("""{"name": {"$eq": "Hallo Welt"}}"""))
+  }
+
+  test("quoted value with wildcard is a wildcard query") {
+    assertQuery("name:\"Wie geht's?\"", """{"name": {"$eq": "Wie geht's?"}}""")
+    assertQuery("name:\"Latasha *millan\"", """{"name": {"$regex": "^Latasha (.*?)millan$", "$options": "is"}}""")
+    assertQuery("name:\"a.b *\"", """{"name": {"$regex": "^a\\.b (.*?)$", "$options": "is"}}""")
+    assertQuery("name:\"Latasha*millan\"", """{"name": {"$regex": "^Latasha(.*?)millan$", "$options": "is"}}""")
+    assertQuery("-name:\"Latasha*millan\"", """{"$and": [{"name": {"$not": {"$regex": "^Latasha(.*?)millan$", "$options": "is"}}}]}""")
+  }
+
+  test("date with time zone offset keeps the offset") {
+    val expected = """{"registered": {"$eq": {"$date": "2014-04-19T20:44:27Z"}}}"""
+    assertQuery("registered:20140419T224427000\\+0200", expected)
+    assertQuery("registered:20140419T224427\\+0200", expected)
+    assertQuery("registered:\"2014-04-19T22:44:27+02:00\"", expected)
+    assertQuery("registered:2014-04-19T22\\:44\\:27.000+02\\:00", expected)
+  }
+
+  test("date without time zone offset is UTC") {
+    val expected = """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}"""
+    assertQuery("registered:20140419T224427000", expected)
+    assertQuery("registered:20140419T224427000Z", expected)
+    assertQuery("registered:20140419T224427", expected)
+    assertQuery("registered:20140419T224427Z", expected)
+    assertQuery("registered:2014-04-19T22\\:44\\:27", expected)
+    assertQuery("registered:2014-04-19T22\\:44\\:27Z", expected)
+    assertQuery("registered:20140419T2244", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
+    assertQuery("registered:20140419T2244Z", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
+    assertQuery("registered:2014-04-19", """{"registered": {"$eq": {"$date": "2014-04-19T00:00:00Z"}}}""")
+  }
+
+  test("date range respects time zone offset") {
+    assertQuery(
+      "registered:[2014-04-20T00\\:00\\:00+02\\:00 TO 2014-04-22T23\\:59\\:59+02\\:00]",
+      """{"registered": {"$lte": {"$date": "2014-04-22T21:59:59Z"}, "$gte": {"$date": "2014-04-19T22:00:00Z"}}}"""
+    )
+  }
+
+  test("date parsing does not depend on the default time zone") {
+    val defaultTimeZone     = TimeZone.getDefault
+    val defaultJodaTimeZone = org.joda.time.DateTimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Kiritimati"))
+      org.joda.time.DateTimeZone.setDefault(org.joda.time.DateTimeZone.forID("America/New_York"))
+      assertQuery("registered:20140419T224427000", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}""")
+      assertQuery("registered:2014-04-19T22\\:44\\:27", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}""")
+      assertQuery("registered:20140419T224427000\\+0200", """{"registered": {"$eq": {"$date": "2014-04-19T20:44:27Z"}}}""")
+    }
+    finally {
+      TimeZone.setDefault(defaultTimeZone)
+      org.joda.time.DateTimeZone.setDefault(defaultJodaTimeZone)
+    }
+  }
+
+  test("date parsing is strict") {
+    assertQuery("code:20140419T224427000X", """{"code": {"$eq": "20140419T224427000X"}}""")
+    assertQuery("code:20140419T22442", """{"code": {"$eq": "20140419T22442"}}""")
+    assertQuery("code:20141319T224427", """{"code": {"$eq": "20141319T224427"}}""")
+  }
+
+}

@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.jdbc.resultSet
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.bson.BsonConverter
 import dev.mongocamp.driver.mongodb.jdbc.MongoJdbcCloseable
+import dev.mongocamp.driver.mongodb.jdbc.SqlDateTimeConverter
 import java.io.InputStream
 import java.io.Reader
 import java.net.URI
@@ -23,6 +24,7 @@ import java.sql.SQLXML
 import java.sql.Statement
 import java.sql.Time
 import java.sql.Timestamp
+import java.time.Instant
 import java.util
 import java.util.Calendar
 import javax.sql.rowset.serial.SerialBlob
@@ -136,23 +138,11 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       .map(_.trim.toByte)
   }
 
-  override def getDate(columnIndex: Int): Date = {
-    checkClosed()
-    val javaDate = currentRow.getDateValue(metaData.getColumnName(columnIndex))
-    new Date(javaDate.getTime)
-  }
+  override def getDate(columnIndex: Int): Date = getDate(metaData.getColumnName(columnIndex))
 
-  override def getTime(columnIndex: Int): Time = {
-    checkClosed()
-    val javaDate = currentRow.getDateValue(metaData.getColumnName(columnIndex))
-    new Time(javaDate.getTime)
-  }
+  override def getTime(columnIndex: Int): Time = getTime(metaData.getColumnName(columnIndex))
 
-  override def getTimestamp(columnIndex: Int): Timestamp = {
-    checkClosed()
-    val javaDate = currentRow.getDateValue(metaData.getColumnName(columnIndex))
-    new Timestamp(javaDate.getTime)
-  }
+  override def getTimestamp(columnIndex: Int): Timestamp = getTimestamp(metaData.getColumnName(columnIndex))
 
   override def getAsciiStream(columnIndex: Int): InputStream = {
     checkClosed()
@@ -245,22 +235,13 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
       .map(_.trim.toByte)
   }
 
-  override def getDate(columnLabel: String): Date = {
-    checkClosed()
-    val javaDate = currentRow.getDateValue(columnLabel)
-    new Date(javaDate.getTime)
-  }
+  override def getDate(columnLabel: String): Date = getDate(columnLabel, null.asInstanceOf[Calendar])
 
-  override def getTime(columnLabel: String): Time = {
-    checkClosed()
-    val javaDate = currentRow.getDateValue(columnLabel)
-    new Time(javaDate.getTime)
-  }
+  override def getTime(columnLabel: String): Time = getTime(columnLabel, null.asInstanceOf[Calendar])
 
   override def getTimestamp(columnLabel: String): Timestamp = {
     checkClosed()
-    val javaDate = currentRow.getDateValue(columnLabel)
-    new Timestamp(javaDate.getTime)
+    instantOption(columnLabel).map(Timestamp.from).orNull
   }
 
   override def getAsciiStream(columnLabel: String): InputStream = {
@@ -660,41 +641,26 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
 
   override def updateRef(columnLabel: String, x: Ref): Unit = sqlFeatureNotSupported()
 
-  override def getDate(columnIndex: Int, cal: Calendar): Date = {
-    checkClosed()
-    val date = getDate(columnIndex)
-    convertDateWithCalendar(cal, date)
-  }
+  override def getDate(columnIndex: Int, cal: Calendar): Date = getDate(metaData.getColumnName(columnIndex), cal)
 
   override def getDate(columnLabel: String, cal: Calendar): Date = {
     checkClosed()
-    val date = getDate(columnLabel)
-    convertDateWithCalendar(cal, date)
+    instantOption(columnLabel).map(SqlDateTimeConverter.toSqlDate(_, SqlDateTimeConverter.zoneId(cal))).orNull
   }
 
-  override def getTime(columnIndex: Int, cal: Calendar): Time = {
-    checkClosed()
-    val date = getDate(columnIndex, cal)
-    new Time(date.getTime)
-  }
+  override def getTime(columnIndex: Int, cal: Calendar): Time = getTime(metaData.getColumnName(columnIndex), cal)
 
   override def getTime(columnLabel: String, cal: Calendar): Time = {
     checkClosed()
-    val date = getDate(columnLabel, cal)
-    new Time(date.getTime)
+    instantOption(columnLabel).map(SqlDateTimeConverter.toSqlTime(_, SqlDateTimeConverter.zoneId(cal))).orNull
   }
 
-  override def getTimestamp(columnIndex: Int, cal: Calendar): Timestamp = {
-    checkClosed()
-    val date = getDate(columnIndex, cal)
-    new Timestamp(date.getTime)
-  }
+  // MongoDB stores instants, so the calendar is not needed to get the timestamp
+  override def getTimestamp(columnIndex: Int, cal: Calendar): Timestamp = getTimestamp(columnIndex)
 
-  override def getTimestamp(columnLabel: String, cal: Calendar): Timestamp = {
-    checkClosed()
-    val date = getDate(columnLabel, cal)
-    new Timestamp(date.getTime)
-  }
+  override def getTimestamp(columnLabel: String, cal: Calendar): Timestamp = getTimestamp(columnLabel)
+
+  private def instantOption(columnLabel: String): Option[Instant] = Option(currentRow.getDateValue(columnLabel)).map(_.toInstant)
 
   override def getURL(columnIndex: Int): URL = {
     checkClosed()
@@ -881,17 +847,6 @@ class MongoDbResultSet(collectionDao: MongoDAO[Document], data: List[Document], 
   override def unwrap[T](iface: Class[T]): T = null.asInstanceOf[T]
 
   override def isWrapperFor(iface: Class[_]): Boolean = false
-
-  private def convertDateWithCalendar(cal: Calendar, date: Date) = {
-    if (cal != null) {
-      val calDate = cal.getTime
-      calDate.setTime(date.getTime)
-      new Date(calDate.getTime)
-    }
-    else {
-      date
-    }
-  }
 
   private def convertReaderToString(reader: Reader): String = {
     val buffer = new StringBuilder
