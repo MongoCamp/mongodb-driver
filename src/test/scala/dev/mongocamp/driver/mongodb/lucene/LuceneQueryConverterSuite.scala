@@ -85,17 +85,44 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
     assertQuery("registered:2014-04-19T22\\:44\\:27.000+02\\:00", expected)
   }
 
-  test("date without time zone offset is UTC") {
-    val expected = """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}"""
-    assertQuery("registered:20140419T224427000", expected)
-    assertQuery("registered:20140419T224427000Z", expected)
-    assertQuery("registered:20140419T224427", expected)
-    assertQuery("registered:20140419T224427Z", expected)
-    assertQuery("registered:2014-04-19T22\\:44\\:27", expected)
-    assertQuery("registered:2014-04-19T22\\:44\\:27Z", expected)
-    assertQuery("registered:20140419T2244", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
-    assertQuery("registered:20140419T2244Z", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
-    assertQuery("registered:2014-04-19", """{"registered": {"$eq": {"$date": "2014-04-19T00:00:00Z"}}}""")
+  private def withDefaultTimeZone[T](timeZoneId: String)(body: => T): T = {
+    val defaultTimeZone = TimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone(timeZoneId))
+      body
+    }
+    finally TimeZone.setDefault(defaultTimeZone)
+  }
+
+  test("date with Z is UTC") {
+    withDefaultTimeZone("Europe/Berlin") {
+      val expected = """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}"""
+      assertQuery("registered:20140419T224427000Z", expected)
+      assertQuery("registered:20140419T224427Z", expected)
+      assertQuery("registered:2014-04-19T22\\:44\\:27Z", expected)
+      assertQuery("registered:20140419T2244Z", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
+    }
+  }
+
+  test("date without time zone offset uses the default time zone of the JVM") {
+    withDefaultTimeZone("UTC") {
+      val expected = """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}"""
+      assertQuery("registered:20140419T224427000", expected)
+      assertQuery("registered:20140419T224427", expected)
+      assertQuery("registered:2014-04-19T22\\:44\\:27", expected)
+      assertQuery("registered:20140419T2244", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:00Z"}}}""")
+      assertQuery("registered:2014-04-19", """{"registered": {"$eq": {"$date": "2014-04-19T00:00:00Z"}}}""")
+    }
+    withDefaultTimeZone("Europe/Berlin") {
+      val expected = """{"registered": {"$eq": {"$date": "2014-04-19T20:44:27Z"}}}"""
+      assertQuery("registered:20140419T224427000", expected)
+      assertQuery("registered:20140419T224427", expected)
+      assertQuery("registered:2014-04-19T22\\:44\\:27", expected)
+      assertQuery("registered:2014-04-19", """{"registered": {"$eq": {"$date": "2014-04-18T22:00:00Z"}}}""")
+      // a time zone offset is stronger than the default time zone
+      assertQuery("registered:20140419T224427000\\+0200", expected)
+      assertQuery("registered:\"2014-04-19T22:44:27+02:00\"", expected)
+    }
   }
 
   test("date range respects time zone offset") {
@@ -103,22 +130,6 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
       "registered:[2014-04-20T00\\:00\\:00+02\\:00 TO 2014-04-22T23\\:59\\:59+02\\:00]",
       """{"registered": {"$lte": {"$date": "2014-04-22T21:59:59Z"}, "$gte": {"$date": "2014-04-19T22:00:00Z"}}}"""
     )
-  }
-
-  test("date parsing does not depend on the default time zone") {
-    val defaultTimeZone     = TimeZone.getDefault
-    val defaultJodaTimeZone = org.joda.time.DateTimeZone.getDefault
-    try {
-      TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Kiritimati"))
-      org.joda.time.DateTimeZone.setDefault(org.joda.time.DateTimeZone.forID("America/New_York"))
-      assertQuery("registered:20140419T224427000", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}""")
-      assertQuery("registered:2014-04-19T22\\:44\\:27", """{"registered": {"$eq": {"$date": "2014-04-19T22:44:27Z"}}}""")
-      assertQuery("registered:20140419T224427000\\+0200", """{"registered": {"$eq": {"$date": "2014-04-19T20:44:27Z"}}}""")
-    }
-    finally {
-      TimeZone.setDefault(defaultTimeZone)
-      org.joda.time.DateTimeZone.setDefault(defaultJodaTimeZone)
-    }
   }
 
   test("date parsing is strict") {

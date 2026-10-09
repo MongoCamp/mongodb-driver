@@ -264,14 +264,17 @@ object LuceneQueryConverter extends LazyLogging {
     }
   }
 
+  // date values without time zone offset are interpreted in the default time zone of the JVM
   private def parseDate(s: String): Option[Date] = {
-    Try(new DateTime(s, DateTimeZone.UTC).toDate).toOption.orElse(
+    val defaultTimeZone = TimeZone.getDefault
+    Try(new DateTime(s, DateTimeZone.forTimeZone(defaultTimeZone)).toDate).toOption.orElse(
       datePatterns.view
         .flatMap(
           pattern => {
             val formatter = new SimpleDateFormat(pattern)
             formatter.setLenient(false)
-            formatter.setTimeZone(TimeZone.getTimeZone("UTC"))
+            // a literal 'Z' marks the value as UTC
+            formatter.setTimeZone(if (pattern.endsWith("'Z'")) TimeZone.getTimeZone("UTC") else defaultTimeZone)
             val position = new ParsePosition(0)
             Option(formatter.parse(s, position)).filter(
               date => position.getIndex == s.length && formatter.format(date).length == s.length

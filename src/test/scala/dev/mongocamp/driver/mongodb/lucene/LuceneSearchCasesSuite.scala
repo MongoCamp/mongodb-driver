@@ -83,10 +83,10 @@ class LuceneSearchCasesSuite extends munit.FunSuite {
     SearchCase("""text:first*""", List("Line Breaks"), "starts with in a value with line breaks"),
     SearchCase("""text:*line?second*""", List("Line Breaks"), "? matches a line break"),
     SearchCase("""text:"*line second*"""", List(), "a line break is no whitespace"),
-    // dates keep the time zone offset, dates without offset are UTC
+    // dates keep the time zone offset, dates without offset use the default time zone of the JVM
     SearchCase("""registered:20140420T004427000\+0200""", List("John W. Dowe"), "date with time zone offset"),
     SearchCase("""registered:"2014-04-20T00:44:27+02:00"""", List("John W. Dowe"), "ISO date with time zone offset"),
-    SearchCase("""registered:20140419T224427000""", List("John W. Dowe"), "date without time zone offset is UTC"),
+    SearchCase("""registered:20140419T224427000Z""", List("John W. Dowe"), "date in UTC"),
     SearchCase("""registered:2014-04-19T22\:44\:27Z""", List("John W. Dowe"), "ISO date in UTC"),
     SearchCase("""registered:[2014-04-20T00:00:00Z TO 2014-04-22T23:59:59Z]""", List("John Dowe", "Jane Dowe"), "date range"),
     SearchCase(

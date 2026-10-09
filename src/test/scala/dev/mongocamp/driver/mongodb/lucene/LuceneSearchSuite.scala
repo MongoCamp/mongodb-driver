@@ -3,6 +3,7 @@ package dev.mongocamp.driver.mongodb.lucene
 import dev.mongocamp.driver.mongodb._
 import dev.mongocamp.driver.mongodb.dao.BasePersonSuite
 import dev.mongocamp.driver.mongodb.test.TestDatabase._
+import java.util.TimeZone
 import org.mongodb.scala.Document
 
 class LuceneSearchSuite extends BasePersonSuite {
@@ -74,7 +75,6 @@ class LuceneSearchSuite extends BasePersonSuite {
     List(
       "registered:20140420T004427000\\+0200",
       "registered:20140419T224427000Z",
-      "registered:20140419T224427000",
       "registered:2014-04-19T22\\:44\\:27Z",
       "registered:\"2014-04-20T00:44:27+02:00\""
     ).foreach(
@@ -84,6 +84,17 @@ class LuceneSearchSuite extends BasePersonSuite {
         assertEquals(search.map(_.name), List("Latasha Mcmillan"), query)
       }
     )
+  }
+
+  test("equals Query with Date without time zone offset uses the default time zone of the JVM") {
+    val defaultTimeZone = TimeZone.getDefault
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"))
+      val luceneQuery = LuceneQueryConverter.parse("registered:20140420T004427000", "unbekannt")
+      val search      = PersonDAO.find(LuceneQueryConverter.toDocument(luceneQuery), sortByBalance).resultList()
+      assertEquals(search.map(_.name), List("Latasha Mcmillan"))
+    }
+    finally TimeZone.setDefault(defaultTimeZone)
   }
 
   test("search with custom tokenizer") {

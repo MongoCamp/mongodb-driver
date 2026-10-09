@@ -65,7 +65,7 @@ Like in Lucene the wildcard value has to match the whole value. The search is ca
 A wildcard at the beginning of the value can not use an index of the field, so the search is slow on large collections.
 :::
 
-Date values are parsed as ISO date (`2014-04-19T22:44:27+02:00`) or in the basic format (`20140419T224427000+0200`). Date values without time zone offset are interpreted as UTC.
+Date values are parsed as ISO date (`2014-04-19T22:44:27+02:00`) or in the basic format (`20140419T224427000+0200`). Date values without time zone offset are interpreted in the default time zone of the JVM (`TimeZone.getDefault`), date values with `Z` as UTC.
 
 ## Search Cases
 The following search cases show the behavior of the lucene queries in MongoDB. Every search case is a test in `LuceneSearchCasesSuite`, so the cases are always up to date.
