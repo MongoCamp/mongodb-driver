@@ -1,3 +1,23 @@
+## [v3.3.1] - 2026-10-09
+### :sparkles: New Features
+- [`db48868`](https://github.com/MongoCamp/mongodb-driver/commit/db48868d7752902387179e995816371e0ac2c38c) - support UUID, java.time and Joda types in BSON conversion *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`ba53605`](https://github.com/MongoCamp/mongodb-driver/commit/ba53605b96a886fac577fad19cb38f4915f61551) - search quoted lucene values as exact value *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :bug: Bug Fixes
+- [`75f4c4c`](https://github.com/MongoCamp/mongodb-driver/commit/75f4c4c6f361c6e9214aa05400bc5f121a5287ee) - keep email addresses and dates as one term in lucene queries, add Tokenizer as param *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`036a6a2`](https://github.com/MongoCamp/mongodb-driver/commit/036a6a22224389d8e3214da053b3015bcaf29f25) - JDBC date and time handling according to the java.sql specification *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+- [`d9c48ff`](https://github.com/MongoCamp/mongodb-driver/commit/d9c48ff3d8cc2cb53203dee34b0cb1b3cd81d123) - anchor lucene wildcard and prefix queries *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :recycle: Refactors
+- [`ab69fd2`](https://github.com/MongoCamp/mongodb-driver/commit/ab69fd2cee54256cf76f79afbfdd466a5a1c0f11) - Rename MongoCampWhitespaceTokenizer => MongoCampTokenizer *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`0df67f8`](https://github.com/MongoCamp/mongodb-driver/commit/0df67f88b54741b9a3710e1f12369e26c08b6f26) - document lucene search behavior with search cases *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :wrench: Chores
+- [`c3d30e6`](https://github.com/MongoCamp/mongodb-driver/commit/c3d30e6fa4551394d0ea8901b8c7c7c9b8fab48f) - update dependencies, sbt plugins and Scala to 3.10.0 *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.3.0] - 2026-09-11
 ### :sparkles: New Features
 - [`bfcbe36`](https://github.com/MongoCamp/mongodb-driver/commit/bfcbe361b1d9d055710f2bb5096b9af9b392f20d) - add configurable serverSelectionTimeoutMS to MongoConfig *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -458,3 +478,4 @@
 [v3.2.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.1...v3.2.3
 [v3.2.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.3...v3.2.4
 [v3.3.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.4...v3.3.0
+[v3.3.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.0...v3.3.1
