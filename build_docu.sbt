@@ -11,7 +11,11 @@ commands += Command.command("ci-deploy-docs")((state: State) => {
     state
   }
   else {
-    "sh ./deploy_ghpages.sh".!
+    IO.write(file("docs/versions.json"), s"""{"mongocamp": "v${version.value}"}\n""")
+    val exitCode = "sh ./deploy_ghpages.sh".!
+    if (exitCode != 0) {
+      state.log.error(s"Documentation deployment failed with exit code $exitCode")
+    }
     state
   }
 })

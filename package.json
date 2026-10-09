@@ -13,6 +13,7 @@
     "url" : "https://github.com/MongoCamp/mongodb-driver/issues"
   },
   "homepage" : "https://mongodb-driver.mongocamp.dev/",
+  "packageManager" : "pnpm@12.10.1",
   "scripts" : {
     "docs:serve" : "vitepress serve docs --port 5555",
     "docs:build" : "pnpm docs:external; vitepress build docs",
