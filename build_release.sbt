@@ -30,7 +30,7 @@ def setMyVersion(version: String, state: State): Unit = {
   json.write()
 }
 
-releaseNextCommitMessage := s"ci: update version after release"
+releaseNextCommitMessage := s"ci: update version after release [skip ci]"
 releaseCommitMessage     := s"ci: prepare release of version ${runtimeVersion.value}"
 
 commands += Command.command("ci-release")(
