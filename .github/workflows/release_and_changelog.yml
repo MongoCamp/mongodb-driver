@@ -9,12 +9,20 @@ jobs:
   update-change-infos:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Generate Changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
+          writeToFile: false
+
       - name: Create Release
-        uses: ncipollo/release-action@main
+        uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           draft: false
@@ -29,13 +37,16 @@ jobs:
           git add ./docs/versions.json
 
       - name: Set up JDK
-        uses: coursier/setup-action@main
+        uses: actions/setup-java@v6
         with:
-          jvm: corretto:25
-          apps: sbt scala scalac
+          distribution: temurin
+          java-version: 25
+          cache: sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
 
       - name: Install pnpm
-        uses: pnpm/action-setup@master
+        uses: pnpm/action-setup@v6
         with:
           version: 6.0.2
 

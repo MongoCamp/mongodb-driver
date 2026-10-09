@@ -12,24 +12,28 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mongodb-version: [ '4.4', '5.0', '6.0', '7.0', '8.0', '8.2', '8.3' ]
         java: [ '21', '25' ]
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v7
       - name: Setup TimeZone
-        uses: szenius/set-timezone@master
+        uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Europe/Berlin"
           timezoneMacos: "Europe/Berlin"
           timezoneWindows: "W. Europe Standard Time"
-      - name: Set up JDK ${{ matrix.Java }}
-        uses: coursier/setup-action@main
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v6
         with:
-          jvm: corretto:${{ matrix.Java }}
-          apps: sbt scala scalac
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
       - name: Start MongoDB ${{ matrix.mongodb-version }}
-        uses: MongoCamp/mongodb-github-action@main
+        uses: MongoCamp/mongodb-github-action@1.4.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
       - name: Run tests
@@ -41,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_ADMIN_TOKEN }}
@@ -49,10 +53,13 @@ jobs:
         name: Install gpg secret key
         run: cat <(echo -e "${{ secrets.PGP_SECRET_KEY }}") | gpg --batch --import
       - name: Set up JDK
-        uses: coursier/setup-action@main
+        uses: actions/setup-java@v6
         with:
-          jvm: corretto:21
-          apps: sbt scala scalac
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
       - name: Release
         env:
           GITHUB_USER: ${{ github.actor }}
@@ -82,13 +89,13 @@ jobs:
 
       - name: Update CHANGELOG
         id: changelog
-        uses: requarks/changelog-action@main
+        uses: requarks/changelog-action@v1
         with:
           token: ${{ github.token }}
           tag: ${{ env.previousTag }}
 
       - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@master
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
           commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }}'

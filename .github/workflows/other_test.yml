@@ -12,24 +12,28 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mongodb-version: [ '6.0', '7.0', '8.0' ]
         java: [ '21', '25' ]
     steps:
-      - uses: actions/checkout@main
-      - name: Set up JDK ${{ matrix.Java }}
-        uses: coursier/setup-action@main
+      - uses: actions/checkout@v7
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v6
         with:
-          jvm: corretto:${{ matrix.Java }}
-          apps: sbt scala scalac
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: sbt
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
       - name: Setup TimeZone
-        uses: szenius/set-timezone@master
+        uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Europe/Berlin"
           timezoneMacos: "Europe/Berlin"
           timezoneWindows: "W. Europe Standard Time"
       - name: Start MongoDB ${{ matrix.mongodb-version }}
-        uses: MongoCamp/mongodb-github-action@main
+        uses: MongoCamp/mongodb-github-action@1.4.0
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
       - name: Run tests
