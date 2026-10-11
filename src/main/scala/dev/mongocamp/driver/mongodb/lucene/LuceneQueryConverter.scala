@@ -151,12 +151,12 @@ object LuceneQueryConverter extends LazyLogging {
     termQuery: TermQuery,
     searchWithValueAndString: Boolean
   ): Unit = {
-    val text = termQuery.getTerm.text()
-    if (text.contains("*")) {
-      // wildcards in quoted values are not parsed as WildcardQuery by lucene
+    val termText = termQuery.getTerm.text()
+    if (containsWildcard(termText)) {
       appendWildCardQueryToSearchMap(negated, searchMapResponse, new WildcardQuery(termQuery.getTerm))
     }
     else {
+      val text           = if (termText.contains("*")) unescape(termText) else termText
       val convertedValue = checkAndConvertValue(text)
       val field          = termQuery.getTerm.field()
       if (negated) {
@@ -179,7 +179,7 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendPrefixQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PrefixQuery): Unit = {
-    val listOfSearches: List[Bson] = List(Map(query.getField -> wildcardRegexQuery(s"${query.getPrefix.text()}*")))
+    val listOfSearches: List[Bson] = List(Map(query.getField -> anchoredRegexQuery(s"${literalToRegex(query.getPrefix.text())}(.*?)")))
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
     }
@@ -213,17 +213,48 @@ object LuceneQueryConverter extends LazyLogging {
     Map("$regex" -> pattern, "$options" -> options)
   }
 
-  private val regexMetaChars = "\\.[]{}()+-|^$/"
+  private val regexMetaChars = "\\.[]{}()+-|^$/*?"
+
+  private val escapeChar = '\\'
 
   // the wildcard value has to match the whole value like in lucene, the search is case-insensitive and . matches line breaks
-  private def wildcardRegexQuery(value: String): Map[String, String] = generateRegexQuery(s"^${wildcardToRegex(value)}$$", "is")
+  private def anchoredRegexQuery(regex: String): Map[String, String] = generateRegexQuery(s"^$regex$$", "is")
+
+  private def wildcardRegexQuery(value: String): Map[String, String] = anchoredRegexQuery(wildcardToRegex(value))
+
+  private def literalToRegex(value: String): String = value.map(literalCharToRegex).mkString
+
+  private def literalCharToRegex(c: Char): String = if (regexMetaChars.contains(c)) s"\\$c" else c.toString
+
+  private def wildcardTokens(value: String): List[Either[Char, Char]] = {
+    val tokens = ArrayBuffer[Either[Char, Char]]()
+    var index  = 0
+    while (index < value.length) {
+      val c = value.charAt(index)
+      if (c == escapeChar && index + 1 < value.length) {
+        index += 1
+        tokens += Right(value.charAt(index))
+      }
+      else if (c == escapeChar) {
+        tokens += Right(c)
+      }
+      else {
+        tokens += Left(c)
+      }
+      index += 1
+    }
+    tokens.toList
+  }
+
+  private def containsWildcard(value: String): Boolean = wildcardTokens(value).contains(Left('*'))
+
+  private def unescape(value: String): String = wildcardTokens(value).map(_.merge).mkString
 
   private def wildcardToRegex(value: String): String = {
-    value.map {
-      case '*'                             => "(.*?)"
-      case '?'                             => "."
-      case c if regexMetaChars.contains(c) => s"\\$c"
-      case c                               => c.toString
+    wildcardTokens(value).map {
+      case Left('*') => "(.*?)"
+      case Left('?') => "."
+      case token     => literalCharToRegex(token.merge)
     }.mkString
   }
 
