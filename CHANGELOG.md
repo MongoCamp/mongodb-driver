@@ -1,3 +1,11 @@
+## [v3.3.3] - 2026-10-11
+### :bug: Bug Fixes
+- [`6db6293`](https://github.com/MongoCamp/mongodb-driver/commit/6db62932ba51ae3191d8db20419d9652cae56df2) - search escaped characters in lucene wildcard queries *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+### :white_check_mark: Tests
+- [`4d3aeb7`](https://github.com/MongoCamp/mongodb-driver/commit/4d3aeb7a684d6214a17c4fd2800c82b8f77460be) - compare lucene search results with lucene itself *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.3.2] - 2026-10-09
 ### :bug: Bug Fixes
 - [`67a5c68`](https://github.com/MongoCamp/mongodb-driver/commit/67a5c6881fa2ba76ebbdf1cf4b9f45a36b3db678) - parse lucene dates without time zone offset in the default time zone of the JVM *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -485,3 +493,4 @@
 [v3.3.0]: https://github.com/MongoCamp/mongodb-driver/compare/v3.2.4...v3.3.0
 [v3.3.1]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.0...v3.3.1
 [v3.3.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.1...v3.3.2
+[v3.3.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.2...v3.3.3
