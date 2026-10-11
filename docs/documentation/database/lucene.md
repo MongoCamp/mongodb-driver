@@ -43,7 +43,7 @@ A quoted value is searched as exact value, `name:"Latasha Mcmillan"` finds only 
 
 <<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneSearchSuite.scala#lucene-exact-value
 
-A quoted value with `*` is searched as wildcard query, `name:"Latasha *millan"` finds `Latasha Mcmillan`. A `?` in a quoted value is no wildcard, so `name:"Wie geht's?"` is searched as exact value.
+A quoted value with `*` is searched as wildcard query, `name:"Latasha *millan"` finds `Latasha Mcmillan`. A `?` in a quoted value is no wildcard, so `name:"Wie geht's?"` is searched as exact value. A `*` in a quoted value is always a wildcard, also if it is escaped (see [Escaped Characters](#escaped-characters)).
 
 If the query is parsed by another parser, like the Lucene `QueryParser`, quoted values are phrase queries. They are searched as exact value too, but the terms of the phrase are joined by a single space.
 
@@ -60,6 +60,27 @@ Like in Lucene the wildcard value has to match the whole value. The search is ca
 | `name:*Dowe`        | `name` ends with `Dowe`                |
 | `name:"*John Dowe*"`| `name` contains `John Dowe`            |
 | `name:J?hn`         | `name` is `J` + one character + `hn`   |
+
+### Escaped Characters
+Characters with a special meaning in the Lucene syntax (`\ + - ! ( ) { } [ ] ^ " ~ * ? : / & |`) are escaped with a backslash. An escaped character is always the literal character, so `name:*Mary\-Jane*` finds `Mary-Jane Smith` and `name:*100\**` finds `100*` but not `1000`. A backslash is escaped with a second backslash (`path:*C\\temp*` finds `C\temp`).
+
+| Query                       | Search                                                  |
+|-----------------------------|---------------------------------------------------------|
+| `name:*Mary\-Jane*`         | `name` contains `Mary-Jane`                             |
+| `mail:*a\+b@example.com*`   | `mail` contains `a+b@example.com`                       |
+| `name:Mary\-Ja*`            | `name` starts with `Mary-Ja`                            |
+| `name:*a\?b*`               | `name` contains `a?b`, the `?` is no wildcard            |
+| `name:100\*`                | `name` is `100*`, the `*` is no wildcard                 |
+
+The Lucene `QueryParser` keeps the escape characters only in wildcard values like `*Mary\-Jane*`, the `LuceneQueryConverter` interprets them like Lucene does. In prefix values (`Mary\-Ja*`), values without wildcard and quoted values the parser removes the escape characters before the value is converted.
+
+::: warning
+In a quoted value the escape characters are removed by the Lucene `QueryParser`, so `\*` and `*` can not be distinguished. A `*` in a quoted value is always a wildcard, `name:"100\**"` finds `100*` and `1000`. To search a literal `*` use an unquoted value with escaped characters, like `name:*100\**`.
+:::
+
+The following search cases are tests in `LuceneEscapeSearchSuite`.
+
+<<< @/../src/test/scala/dev/mongocamp/driver/mongodb/lucene/LuceneEscapeSearchSuite.scala#lucene-escape-search-cases
 
 ::: tip
 A wildcard at the beginning of the value can not use an index of the field, so the search is slow on large collections.
