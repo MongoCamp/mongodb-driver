@@ -6,7 +6,7 @@ import io.circe.jawn.decode
 import io.circe.Decoder
 import io.circe.Encoder
 
-class JsonConverter(dropNullValues: Boolean = false, defaultShouldLogAsError: Boolean = false) extends CirceSchema with LazyLogging {
+class JsonConverter(dropNullValues: Boolean = false, defaultShouldLogAsError: Boolean = false) extends CirceCodecs with LazyLogging {
 
   def toJson[A <: Any](a: A)(implicit encoder: Encoder[A]): String = {
     import io.circe.syntax._
