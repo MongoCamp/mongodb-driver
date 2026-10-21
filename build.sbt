@@ -25,7 +25,10 @@ crossScalaVersions := Seq("3.10.0", "2.13.18")
 scalaVersion := crossScalaVersions.value.last
 
 scalacOptions ++= Seq("-deprecation")
-//scalacOptions ++= Seq("--Xmax-inlines", "128")
+scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+  case Some((2, _)) => Seq("-Xsource:3")
+  case _            => Seq.empty
+})
 
 Test / parallelExecution := false
 
@@ -51,9 +54,9 @@ libraryDependencies += "de.bwaldvogel" % "mongo-java-server" % MongoJavaServerVe
 
 libraryDependencies += "de.bwaldvogel" % "mongo-java-server-h2-backend" % MongoJavaServerVersion % Provided
 
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.11" % Provided
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.10.12" % Provided
 
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-22" % Provided
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.7-24" % Provided
 
 libraryDependencies += "org.apache.lucene" % "lucene-queryparser" % "10.5.2"
 
