@@ -25,16 +25,16 @@ class CirceSchemaSuite extends munit.FunSuite {
 
   test("java.time.LocalDate format") {
     val localDate = java.time.LocalDate.of(2024, 2, 29)
-    assertFormat(JavaLocalDateFormat, localDate, "2024-02-29")
-    assertDecode(JavaLocalDateFormat, startOfDayIso(localDate), localDate)
-    assertDecode(JavaLocalDateFormat, "2024-02-29T10:15:30", localDate)
+    assertFormat(JavaLocalDateCodec, localDate, "2024-02-29")
+    assertDecode(JavaLocalDateCodec, startOfDayIso(localDate), localDate)
+    assertDecode(JavaLocalDateCodec, "2024-02-29T10:15:30", localDate)
   }
 
   test("java.time.LocalDateTime format") {
     val localDateTime = java.time.LocalDateTime.of(2024, 2, 29, 10, 15, 30, 123000000)
-    assertFormat(JavaLocalDateTimeFormat, localDateTime, "2024-02-29T10:15:30.123")
-    assertDecode(JavaLocalDateTimeFormat, localDateTime.atZone(ZoneId.systemDefault()).toInstant.toString, localDateTime)
-    assertDecode(JavaLocalDateTimeFormat, "2024-02-29", java.time.LocalDateTime.of(2024, 2, 29, 0, 0))
+    assertFormat(JavaLocalDateTimeCodec, localDateTime, "2024-02-29T10:15:30.123")
+    assertDecode(JavaLocalDateTimeCodec, localDateTime.atZone(ZoneId.systemDefault()).toInstant.toString, localDateTime)
+    assertDecode(JavaLocalDateTimeCodec, "2024-02-29", java.time.LocalDateTime.of(2024, 2, 29, 0, 0))
   }
 
   test("java.time formats do not depend on joda default time zone") {
@@ -42,80 +42,80 @@ class CirceSchemaSuite extends munit.FunSuite {
     try {
       java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("Pacific/Kiritimati"))
       val localDate = java.time.LocalDate.of(2024, 2, 29)
-      assertDecode(JavaLocalDateFormat, "2024-02-29", localDate)
-      assertDecode(JavaLocalDateFormat, startOfDayIso(localDate), localDate)
-      assertDecode(JavaLocalDateTimeFormat, "2024-02-29T10:15:30", java.time.LocalDateTime.of(2024, 2, 29, 10, 15, 30))
+      assertDecode(JavaLocalDateCodec, "2024-02-29", localDate)
+      assertDecode(JavaLocalDateCodec, startOfDayIso(localDate), localDate)
+      assertDecode(JavaLocalDateTimeCodec, "2024-02-29T10:15:30", java.time.LocalDateTime.of(2024, 2, 29, 10, 15, 30))
     }
     finally java.util.TimeZone.setDefault(defaultTimeZone)
   }
 
   test("java.sql.Date format") {
     val sqlDate = java.sql.Date.valueOf("2024-02-29")
-    assertFormat(SqlDateFormat, sqlDate, startOfDayIso(java.time.LocalDate.of(2024, 2, 29)))
+    assertFormat(SqlDateCodec, sqlDate, startOfDayIso(java.time.LocalDate.of(2024, 2, 29)))
   }
 
   test("java.sql.Timestamp format") {
-    assertFormat(SqlTimestampFormat, new java.sql.Timestamp(millis), instantIso)
+    assertFormat(SqlTimestampCodec, new java.sql.Timestamp(millis), instantIso)
   }
 
   test("joda Instant format") {
-    assertFormat(JodaInstantFormat, new org.joda.time.Instant(millis), instantIso)
+    assertFormat(JodaInstantCodec, new org.joda.time.Instant(millis), instantIso)
   }
 
   test("joda MutableDateTime format") {
-    assertFormat(JodaMutableDateTimeFormat, new org.joda.time.MutableDateTime(millis), instantIso)
+    assertFormat(JodaMutableDateTimeCodec, new org.joda.time.MutableDateTime(millis), instantIso)
   }
 
   test("joda LocalDate format") {
     val localDate = new org.joda.time.LocalDate(2024, 2, 29)
-    assertFormat(JodaLocalDateFormat, localDate, "2024-02-29")
-    assertDecode(JodaLocalDateFormat, Instant.ofEpochMilli(localDate.toDateTimeAtStartOfDay.getMillis).toString, localDate)
+    assertFormat(JodaLocalDateCodec, localDate, "2024-02-29")
+    assertDecode(JodaLocalDateCodec, Instant.ofEpochMilli(localDate.toDateTimeAtStartOfDay.getMillis).toString, localDate)
   }
 
   test("joda LocalDateTime format") {
     val localDateTime = new org.joda.time.LocalDateTime(2024, 2, 29, 10, 15, 30, 123)
-    assertFormat(JodaLocalDateTimeFormat, localDateTime, "2024-02-29T10:15:30.123")
-    assertDecode(JodaLocalDateTimeFormat, Instant.ofEpochMilli(localDateTime.toDateTime.getMillis).toString, localDateTime)
+    assertFormat(JodaLocalDateTimeCodec, localDateTime, "2024-02-29T10:15:30.123")
+    assertDecode(JodaLocalDateTimeCodec, Instant.ofEpochMilli(localDateTime.toDateTime.getMillis).toString, localDateTime)
   }
 
   test("joda LocalTime format") {
-    assertFormat(JodaLocalTimeFormat, new org.joda.time.LocalTime(10, 15, 30, 123), "10:15:30.123")
+    assertFormat(JodaLocalTimeCodec, new org.joda.time.LocalTime(10, 15, 30, 123), "10:15:30.123")
   }
 
   test("joda Duration format") {
     val duration = org.joda.time.Duration.standardHours(25)
-    assertFormat(JodaDurationFormat, duration, "90000000 milliseconds")
-    assertDecode(JodaDurationFormat, "PT90000S", duration)
-    assertDecode(JodaDurationFormat, "25 hours", duration)
+    assertFormat(JodaDurationCodec, duration, "90000000 milliseconds")
+    assertDecode(JodaDurationCodec, "PT90000S", duration)
+    assertDecode(JodaDurationCodec, "25 hours", duration)
   }
 
   test("joda Period format") {
-    assertFormat(JodaPeriodFormat, new org.joda.time.Period(1, 2, 0, 3, 4, 5, 6, 7), "P1Y2M3DT4H5M6.007S")
+    assertFormat(JodaPeriodCodec, new org.joda.time.Period(1, 2, 0, 3, 4, 5, 6, 7), "P1Y2M3DT4H5M6.007S")
   }
 
   test("joda DateTimeZone format") {
-    assertFormat(JodaDateTimeZoneFormat, org.joda.time.DateTimeZone.forID("Europe/Berlin"), "Europe/Berlin")
+    assertFormat(JodaDateTimeZoneCodec, org.joda.time.DateTimeZone.forID("Europe/Berlin"), "Europe/Berlin")
   }
 
   test("joda YearMonth format") {
-    assertFormat(JodaYearMonthFormat, new org.joda.time.YearMonth(2024, 2), "2024-02")
+    assertFormat(JodaYearMonthCodec, new org.joda.time.YearMonth(2024, 2), "2024-02")
   }
 
   test("joda MonthDay format") {
-    assertFormat(JodaMonthDayFormat, new org.joda.time.MonthDay(2, 29), "--02-29")
+    assertFormat(JodaMonthDayCodec, new org.joda.time.MonthDay(2, 29), "--02-29")
   }
 
   test("string formats encode null as json null") {
-    assertEquals(JodaLocalDateFormat.apply(null: org.joda.time.LocalDate), Json.Null)
-    assertEquals(JavaLocalDateFormat.apply(null: java.time.LocalDate), Json.Null)
+    assertEquals(JodaLocalDateCodec.apply(null: org.joda.time.LocalDate), Json.Null)
+    assertEquals(JavaLocalDateCodec.apply(null: java.time.LocalDate), Json.Null)
   }
 
   test("string formats fail on invalid input") {
-    assert(JodaLocalDateFormat.decodeJson(Json.fromString("no date")).isLeft)
-    assert(JavaLocalDateFormat.decodeJson(Json.fromString("no date")).isLeft)
-    assert(JodaDurationFormat.decodeJson(Json.fromString("no duration")).isLeft)
-    assert(JodaDateTimeZoneFormat.decodeJson(Json.fromString("no zone")).isLeft)
-    assert(JodaLocalDateFormat.decodeJson(Json.fromInt(42)).isLeft)
+    assert(JodaLocalDateCodec.decodeJson(Json.fromString("no date")).isLeft)
+    assert(JavaLocalDateCodec.decodeJson(Json.fromString("no date")).isLeft)
+    assert(JodaDurationCodec.decodeJson(Json.fromString("no duration")).isLeft)
+    assert(JodaDateTimeZoneCodec.decodeJson(Json.fromString("no zone")).isLeft)
+    assert(JodaLocalDateCodec.decodeJson(Json.fromInt(42)).isLeft)
   }
 
   test("encodeAnyToJson converts UUID and date types") {
