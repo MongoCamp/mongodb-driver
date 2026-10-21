@@ -13,8 +13,8 @@ import scala.jdk.CollectionConverters.*
 
 /** Frozen binary compatibility layer for libraries compiled against mongodb-driver 3.0.x (e.g. the generated rest clients).
   *
-  * Those classes contain the fields and setters of the vals declared here and call `CirceSchema.$init$` and the static
-  * `CirceSchema.<method>$` forwarders. Do not add, remove, rename or retype any member of this trait. Use [[CirceCodecs]].
+  * Those classes contain the fields and setters of the vals declared here and call `CirceSchema.$init$` and the static `CirceSchema.<method>$` forwarders. Do
+  * not add, remove, rename or retype any member of this trait. Use [[CirceCodecs]].
   */
 @deprecated("use CirceCodecs", "3.3.4")
 trait CirceSchema extends CirceProductSchema {
