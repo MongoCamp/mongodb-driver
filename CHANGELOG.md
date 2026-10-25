@@ -1,3 +1,8 @@
+## [v3.3.5] - 2026-10-25
+### :bug: Bug Fixes
+- [`0b01180`](https://github.com/MongoCamp/mongodb-driver/commit/0b01180f4243f8009e48f93fdb65acc20d1f5eb0) - encode Enumeration values and unknown types in encodeAnyToJson *(commit by [@QuadStingray](https://github.com/QuadStingray))*
+
+
 ## [v3.3.4] - 2026-10-21
 ### :wrench: Chores
 - [`a0fe92b`](https://github.com/MongoCamp/mongodb-driver/commit/a0fe92b231ce9c114a01230806358552dcb9aafe) - 3 dependency updates for mongodb-driver *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -500,3 +505,4 @@
 [v3.3.2]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.1...v3.3.2
 [v3.3.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.2...v3.3.3
 [v3.3.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.3...v3.3.4
+[v3.3.5]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.4...v3.3.5
