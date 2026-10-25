@@ -68,14 +68,18 @@ trait CirceConverter {
 
   def encodeAnyToJson(a: Any, depth: Int = 0): Json = {
     a match {
-      case s: String      => Json.fromString(s)
-      case b: Boolean     => Json.fromBoolean(b)
-      case l: Long        => Json.fromLong(l)
-      case i: Int         => Json.fromInt(i)
-      case bi: BigInt     => Json.fromBigInt(bi)
-      case bd: BigDecimal => Json.fromBigDecimal(bd)
-      case d: Double      => Json.fromDoubleOrNull(d)
-      case f: Float       => Json.fromFloatOrNull(f)
+      case s: String                => Json.fromString(s)
+      case b: Boolean               => Json.fromBoolean(b)
+      case l: Long                  => Json.fromLong(l)
+      case i: Int                   => Json.fromInt(i)
+      case bi: BigInt               => Json.fromBigInt(bi)
+      case bd: BigDecimal           => Json.fromBigDecimal(bd)
+      case d: Double                => Json.fromDoubleOrNull(d)
+      case f: Float                 => Json.fromFloatOrNull(f)
+      case s: Short                 => Json.fromInt(s.toInt)
+      case b: Byte                  => Json.fromInt(b.toInt)
+      case bd: java.math.BigDecimal => Json.fromBigDecimal(BigDecimal(bd))
+      case bi: java.math.BigInteger => Json.fromBigInt(BigInt(bi))
       case option: Option[_] =>
         option
           .map(
@@ -106,6 +110,8 @@ trait CirceConverter {
             )
             .toList: _*
         )
+      case e: Enumeration#Value                                 => Json.fromString(e.toString)
+      case e: Product if EnumValues.isValueWithoutParameters(e) => Json.fromString(e.toString)
       case product: Product =>
         val productElementKeys = productElementNames(product).toList
         val fieldMap = productElementKeys
@@ -118,13 +124,7 @@ trait CirceConverter {
           .toMap
         encodeAnyToJson(fieldMap)
       case r: Document => encodeAnyToJson(r.toMap)
-      case any: Any =>
-        if (depth < 256) {
-          encodeAnyToJson(any, depth + 1)
-        }
-        else {
-          Json.Null
-        }
+      case any: Any    => Json.fromString(any.toString)
       case _ =>
         Json.Null
     }
