@@ -28,7 +28,8 @@ Documentation can be found [here](https://mongodb-driver.mongocamp.dev/).
 
 ## Version
 
-Scala Version is 3.6.x / 2.13.x
+Scala 3 artifacts are built against the current Scala 3 LTS (3.9.x), Scala 2.13 is cross-published.
+Projects on Scala 3.9 or newer can use the Scala 3 artifacts.
 
 ## CI
 
