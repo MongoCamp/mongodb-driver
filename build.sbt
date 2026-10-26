@@ -20,7 +20,9 @@ developers := List(
 
 licenses += ("Apache-2.0", uri("https://www.apache.org/licenses/LICENSE-2.0.html"))
 
-crossScalaVersions := Seq("3.10.0", "2.13.18")
+// Scala 3 artifacts are built against the current Scala 3 LTS line, so projects on LTS can use them.
+// Do not raise the Scala 3 version beyond the LTS line in dependency updates.
+crossScalaVersions := Seq("3.9.0", "2.13.18")
 
 scalaVersion := crossScalaVersions.value.last
 
