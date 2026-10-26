@@ -30,6 +30,7 @@ Documentation can be found [here](https://mongodb-driver.mongocamp.dev/).
 
 Scala 3 artifacts are built against the current Scala 3 LTS (3.9.x), Scala 2.13 is cross-published.
 Projects on Scala 3.9 or newer can use the Scala 3 artifacts.
+See [Scala Compatibility](https://mongodb-driver.mongocamp.dev/documentation/scala-compatibility.html) for the Scala versions of each release.
 
 ## CI
 

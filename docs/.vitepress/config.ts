@@ -84,6 +84,10 @@ function sidebarDocumentation() {
             link: '/documentation/getting-started'
         },
         {
+            text: 'Scala Compatibility',
+            link: '/documentation/scala-compatibility'
+        },
+        {
             text: 'Database',
             link: '/documentation/database/',
             collapsible: true,
