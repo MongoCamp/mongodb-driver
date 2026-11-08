@@ -138,4 +138,51 @@ class LuceneQueryConverterSuite extends munit.FunSuite {
     assertQuery("code:20141319T224427", """{"code": {"$eq": "20141319T224427"}}""")
   }
 
+  test("open ranges") {
+    assertQuery("n:[5 TO *]", """{"n": {"$gte": 5}}""")
+    assertQuery("n:[* TO 5]", """{"n": {"$lte": 5}}""")
+    assertQuery("n:{5 TO *]", """{"n": {"$gt": 5}}""")
+    assertQuery("n:[* TO 5}", """{"n": {"$lt": 5}}""")
+    assertQuery("n:[5 TO 50]", """{"n": {"$gte": 5, "$lte": 50}}""")
+    assertQuery("n:{5 TO 50}", """{"n": {"$gt": 5, "$lt": 50}}""")
+    assertQuery("-n:[5 TO *]", """{"$and": [{"n": {"$not": {"$gte": 5}}}]}""")
+    assertQuery("d:[2018-01-01T00:00:00Z TO *]", """{"d": {"$gte": {"$date": "2018-01-01T00:00:00Z"}}}""")
+    assertQuery("d:[* TO 2018-01-01T00:00:00Z]", """{"d": {"$lte": {"$date": "2018-01-01T00:00:00Z"}}}""")
+    assertQuery("n:[* TO *]", """{"n": {"$exists": true}}""")
+  }
+
+  test("comparison operators") {
+    assertQuery("n:>=5", """{"n": {"$gte": 5}}""")
+    assertQuery("n:>5", """{"n": {"$gt": 5}}""")
+    assertQuery("n:<=5", """{"n": {"$lte": 5}}""")
+    assertQuery("n:<5", """{"n": {"$lt": 5}}""")
+    assertQuery("n:>=2.5", """{"n": {"$gte": 2.5}}""")
+    assertQuery("-n:>=5", """{"$and": [{"n": {"$not": {"$gte": 5}}}]}""")
+    assertQuery("n:>=5 AND n:<10", """{"$and": [{"n": {"$gte": 5}}, {"n": {"$lt": 10}}]}""")
+    assertQuery("d:>=2018-01-01T00\\:00\\:00Z", """{"d": {"$gte": {"$date": "2018-01-01T00:00:00Z"}}}""")
+    // quoted values are exact values
+    assertQuery("n:\">=5\"", """{"n": {"$eq": ">=5"}}""")
+  }
+
+  test("exists") {
+    assertQuery("_exists_:opt", """{"opt": {"$exists": true}}""")
+    assertQuery("-_exists_:opt", """{"$and": [{"opt": {"$exists": false}}]}""")
+    assertQuery("NOT _exists_:opt", """{"$and": [{"opt": {"$exists": false}}]}""")
+    assertQuery("_exists_:opt AND a:b", """{"$and": [{"opt": {"$exists": true}}, {"a": {"$eq": "b"}}]}""")
+    assertQuery("n:*", """{"n": {"$exists": true}}""")
+    assertQuery("_id:*", """{"_id": {"$exists": true}}""")
+    assertQuery("name:*", """{"name": {"$exists": true}}""")
+    assertQuery("-n:*", """{"$and": [{"n": {"$exists": false}}]}""")
+  }
+
+  test("match all documents") {
+    assertQuery("*:*", """{}""")
+  }
+
+  test("unsupported queries throw IllegalArgumentException") {
+    List("name:foo~", "name:foo^2").foreach(
+      query => intercept[IllegalArgumentException](toJson(query))
+    )
+  }
+
 }
