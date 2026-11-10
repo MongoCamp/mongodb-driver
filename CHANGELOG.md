@@ -1,3 +1,12 @@
+## [v3.3.7] - 2026-11-10
+### :bug: Bug Fixes
+- [`9ae6117`](https://github.com/MongoCamp/mongodb-driver/commit/9ae61174fd29a4428631d14bfd21207bc23a5bd9) - convert open ranges, comparison operators and exists in lucene queries *(commit by [@sfxcode](https://github.com/sfxcode))*
+  - :arrow_lower_right: *fixes issue [#86](https://github.com/MongoCamp/mongodb-driver/issues/86) opened by [@sfxcode](https://github.com/sfxcode)*
+- [`3f91d6c`](https://github.com/MongoCamp/mongodb-driver/commit/3f91d6cc0fb049189fbf6e067cda9631b08b3d26) - keep order of range operators in lucene range queries *(commit by [@sfxcode](https://github.com/sfxcode))*
+- [`1397797`](https://github.com/MongoCamp/mongodb-driver/commit/1397797c63146fa6ffb44b13edb8d2301f7cfaea) - remove build-time initialization of logging from native-image.properties *(commit by [@sfxcode](https://github.com/sfxcode))*
+  - :arrow_lower_right: *fixes issue [#87](https://github.com/MongoCamp/mongodb-driver/issues/87) opened by [@sfxcode](https://github.com/sfxcode)*
+
+
 ## [v3.3.5] - 2026-10-25
 ### :bug: Bug Fixes
 - [`0b01180`](https://github.com/MongoCamp/mongodb-driver/commit/0b01180f4243f8009e48f93fdb65acc20d1f5eb0) - encode Enumeration values and unknown types in encodeAnyToJson *(commit by [@QuadStingray](https://github.com/QuadStingray))*
@@ -506,3 +515,4 @@
 [v3.3.3]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.2...v3.3.3
 [v3.3.4]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.3...v3.3.4
 [v3.3.5]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.4...v3.3.5
+[v3.3.7]: https://github.com/MongoCamp/mongodb-driver/compare/v3.3.6...v3.3.7
