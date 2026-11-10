@@ -123,11 +123,15 @@ object LuceneQueryConverter extends LazyLogging {
     else {
       def rangeSearch(convert: String => Any): Map[String, Any] = {
         // the upper bound is added first, like it was before the open ranges
-        (upperBound.map(
-          bound => (if (termRangeQuery.includesUpper()) "$lte" else "$lt") -> convert(bound)
-        ).toList ++ lowerBound.map(
-          bound => (if (termRangeQuery.includesLower()) "$gte" else "$gt") -> convert(bound)
-        ).toList).toMap
+        (upperBound
+          .map(
+            bound => (if (termRangeQuery.includesUpper()) "$lte" else "$lt") -> convert(bound)
+          )
+          .toList ++ lowerBound
+          .map(
+            bound => (if (termRangeQuery.includesLower()) "$gte" else "$gt") -> convert(bound)
+          )
+          .toList).toMap
       }
 
       val searchWithStringValue = searchWithValueAndString && List(lowerBound, upperBound).flatten.exists(

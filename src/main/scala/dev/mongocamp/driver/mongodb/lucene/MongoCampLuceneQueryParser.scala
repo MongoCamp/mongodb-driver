@@ -3,12 +3,12 @@ package dev.mongocamp.driver.mongodb.lucene
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.index.Term
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.util.BytesRef
 import org.apache.lucene.search.FieldExistsQuery
 import org.apache.lucene.search.Query
-import org.apache.lucene.search.TermRangeQuery
 import org.apache.lucene.search.TermQuery
+import org.apache.lucene.search.TermRangeQuery
 import org.apache.lucene.search.WildcardQuery
+import org.apache.lucene.util.BytesRef
 
 /** QueryParser for LuceneQueryConverter. Leading wildcards are allowed and quoted values like `name:"Hallo Welt"` are searched as exact value, they are not
   * split into terms by the analyzer. Additionally supported are the comparison operators `>`, `>=`, `<` and `<=` (`age:>=18`) and `_exists_:field`.
