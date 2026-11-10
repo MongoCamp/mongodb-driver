@@ -61,6 +61,26 @@ Like in Lucene the wildcard value has to match the whole value. The search is ca
 | `name:"*John Dowe*"`| `name` contains `John Dowe`            |
 | `name:J?hn`         | `name` is `J` + one character + `hn`   |
 
+### Ranges and Comparisons
+Ranges and comparison operators work for numbers and dates. Open ranges use `*` as bound, `[` and `]` include the bound, `{` and `}` exclude it.
+
+| Query                              | MongoDB                               |
+|------------------------------------|---------------------------------------|
+| `age:[5 TO 50]`                    | `{"age": {"$gte": 5, "$lte": 50}}`    |
+| `age:{5 TO 50}`                    | `{"age": {"$gt": 5, "$lt": 50}}`      |
+| `age:[5 TO *]`                     | `{"age": {"$gte": 5}}`                |
+| `age:[* TO 5]`                     | `{"age": {"$lte": 5}}`                |
+| `age:>=5`, `age:>5`                | `$gte`, `$gt`                         |
+| `age:<=5`, `age:<5`                | `$lte`, `$lt`                         |
+
+The colons of a date with time have to be escaped in a comparison (`created:>=2018-01-01T00\:00\:00Z`). A quoted value like `age:">=5"` is an exact value, not a comparison.
+
+### Existing Fields
+`_exists_:field` and `field:*` find the documents that have the field, `-_exists_:field` and `-field:*` the documents without the field. Both are converted to `$exists`, so they work for all types of fields, also for numbers, dates and `_id`.
+
+### Unsupported Queries
+If a query can not be converted to a MongoDB filter, for example a fuzzy query (`name:foo~`) or a boosted term (`name:foo^2`), `LuceneQueryConverter.toDocument` throws an `IllegalArgumentException` instead of creating a filter that silently matches the wrong documents.
+
 ### Escaped Characters
 Characters with a special meaning in the Lucene syntax (`\ + - ! ( ) { } [ ] ^ " ~ * ? : / & |`) are escaped with a backslash. An escaped character is always the literal character, so `name:*Mary\-Jane*` finds `Mary-Jane Smith` and `name:*100\**` finds `100*` but not `1000`. A backslash is escaped with a second backslash (`path:*C\\temp*` finds `C\temp`).
 

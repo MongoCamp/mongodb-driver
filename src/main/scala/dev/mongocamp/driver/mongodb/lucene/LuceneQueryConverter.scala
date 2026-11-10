@@ -39,13 +39,10 @@ object LuceneQueryConverter extends LazyLogging {
       case query: PrefixQuery             => appendPrefixQueryToSearchMap(negated, searchMapResponse, query)
       case query: WildcardQuery           => appendWildCardQueryToSearchMap(negated, searchMapResponse, query)
       case query: PhraseQuery             => appendPhraseQueryToSearchMap(negated, searchMapResponse, query, searchWithValueAndString)
-      case a: Any =>
-        val simpleNameOption = Option(a.getClass.getSimpleName).filterNot(
-          s => s.trim.equalsIgnoreCase("")
-        )
-        if (simpleNameOption.isDefined) {
-          logger.error(s"Unexpected QueryType <${a.getClass.getSimpleName}>")
-        }
+      case _: MatchAllDocsQuery           => // matches every document, no filter needed
+      case query: FieldExistsQuery        => searchMapResponse.put(query.getField, Map("$exists" -> !negated))
+      case other =>
+        throw new IllegalArgumentException(s"Unsupported lucene query <${other.getClass.getSimpleName}>: $other")
     }
     searchMapResponse.toMap
   }
@@ -115,32 +112,44 @@ object LuceneQueryConverter extends LazyLogging {
     termRangeQuery: TermRangeQuery,
     searchWithValueAndString: Boolean
   ): Unit = {
-    val lowerBoundString = new String(termRangeQuery.getLowerTerm.bytes)
-    val lowerBound       = checkAndConvertValue(lowerBoundString)
-    val upperBoundString = new String(termRangeQuery.getUpperTerm.bytes)
-    val upperBound       = checkAndConvertValue(upperBoundString)
+    val field      = termRangeQuery.getField
+    val lowerBound = Option(termRangeQuery.getLowerTerm).map(_.utf8ToString())
+    val upperBound = Option(termRangeQuery.getUpperTerm).map(_.utf8ToString())
 
-    val searchWithStringValue = searchWithValueAndString && (lowerBoundString != lowerBound || upperBoundString != upperBound)
-
-    val inRangeSearch       = Map("$lte" -> upperBound, "$gte" -> lowerBound)
-    val inRangeStringSearch = Map("$lte" -> upperBoundString, "$gte" -> lowerBoundString)
-    if (negated) {
-      if (searchWithStringValue) {
-        searchMapResponse.put(
-          "$and",
-          List(Map(termRangeQuery.getField -> Map("$not" -> inRangeSearch)), Map(termRangeQuery.getField -> Map("$not" -> inRangeStringSearch)))
-        )
-      }
-      else {
-        searchMapResponse.put(termRangeQuery.getField, Map("$not" -> inRangeSearch))
-      }
+    if (lowerBound.isEmpty && upperBound.isEmpty) {
+      // [* TO *] matches every document with a value
+      searchMapResponse.put(field, Map("$exists" -> !negated))
     }
     else {
-      if (searchWithStringValue) {
-        searchMapResponse.put("$or", List(Map(termRangeQuery.getField -> inRangeSearch), Map(termRangeQuery.getField -> inRangeStringSearch)))
+      def rangeSearch(convert: String => Any): Map[String, Any] = {
+        // the upper bound is added first, like it was before the open ranges
+        (upperBound.map(
+          bound => (if (termRangeQuery.includesUpper()) "$lte" else "$lt") -> convert(bound)
+        ).toList ++ lowerBound.map(
+          bound => (if (termRangeQuery.includesLower()) "$gte" else "$gt") -> convert(bound)
+        ).toList).toMap
+      }
+
+      val searchWithStringValue = searchWithValueAndString && List(lowerBound, upperBound).flatten.exists(
+        bound => checkAndConvertValue(bound) != bound
+      )
+      val inRangeSearch       = rangeSearch(checkAndConvertValue)
+      val inRangeStringSearch = rangeSearch(identity)
+      if (negated) {
+        if (searchWithStringValue) {
+          searchMapResponse.put("$and", List(Map(field -> Map("$not" -> inRangeSearch)), Map(field -> Map("$not" -> inRangeStringSearch))))
+        }
+        else {
+          searchMapResponse.put(field, Map("$not" -> inRangeSearch))
+        }
       }
       else {
-        searchMapResponse.put(termRangeQuery.getField, inRangeSearch)
+        if (searchWithStringValue) {
+          searchMapResponse.put("$or", List(Map(field -> inRangeSearch), Map(field -> inRangeStringSearch)))
+        }
+        else {
+          searchMapResponse.put(field, inRangeSearch)
+        }
       }
     }
   }
@@ -179,6 +188,10 @@ object LuceneQueryConverter extends LazyLogging {
   }
 
   private def appendPrefixQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: PrefixQuery): Unit = {
+    if (query.getPrefix.text().isEmpty) {
+      appendExistsToSearchMap(negated, searchMapResponse, query.getField)
+      return
+    }
     val listOfSearches: List[Bson] = List(Map(query.getField -> anchoredRegexQuery(s"${literalToRegex(query.getPrefix.text())}(.*?)")))
     if (negated) {
       searchMapResponse.put("$nor", listOfSearches)
@@ -188,7 +201,16 @@ object LuceneQueryConverter extends LazyLogging {
     }
   }
 
+  // field:* matches every document with a value in the field, a regular expression would only match text
+  private def appendExistsToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], field: String): Unit = {
+    searchMapResponse.put(field, Map("$exists" -> !negated))
+  }
+
   private def appendWildCardQueryToSearchMap(negated: Boolean, searchMapResponse: mutable.Map[String, Any], query: WildcardQuery): Unit = {
+    if (query.getTerm.text() == "*") {
+      appendExistsToSearchMap(negated, searchMapResponse, query.getField)
+      return
+    }
     val regexQuery = wildcardRegexQuery(query.getTerm.text())
     if (negated) {
       searchMapResponse.put(query.getField, Map("$not" -> regexQuery))
